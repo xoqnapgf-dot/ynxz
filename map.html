@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>地图 · 意拟小站</title>
+  <link rel="stylesheet" href="css/style.css?v=21" />
+  <style>
+    .map-main { max-width: none; padding: 0; height: calc(100vh - var(--header-h, 64px)); }
+    .map-stage2 { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0b1220; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+    .map-stage2.grabbing { cursor: grabbing; }
+    .map-canvas { position: absolute; top: 0; left: 0; }
+    .map-base { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; image-rendering: auto; }
+    .map-base.hide { display: none; }
+    .hot-layer { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+    .hot { position: absolute; transform: translate(-50%, -50%); background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: auto; }
+    .hot-dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid #fff; background: rgba(200, 60, 40, .95); box-shadow: 0 0 0 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.6); }
+    .hot-name { font: 600 11px/1.1 var(--serif, serif); color: #fff; text-shadow: 0 1px 3px #000, 0 0 4px #000; white-space: nowrap; letter-spacing: .04em; }
+    .hot:hover .hot-dot, .hot.active .hot-dot { background: #ffcf5a; }
+    .map-ui { position: absolute; z-index: 6; }
+    .map-title { top: 14px; left: 50%; transform: translateX(-50%); font-family: var(--serif, serif); font-weight: 900; letter-spacing: .3em; color: #f3f0e8; text-shadow: 0 2px 8px rgba(0,0,0,.8); font-size: 1.05rem; }
+    .map-modes { top: 12px; left: 12px; display: flex; gap: 4px; background: rgba(12,14,22,.72); padding: 4px; border-radius: 10px; border: 1px solid rgba(216,178,90,.25); }
+    .map-modes button { border: 0; background: transparent; color: #cfc8b4; font: 600 .82rem/1 var(--serif, serif); letter-spacing: .12em; padding: .5rem .8rem; border-radius: 7px; cursor: pointer; }
+    .map-modes button[aria-pressed="true"] { background: rgba(216,178,90,.9); color: #1a140a; }
+    .map-zoomctl { top: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .map-zoomctl button { width: 38px; height: 38px; border-radius: 9px; border: 1px solid rgba(216,178,90,.4); background: rgba(12,14,22,.82); color: #e9e2cf; font-size: 1.15rem; cursor: pointer; }
+    .map-zoomctl button:hover { border-color: #d8b25a; color: #fff; }
+    .map-zoomlvl { bottom: 16px; right: 16px; font: 600 .78rem/1 var(--serif, serif); letter-spacing: .1em; color: #d8b25a; background: rgba(12,14,22,.7); padding: .4rem .55rem; border-radius: 8px; border: 1px solid rgba(216,178,90,.28); }
+    .map-scalebar { bottom: 16px; left: 16px; color: #e9e2cf; font-size: .74rem; letter-spacing: .06em; text-shadow: 0 1px 3px #000; }
+    .map-scalebar .bar { height: 6px; border: 1px solid #e9e2cf; border-top: none; margin-bottom: 3px; }
+    .nation-card { position: absolute; z-index: 8; right: 16px; top: 60px; width: min(320px, 78vw); background: rgba(16,18,26,.95); border: 1px solid rgba(216,178,90,.35); border-radius: 14px; padding: 1rem 1.1rem; color: #efe9d8; box-shadow: 0 20px 50px -20px #000; display: none; }
+    .nation-card.show { display: block; }
+    .nation-card h3 { margin: 0; font-family: var(--serif, serif); font-size: 1.25rem; letter-spacing: .06em; color: #f3f0e8; }
+    .nation-card .form { display: inline-block; margin: .35rem 0 .6rem; font-size: .72rem; letter-spacing: .12em; color: #d8b25a; border: 1px solid rgba(216,178,90,.4); border-radius: 999px; padding: .12rem .55rem; }
+    .nation-card p { margin: 0 0 .8rem; font-size: .86rem; line-height: 1.7; color: #bdb6a4; }
+    .nation-card .enter { display: inline-block; border: 0; background: rgba(216,178,90,.9); color: #1a140a; font-weight: 700; letter-spacing: .1em; padding: .5rem .9rem; border-radius: 8px; cursor: pointer; }
+    .nation-card .nc-close { position: absolute; top: 6px; right: 10px; border: 0; background: none; color: #8a8474; font-size: 1.2rem; cursor: pointer; }
+    @media (max-width: 600px) {
+      .map-title { font-size: .82rem; letter-spacing: .2em; top: 10px; }
+      .map-modes { top: 8px; left: 8px; }
+      .map-modes button { padding: .4rem .55rem; font-size: .72rem; }
+      .map-zoomctl { top: 8px; right: 8px; gap: 5px; }
+      .map-zoomctl button { width: 34px; height: 34px; font-size: 1.05rem; }
+      .hot-name { font-size: 9px; }
+      .nation-card { right: 8px; left: 8px; top: auto; bottom: 64px; width: auto; }
+      .map-zoomlvl { bottom: 12px; right: 10px; }
+      .map-scalebar { bottom: 12px; left: 10px; }
+    }
+  </style>
+</head>
+<body data-page="map" class="theme-map">
+  <header class="site-header">
+    <a class="brand" href="index.html"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="gallery.html">画廊</a>
+      <a href="map.html" aria-current="page">地图</a>
+      <a href="cp.html">CP乱炖</a>
+      <a href="forum.html">讨论区</a>
+      <a href="search.html">搜索</a>
+    </nav>
+  </header>
+
+  <main class="map-main">
+    <div id="mapStage" class="map-stage2">
+      <div id="mapCanvas" class="map-canvas">
+        <img id="baseTerrain" class="map-base" src="素材/地图/terrain.png?v=4" alt="地形图">
+        <img id="baseNations" class="map-base hide" src="素材/地图/nations.png?v=4" alt="国家划分图">
+      </div>
+      <div id="hotLayer" class="hot-layer"></div>
+
+      <div class="map-ui map-title">PIERTEIA · 主世界</div>
+      <div class="map-ui map-modes" role="group" aria-label="图层">
+        <button type="button" data-mode="terrain" aria-pressed="true">地形</button>
+        <button type="button" data-mode="nations" aria-pressed="false">国家/地区</button>
+      </div>
+      <div class="map-ui map-zoomctl">
+        <button id="zin" type="button" aria-label="放大">+</button>
+        <button id="zout" type="button" aria-label="缩小">&minus;</button>
+        <button id="zfit" type="button" aria-label="复位">&#x2922;</button>
+      </div>
+      <div class="map-ui map-scalebar"><div class="bar" id="scaleBar"></div><span id="scaleLabel">—</span></div>
+      <div class="map-ui map-zoomlvl" id="zoomLvl">100%</div>
+
+      <div class="nation-card" id="nationCard">
+        <button class="nc-close" id="ncClose" aria-label="关闭">&times;</button>
+        <h3 id="ncName">—</h3>
+        <span class="form" id="ncForm"></span>
+        <p id="ncDesc">该区域介绍待补充。</p>
+        <button class="enter" id="ncEnter">进入 →</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/map-data.js?v=2"></script>
+  <script>
+  (function () {
+    var W = 3000, H = 935, KM_PER_UNIT = 21.3;
+    var stage = document.getElementById('mapStage');
+    var canvas = document.getElementById('mapCanvas');
+    var baseT = document.getElementById('baseTerrain');
+    var baseN = document.getElementById('baseNations');
+    var hotLayer = document.getElementById('hotLayer');
+    var NAT = window.MAP_NATIONS || [];
+    var s = 1, tx = 0, ty = 0, cw0 = 0, ch0 = 0;
+    var MAXS = 6;
+
+    function layout() {
+      var sw = stage.clientWidth, sh = stage.clientHeight;
+      var fit = Math.min(sw / W, sh / H);
+      cw0 = W * fit; ch0 = H * fit;
+    }
+    function clampT() {
+      var sw = stage.clientWidth, sh = stage.clientHeight, mw = cw0 * s, mh = ch0 * s;
+      tx = (mw <= sw) ? (sw - mw) / 2 : Math.max(sw - mw, Math.min(0, tx));
+      ty = (mh <= sh) ? (sh - mh) / 2 : Math.max(sh - mh, Math.min(0, ty));
+    }
+    function apply() {
+      var w = cw0 * s, h = ch0 * s;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      canvas.style.left = tx + 'px';
+      canvas.style.top = ty + 'px';
+      for (var i = 0; i < hots.length; i++) {
+        var n = NAT[i];
+        hots[i].style.left = (tx + n.x * w) + 'px';
+        hots[i].style.top = (ty + n.y * h) + 'px';
+      }
+      document.getElementById('zoomLvl').textContent = Math.round(s * 100) + '%';
+      updateScale(w);
+    }
+    function centerFit() { s = 1; tx = (stage.clientWidth - cw0) / 2; ty = (stage.clientHeight - ch0) / 2; apply(); }
+    function zoomAt(factor, cx, cy) {
+      var ns = Math.max(1, Math.min(MAXS, s * factor));
+      factor = ns / s;
+      tx = cx - (cx - tx) * factor;
+      ty = cy - (cy - ty) * factor;
+      s = ns; clampT(); apply();
+    }
+    function niceNum(x) { var p = Math.pow(10, Math.floor(Math.log10(x))); var f = x / p; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p; }
+    function updateScale(w) {
+      var kmPerPx = KM_PER_UNIT / (w / W);
+      var km = niceNum(130 * kmPerPx);
+      document.getElementById('scaleBar').style.width = Math.round(km / kmPerPx) + 'px';
+      document.getElementById('scaleLabel').textContent = km >= 1 ? km + ' km' : Math.round(km * 1000) + ' m';
+    }
+
+    stage.addEventListener('wheel', function (e) { e.preventDefault(); var r = stage.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+    var drag = null;
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.map-ui') || e.target.closest('.hot') || e.target.closest('.nation-card')) return;
+      e.preventDefault();
+      drag = { x: e.clientX, y: e.clientY, tx: tx, ty: ty };
+      stage.classList.add('grabbing'); stage.setPointerCapture(e.pointerId);
+    });
+    stage.addEventListener('pointermove', function (e) { if (!drag) return; tx = drag.tx + (e.clientX - drag.x); ty = drag.ty + (e.clientY - drag.y); clampT(); apply(); });
+    function endDrag() { drag = null; stage.classList.remove('grabbing'); }
+    stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+
+    document.getElementById('zin').onclick = function () { var r = stage.getBoundingClientRect(); zoomAt(1.3, r.width / 2, r.height / 2); };
+    document.getElementById('zout').onclick = function () { var r = stage.getBoundingClientRect(); zoomAt(1 / 1.3, r.width / 2, r.height / 2); };
+    document.getElementById('zfit').onclick = centerFit;
+
+    var mode = 'terrain';
+    document.querySelectorAll('[data-mode]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        mode = b.dataset.mode;
+        document.querySelectorAll('[data-mode]').forEach(function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); });
+        baseT.classList.toggle('hide', mode !== 'terrain');
+        baseN.classList.toggle('hide', mode !== 'nations');
+        closeCard();
+        apply();
+      });
+    });
+
+    var card = document.getElementById('nationCard'), curNation = null, hots = [];
+    NAT.forEach(function (n) {
+      var b = document.createElement('button');
+      b.className = 'hot'; b.title = n.name; b.setAttribute('aria-label', n.name);
+      b.innerHTML = '<i class="hot-dot"></i><span class="hot-name"></span>';
+      b.querySelector('.hot-name').textContent = n.name;
+      b.addEventListener('click', function (e) { e.stopPropagation(); openNation(n, b); });
+      hotLayer.appendChild(b); hots.push(b);
+    });
+    function openNation(n, btn) {
+      curNation = n;
+      document.getElementById('ncName').textContent = n.name;
+      var f = document.getElementById('ncForm'); f.textContent = n.form || ''; f.style.display = n.form ? '' : 'none';
+      hots.forEach(function (h) { h.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      card.classList.add('show');
+    }
+    function closeCard() { card.classList.remove('show'); hots.forEach(function (h) { h.classList.remove('active'); }); }
+    document.getElementById('ncClose').onclick = closeCard;
+    document.getElementById('ncEnter').onclick = function () { location.href = 'gallery.html?cat=ideology'; };
+
+    window.addEventListener('resize', function () { layout(); apply(); });
+    layout(); centerFit();
+  })();
+  </script>
+</body>
+</html>

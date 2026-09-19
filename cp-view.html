@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CP乱炖 · 意拟小站</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .cpw { max-width: 780px; margin: 0 auto; padding: clamp(2rem, 6vh, 3.4rem) 22px 5rem; }
+    .cpw-back { display: inline-block; margin-bottom: 1.4rem; font-size: 0.85rem; letter-spacing: 0.14em; color: var(--gold); text-decoration: none; }
+    .cpw-back:hover { color: var(--gold-hi); }
+    .cpw-title { font-family: var(--serif); font-weight: 900; font-size: clamp(1.5rem, 4vw, 2rem); letter-spacing: 0.06em; margin: 0 0 0.6rem; color: var(--ink); }
+    .cpw-meta { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.82rem; letter-spacing: 0.12em; color: var(--ink-faint); padding-bottom: 1.1rem; margin-bottom: 1.6rem; border-bottom: 1px solid var(--hairline); }
+    .cpw-imgs { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.8rem; }
+    .cpw-imgs img { width: 100%; height: auto; border-radius: var(--radius); border: 1px solid var(--hairline); }
+    .cpw-body { white-space: pre-wrap; word-break: break-word; line-height: 2.1; letter-spacing: 0.05em; color: var(--ink-dim); }
+    .cpw-missing { color: var(--ink-faint); letter-spacing: 0.06em; }
+    .cpw-missing a { color: var(--gold); }
+  </style>
+</head>
+<body>
+  <main class="cpw" id="cpw">
+    <p class="cpw-missing">加载中…</p>
+  </main>
+
+  <script>
+    (function () {
+      /* 内置官方投稿（与 cp.js 中 SEED_POSTS 保持一致） */
+      var SEED = [
+        { id: 'seed-kang-anzi', official: true, title: '安康 × 安资', body: '', images: ['素材/CP区/安康&安资_cp图.PNG'] }
+      ];
+      function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+      function fmtDate(ts) {
+        var d = new Date(ts);
+        function p(n) { return (n < 10 ? '0' : '') + n; }
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+      }
+      var params = new URLSearchParams(location.search);
+      var id = params.get('post');
+      var posts = SEED.slice();
+      try {
+        var raw = localStorage.getItem('ynxz_cp_posts_v1');
+        if (raw) { var u = JSON.parse(raw); if (Array.isArray(u)) posts = posts.concat(u); }
+      } catch (e) {}
+      var p = null;
+      for (var i = 0; i < posts.length; i++) { if (posts[i].id === id) { p = posts[i]; break; } }
+      var el = document.getElementById('cpw');
+      if (!p) {
+        el.innerHTML = '<p class="cpw-missing">未找到该投稿。<a href="cp.html">← 返回 CP乱炖</a></p>';
+        return;
+      }
+      document.title = p.title + ' · CP乱炖';
+      var hasImg = p.images && p.images.length;
+      var hasTxt = p.body && p.body.trim();
+      var type = hasImg && hasTxt ? '图文' : hasImg ? '图' : '文';
+      var imgs = (p.images || []).map(function (u) { return '<img src="' + esc(u) + '" alt="">'; }).join('');
+      el.innerHTML =
+        '<a class="cpw-back" href="cp.html">← 返回 CP乱炖</a>' +
+        '<h1 class="cpw-title">' + esc(p.title) + '</h1>' +
+        '<div class="cpw-meta"><span>' + type + '</span><span>' + (p.official ? '官方' : fmtDate(p.created)) + '</span></div>' +
+        (imgs ? '<div class="cpw-imgs">' + imgs + '</div>' : '') +
+        (hasTxt ? '<div class="cpw-body">' + esc(p.body) + '</div>' : '');
+
+      /* 返回：优先关掉本新标签（回到原来的列表页）；关不掉才在本标签跳 cp.html */
+      var back = el.querySelector('.cpw-back');
+      if (back) back.addEventListener('click', function (e) {
+        e.preventDefault();
+        try { window.close(); } catch (err) {}
+        setTimeout(function () { if (!window.closed) location.href = 'cp.html'; }, 120);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>画廊 · 意拟小站</title>
+  <link rel="stylesheet" href="css/style.css?v=21" />
+  <link rel="stylesheet" href="css/gallery.css?v=35" />
+</head>
+<body data-page="gallery" class="theme-gallery">
+
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="brand-zh">意拟小站</span>
+      <span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="gallery.html" aria-current="page">画廊</a>
+      <a href="map.html">地图</a>
+      <a href="cp.html">CP乱炖</a>
+      <a href="forum.html">讨论区</a>
+      <a href="search.html">搜索</a>
+    </nav>
+  </header>
+
+  <main class="gallery-main">
+    <section class="page-head compact">
+      <p class="page-badge reveal">01&nbsp;·&nbsp;GALLERY</p>
+      <h1 class="page-title reveal">画廊</h1>
+      <p class="page-title-en reveal" style="--d:.08s">GALLERY</p>
+    </section>
+
+    <!-- 工具栏：分类 -->
+    <div class="gal-toolbar reveal" style="--d:.14s">
+      <div class="gal-group" role="group" aria-label="分类">
+        <button type="button" class="gal-chip" data-gal-cat="ideology" aria-pressed="true">意识形态</button>
+        <button type="button" class="gal-chip" data-gal-cat="character" aria-pressed="false">角色</button>
+      </div>
+    </div>
+
+    <!-- 作品索引 -->
+    <section id="galIndex" class="gal-index" aria-label="作品索引"></section>
+
+    <!-- 空状态 -->
+    <div class="void-note" id="galEmpty" hidden>
+      <span class="diamond"></span>
+      <span>暂无作品</span>
+    </div>
+
+    <!-- 详情整页（意识形态内页 / 角色界面） -->
+    <section id="galDetailPage" class="gal-detail-page" hidden aria-live="polite">
+      <div id="galDetailBody" class="gal-detail-wrap"></div>
+    </section>
+
+    <!-- 左上角浮动返回方块（全局唯一，置于任何动画容器之外，fixed 才不被 transform 破坏） -->
+    <button type="button" id="detailBack" class="detail-back" aria-label="返回" title="返回（Esc）" hidden>
+      <span class="detail-back-arrow">‹</span><span class="detail-back-text">返回</span>
+    </button>
+  </main>
+
+  <footer class="site-footer">
+    <span>意拟小站 · IDEOLOGICAL HUMANS</span>
+  </footer>
+
+  <script src="js/gallery-data.js?v=59" defer></script>
+  <script src="js/versions-data.js?v=5" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/gallery.js?v=61" defer></script>
+</body>
+</html>
