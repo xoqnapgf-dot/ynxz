@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>万道归墟</title>
-<meta name="description" content="《万道归墟》设定与剧情展示：人物、系统、境界、世界层界、终焉纪与全书大纲，附第一卷二十七章在线阅读。">
+<meta name="description" content="《万道归墟》设定集：作品档案、修炼与系统法则、人物、境界、世界层界、终焉纪、势力、伏笔与全书大纲。">
 <meta name="theme-color" content="#0A0D12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,13 +21,16 @@
   <div class="topbar-in">
     <a class="brand" href="#top"><b data-book-title>万道归墟</b><small>WAN DAO GUI XU</small></a>
     <nav class="nav" aria-label="目录">
-      <a href="#vol1">卷一</a>
+      <a href="#profile">档案</a>
+      <a href="#lore">体系</a>
       <a href="#people">人物</a>
       <a href="#mirror">系统</a>
       <a href="#items">法宝</a>
       <a href="#world">世界</a>
       <a href="#realms">境界</a>
       <a href="#legend">终焉纪</a>
+      <a href="#factions">势力</a>
+      <a href="#threads">伏笔</a>
       <a href="#outline">大纲</a>
       <a href="#errata">校勘</a>
     </nav>
@@ -58,7 +61,7 @@
       <div class="blurb" id="blurb"></div>
       <p class="twist" id="twist"></p>
       <div class="actions">
-        <button class="btn seal-btn" type="button" data-read="1">开卷 · 第一章</button>
+        <a class="btn seal-btn" href="#profile">看设定</a>
         <button class="btn ghost" type="button" data-pv>观看 PV</button>
       </div>
     </div>
@@ -66,17 +69,37 @@
   <div class="scroll-cue">往下 · 坠入归墟</div>
 </section>
 
-<!-- ═════════ 卷一 ═════════ -->
-<section id="vol1" class="sec zone-paper">
-  <div class="big-glyph" aria-hidden="true">卷</div>
+<!-- ═════════ 作品档案 ═════════ -->
+<section id="profile" class="sec zone-paper">
+  <div class="big-glyph" aria-hidden="true">典</div>
   <div class="wrap">
     <div class="sec-head">
-      <p class="kicker">已成稿 · 二十七章</p>
-      <h2 class="sec-title">第一卷 · 星源天</h2>
-      <p class="lead">泥头车一撞，何阳到了星源天。这里民风懒散，穿越者多得像批发，每个人都带着自己的系统。他的系统没有化身，也不说自己是什么，动不动就封号。</p>
-      <div class="vol-meta"><span>境界 <b>筑基 → 化神</b></span><span>地点 <b>星源天 · 飞云州</b></span><span>篇幅 <b>约七万一千字</b></span></div>
+      <p class="kicker">作品档案</p>
+      <h2 class="sec-title logline" id="logline"></h2>
     </div>
-    <div class="arcs" id="arcs"></div>
+    <div class="profile-grid">
+      <dl class="facts" id="facts"></dl>
+      <figure class="title-note">
+        <blockquote id="tnQuote"></blockquote>
+        <figcaption><span class="seal seal-sm" aria-hidden="true"><span>归</span><span>墟</span></span><cite id="tnSrc"></cite></figcaption>
+        <p id="tnText"></p>
+      </figure>
+    </div>
+    <div class="cheats-h"><h3>金手指</h3><span></span></div>
+    <div class="cheats" id="cheats"></div>
+  </div>
+</section>
+
+<!-- ═════════ 星源天体系 ═════════ -->
+<section id="lore" class="sec zone-paper">
+  <div class="big-glyph" aria-hidden="true">律</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">星源天 · 体系与法则</p>
+      <h2 class="sec-title">五个境界，一群系统，一座试炼地</h2>
+      <p class="lead">前半部的规则大多藏在正文里。这里把修炼体系、系统的运作规律、穿越者的派系和星源天的来历整理出来。</p>
+    </div>
+    <div class="arcs" id="loreBlocks"></div>
   </div>
 </section>
 
@@ -229,14 +252,41 @@
   </div>
 </section>
 
+<!-- ═════════ 势力 ═════════ -->
+<section id="factions" class="sec zone-dark zone-factions">
+  <div class="big-glyph" aria-hidden="true">势</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">势力 · 阵营</p>
+      <h2 class="sec-title">从一座山峰，到时间树的另一根枝</h2>
+      <p class="lead">按何阳遇到它们的先后排列。红框是终局之敌。</p>
+    </div>
+    <div class="factions" id="factionGrid"></div>
+  </div>
+</section>
+
+<!-- ═════════ 伏笔 ═════════ -->
+<section id="threads" class="sec zone-dark zone-threads">
+  <div class="big-glyph" aria-hidden="true">伏</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">伏笔 · 回收</p>
+      <h2 class="sec-title">第一卷埋下的线，在哪里收</h2>
+      <p class="lead">左边是已经写出来的伏笔，右边是大纲里的回收处，点一下显示。标“待定”的还没有找到回收的位置。</p>
+      <div class="spoil-ctl"><label class="switch"><input type="checkbox" id="spoilThreads"><span>显示全部回收</span></label></div>
+    </div>
+    <ol class="threads" id="threadList"></ol>
+  </div>
+</section>
+
 <!-- ═════════ 大纲 ═════════ -->
 <section id="outline" class="sec zone-dark zone-outline">
   <div class="big-glyph" aria-hidden="true">纲</div>
   <div class="wrap">
     <div class="sec-head">
-      <p class="kicker">全书大纲 · 卷二至终卷</p>
-      <h2 class="sec-title">从无疆界，到起源与终焉</h2>
-      <p class="lead">以下内容尚未成稿，按设定文档的主线整理。卷名为网站补拟。关键转折默认遮住，点一下显示。</p>
+      <p class="kicker">全书大纲 · 卷一至终卷</p>
+      <h2 class="sec-title">从星源天，到起源与终焉</h2>
+      <p class="lead">按设定文档的主线关键情节点整理。卷一已写至第二十七章，卷二起尚未成稿，卷名为网站补拟。关键转折默认遮住，点一下显示。</p>
       <div class="spoil-ctl"><label class="switch"><input type="checkbox" id="spoilAll"><span>显示全部剧透</span></label></div>
     </div>
     <div class="vols" id="vols"></div>
@@ -251,7 +301,7 @@
       <small>终 卷</small>
       <p>多元宇宙、无限次方盒、无限阶指数塔……<br>而造成这一切的幕后真凶，居然是……<em>何阳自己？</em></p>
       <h2>归墟</h2>
-      <button class="btn" type="button" data-read="1">从第一章读起</button>
+      <a class="btn" href="#outline">看全书大纲</a>
     </div>
   </div>
 
@@ -260,7 +310,7 @@
       <div class="sec-head">
         <p class="kicker">附录 · 校勘记</p>
         <h2 class="sec-title">哪些是错字，哪些是两个东西</h2>
-        <p class="lead">正文阅读版已按“改正”和“统一”两栏处理。“确认是两个东西”的原样保留。“待作者定夺”的没有改动，只在这里列出。</p>
+        <p class="lead">核对原稿与设定文档得到的结果，供修稿参考。网站引用原文时已按“改正”和“统一”两栏处理；“确认是两个东西”的原样保留；“待作者定夺”的没有改动，只在这里列出。</p>
       </div>
       <div class="errata-grid" id="erGrid"></div>
     </div>
@@ -268,29 +318,11 @@
 
   <footer class="footer">
     <b data-book-title>万道归墟</b>
-    <span>玄幻 · 仙侠 · 奇幻 ｜ 第一卷连载中</span>
+    <span>玄幻 · 仙侠 · 奇幻 ｜ 设定集</span>
   </footer>
 </section>
 
 </main>
-
-<!-- 阅读器 -->
-<div class="reader" id="reader" hidden role="dialog" aria-modal="true" aria-label="正文阅读">
-  <div class="reader-bar">
-    <button class="icon-btn" type="button" id="rClose" aria-label="关闭阅读">返回</button>
-    <label class="sr" for="rSelect">选择章节</label>
-    <select id="rSelect"></select>
-    <button class="icon-btn" type="button" id="rSmaller" aria-label="缩小字号">A-</button>
-    <button class="icon-btn" type="button" id="rBigger" aria-label="放大字号">A+</button>
-  </div>
-  <div class="reader-body" id="rBody">
-    <article class="reader-article" id="rArticle"></article>
-    <div class="reader-nav">
-      <button class="btn ghost" type="button" id="rPrev">上一章</button>
-      <button class="btn" type="button" id="rNext">下一章</button>
-    </div>
-  </div>
-</div>
 
 <!-- PV -->
 <div class="pv" id="pv" hidden role="dialog" aria-modal="true" aria-label="万道归墟 PV">
@@ -306,7 +338,6 @@
 </div>
 
 <script src="assets/js/data.js"></script>
-<script src="assets/js/chapters.js"></script>
 <script src="assets/js/site.js"></script>
 <script src="assets/js/ink.js"></script>
 <script src="assets/js/world.js"></script>
