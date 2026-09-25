@@ -67,6 +67,7 @@ function renderAt(tt, dt) {
   fadeEl.style.background = col; fadeEl.style.opacity = f.toFixed(3);
   if (sc.tint) { const t = sc.tint(p); if (t) { fadeEl.style.background = t[0]; fadeEl.style.opacity = Math.max(f, t[1]).toFixed(3); } }
   E.bloom.strength = (sc.bloom ? sc.bloom(p) : 1) * 0.62;
+  E.renderer.toneMappingExposure = sc.exposure || 1;
   E.composer.passes[0].scene = sc.scene; E.composer.passes[0].camera = sc.camera;
   E.composer.render();
   let cap = null; sc.caps.forEach(c => { if (p >= c[0]) cap = c; });
@@ -146,6 +147,7 @@ async function build() {
   }
 
   const mobile = Math.min(window.innerWidth, window.innerHeight) < 700;
+  const portrait = window.innerWidth < window.innerHeight;
   const Q = mobile ? 0.4 : 1;
   const renderer = new THREE.WebGLRenderer({ antialias: !mobile, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1 : 1.5));
@@ -289,8 +291,8 @@ async function build() {
           gl_FragColor=vec4(col,c.a*(0.35+0.65*a)); }`,
       transparent: true, depthWrite: false, side: THREE.DoubleSide
     });
-    const panel = new THREE.Mesh(new THREE.PlaneGeometry(7, 7 * TH / TW), mat); scene.add(panel);
-    const frameGlow = sprite(T_CYAN, [11, 7], 0x7fb9cb, 0.18); frameGlow.position.z = -0.5; scene.add(frameGlow);
+    const panel = new THREE.Mesh(new THREE.PlaneGeometry(7, 7 * TH / TW), mat); if (portrait) panel.scale.setScalar(0.62); scene.add(panel);
+    const frameGlow = sprite(T_CYAN, portrait ? [5, 3.2] : [11, 7], 0x7fb9cb, 0.18); frameGlow.position.z = -0.5; scene.add(frameGlow);
     const grid = new THREE.GridHelper(80, 80, 0x2d5b74, 0x10212b); grid.position.y = -3.2; grid.material.transparent = true; grid.material.opacity = 0.55; scene.add(grid);
     const N = Math.floor(900 * Q + 200), g = new THREE.BufferGeometry(), pp = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) pp.set([(rnd() - 0.5) * 30, (rnd() - 0.5) * 16, (rnd() - 0.5) * 20 - 4], i * 3);
@@ -348,7 +350,7 @@ async function build() {
     }
     const ig = new THREE.BufferGeometry();
     ig.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); ig.setAttribute("color", new THREE.Float32BufferAttribute(colr, 3)); ig.setIndex(idx); ig.computeVertexNormals();
-    const island = new THREE.Mesh(ig, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0.02, flatShading: true }));
+    const island = new THREE.Mesh(ig, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, metalness: 0.02, flatShading: true, emissive: 0x16201c }));
     const isl = new THREE.Group(); isl.add(island); scene.add(isl);
     // 瀑布
     const WN = Math.floor(1800 * Q + 300), wg = new THREE.BufferGeometry(), wp = new Float32Array(WN * 3), wo = new Float32Array(WN);
@@ -376,7 +378,7 @@ async function build() {
     // 流星：降临的穿越者
     const mets = []; for (let i = 0; i < 14; i++) { const s = sprite(T_STREAK, [6, 0.35], 0xffe7b0, 0.9); scene.add(s); mets.push([s, rnd(), (rnd() - 0.5) * 40, (rnd() - 0.5) * 30 - 10]); }
     scenes.push({
-      d: 7, scene, camera: cam, fadeIn: 0.7,
+      d: 7, scene, camera: cam, fadeIn: 0.7, exposure: 1.55,
       caps: [[0.12, "星源天", "漂浮在星海中的大陆。穿越者多得像批发，每人都带着自己的系统。"]],
       bloom: () => 0.85,
       update(p, lt) {
@@ -395,9 +397,9 @@ async function build() {
     const scene = new THREE.Scene(); scene.background = new THREE.Color(0x040404);
     const cam = mkCam(40);
     const tL = textTex("何阳", "220px " + BRUSH, "#D9D4C7", { glow: "rgba(255,255,255,.2)", blur: 14 });
-    const left = textPlane(tL, 3.1); left.position.set(-3.4, 0, 0); scene.add(left);
-    const right = textPlane(tL, 3.1, new THREE.MeshBasicMaterial({ map: tL, transparent: true, depthWrite: false, color: 0xb9b4a8 })); right.position.set(3.4, 0, 0); right.scale.x = -1; scene.add(right);
-    const eyeA = sprite(T_RED, 0.5, 0xff5040, 0); eyeA.position.set(3.0, 0.5, 0.2); scene.add(eyeA);
+    const left = textPlane(tL, 3.1); left.position.set(-3.4, 0, 0); if (portrait) { left.position.set(0, 3.3, 0); left.scale.setScalar(0.62); } scene.add(left);
+    const right = textPlane(tL, 3.1, new THREE.MeshBasicMaterial({ map: tL, transparent: true, depthWrite: false, color: 0xb9b4a8 })); right.position.set(3.4, 0, 0); right.scale.x = -1; if (portrait) { right.position.set(0, -3.3, 0); right.scale.set(-0.62, 0.62, 1); } scene.add(right);
+    const eyeA = sprite(T_RED, 0.5, 0xff5040, 0); eyeA.position.set(3.0, 0.5, 0.2); if (portrait) eyeA.position.set(0.3, -3.0, 0.2); scene.add(eyeA);
     // 镜面碎片（顶点着色器炸裂）
     const cols = mobile ? 9 : 14, rows = mobile ? 12 : 18, w = 3.2, h = 5.6;
     const P = []; for (let r = 0; r <= rows; r++) for (let c = 0; c <= cols; c++) { const jx = (c > 0 && c < cols) ? (rnd() - 0.5) * 0.7 : 0, jy = (r > 0 && r < rows) ? (rnd() - 0.5) * 0.7 : 0; P.push([(c + jx) / cols * w - w / 2, (r + jy) / rows * h - h / 2]); }
@@ -413,9 +415,9 @@ async function build() {
         void main(){ vB=aB; vP=position.xy; float k=max(0.0,uK-aD.w*0.25); vec3 p=position-aC; p=rot(vec3(aD.w,1.0-aD.w,0.5),k*(3.0+aD.w*6.0))*p; vec3 c=aC+vec3(aD.xy*k*2.2,aD.z*k*1.6); c.y-=k*k*1.4; vF=k; gl_Position=projectionMatrix*modelViewMatrix*vec4(c+p,1.0); }`,
       fragmentShader: `uniform float uT; varying vec3 vB; varying float vF; varying vec2 vP; void main(){ float e=min(min(vB.x,vB.y),vB.z); float edge=smoothstep(0.035,0.0,e); float sheen=0.5+0.5*sin(vP.x*1.6+vP.y*0.8-uT*1.4); vec3 glass=vec3(0.05,0.06,0.07)+vec3(0.35,0.4,0.45)*pow(sheen,6.0)*0.6; vec3 col=glass+vec3(1.0,0.85,0.55)*edge*(0.25+vF*2.5); gl_FragColor=vec4(col,0.55+edge*0.45); }`,
       transparent: true, depthWrite: false, side: THREE.DoubleSide });
-    const mirror = new THREE.Mesh(sg, shard); scene.add(mirror);
+    const mirror = new THREE.Mesh(sg, shard); if (portrait) { mirror.rotation.z = Math.PI / 2; mirror.scale.setScalar(0.5); } scene.add(mirror);
     const mist = [];
-    for (let i = 0; i < Math.floor(40 * Q + 16); i++) { const s = sprite(T_CLOUD, 2 + rnd() * 3, 0x000000, 0.9, THREE.NormalBlending); s.position.set(3.4 + (rnd() - 0.5) * 3, (rnd() - 0.5) * 3, 0.3 + rnd()); s.userData.v = V((rnd() - 0.2) * 2, (rnd() - 0.5) * 1.4, rnd()); scene.add(s); mist.push(s); }
+    for (let i = 0; i < Math.floor(40 * Q + 16); i++) { const s = sprite(T_CLOUD, 2 + rnd() * 3, 0x000000, 0.9, THREE.NormalBlending); s.position.set(portrait ? (rnd() - 0.5) * 3 : 3.4 + (rnd() - 0.5) * 3, portrait ? -3.3 + (rnd() - 0.5) * 2 : (rnd() - 0.5) * 3, 0.3 + rnd()); s.userData.v = V((rnd() - 0.2) * 2, (rnd() - 0.5) * 1.4, rnd()); scene.add(s); mist.push(s); }
     const flash = sprite(T_WHITE, 1, 0xfff4dd, 0); flash.position.z = 0.4; scene.add(flash);
     scenes.push({
       d: 6.5, scene, camera: cam,
@@ -454,12 +456,12 @@ async function build() {
     const skyMat = new THREE.ShaderMaterial({ uniforms: { uO: { value: 0 }, uT: { value: 0 } },
       vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
       fragmentShader: NOISE + `uniform float uO; uniform float uT; varying vec2 vUv;
-        void main(){ vec2 p=(vUv-vec2(0.5,0.62))*vec2(2.2,1.3); float n=fbm(p*3.0+vec2(uT*0.05,0.0)); float r=length(p*vec2(1.0,1.6))+ (n-0.5)*0.55; float o=uO*0.62;
-          float inside=smoothstep(o,o-0.02,r); float edge=smoothstep(0.08,0.0,abs(r-o))*step(0.01,uO);
+        void main(){ vec2 p=(vUv-vec2(0.5,0.62))*vec2(2.2,1.3); float n=fbm(p*3.0+vec2(uT*0.05,0.0)); float r=length(p*vec2(1.0,1.6))+ (n-0.5)*0.55; float o=uO*0.5;
+          r=max(r,0.05); float inside=smoothstep(o,o-0.02,r); float edge=smoothstep(0.08,0.0,abs(r-o))*smoothstep(0.08,0.25,uO);
           vec3 sky=mix(vec3(0.02,0.025,0.05),vec3(0.06,0.05,0.09),vUv.y); float st=step(0.9975,h21(floor(vUv*vec2(900.0,600.0)))); sky+=st*0.8;
           vec3 col=sky+vec3(1.0,0.8,0.5)*edge*1.1+vec3(1.0,0.95,0.85)*pow(edge,4.0)*0.9;
           gl_FragColor=vec4(col,1.0-inside); }`, transparent: true, depthWrite: false });
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(220, 150), skyMat); sky.position.set(0, 20, -60); scene.add(sky);
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(220, portrait ? 300 : 150), skyMat); sky.position.set(0, 20, -60); scene.add(sky);
     // 大地与升空的系统光点
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshBasicMaterial({ color: 0x050608 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -2; scene.add(ground);
     const RN = Math.floor(2400 * Q + 400), rg = new THREE.BufferGeometry(), rp = new Float32Array(RN * 3), rd = new Float32Array(RN);
@@ -479,7 +481,7 @@ async function build() {
         tet.rotation.y = lt * 0.25; tet.rotation.x = Math.sin(lt * 0.4) * 0.2; eye.lookAt(cam.position.clone().sub(inner.position));
         clash.material.opacity = 0.55 * Math.max(0, Math.sin(lt * 5)) * sm((p - 0.25) / 0.1); clash.scale.setScalar(4 + Math.max(0, Math.sin(lt * 5)) * 8);
         riseMat.uniforms.uK.value = sm((p - 0.4) / 0.6);
-        const e = sm(p); cam.position.set(Math.sin(lt * 0.15) * 2, lerp(0, 4, e), lerp(14, 4, e)); cam.lookAt(0, lerp(6, 16, e), -60);
+        const e = sm(p); cam.position.set(Math.sin(lt * 0.15) * 2, lerp(0, 4, e), lerp(portrait ? 26 : 14, portrait ? 12 : 4, e)); cam.lookAt(0, lerp(10, 16, e), -60);
       }
     });
   })();
@@ -502,15 +504,15 @@ async function build() {
     for (let i = 0; i < GN; i++) { const arm = i % 4, r = Math.pow(rnd(), 0.6) * GR, a = arm / 4 * 6.283 + r / GR * 5.0 + (rnd() - 0.5) * 0.5, h = (rnd() - 0.5) * 600 * (1 - r / GR); gp.set([gC.x + Math.cos(a) * r, gC.y + h, gC.z + Math.sin(a) * r], i * 3); const w = 1 - r / GR; gc.set([0.7 + w * 0.3, 0.6 + w * 0.3, 0.55 + (1 - w) * 0.4], i * 3); }
     gg.setAttribute("position", new THREE.BufferAttribute(gp, 3)); gg.setAttribute("color", new THREE.BufferAttribute(gc, 3));
     const gal = new THREE.Points(gg, new THREE.PointsMaterial({ size: 2.2, map: T_DOT, vertexColors: true, ...ADD, sizeAttenuation: false, opacity: 0.8 })); scene.add(gal);
-    const core = sprite(T_WARM, 9000, 0xffe8c0, 0.4); core.position.copy(gC); scene.add(core);
+    const core = sprite(T_WARM, 5000, 0xffe8c0, 0.25); core.position.copy(gC); scene.add(core);
     // 星系团
     const galTex = canvasTex(128, 128, (g) => { for (let i = 0; i < 500; i++) { const r = Math.pow(Math.random(), 0.6) * 58, a = (i % 2) * 3.14 + r / 58 * 5 + (Math.random() - 0.5) * 0.4; g.fillStyle = "rgba(255,240,210," + (0.6 - r / 120) + ")"; g.fillRect(64 + Math.cos(a) * r, 64 + Math.sin(a) * r * 0.55, 1.5, 1.5); } const gr = g.createRadialGradient(64, 64, 0, 64, 64, 16); gr.addColorStop(0, "rgba(255,245,220,1)"); gr.addColorStop(1, "rgba(255,245,220,0)"); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); });
     for (let i = 0; i < 160 * Q + 60; i++) { const s = sprite(galTex, 20000 + rnd() * 30000, 0xffffff, 0.45); s.material.rotation = rnd() * 6; const r = 60000 + rnd() * 900000; const a = rnd() * 6.28, b = Math.acos(2 * rnd() - 1); s.position.set(Math.sin(b) * Math.cos(a) * r, Math.cos(b) * r * 0.6, Math.sin(b) * Math.sin(a) * r); scene.add(s); }
     // 宇宙泡
     const bubMat = new THREE.ShaderMaterial({ vertexShader: "varying vec3 vN; varying vec3 vV; void main(){ vN=normalize(normalMatrix*normal); vec4 mv=modelViewMatrix*vec4(position,1.0); vV=normalize(-mv.xyz); gl_Position=projectionMatrix*mv; }",
-      fragmentShader: "varying vec3 vN; varying vec3 vV; void main(){ float f=pow(1.0-abs(dot(vN,vV)),3.0); gl_FragColor=vec4(vec3(0.75,0.85,1.0)*f*1.2+vec3(0.9,0.75,0.4)*f*f,f*0.9); }", ...ADD, side: THREE.DoubleSide });
+      fragmentShader: "varying vec3 vN; varying vec3 vV; void main(){ float f=pow(1.0-abs(dot(vN,vV)),3.0); gl_FragColor=vec4(vec3(0.75,0.85,1.0)*f*0.6+vec3(0.9,0.75,0.4)*f*f*0.5,f*0.6); }", ...ADD, side: THREE.FrontSide });
     const bubG = new THREE.SphereGeometry(1, 32, 24);
-    for (let i = 0; i < 70 * Q + 30; i++) { const m = new THREE.Mesh(bubG, bubMat); const r = i === 0 ? 0 : 3e6 + rnd() * 4e7; const a = rnd() * 6.28, b = Math.acos(2 * rnd() - 1); m.position.set(Math.sin(b) * Math.cos(a) * r, Math.cos(b) * r, Math.sin(b) * Math.sin(a) * r); m.scale.setScalar(i === 0 ? 2.4e6 : 1e6 + rnd() * 5e6); scene.add(m); }
+    for (let i = 0; i < 70 * Q + 30; i++) { const m = new THREE.Mesh(bubG, bubMat); const r = 6e6 + rnd() * 4e7; const a = rnd() * 6.28, b = Math.acos(2 * rnd() - 1); m.position.set(Math.sin(b) * Math.cos(a) * r, Math.cos(b) * r, Math.sin(b) * Math.sin(a) * r); m.scale.setScalar(1e6 + rnd() * 4e6); scene.add(m); }
     // 量级字
     const words = ["恒星系", "星团", "星系", "星系群", "星系团", "宇宙结构", "单体宇宙", "多元宇宙", "无限多元宇宙", "无限盒子", "无限次方盒子", "无限阶指数塔", "无限阶无穷", "超越逻辑与数学"];
     const wordSpr = words.map((w, i) => { const t = textTex(w, "900 64px " + SERIF, "#F1DFAE", { glow: "rgba(235,215,162,.7)", blur: 18 }); const s = sprite(t, 1, 0xffffff, 0, THREE.NormalBlending); s.userData = { i, a: t.userData.aspect, ang: rnd() * 6.28 }; scene.add(s); return s; });
@@ -618,10 +620,10 @@ async function build() {
       vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
       fragmentShader: NOISE + "uniform sampler2D uTex; uniform float uK; varying vec2 vUv; void main(){ vec4 t=texture2D(uTex,vUv); float n=fbm(vUv*vec2(9.0,3.0))*0.7+vUv.x*0.35; float th=uK*1.3-0.15; float a=smoothstep(th,th-0.06,n); float edge=smoothstep(0.07,0.0,abs(n-th))*step(0.02,uK)*(1.0-step(1.0,uK)); vec3 c=t.rgb*a+vec3(1.0,0.75,0.35)*edge*t.a*3.0; gl_FragColor=vec4(c,t.a*max(a,edge)); }",
       transparent: true, depthWrite: false });
-    const title = textPlane(tt, 3.2, tMat); scene.add(title);
+    const title = textPlane(tt, 3.2, tMat); if (portrait) title.scale.setScalar(0.4); scene.add(title);
     const sealTex = canvasTex(256, 256, (g) => { g.fillStyle = "#A5342B"; g.fillRect(10, 10, 236, 236); g.strokeStyle = "#F3E3DC"; g.lineWidth = 8; g.strokeRect(28, 28, 200, 200); g.fillStyle = "#F3E3DC"; g.font = "900 84px " + SERIF; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("何", 90, 86); g.fillText("阳", 166, 86); g.fillText("之", 90, 172); g.fillText("印", 166, 172); });
     const seal = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.05), new THREE.MeshBasicMaterial({ map: sealTex, transparent: true, opacity: 0 }));
-    seal.position.set(title.geometry.parameters.width / 2 - 0.3, -1.0, 0.05); seal.scale.setScalar(0.8); seal.rotation.z = -0.07; scene.add(seal);
+    seal.position.set(portrait ? title.geometry.parameters.width * 0.2 - 0.1 : title.geometry.parameters.width / 2 - 0.3, portrait ? -0.95 : -1.0, 0.05); seal.scale.setScalar(0.8); seal.rotation.z = -0.07; scene.add(seal);
     const EN = Math.floor(1400 * Q + 300), eg = new THREE.BufferGeometry(), ep = new Float32Array(EN * 3), eo = new Float32Array(EN);
     for (let i = 0; i < EN; i++) { ep.set([(rnd() - 0.5) * 20, -6, (rnd() - 0.5) * 8], i * 3); eo[i] = rnd(); }
     eg.setAttribute("position", new THREE.BufferAttribute(ep, 3)); eg.setAttribute("off", new THREE.BufferAttribute(eo, 1));
@@ -636,7 +638,7 @@ async function build() {
       bloom: () => 1.0,
       update(p, lt) {
         uT.value = lt; tMat.uniforms.uK.value = sm(p / 0.5) * 1.05;
-        const sk = sm((p - 0.52) / 0.12); seal.material.opacity = sk; seal.scale.setScalar(lerp(1.8, 0.8, sk));
+        const sk = sm((p - 0.52) / 0.12); seal.material.opacity = sk; seal.scale.setScalar(lerp(1.8, 0.8, sk) * (portrait ? 0.55 : 1));
         const shake = sk > 0 && sk < 1 ? (1 - sk) * 0.05 : 0;
         cam.position.set((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake, lerp(9, 7.2, sm(p))); cam.lookAt(0, 0, 0);
       }
@@ -645,7 +647,7 @@ async function build() {
 
   const total = scenes.reduce((s, x) => s + x.d, 0);
   const engine = {
-    scenes, total, composer, bloom, cur: -1,
+    scenes, total, composer, bloom, renderer, cur: -1,
     at(tt) { let acc = 0; for (let i = 0; i < scenes.length; i++) { if (tt < acc + scenes[i].d) return [i, (tt - acc) / scenes[i].d, tt - acc]; acc += scenes[i].d; } const l = scenes.length - 1; return [l, 1, scenes[l].d]; },
     resize() {
       const w = host.clientWidth || window.innerWidth, h = host.clientHeight || window.innerHeight;

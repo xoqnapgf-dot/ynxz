@@ -96,7 +96,7 @@
   function L0(x, y, R, a, t) {
     ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y + Math.sin(t / 1800) * R * 0.025);
     ctx.globalCompositeOperation = "lighter";
-    ctx.drawImage(SP_BLUE, -R * 1.6, -R * 1.1, R * 3.2, R * 2.2);
+    ctx.globalAlpha = a * 0.45; ctx.drawImage(SP_BLUE, -R * 1.6, -R * 1.1, R * 3.2, R * 2.2); ctx.globalAlpha = a;
     ctx.globalCompositeOperation = "source-over";
     gates.forEach(function (g, j) {
       var ang = g[0] + t / 9000 * (0.5 + g[3]), gx = Math.cos(ang) * R * g[1], gy = Math.sin(ang) * R * g[1] * 0.42;
@@ -142,13 +142,13 @@
     ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y);
     ctx.save(); ctx.scale(1, 0.42);
     var g = ctx.createRadialGradient(0, 0, 0, 0, 0, R);
-    g.addColorStop(0, "rgba(255,244,214,.75)"); g.addColorStop(0.35, "rgba(235,215,162,.35)"); g.addColorStop(0.75, "rgba(120,140,160,.12)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    g.addColorStop(0, "rgba(255,244,214,.5)"); g.addColorStop(0.35, "rgba(235,215,162,.22)"); g.addColorStop(0.75, "rgba(120,140,160,.12)"); g.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.fill(); ctx.restore();
     ctx.globalCompositeOperation = "lighter";
     clouds.forEach(function (c) {
       var s = c[2] * R, ang = t / 60000 * (0.5 + c[3]);
       var cx = c[0] * Math.cos(ang) * R - c[1] * Math.sin(ang) * R * 0.2, cy = c[1] * R;
-      ctx.globalAlpha = a * 0.5; ctx.drawImage(NEB, cx - s, cy - s * 0.4, s * 2, s * 0.8);
+      ctx.globalAlpha = a * 0.22; ctx.drawImage(NEB, cx - s, cy - s * 0.4, s * 2, s * 0.8);
     });
     ctx.globalAlpha = a;
     for (var i = 0; i < 7; i++) {
@@ -163,8 +163,8 @@
   }
   function L2(x, y, R, a, t) {
     ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.lineCap = "round";
-    ctx.globalCompositeOperation = "lighter";
-    ctx.drawImage(NEB, -R * 1.4, -R * 1.0, R * 2.8, R * 2.0);
+    ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = a * 0.35;
+    ctx.drawImage(NEB, -R * 1.4, -R * 1.0, R * 2.8, R * 2.0); ctx.globalAlpha = a;
     [[Math.max(6, R * 0.12), "rgba(201,164,91,.08)"], [Math.max(3, R * 0.05), "rgba(201,164,91,.18)"], [Math.max(1, R * 0.012), "rgba(255,240,205,.95)"]].forEach(function (pass) {
       ctx.strokeStyle = pass[1]; ctx.lineWidth = pass[0]; ctx.beginPath();
       for (var i = 0; i <= 48; i++) { var b = branchPt(i / 48); if (i) ctx.lineTo(b[0] * R, b[1] * R); else ctx.moveTo(b[0] * R, b[1] * R); }

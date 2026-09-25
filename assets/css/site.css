@@ -835,3 +835,7 @@ details.secret p { margin-top: 8px; line-height: 1.8; color: var(--ink); }
   .fm-he { font-size: 22px; }
   .t-hint { display: none; }
 }
+
+.swipe-hint { display: none; font-family: var(--f-sans); font-size: 11.5px; letter-spacing: .3em; color: var(--moon-dim); margin-bottom: 6px; }
+.swipe-hint::before { content: "‹ "; color: var(--gold); } .swipe-hint::after { content: " ›"; color: var(--gold); }
+@media (max-width: 860px) { .swipe-hint { display: block; } }

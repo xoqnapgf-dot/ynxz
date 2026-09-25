@@ -20,8 +20,8 @@ def main(out):
     css = (ROOT / "assets/css/site.css").read_text(encoding="utf-8")
 
     importmap = re.search(r'<script type="importmap">.*?</script>', head).group(0)
-    classic = re.findall(r'<script src="(assets/js/[^"]+)"></script>', body)
-    modules = re.findall(r'<script type="module" src="(assets/js/[^"]+)"></script>', body)
+    classic = [f.split("?")[0] for f in re.findall(r'<script src="(assets/js/[^"]+)"></script>', body)]
+    modules = [f.split("?")[0] for f in re.findall(r'<script type="module" src="(assets/js/[^"]+)"></script>', body)]
     body = re.sub(r'<script( type="module")? src="assets/js/[^"]+"></script>\n?', "", body)
     read = lambda f: (ROOT / f).read_text(encoding="utf-8").replace("</script", "<\\/script")
     js = "\n".join(read(f) for f in classic)
