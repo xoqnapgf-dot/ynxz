@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500&family=Noto+Serif+SC:wght@400;600;900&family=Zhi+Mang+Xing&display=swap">
 <link rel="stylesheet" href="assets/css/site.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
 
@@ -32,7 +33,6 @@
       <a href="#factions">势力</a>
       <a href="#threads">伏笔</a>
       <a href="#outline">大纲</a>
-      <a href="#errata">校勘</a>
     </nav>
     <button class="pv-btn" type="button" data-pv><i></i>PV</button>
   </div>
@@ -71,11 +71,11 @@
 
 <!-- ═════════ 作品档案 ═════════ -->
 <section id="profile" class="sec zone-paper">
-  <div class="big-glyph" aria-hidden="true">典</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">作品档案</p>
-      <h2 class="sec-title logline" id="logline"></h2>
+      <h2 class="brush-title">卷宗</h2>
+      <p class="sec-sub logline" id="logline"></p>
     </div>
     <div class="profile-grid">
       <dl class="facts" id="facts"></dl>
@@ -92,12 +92,12 @@
 
 <!-- ═════════ 星源天体系 ═════════ -->
 <section id="lore" class="sec zone-paper">
-  <div class="big-glyph" aria-hidden="true">律</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">星源天 · 体系与法则</p>
-      <h2 class="sec-title">五个境界，一群系统，一座试炼地</h2>
-      <p class="lead">前半部的规则大多藏在正文里。这里把修炼体系、系统的运作规律、穿越者的派系和星源天的来历整理出来。</p>
+      <h2 class="brush-title">天律</h2>
+      <p class="sec-sub">五个境界，一群系统，一座试炼地</p>
+      <p class="lead">星源天的修炼体系、系统的运作规律、穿越者的派系，以及这座试炼地的来历。</p>
     </div>
     <div class="arcs" id="loreBlocks"></div>
   </div>
@@ -105,11 +105,11 @@
 
 <!-- ═════════ 人物志 ═════════ -->
 <section id="people" class="sec zone-paper">
-  <div class="big-glyph" aria-hidden="true">人</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">人物志 · 星源天篇</p>
-      <h2 class="sec-title">星云峰上的人，天罡阁里的人</h2>
+      <h2 class="brush-title">众生</h2>
+      <p class="sec-sub">星云峰上的人，天罡阁里的人</p>
       <p class="lead">带菱形标记的是真实身份，属于剧透，点开才显示。</p>
     </div>
     <div class="groups" id="groups"></div>
@@ -118,11 +118,11 @@
 
 <!-- ═════════ 破妄镜 ═════════ -->
 <section id="mirror" class="sec zone-paper">
-  <div class="big-glyph" aria-hidden="true">镜</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">破妄镜 · 系统图鉴</p>
-      <h2 class="sec-title">照一照，便知是何系统</h2>
+      <h2 class="brush-title">破妄</h2>
+      <p class="sec-sub">照一照，便知是何系统</p>
       <p class="lead">破妄镜可以探查其他穿越者所拥有的系统，无论创造者或宿主修为多高，都可以显示在镜面中。只有一个系统，它照不出来。</p>
     </div>
     <div class="mirror-grid">
@@ -158,11 +158,11 @@
 
 <!-- ═════════ 储物空间 ═════════ -->
 <section id="items" class="sec zone-paper">
-  <div class="big-glyph" aria-hidden="true">器</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">储物空间 · 功法与法宝</p>
-      <h2 class="sec-title">看似凑数，件件有来历</h2>
+      <h2 class="brush-title">储物</h2>
+      <p class="sec-sub">看似凑数，件件有来历</p>
       <p class="lead">文鸿和雨音当过一次“质检员”，一掌打不碎的只剩两件兵器。系统从来不说哪样东西重要。</p>
     </div>
     <div class="items" id="items-grid"></div>
@@ -184,66 +184,74 @@
 </div>
 
 <!-- ═════════ 世界 ═════════ -->
-<section id="world" class="sec zone-dark zone-world">
-  <div class="big-glyph" aria-hidden="true">界</div>
-  <div class="wrap">
-    <div class="sec-head">
+<section id="world" class="zone-dark scrolly" style="--len:620svh">
+  <div class="stick">
+    <canvas aria-label="世界层界：镜头从星源天一路后退到混沌海"></canvas>
+    <div class="vignette"></div><div class="grain"></div>
+    <div class="w-head">
       <p class="kicker">世界 · 层界</p>
-      <h2 class="sec-title">从漂浮的大陆，到混沌海</h2>
-      <p class="lead">点层级名称，或者拖动滑杆，镜头会一路往外退。</p>
+      <h2 class="brush-title">层界</h2>
+      <p class="w-hint">往下滑，镜头一路后退</p>
     </div>
-    <div class="world-grid">
-      <div class="world-stage" id="worldStage">
-        <canvas aria-label="世界层界缩放图"></canvas>
-        <div class="world-hud"><div><span id="hudEn">SOURCE-STAR HEAVEN</span><b id="hudName">星源天</b></div><div id="hudScale">约一个地球大小</div></div>
-      </div>
-      <div class="world-side">
-        <ul class="lvl-list" id="lvlList"></ul>
-        <div class="zoom-ctl"><span>近</span><input class="zoom" id="zoomRange" type="range" min="0" max="4" step="0.001" value="0" aria-label="层界缩放"><span>远</span></div>
-        <p class="lvl-desc" id="lvlDesc"></p>
-      </div>
+    <div class="w-label in">
+      <span class="w-idx" id="wIdx">壹</span>
+      <p class="w-en" id="wEn">SOURCE-STAR HEAVEN</p>
+      <h3 class="w-name" id="wName">星源天</h3>
+      <p class="w-scale" id="wScale">约一个地球大小</p>
+      <p class="w-desc" id="wDesc"></p>
     </div>
+    <nav class="w-rail" aria-label="层界">
+      <button class="w-tick" type="button"><i></i><span>星源天</span></button>
+      <button class="w-tick" type="button"><i></i><span>无疆界</span></button>
+      <button class="w-tick" type="button"><i></i><span>诸天万界</span></button>
+      <button class="w-tick" type="button"><i></i><span>时间树</span></button>
+      <button class="w-tick" type="button"><i></i><span>混沌海</span></button>
+    </nav>
   </div>
 </section>
 
 <!-- ═════════ 境界 ═════════ -->
 <section id="realms" class="sec zone-dark zone-realms">
-  <div class="big-glyph" aria-hidden="true">阶</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">境界天梯 · 破坏力量级</p>
-      <h2 class="sec-title">从爆墙，到超越逻辑与数学</h2>
+      <h2 class="brush-title">天梯</h2>
+      <p class="sec-sub">从爆墙，到超越逻辑与数学</p>
       <p class="lead">星源天五境，无疆界四境，诸天万界十三境，再往上是四位超脱者。卷一结束时，何阳在化神。</p>
     </div>
-    <div class="ladder" id="ladder"></div>
+    <div class="realm-wrap">
+      <div class="realm-hud" id="realmHud">
+        <canvas aria-hidden="true"></canvas>
+        <div class="hud-text in"><small id="hTier">星源天</small><b id="hName">筑基</b><span id="hScale">爆墙</span><em id="hWho"></em></div>
+      </div>
+      <div class="ladder" id="ladder"></div>
+    </div>
     <p class="unit-lost">到了禁忌级之后，一切计量单位与境界都失去了意义，哪怕是至高无上的天帝也对此无能为力。</p>
   </div>
 </section>
 
 <!-- ═════════ 终焉纪 ═════════ -->
 <section id="legend" class="zone-dark zone-legend">
-  <div class="tree-stage" id="treeStage">
-    <div class="tree-over">
-      <div>
-        <p class="kicker">前史 · 终焉纪</p>
-        <h2 class="sec-title">终焉纪</h2>
-        <p class="lead" style="margin-top:14px">时间树由起源之种长成，有起点，无终点。</p>
+  <div class="scrolly" id="treeScroll" style="--len:760svh">
+    <div class="stick" id="treeStage">
+      <div class="vignette"></div><div class="grain"></div>
+      <div class="t-head">
+        <p class="kicker">前史</p>
+        <h2 class="brush-title">终焉纪</h2>
       </div>
-      <p class="tree-hint">拖动旋转 · 时间树</p>
+      <ol class="t-caps" id="tCaps"></ol>
+      <div class="tree-label" id="treeLabel" style="opacity:0">诸天万界 · 何阳在此</div>
+      <p class="t-hint">往下滑 · 时间树</p>
     </div>
-    <div class="tree-label" id="treeLabel" style="opacity:0">诸天万界 · 何阳在此</div>
   </div>
-  <div class="sec" style="padding-top:clamp(40px,6vw,72px)">
+  <div class="sec">
     <div class="wrap">
-      <div class="stele-wrap">
-        <div class="stele"><ol id="stele"></ol></div>
-      </div>
       <div class="eight-wrap">
         <div id="eightSvg"></div>
         <div class="eight-notes">
           <p class="kicker">天庭 · 师徒八人</p>
           <h3>两位准神，各收三徒</h3>
-          <p>终焉与起源结为道侣，又在半神之后决裂。起源门下湮灭、幻梦、太初，终焉门下哀怜、轮回、命运。第三卷里，何阳会在地球上发现一张照片：他们八人，也曾在这样的地方合影。</p>
+          <p>终焉与起源结为道侣，又在半神之后决裂。起源门下湮灭、幻梦、太初，终焉门下哀怜、轮回、命运。他们八人，也曾在某颗地球上合影。</p>
           <p class="kicker" style="margin-top:10px">终局之敌</p>
           <ul class="foes" id="foes"></ul>
         </div>
@@ -254,41 +262,43 @@
 
 <!-- ═════════ 势力 ═════════ -->
 <section id="factions" class="sec zone-dark zone-factions">
-  <div class="big-glyph" aria-hidden="true">势</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">势力 · 阵营</p>
-      <h2 class="sec-title">从一座山峰，到时间树的另一根枝</h2>
-      <p class="lead">按何阳遇到它们的先后排列。红框是终局之敌。</p>
+      <h2 class="brush-title">诸势</h2>
+      <p class="sec-sub">从一座山峰，到时间树的另一根枝</p>
+      <p class="lead">一圈一界，何阳在中心。点任意一颗星，看这股势力是谁。红色是终局之敌。</p>
     </div>
-    <div class="factions" id="factionGrid"></div>
+    <div class="fmap-wrap"><div class="fmap" id="factionMap"></div><div class="fmap-detail" id="factionDetail" aria-live="polite"></div></div>
   </div>
 </section>
 
 <!-- ═════════ 伏笔 ═════════ -->
 <section id="threads" class="sec zone-dark zone-threads">
-  <div class="big-glyph" aria-hidden="true">伏</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">伏笔 · 回收</p>
-      <h2 class="sec-title">第一卷埋下的线，在哪里收</h2>
-      <p class="lead">左边是已经写出来的伏笔，右边是大纲里的回收处，点一下显示。标“待定”的还没有找到回收的位置。</p>
-      <div class="spoil-ctl"><label class="switch"><input type="checkbox" id="spoilThreads"><span>显示全部回收</span></label></div>
+      <h2 class="brush-title">伏线</h2>
+      <p class="sec-sub">第一卷埋下的线，在哪里收</p>
+      <p class="lead">每一根红线，从第一卷的某一章出发，落在后面的某一卷。点一根线看它埋了什么、收在哪里。</p>
     </div>
-    <ol class="threads" id="threadList"></ol>
+    <div class="viz-scroll"><div class="arc-wrap" id="threadArc"></div></div>
+    <div class="thread-detail" id="threadDetail" aria-live="polite"></div>
+    <details class="all-list"><summary>全部伏线 · 文字版</summary><ol class="threads" id="threadList"></ol></details>
   </div>
 </section>
 
 <!-- ═════════ 大纲 ═════════ -->
 <section id="outline" class="sec zone-dark zone-outline">
-  <div class="big-glyph" aria-hidden="true">纲</div>
   <div class="wrap">
     <div class="sec-head">
       <p class="kicker">全书大纲 · 卷一至终卷</p>
-      <h2 class="sec-title">从星源天，到起源与终焉</h2>
-      <p class="lead">按设定文档的主线关键情节点整理。卷一已写至第二十七章，卷二起尚未成稿，卷名为网站补拟。关键转折默认遮住，点一下显示。</p>
+      <h2 class="brush-title">长卷</h2>
+      <p class="sec-sub">从星源天，到起源与终焉</p>
+      <p class="lead">一卷一界，一路往上。关键转折默认遮住，点一下显示。</p>
       <div class="spoil-ctl"><label class="switch"><input type="checkbox" id="spoilAll"><span>显示全部剧透</span></label></div>
     </div>
+    <div class="viz-scroll"><div class="ascent" id="ascent"></div></div>
     <div class="vols" id="vols"></div>
   </div>
 </section>
@@ -305,17 +315,6 @@
     </div>
   </div>
 
-  <div class="errata" id="errata">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">附录 · 校勘记</p>
-        <h2 class="sec-title">哪些是错字，哪些是两个东西</h2>
-        <p class="lead">核对原稿与设定文档得到的结果，供修稿参考。网站引用原文时已按“改正”和“统一”两栏处理；“确认是两个东西”的原样保留；“待作者定夺”的没有改动，只在这里列出。</p>
-      </div>
-      <div class="errata-grid" id="erGrid"></div>
-    </div>
-  </div>
-
   <footer class="footer">
     <b data-book-title>万道归墟</b>
     <span>玄幻 · 仙侠 · 奇幻 ｜ 设定集</span>
@@ -326,7 +325,9 @@
 
 <!-- PV -->
 <div class="pv" id="pv" hidden role="dialog" aria-modal="true" aria-label="万道归墟 PV">
-  <canvas id="pvCanvas"></canvas>
+  <div class="pv-gl" id="pvGl"></div>
+  <div class="pv-bar top"></div><div class="pv-bar bottom"></div>
+  <div class="pv-title" id="pvTitle"></div>
   <button class="icon-btn pv-close" type="button" id="pvClose">关闭</button>
   <div class="pv-cap" id="pvCap"></div>
   <div class="pv-ui">
@@ -339,9 +340,11 @@
 
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
+<script src="assets/js/visuals.js"></script>
 <script src="assets/js/ink.js"></script>
 <script src="assets/js/world.js"></script>
-<script src="assets/js/tree3d.js"></script>
-<script src="assets/js/pv.js"></script>
+<script src="assets/js/realms.js"></script>
+<script type="module" src="assets/js/tree3d.js"></script>
+<script type="module" src="assets/js/pv3d.js"></script>
 </body>
 </html>

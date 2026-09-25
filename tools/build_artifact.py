@@ -19,12 +19,15 @@ def main(out):
     fonts = "\n".join(re.findall(r'<link rel="(?:preconnect|stylesheet)" href="https://fonts[^"]+"[^>]*>', head))
     css = (ROOT / "assets/css/site.css").read_text(encoding="utf-8")
 
-    scripts = re.findall(r'<script src="(assets/js/[^"]+)"></script>', body)
-    body = re.sub(r'<script src="assets/js/[^"]+"></script>\n?', "", body)
-    js = "\n".join((ROOT / s).read_text(encoding="utf-8") for s in scripts)
-    js = js.replace("</script", "<\\/script")
+    importmap = re.search(r'<script type="importmap">.*?</script>', head).group(0)
+    classic = re.findall(r'<script src="(assets/js/[^"]+)"></script>', body)
+    modules = re.findall(r'<script type="module" src="(assets/js/[^"]+)"></script>', body)
+    body = re.sub(r'<script( type="module")? src="assets/js/[^"]+"></script>\n?', "", body)
+    read = lambda f: (ROOT / f).read_text(encoding="utf-8").replace("</script", "<\\/script")
+    js = "\n".join(read(f) for f in classic)
+    mods = "\n".join(f'<script type="module">\n{read(f)}\n</script>' for f in modules)
 
-    page = f"{title}\n{fonts}\n<style>\n{css}\n</style>\n{body.strip()}\n<script>\n{js}\n</script>\n"
+    page = f"{title}\n{fonts}\n{importmap}\n<style>\n{css}\n</style>\n{body.strip()}\n<script>\n{js}\n</script>\n{mods}\n"
     Path(out).write_text(page, encoding="utf-8")
     print(f"{out}  {len(page.encode('utf-8')) / 1024:.0f} KB")
 
