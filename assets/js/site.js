@@ -33,7 +33,7 @@
   function spoil(s) {
     return esc(s).replace(/\[\[(.+?)\]\]/g, '<span class="spoiler" tabindex="0" role="button" aria-label="剧透，点击显示">$1</span>');
   }
-  var BU = '<span class="bu" title="网站补完内容">补</span>';
+  var BU = "";
   /* ── 书名 ── */
   $$("[data-book-title]").forEach(function (el) { el.textContent = D.book.title; });
   document.title = D.book.title;
@@ -57,7 +57,7 @@
 
   /* ── 作品档案 ── */
   var PF = D.profile;
-  $("#logline").innerHTML = esc(PF.logline) + BU;
+  $("#logline").textContent = PF.logline;
   $("#facts").innerHTML = PF.facts.map(function (f) { return "<div><dt>" + esc(f[0]) + "</dt><dd>" + spoil(f[1]) + "</dd></div>"; }).join("");
   $("#tnQuote").textContent = PF.titleNote.quote;
   $("#tnSrc").textContent = PF.titleNote.src;
@@ -68,15 +68,16 @@
 
   /* ── 星源天体系 ── */
   $("#loreBlocks").innerHTML = D.lore.map(function (g) {
+    var dia = g.key === "cult" ? '<div class="diagram" id="cultDiagram"></div>' : g.key === "camp" ? '<div class="diagram tower" id="towerDiagram"></div>' : "";
     return '<div class="arc"><div class="arc-name"><small>' + esc(g.sub) + "</small><h3>" + esc(g.h) + "</h3></div>" +
-      '<div class="lore-items">' + g.items.map(function (it) {
+      '<div>' + dia + '<div class="lore-items">' + g.items.map(function (it) {
         return '<article class="lore-item"><h4>' + esc(it.h) + "</h4><p>" + esc(it.t) + "</p>" +
           (it.secret ? '<details class="secret"><summary>真相</summary><p>' + esc(it.secret) + "</p></details>" : "") + "</article>";
-      }).join("") + "</div></div>";
+      }).join("") + "</div></div></div>";
   }).join("");
 
   /* ── 势力 ── */
-  $("#factionGrid").innerHTML = D.factions.map(function (f) {
+  if ($("#factionGrid")) $("#factionGrid").innerHTML = D.factions.map(function (f) {
     return '<article class="faction' + (f.foe ? " foe" : "") + '"><small>' + esc(f.where) + "</small><h4>" + esc(f.name) + "</h4><p>" + esc(f.t) + "</p></article>";
   }).join("");
 
@@ -88,7 +89,6 @@
       '<div class="pay"><small>收 · ' + esc(t.when) + (t.bu ? BU : "") + "</small><p>" +
       (t.open ? esc(t.pay) : '<span class="spoiler" tabindex="0" role="button" aria-label="剧透，点击显示">' + esc(t.pay) + "</span>") + "</p></div></li>";
   }).join("");
-  $("#spoilThreads").addEventListener("change", function () { $("#threads").classList.toggle("show-all", this.checked); });
 
   /* ── 人物 ── */
   $("#groups").innerHTML = D.people.map(function (g) {
@@ -166,7 +166,7 @@
       var here = r[2] === "he";
       var alias = (!beyond && r[3]) ? "<small>" + esc(r[3]) + "</small>" : "";
       var holders = (beyond && r[3]) ? "<em>" + esc(r[3]) + "</em>" : "";
-      return '<li class="rung' + (here ? " here" : "") + '"><div class="rung-name">' + esc(r[0]) + alias + "</div>" +
+      return '<li class="rung' + (here ? " here" : "") + '" data-tier="' + esc(t.tier) + '" data-name="' + esc(r[0]) + '" data-scale="' + esc(r[1] || "") + '" data-who="' + esc(r[3] || "") + '"><div class="rung-name">' + esc(r[0]) + alias + "</div>" +
         '<div class="rung-scale"><span>' + (r[1] ? esc(r[1]) : "不可言说") + " " + holders + '</span><div class="bar"><i style="--w:' + w.toFixed(1) + '%"></i></div></div>' +
         (here ? '<span class="here-tag">何阳 · 卷一</span>' : "") + "</li>";
     }).join("");
@@ -174,9 +174,9 @@
   }).join("");
 
   /* ── 终焉纪 ── */
-  $("#stele").innerHTML = D.legend.map(function (l) {
-    return "<li><h4>" + esc(l.h) + "</h4><p>" + esc(l.t) + "</p>" +
-      (l.secret ? '<details class="secret"><summary>真相</summary><p>' + esc(l.secret) + "</p></details>" : "") + "</li>";
+  $("#tCaps").innerHTML = D.legend.map(function (l, i) {
+    return '<li class="t-cap" data-i="' + i + '"><span class="t-no">' + "壹贰叁肆伍陆柒"[i] + "</span><h4>" + esc(l.h) + "</h4><p>" + esc(l.t) + "</p>" +
+      (l.secret ? '<p class="t-secret"><span class="spoiler" tabindex="0" role="button" aria-label="剧透，点击显示">' + esc(l.secret) + "</span></p>" : "") + "</li>";
   }).join("");
   $("#foes").innerHTML = D.enemies.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("");
   (function drawEight() {
@@ -226,7 +226,8 @@
   /* ── 大纲 ── */
   $("#vols").innerHTML = D.outline.map(function (v) {
     return '<div class="vol"><div class="vol-h"><h3>' + esc(v.name.split(" · ")[1] || v.name) + (v.bu ? BU : "") + "</h3><small>" + esc(v.name.split(" · ")[0]) + " · " + esc(v.realm) + "</small>" + (v.done ? '<span class="done-tag">' + esc(v.done) + "</span>" : "") + "</div>" +
-      '<ol class="beats">' + v.beats.map(function (b) { return "<li>" + spoil(b) + "</li>"; }).join("") + "</ol></div>";
+      '<div><ol class="beats">' + v.beats.slice(0, 3).map(function (b) { return "<li>" + spoil(b) + "</li>"; }).join("") + "</ol>" +
+      (v.beats.length > 3 ? '<details class="more"><summary>展开其余 ' + (v.beats.length - 3) + ' 个情节点</summary><ol class="beats">' + v.beats.slice(3).map(function (b) { return "<li>" + spoil(b) + "</li>"; }).join("") + "</ol></details>" : "") + "</div></div>";
   }).join("");
   document.addEventListener("click", function (e) {
     var sp = e.target.closest(".spoiler"); if (sp) sp.classList.toggle("shown");
@@ -235,23 +236,6 @@
     if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("spoiler")) { e.preventDefault(); e.target.classList.toggle("shown"); }
   });
   $("#spoilAll").addEventListener("change", function () { $("#outline").classList.toggle("show-all", this.checked); });
-
-  /* ── 校勘记 ── */
-  (function () {
-    var E = D.errata;
-    function table(rows, kind) {
-      return '<div class="er-scroll"><table class="er-table"><tbody>' + rows.map(function (r) {
-        if (kind === "fix") return "<tr><td><s>" + esc(r[0]) + '</s></td><td class="to">' + esc(r[1]) + '</td><td class="note">' + esc(r[2]) + "</td></tr>";
-        if (kind === "uni") return "<tr><td>" + esc(r[0]) + '</td><td class="to">' + esc(r[1]) + '</td><td class="note">' + esc(r[2]) + "</td></tr>";
-        return "<tr><td>" + esc(r[0]) + '</td><td class="note">' + esc(r[1]) + "</td></tr>";
-      }).join("") + "</tbody></table></div>";
-    }
-    $("#erGrid").innerHTML =
-      '<div class="er-block"><h3>确认是错字<small>已改 · ' + E.fixed.length + ' 条</small></h3><p>意思明确、只是字打错了。</p>' + table(E.fixed, "fix") + "</div>" +
-      '<div class="er-block"><h3>同一个东西，写法不同<small>已统一 · ' + E.unified.length + ' 条</small></h3><p>根据上下文判断为同一事物。</p>' + table(E.unified, "uni") + "</div>" +
-      '<div class="er-block"><h3>确认是两个东西<small>保留 · ' + E.distinct.length + ' 条</small></h3><p>看着像，其实不是。</p>' + table(E.distinct, "two") + "</div>" +
-      '<div class="er-block"><h3>待作者定夺<small>未改 · ' + E.open.length + ' 条</small></h3><p>前后说法不一致，网站没有擅自改。</p>' + table(E.open, "two") + "</div>";
-  })();
 
   /* ── 顶栏高亮 ── */
   var navLinks = $$(".nav a");
@@ -267,7 +251,7 @@
         });
       });
     }, { rootMargin: "-45% 0px -50% 0px" });
-    ["profile", "lore", "people", "mirror", "items", "world", "realms", "legend", "factions", "threads", "outline", "errata"].forEach(function (id) { var el = document.getElementById(id); if (el) secIO.observe(el); });
+    ["profile", "lore", "people", "mirror", "items", "world", "realms", "legend", "factions", "threads", "outline"].forEach(function (id) { var el = document.getElementById(id); if (el) secIO.observe(el); });
   }
 
   /* ── 下坠：墨点落下，渐渐变成星 ── */
@@ -312,58 +296,93 @@
     frame(0);
   })();
 
-  /* ── 归墟：万道之字卷入深渊 ── */
+  /* ── 归墟：万道之字卷入深渊（字形预渲染成贴图） ── */
   (function vortex() {
     var box = $("#vortex"), cv = $("canvas", box); if (!cv) return;
     var ctx = cv.getContext("2d"), W, H, dpr, cx, cy, R, ps = [], run = false, raf;
-    var glyphs = "剑火雷阵符龙凰风水土金木鼎镜轮命梦灭初源焉道法空时因果生死星天地仙魔佛妖鬼神气血魂魄梵音琴弓匕塔图笔墨尘元虚无".split("");
+    var small = window.innerWidth < 760;
+    var glyphs = "剑火雷阵符龙凰风水土金木鼎镜轮命梦灭初源焉道法空时因果生死星天地仙魔佛妖鬼神气血魂魄琴弓匕塔图笔墨尘元虚无".split("");
+    var sprites = [];
+    function bake() {
+      sprites = glyphs.map(function (g) {
+        var c = document.createElement("canvas"); c.width = c.height = 72;
+        var x = c.getContext("2d"); x.font = '56px "Zhi Mang Xing", "KaiTi", serif';
+        x.textAlign = "center"; x.textBaseline = "middle"; x.shadowColor = "rgba(235,215,162,.8)"; x.shadowBlur = 10;
+        x.fillStyle = "#F1DFAE"; x.fillText(g, 36, 38); return c;
+      });
+    }
+    var dot = (function () { var c = document.createElement("canvas"); c.width = c.height = 16; var x = c.getContext("2d"); var g = x.createRadialGradient(8, 8, 0, 8, 8, 8); g.addColorStop(0, "rgba(255,240,205,1)"); g.addColorStop(1, "rgba(201,164,91,0)"); x.fillStyle = g; x.fillRect(0, 0, 16, 16); return c; })();
     function size() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = box.clientWidth; H = box.clientHeight; cx = W / 2; cy = H / 2; R = Math.hypot(W, H) * 0.55;
-      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dpr = Math.min(window.devicePixelRatio || 1, small ? 1.25 : 1.75);
+      W = box.clientWidth; H = box.clientHeight; cx = W / 2; cy = H * 0.48; R = Math.hypot(W, H) * 0.55;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     function spawn(p, init) {
       p.a = Math.random() * 6.283; p.r = init ? 40 + Math.random() * R : R * (0.8 + Math.random() * 0.3);
-      p.g = glyphs[(Math.random() * glyphs.length) | 0]; p.s = 12 + Math.random() * 16;
-      p.k = Math.random() < 0.18; return p;
+      p.g = (Math.random() * glyphs.length) | 0; p.s = 14 + Math.random() * 18; p.k = Math.random() < 0.16; return p;
     }
     function frame() {
       ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "rgba(3,3,4,0.28)"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "rgba(3,3,4,0.3)"; ctx.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = "lighter";
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       for (var i = 0; i < ps.length; i++) {
         var p = ps[i];
-        var w = 0.9 / Math.pow(Math.max(p.r, 30), 0.72);
-        p.a += w; p.r -= 0.35 + 70 / (p.r + 20);
+        p.a += 0.9 / Math.pow(Math.max(p.r, 30), 0.72); p.r -= 0.35 + 70 / (p.r + 20);
         if (p.r < 26) spawn(p);
-        var x = cx + Math.cos(p.a) * p.r, y = cy + Math.sin(p.a) * p.r * 0.62;
-        var near = 1 - Math.min(1, p.r / R);
-        var alpha = Math.min(1, near * 1.6) * (p.r < 60 ? p.r / 60 : 1);
-        var sz = p.s * (0.35 + 0.65 * Math.min(1, p.r / (R * 0.5)));
-        if (p.k) {
-          ctx.font = sz + 'px "Zhi Mang Xing", "KaiTi", serif';
-          ctx.fillStyle = "rgba(235,215,162," + (alpha * 0.85).toFixed(3) + ")";
-          ctx.fillText(p.g, x, y);
-        } else {
-          ctx.fillStyle = "rgba(201,164,91," + (alpha * 0.8).toFixed(3) + ")";
-          ctx.fillRect(x, y, 1.3, 1.3);
-        }
+        var x = cx + Math.cos(p.a) * p.r, y = cy + Math.sin(p.a) * p.r * 0.6;
+        var near = 1 - Math.min(1, p.r / R), alpha = Math.min(1, near * 1.6) * (p.r < 60 ? p.r / 60 : 1);
+        if (p.k && sprites.length) {
+          var sz = p.s * (0.35 + 0.65 * Math.min(1, p.r / (R * 0.5)));
+          ctx.globalAlpha = alpha * 0.9; ctx.drawImage(sprites[p.g], x - sz / 2, y - sz / 2, sz, sz);
+        } else { ctx.globalAlpha = alpha * 0.8; ctx.drawImage(dot, x - 2, y - 2, 4, 4); }
       }
-      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, 90);
-      g.addColorStop(0, "rgba(0,0,0,1)"); g.addColorStop(0.55, "rgba(0,0,0,.95)"); g.addColorStop(0.72, "rgba(235,215,162,.22)"); g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.globalCompositeOperation = "source-over";
-      ctx.save(); ctx.translate(cx, cy); ctx.scale(1, 0.62); ctx.translate(-cx, -cy);
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, 90, 0, 6.283); ctx.fill(); ctx.restore();
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+      ctx.save(); ctx.translate(cx, cy); ctx.scale(1, 0.6);
+      var g = ctx.createRadialGradient(0, 0, 0, 0, 0, 100);
+      g.addColorStop(0, "#000"); g.addColorStop(0.55, "rgba(0,0,0,.96)"); g.addColorStop(0.72, "rgba(235,215,162,.28)"); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, 100, 0, 6.283); ctx.fill(); ctx.restore();
       if (run) raf = requestAnimationFrame(frame);
     }
-    size();
-    var n = Math.round(Math.min(520, W * 0.45));
-    for (var i = 0; i < n; i++) ps.push(spawn({}, true));
+    size(); bake();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(bake);
+    for (var i = 0; i < (small ? 260 : 520); i++) ps.push(spawn({}, true));
     window.addEventListener("resize", size);
     ctx.fillStyle = "#030304"; ctx.fillRect(0, 0, W, H);
     if (reduced) { for (var k = 0; k < 40; k++) frame(); return; }
     onVisible(box, function () { if (!run) { run = true; raf = requestAnimationFrame(frame); } }, function () { run = false; cancelAnimationFrame(raf); }, "0px");
     for (var j = 0; j < 30; j++) frame();
+  })();
+
+  /* ── 显现：标题笔锋扫出，卡片浮起 ── */
+  (function reveal() {
+    if (reduced || !("IntersectionObserver" in window)) return;
+    var sel = ".brush-title, .sec-sub, .lead, .person, .item, .lore-item, .faction, .thread, .cheat, .facts > div, .title-note, .beats li, .sys-row, .later-list li, .rung";
+    var els = $$(sel);
+    document.documentElement.classList.add("rv");
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var el = e.target, sib = el.parentNode ? Array.prototype.indexOf.call(el.parentNode.children, el) : 0;
+        el.style.setProperty("--d", Math.min(sib, 8) * 0.06 + "s");
+        el.classList.add("in"); io.unobserve(el);
+      });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    els.forEach(function (el) { io.observe(el); });
+    setTimeout(function () { els.forEach(function (el) { el.classList.add("in"); }); }, 20000);
+  })();
+
+  /* ── 首屏视差 ── */
+  (function parallax() {
+    if (reduced) return;
+    var art = $("#heroArt"), title = $(".title-block"), side = $(".hero-side"), hero = $("#top"), ticking = false;
+    function upd() {
+      ticking = false;
+      var y = Math.min(window.scrollY, hero.offsetHeight);
+      art.style.transform = "translate3d(0," + (y * 0.35).toFixed(1) + "px,0) scale(" + (1 + y / 4000).toFixed(4) + ")";
+      title.style.transform = "translate3d(0," + (y * 0.18).toFixed(1) + "px,0)";
+      side.style.transform = "translate3d(0," + (y * -0.06).toFixed(1) + "px,0)";
+      side.style.opacity = String(Math.max(0, 1 - y / (hero.offsetHeight * 0.9)));
+    }
+    window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
   })();
 })();
