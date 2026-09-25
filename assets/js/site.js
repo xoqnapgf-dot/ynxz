@@ -2,7 +2,6 @@
 (function () {
   "use strict";
   var D = window.WDGX;
-  var CH = window.WDGX_CHAPTERS || [];
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -35,13 +34,6 @@
     return esc(s).replace(/\[\[(.+?)\]\]/g, '<span class="spoiler" tabindex="0" role="button" aria-label="剧透，点击显示">$1</span>');
   }
   var BU = '<span class="bu" title="网站补完内容">补</span>';
-  var CN = "零一二三四五六七八九";
-  function cnNum(n) {
-    if (n <= 10) return n === 10 ? "十" : CN[n];
-    if (n < 20) return "十" + CN[n - 10];
-    return CN[Math.floor(n / 10)] + "十" + (n % 10 ? CN[n % 10] : "");
-  }
-
   /* ── 书名 ── */
   $$("[data-book-title]").forEach(function (el) { el.textContent = D.book.title; });
   document.title = D.book.title;
@@ -63,19 +55,40 @@
     setTimeout(function () { $("#sysPanel").classList.add("glitch"); }, 3300);
   }
 
-  /* ── 卷一 ── */
-  $("#arcs").innerHTML = D.vol1.arcs.map(function (arc, ai) {
-    var items = arc.chapters.map(function (c) {
-      var ch = CH[c[0] - 1] || { title: "" };
-      var bu = c[0] === 2 ? BU : "";
-      return '<li class="chap"><span class="chap-no">第' + cnNum(c[0]) + "章</span>" +
-        "<div><h4>" + esc(ch.title) + bu +
-        ' <button class="read-link" type="button" data-read="' + c[0] + '">读此章</button></h4></div>' +
-        "<p>" + esc(c[1]) + "</p></li>";
-    }).join("");
-    return '<div class="arc"><div class="arc-name"><small>第' + cnNum(ai + 1) + "段 · 第" + cnNum(arc.chapters[0][0]) + "至" + cnNum(arc.chapters[arc.chapters.length - 1][0]) + "章</small><h3>" + esc(arc.name) + "</h3></div>" +
-      '<ol class="chap-list">' + items + "</ol></div>";
+  /* ── 作品档案 ── */
+  var PF = D.profile;
+  $("#logline").innerHTML = esc(PF.logline) + BU;
+  $("#facts").innerHTML = PF.facts.map(function (f) { return "<div><dt>" + esc(f[0]) + "</dt><dd>" + spoil(f[1]) + "</dd></div>"; }).join("");
+  $("#tnQuote").textContent = PF.titleNote.quote;
+  $("#tnSrc").textContent = PF.titleNote.src;
+  $("#tnText").innerHTML = esc(PF.titleNote.text) + BU;
+  $("#cheats").innerHTML = PF.cheats.map(function (c, i) {
+    return '<article class="cheat"><span class="cheat-no">' + "壹贰叁"[i] + "</span><h4>" + esc(c.h) + "</h4><p>" + spoil(c.t) + "</p></article>";
   }).join("");
+
+  /* ── 星源天体系 ── */
+  $("#loreBlocks").innerHTML = D.lore.map(function (g) {
+    return '<div class="arc"><div class="arc-name"><small>' + esc(g.sub) + "</small><h3>" + esc(g.h) + "</h3></div>" +
+      '<div class="lore-items">' + g.items.map(function (it) {
+        return '<article class="lore-item"><h4>' + esc(it.h) + "</h4><p>" + esc(it.t) + "</p>" +
+          (it.secret ? '<details class="secret"><summary>真相</summary><p>' + esc(it.secret) + "</p></details>" : "") + "</article>";
+      }).join("") + "</div></div>";
+  }).join("");
+
+  /* ── 势力 ── */
+  $("#factionGrid").innerHTML = D.factions.map(function (f) {
+    return '<article class="faction' + (f.foe ? " foe" : "") + '"><small>' + esc(f.where) + "</small><h4>" + esc(f.name) + "</h4><p>" + esc(f.t) + "</p></article>";
+  }).join("");
+
+  /* ── 伏笔 ── */
+  $("#threadList").innerHTML = D.threads.map(function (t) {
+    return '<li class="thread' + (t.open ? " open" : "") + '">' +
+      '<div class="plant"><small>埋 · ' + esc(t.where) + "</small><p>" + esc(t.plant) + "</p></div>" +
+      '<div class="arrow" aria-hidden="true"></div>' +
+      '<div class="pay"><small>收 · ' + esc(t.when) + (t.bu ? BU : "") + "</small><p>" +
+      (t.open ? esc(t.pay) : '<span class="spoiler" tabindex="0" role="button" aria-label="剧透，点击显示">' + esc(t.pay) + "</span>") + "</p></div></li>";
+  }).join("");
+  $("#spoilThreads").addEventListener("change", function () { $("#threads").classList.toggle("show-all", this.checked); });
 
   /* ── 人物 ── */
   $("#groups").innerHTML = D.people.map(function (g) {
@@ -212,7 +225,7 @@
 
   /* ── 大纲 ── */
   $("#vols").innerHTML = D.outline.map(function (v) {
-    return '<div class="vol"><div class="vol-h"><h3>' + esc(v.name.split(" · ")[1] || v.name) + (v.bu ? BU : "") + "</h3><small>" + esc(v.name.split(" · ")[0]) + " · " + esc(v.realm) + "</small></div>" +
+    return '<div class="vol"><div class="vol-h"><h3>' + esc(v.name.split(" · ")[1] || v.name) + (v.bu ? BU : "") + "</h3><small>" + esc(v.name.split(" · ")[0]) + " · " + esc(v.realm) + "</small>" + (v.done ? '<span class="done-tag">' + esc(v.done) + "</span>" : "") + "</div>" +
       '<ol class="beats">' + v.beats.map(function (b) { return "<li>" + spoil(b) + "</li>"; }).join("") + "</ol></div>";
   }).join("");
   document.addEventListener("click", function (e) {
@@ -254,66 +267,8 @@
         });
       });
     }, { rootMargin: "-45% 0px -50% 0px" });
-    ["vol1", "people", "mirror", "items", "world", "realms", "legend", "outline", "errata"].forEach(function (id) { var el = document.getElementById(id); if (el) secIO.observe(el); });
+    ["profile", "lore", "people", "mirror", "items", "world", "realms", "legend", "factions", "threads", "outline", "errata"].forEach(function (id) { var el = document.getElementById(id); if (el) secIO.observe(el); });
   }
-
-  /* ── 阅读器 ── */
-  var reader = $("#reader"), rBody = $("#rBody"), rArticle = $("#rArticle"), rSelect = $("#rSelect");
-  var cur = 1, size = 18, lastFocus = null;
-  try { size = +localStorage.getItem("wdgx-size") || 18; } catch (e) {}
-  rSelect.innerHTML = CH.map(function (c) { return '<option value="' + c.n + '">第' + cnNum(c.n) + "章 " + esc(c.title) + "</option>"; }).join("");
-  function renderChapter(n) {
-    var c = CH[n - 1]; if (!c) return;
-    cur = n; rSelect.value = n;
-    var html = "<header><small>" + esc(D.vol1.name) + "</small><h2>" + esc(c.title) + "</h2><small>第" + cnNum(n) + "章</small><i></i></header>";
-    html += c.paras.map(function (p) {
-      if (/^【/.test(p)) return '<p class="sysmsg">' + esc(p).replace(/【/g, '<span class="br">【</span>').replace(/】/g, '<span class="br">】</span>') + "</p>";
-      return "<p>" + esc(p) + "</p>";
-    }).join("");
-    html += '<p class="reader-end">' + (n === CH.length ? "第一卷 · 未完待续" : "本章完") + "</p>";
-    rArticle.innerHTML = html;
-    rArticle.style.setProperty("--rsize", size + "px");
-    $("#rPrev").disabled = n <= 1; $("#rNext").disabled = n >= CH.length;
-    $("#rNext").textContent = n >= CH.length ? "已是最新" : "下一章";
-    rBody.scrollTop = 0;
-    try { localStorage.setItem("wdgx-last", n); } catch (e) {}
-  }
-  function openReader(n) {
-    lastFocus = document.activeElement;
-    renderChapter(n);
-    reader.hidden = false;
-    document.documentElement.style.overflow = "hidden";
-    $("#rClose").focus();
-  }
-  function closeReader() {
-    reader.hidden = true;
-    document.documentElement.style.overflow = "";
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
-  }
-  document.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-read]"); if (!b) return;
-    e.preventDefault(); openReader(+b.dataset.read || 1);
-  });
-  $("#rClose").addEventListener("click", closeReader);
-  rSelect.addEventListener("change", function () { renderChapter(+rSelect.value); });
-  $("#rPrev").addEventListener("click", function () { if (cur > 1) renderChapter(cur - 1); });
-  $("#rNext").addEventListener("click", function () { if (cur < CH.length) renderChapter(cur + 1); });
-  function setSize(d) {
-    size = Math.max(15, Math.min(24, size + d));
-    rArticle.style.setProperty("--rsize", size + "px");
-    try { localStorage.setItem("wdgx-size", size); } catch (e) {}
-  }
-  $("#rSmaller").addEventListener("click", function () { setSize(-1); });
-  $("#rBigger").addEventListener("click", function () { setSize(1); });
-  document.addEventListener("keydown", function (e) {
-    if (reader.hidden) return;
-    if (e.key === "Escape") closeReader();
-    if (e.target === rSelect) return;
-    if (e.key === "ArrowLeft" && cur > 1) renderChapter(cur - 1);
-    if (e.key === "ArrowRight" && cur < CH.length) renderChapter(cur + 1);
-  });
-  var m = /^#read-(\d+)$/.exec(location.hash);
-  if (m) openReader(Math.min(CH.length, Math.max(1, +m[1])));
 
   /* ── 下坠：墨点落下，渐渐变成星 ── */
   (function descent() {
