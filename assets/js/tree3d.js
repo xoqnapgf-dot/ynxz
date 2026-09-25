@@ -135,7 +135,7 @@ async function boot() {
   const tubeMat = new THREE.ShaderMaterial({
     uniforms: { uGrow: growU, uTime: { value: 0 } },
     vertexShader: "attribute float ord; varying float vO; varying vec3 vN; varying vec3 vP; void main(){ vO=ord; vN=normalize(normalMatrix*normal); vec4 mv=modelViewMatrix*vec4(position,1.0); vP=mv.xyz; gl_Position=projectionMatrix*mv; }",
-    fragmentShader: "uniform float uGrow; uniform float uTime; varying float vO; varying vec3 vN; varying vec3 vP; void main(){ if(vO>uGrow) discard; float rim=1.0-abs(dot(normalize(-vP),vN)); float pulse=0.6+0.4*sin(vO*80.0-uTime*2.5); vec3 c=mix(vec3(1.0,0.83,0.5),vec3(1.0,0.97,0.88),rim)*(0.35+rim*0.9)*(0.8+pulse*0.4); gl_FragColor=vec4(c,1.0); }",
+    fragmentShader: "uniform float uGrow; uniform float uTime; varying float vO; varying vec3 vN; varying vec3 vP; void main(){ if(vO>uGrow) discard; float rim=1.0-abs(dot(normalize(-vP),vN)); float pulse=0.6+0.4*sin(vO*80.0-uTime*2.5); vec3 c=mix(vec3(1.0,0.83,0.5),vec3(1.0,0.97,0.88),rim)*(0.35+rim*0.9)*(0.8+pulse*0.4); c*=clamp(length(vP)/9.0,0.18,1.0); gl_FragColor=vec4(c,1.0); }",
     blending: THREE.AdditiveBlending, transparent: true, depthWrite: false
   });
   scene.add(new THREE.Mesh(merged, tubeMat));
