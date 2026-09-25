@@ -1,101 +1,316 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>意拟小站 · Ideological Humans</title>
-  <meta name="description" content="意拟小站 —— 意识形态拟人化：画廊、地图、CP乱炖与讨论区。" />
-  <link rel="stylesheet" href="css/style.css?v=21" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>万道归墟</title>
+<meta name="description" content="《万道归墟》设定与剧情展示：人物、系统、境界、世界层界、终焉纪与全书大纲，附第一卷二十七章在线阅读。">
+<meta name="theme-color" content="#0A0D12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500&family=Noto+Serif+SC:wght@400;600;900&family=Zhi+Mang+Xing&display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body data-page="home">
+<body>
 
-  <header class="site-header">
-    <a class="brand" href="index.html">
-      <span class="brand-zh">意拟小站</span>
-      <span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span>
-    </a>
-    <nav class="site-nav" aria-label="主导航">
-      <a href="gallery.html">画廊</a>
-      <a href="map.html">地图</a>
-      <a href="cp.html">CP乱炖</a>
-      <a href="forum.html">讨论区</a>
-      <a href="search.html">搜索</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter>
+</svg>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#top"><b data-book-title>万道归墟</b><small>WAN DAO GUI XU</small></a>
+    <nav class="nav" aria-label="目录">
+      <a href="#vol1">卷一</a>
+      <a href="#people">人物</a>
+      <a href="#mirror">系统</a>
+      <a href="#items">法宝</a>
+      <a href="#world">世界</a>
+      <a href="#realms">境界</a>
+      <a href="#legend">终焉纪</a>
+      <a href="#outline">大纲</a>
+      <a href="#errata">校勘</a>
     </nav>
-  </header>
+    <button class="pv-btn" type="button" data-pv><i></i>PV</button>
+  </div>
+</header>
 
-  <main id="top">
+<main>
 
-    <!-- 主视觉：大标题 -->
-    <section class="hero">
-      <div class="hero-frame" aria-hidden="true"></div>
-      <div class="hero-emblem" aria-hidden="true"><span class="core"></span></div>
-      <div class="hero-glow" aria-hidden="true"></div>
-      <div class="hero-watermark" aria-hidden="true">意拟</div>
-      <div class="hero-inner">
-        <p class="hero-eyebrow reveal"><span class="dot"></span></p>
-        <h1 class="hero-title reveal" style="--d:.08s">意识形态拟人化</h1>
-        <p class="hero-sub reveal" style="--d:.16s">IDEOLOGICAL&nbsp;HUMANS</p>
+<!-- ═════════ 首屏 ═════════ -->
+<section id="top" class="hero zone-paper">
+  <div class="hero-art" id="heroArt"><div class="fallback"></div></div>
+  <div class="hero-veil"></div>
+  <div class="hero-grid">
+    <div class="title-block">
+      <h1 class="book-title" aria-label="万道归墟"><span>万</span><span>道</span><span>归</span><span>墟</span></h1>
+      <div class="title-meta">
+        <div class="seal" aria-label="印：何阳"><span>何</span><span>阳</span><span>之</span><span>印</span></div>
+        <span>第一卷 · 星源天</span>
       </div>
-    </section>
-
-    <!-- 站点声明 -->
-    <section class="intro reveal" style="--d:.2s" aria-label="站点声明">
-      <span class="intro-seal" aria-hidden="true">仅供娱乐</span>
-      <div class="intro-head">
-        <span class="zh">本站声明</span>
-        <span class="en">NOTICE</span>
+    </div>
+    <div class="hero-side">
+      <p class="eyebrow"><span class="dot"></span><span id="genre">玄幻 · 仙侠 · 奇幻</span><span>前半系统文，后半传统玄幻</span></p>
+      <div class="sys" id="sysPanel" role="img" aria-label="系统面板：宿主何阳，境界筑基，账号封禁中">
+        <div class="sys-head"><span>SYSTEM · 宿主面板</span><i></i></div>
+        <div id="sysLines"></div>
       </div>
-      <div class="intro-inner">
-        <p>欢迎大家来到本站，本站主打意识形态拟人化＋系列OC世界观，内容均为娱乐，出现的意识形态均不代表本人立场。</p>
-        <p>本人爱好CP乱炖，但不会搞地狱笑话等内容。</p>
-        <p>本站衍生故事与设定均为娱乐，如有冒犯，本站表示无能为力。</p>
-        <p>每个角色原本其实就是各个意识形态的拟人化形象，但因为抽卡、历史版本等缘故，再加上本就有<span class="kw">“安那其学院”</span>的世界观想法，所以最终融汇成了完整世界观。不过每个角色其实也依旧可以直接当作对应意识形态的拟人化，这点大家看喜好就行。</p>
-        <p>讨论区内容的发布选择入库后筛选的模式，不定期处理。</p>
-        <p style="color:#d0524a">⚠️ 本站图片均为 4K 原图，单张体积较大，请勿使用流量浏览。</p>
-        <p>最后，所有图片和网站搭建均为本人自主出资，请勿商用和冒用素材。</p>
+      <div class="blurb" id="blurb"></div>
+      <p class="twist" id="twist"></p>
+      <div class="actions">
+        <button class="btn seal-btn" type="button" data-read="1">开卷 · 第一章</button>
+        <button class="btn ghost" type="button" data-pv>观看 PV</button>
       </div>
-    </section>
+    </div>
+  </div>
+  <div class="scroll-cue">往下 · 坠入归墟</div>
+</section>
 
-    <!-- 大选项卡 -->
-    <section class="portals" aria-label="内容入口">
-      <a class="portal reveal accent-gallery" href="gallery.html">
-        <span class="portal-index">01</span>
-        <span class="portal-name">画廊</span>
-        <span class="portal-en">GALLERY</span>
-        <span class="portal-line" aria-hidden="true"></span>
-        <span class="portal-arrow" aria-hidden="true">&#8594;</span>
-      </a>
-      <a class="portal reveal accent-map" href="map.html" style="--d:.08s">
-        <span class="portal-index">02</span>
-        <span class="portal-name">地图</span>
-        <span class="portal-en">MAP</span>
-        <span class="portal-line" aria-hidden="true"></span>
-        <span class="portal-arrow" aria-hidden="true">&#8594;</span>
-      </a>
-      <a class="portal reveal accent-cp" href="cp.html" style="--d:.16s">
-        <span class="portal-index">03</span>
-        <span class="portal-name">CP乱炖</span>
-        <span class="portal-en">CROSSOVER</span>
-        <span class="portal-line" aria-hidden="true"></span>
-        <span class="portal-arrow" aria-hidden="true">&#8594;</span>
-      </a>
-    </section>
+<!-- ═════════ 卷一 ═════════ -->
+<section id="vol1" class="sec zone-paper">
+  <div class="big-glyph" aria-hidden="true">卷</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">已成稿 · 二十七章</p>
+      <h2 class="sec-title">第一卷 · 星源天</h2>
+      <p class="lead">泥头车一撞，何阳到了星源天。这里民风懒散，穿越者多得像批发，每个人都带着自己的系统。他的系统没有化身，也不说自己是什么，动不动就封号。</p>
+      <div class="vol-meta"><span>境界 <b>筑基 → 化神</b></span><span>地点 <b>星源天 · 飞云州</b></span><span>篇幅 <b>约七万一千字</b></span></div>
+    </div>
+    <div class="arcs" id="arcs"></div>
+  </div>
+</section>
 
-    <!-- 讨论区横条 -->
-    <a class="forum-strip reveal accent-forum" href="forum.html" aria-label="进入讨论区">
-      <div class="forum-head">
-        <h2 class="forum-title">讨论区</h2>
-        <span class="forum-en">FORUM</span>
+<!-- ═════════ 人物志 ═════════ -->
+<section id="people" class="sec zone-paper">
+  <div class="big-glyph" aria-hidden="true">人</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">人物志 · 星源天篇</p>
+      <h2 class="sec-title">星云峰上的人，天罡阁里的人</h2>
+      <p class="lead">带菱形标记的是真实身份，属于剧透，点开才显示。</p>
+    </div>
+    <div class="groups" id="groups"></div>
+  </div>
+</section>
+
+<!-- ═════════ 破妄镜 ═════════ -->
+<section id="mirror" class="sec zone-paper">
+  <div class="big-glyph" aria-hidden="true">镜</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">破妄镜 · 系统图鉴</p>
+      <h2 class="sec-title">照一照，便知是何系统</h2>
+      <p class="lead">破妄镜可以探查其他穿越者所拥有的系统，无论创造者或宿主修为多高，都可以显示在镜面中。只有一个系统，它照不出来。</p>
+    </div>
+    <div class="mirror-grid">
+      <div class="mirror-stage">
+        <div class="mirror" aria-live="polite">
+          <div class="mirror-face"><div class="mirror-text" id="mirrorText"></div></div>
+        </div>
+        <div class="mirror-ctl">
+          <button class="btn" type="button" id="mirrorRand">随机照一人</button>
+          <button class="btn ghost" type="button" id="mirrorSelf">照何阳自己</button>
+        </div>
       </div>
-      <span class="forum-more">进入讨论区&nbsp;&#8594;</span>
-    </a>
+      <div class="sys-index" id="sysIndex"></div>
+    </div>
+    <div class="his-sys">
+      <div class="sys">
+        <div class="sys-head"><span>何阳的系统 · 类型未知</span><i></i></div>
+        <div class="his-cols">
+          <div>
+            <h3>它说过的话</h3>
+            <div class="his-lines" id="hisLines"></div>
+          </div>
+          <div>
+            <h3>已知情报</h3>
+            <ul class="his-facts" id="hisFacts"></ul>
+            <details class="secret" style="margin-top:14px"><summary>制造者</summary><p id="hisSecret"></p></details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  </main>
+<!-- ═════════ 储物空间 ═════════ -->
+<section id="items" class="sec zone-paper">
+  <div class="big-glyph" aria-hidden="true">器</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">储物空间 · 功法与法宝</p>
+      <h2 class="sec-title">看似凑数，件件有来历</h2>
+      <p class="lead">文鸿和雨音当过一次“质检员”，一掌打不碎的只剩两件兵器。系统从来不说哪样东西重要。</p>
+    </div>
+    <div class="items" id="items-grid"></div>
+    <div class="later">
+      <h3 class="later-h">将来会出现的</h3>
+      <p class="later-sub">出自全书大纲，第二卷之后陆续登场。</p>
+      <ul class="later-list" id="laterList"></ul>
+    </div>
+  </div>
+</section>
 
-  <footer class="site-footer">
-    <span>意拟小站 · IDEOLOGICAL HUMANS</span>
+<!-- ═════════ 下坠 ═════════ -->
+<div class="descent" id="descent">
+  <canvas aria-hidden="true"></canvas>
+  <div class="descent-text">
+    <p>天地崩塌　时空湮灭</p>
+    <small>从星源天往外看，一层比一层大</small>
+  </div>
+</div>
+
+<!-- ═════════ 世界 ═════════ -->
+<section id="world" class="sec zone-dark zone-world">
+  <div class="big-glyph" aria-hidden="true">界</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">世界 · 层界</p>
+      <h2 class="sec-title">从漂浮的大陆，到混沌海</h2>
+      <p class="lead">点层级名称，或者拖动滑杆，镜头会一路往外退。</p>
+    </div>
+    <div class="world-grid">
+      <div class="world-stage" id="worldStage">
+        <canvas aria-label="世界层界缩放图"></canvas>
+        <div class="world-hud"><div><span id="hudEn">SOURCE-STAR HEAVEN</span><b id="hudName">星源天</b></div><div id="hudScale">约一个地球大小</div></div>
+      </div>
+      <div class="world-side">
+        <ul class="lvl-list" id="lvlList"></ul>
+        <div class="zoom-ctl"><span>近</span><input class="zoom" id="zoomRange" type="range" min="0" max="4" step="0.001" value="0" aria-label="层界缩放"><span>远</span></div>
+        <p class="lvl-desc" id="lvlDesc"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ 境界 ═════════ -->
+<section id="realms" class="sec zone-dark zone-realms">
+  <div class="big-glyph" aria-hidden="true">阶</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">境界天梯 · 破坏力量级</p>
+      <h2 class="sec-title">从爆墙，到超越逻辑与数学</h2>
+      <p class="lead">星源天五境，无疆界四境，诸天万界十三境，再往上是四位超脱者。卷一结束时，何阳在化神。</p>
+    </div>
+    <div class="ladder" id="ladder"></div>
+    <p class="unit-lost">到了禁忌级之后，一切计量单位与境界都失去了意义，哪怕是至高无上的天帝也对此无能为力。</p>
+  </div>
+</section>
+
+<!-- ═════════ 终焉纪 ═════════ -->
+<section id="legend" class="zone-dark zone-legend">
+  <div class="tree-stage" id="treeStage">
+    <div class="tree-over">
+      <div>
+        <p class="kicker">前史 · 终焉纪</p>
+        <h2 class="sec-title">终焉纪</h2>
+        <p class="lead" style="margin-top:14px">时间树由起源之种长成，有起点，无终点。</p>
+      </div>
+      <p class="tree-hint">拖动旋转 · 时间树</p>
+    </div>
+    <div class="tree-label" id="treeLabel" style="opacity:0">诸天万界 · 何阳在此</div>
+  </div>
+  <div class="sec" style="padding-top:clamp(40px,6vw,72px)">
+    <div class="wrap">
+      <div class="stele-wrap">
+        <div class="stele"><ol id="stele"></ol></div>
+      </div>
+      <div class="eight-wrap">
+        <div id="eightSvg"></div>
+        <div class="eight-notes">
+          <p class="kicker">天庭 · 师徒八人</p>
+          <h3>两位准神，各收三徒</h3>
+          <p>终焉与起源结为道侣，又在半神之后决裂。起源门下湮灭、幻梦、太初，终焉门下哀怜、轮回、命运。第三卷里，何阳会在地球上发现一张照片：他们八人，也曾在这样的地方合影。</p>
+          <p class="kicker" style="margin-top:10px">终局之敌</p>
+          <ul class="foes" id="foes"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ 大纲 ═════════ -->
+<section id="outline" class="sec zone-dark zone-outline">
+  <div class="big-glyph" aria-hidden="true">纲</div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">全书大纲 · 卷二至终卷</p>
+      <h2 class="sec-title">从无疆界，到起源与终焉</h2>
+      <p class="lead">以下内容尚未成稿，按设定文档的主线整理。卷名为网站补拟。关键转折默认遮住，点一下显示。</p>
+      <div class="spoil-ctl"><label class="switch"><input type="checkbox" id="spoilAll"><span>显示全部剧透</span></label></div>
+    </div>
+    <div class="vols" id="vols"></div>
+  </div>
+</section>
+
+<!-- ═════════ 归墟 ═════════ -->
+<section id="guixu" class="zone-dark zone-guixu">
+  <div class="vortex" id="vortex">
+    <canvas aria-hidden="true"></canvas>
+    <div class="vortex-text">
+      <small>终 卷</small>
+      <p>多元宇宙、无限次方盒、无限阶指数塔……<br>而造成这一切的幕后真凶，居然是……<em>何阳自己？</em></p>
+      <h2>归墟</h2>
+      <button class="btn" type="button" data-read="1">从第一章读起</button>
+    </div>
+  </div>
+
+  <div class="errata" id="errata">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">附录 · 校勘记</p>
+        <h2 class="sec-title">哪些是错字，哪些是两个东西</h2>
+        <p class="lead">正文阅读版已按“改正”和“统一”两栏处理。“确认是两个东西”的原样保留。“待作者定夺”的没有改动，只在这里列出。</p>
+      </div>
+      <div class="errata-grid" id="erGrid"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <b data-book-title>万道归墟</b>
+    <span>玄幻 · 仙侠 · 奇幻 ｜ 第一卷连载中</span>
   </footer>
+</section>
 
-  <script src="js/main.js" defer></script>
+</main>
+
+<!-- 阅读器 -->
+<div class="reader" id="reader" hidden role="dialog" aria-modal="true" aria-label="正文阅读">
+  <div class="reader-bar">
+    <button class="icon-btn" type="button" id="rClose" aria-label="关闭阅读">返回</button>
+    <label class="sr" for="rSelect">选择章节</label>
+    <select id="rSelect"></select>
+    <button class="icon-btn" type="button" id="rSmaller" aria-label="缩小字号">A-</button>
+    <button class="icon-btn" type="button" id="rBigger" aria-label="放大字号">A+</button>
+  </div>
+  <div class="reader-body" id="rBody">
+    <article class="reader-article" id="rArticle"></article>
+    <div class="reader-nav">
+      <button class="btn ghost" type="button" id="rPrev">上一章</button>
+      <button class="btn" type="button" id="rNext">下一章</button>
+    </div>
+  </div>
+</div>
+
+<!-- PV -->
+<div class="pv" id="pv" hidden role="dialog" aria-modal="true" aria-label="万道归墟 PV">
+  <canvas id="pvCanvas"></canvas>
+  <button class="icon-btn pv-close" type="button" id="pvClose">关闭</button>
+  <div class="pv-cap" id="pvCap"></div>
+  <div class="pv-ui">
+    <button class="icon-btn" type="button" id="pvPlay">暂停</button>
+    <button class="icon-btn" type="button" id="pvSound">声音 开</button>
+    <div class="pv-prog"><i id="pvProg"></i></div>
+    <button class="icon-btn" type="button" id="pvReplay">重播</button>
+  </div>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/chapters.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/ink.js"></script>
+<script src="assets/js/world.js"></script>
+<script src="assets/js/tree3d.js"></script>
+<script src="assets/js/pv.js"></script>
 </body>
 </html>
