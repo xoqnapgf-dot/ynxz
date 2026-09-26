@@ -22,7 +22,18 @@
 | `assets/js/tree3d.js` | 终焉纪三维时间树（three.js + 泛光，滚动运镜） |
 | `assets/js/pv3d.js` | 开篇 PV（three.js 九个分镜，WebAudio 合成音效） |
 | `tools/build_artifact.py` | 打包成单文件 HTML |
+| `tools/build_static.py` | 生成离线静态站 zip：库和裁剪后的字体全部放进包里，根目录即 `index.html` |
+| `tools/stamp.py` | 给资源引用加版本号，避免浏览器缓存旧版 |
 
 ## 发布
 
 GitHub Pages 从 `main` 分支根目录发布，网址是 <https://xoqnapgf-dot.github.io/ynxz/>。代码合并进 `main` 后一两分钟自动更新。
+
+## 打包静态站
+
+```
+pip install fonttools brotli
+python3 tools/build_static.py dist 万道归墟-静态站.zip
+```
+
+解压后直接上传到任意静态托管即可，不依赖 Google Fonts 或 CDN。改过文字后要重新打包，字体才会包含新增的字。
