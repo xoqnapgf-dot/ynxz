@@ -53,6 +53,14 @@
     .nation-card p { margin: 0 0 .8rem; font-size: .86rem; line-height: 1.7; color: #bdb6a4; }
     .nation-card .enter { display: inline-block; border: 0; background: rgba(216,178,90,.9); color: #1a140a; font-weight: 700; letter-spacing: .1em; padding: .5rem .9rem; border-radius: 8px; cursor: pointer; }
     .nation-card .nc-close { position: absolute; top: 6px; right: 10px; border: 0; background: none; color: #8a8474; font-size: 1.2rem; cursor: pointer; }
+    /* 已设定 vs 自动生成：只有有角色/归属、写进地点志的才算「存在」；其余是地图生成器的占位，默认隐藏 */
+    .map-ghost { top: 58px; left: 12px; border: 1px solid rgba(216,178,90,.35); background: rgba(12,14,22,.72); color: #cfc8b4; font: 600 .74rem/1 var(--serif, serif); letter-spacing: .1em; padding: .5rem .75rem; border-radius: 10px; cursor: pointer; backdrop-filter: blur(6px); }
+    .map-ghost[aria-pressed="true"] { color: #1a140a; background: rgba(216,178,90,.9); }
+    .hot.ghost { display: none; }
+    .show-ghosts .hot.ghost { display: flex; opacity: .75; }
+    .hot.ghost .hot-dot { width: 8px; height: 8px; border-width: 1px; background: rgba(214,218,230,.55); box-shadow: none; }
+    .hot.ghost .hot-name { font-weight: 400; font-size: 10px; opacity: .8; text-shadow: 0 1px 3px #000; }
+    .nation-card .ghost-note { margin-top: .5rem; font-size: .78rem; color: #8a8474; letter-spacing: .06em; }
     @media (max-width: 600px) {
       .map-title { font-size: .82rem; letter-spacing: .2em; top: 10px; }
       .map-modes { top: 8px; left: 8px; }
@@ -110,6 +118,7 @@
         <button type="button" data-mode="terrain" aria-pressed="true">地形</button>
         <button type="button" data-mode="nations" aria-pressed="false">国家/地区</button>
       </div>
+      <button id="ghostToggle" type="button" class="map-ui map-ghost" aria-pressed="false" title="地图生成器自动划定、尚无设定的地区">显示未设定地区</button>
       <div class="map-ui map-zoomctl">
         <button id="zin" type="button" aria-label="放大">+</button>
         <button id="zout" type="button" aria-label="缩小">&minus;</button>
@@ -130,7 +139,7 @@
   </main>
 
   <script src="js/map-data.js?v=23"></script>
-  <script src="js/locations-data.js?v=14"></script>
+  <script src="js/locations-data.js?v=15"></script>
   <script>
   (function () {
     var W = 3000, H = 935, KM_PER_UNIT = 21.3;
@@ -229,7 +238,8 @@
     var card = document.getElementById('nationCard'), curNation = null, hots = [];
     NAT.forEach(function (n) {
       var b = document.createElement('button');
-      b.className = 'hot' + (n.type === 'special' ? ' special' : ''); b.title = n.name; b.setAttribute('aria-label', n.name);
+      n._ghost = n.type !== 'special' && !((window.LOCATION_DATA || {})[n.name]);
+      b.className = 'hot' + (n.type === 'special' ? ' special' : '') + (n._ghost ? ' ghost' : ''); b.title = n.name; b.setAttribute('aria-label', n.name);
       b.innerHTML = '<i class="hot-dot"></i><span class="hot-name"></span>';
       if (n.color) b.querySelector('.hot-dot').style.background = n.color;
       b.querySelector('.hot-name').textContent = n.name;
@@ -240,13 +250,28 @@
       curNation = n;
       document.getElementById('ncName').textContent = n.name;
       var special = n.type === 'special';
-      var f = document.getElementById('ncForm'); f.textContent = special ? (n.form || '特殊地点') : (n.form || ''); f.style.display = (special || n.form) ? '' : 'none';
-      document.getElementById('ncEnter').style.display = special ? 'none' : '';
-      document.getElementById('ncDesc').textContent = n.desc || ((window.LOCATION_DATA || {})[n.name] || {}).desc || '该区域介绍待补充。';
+      var loc = (window.LOCATION_DATA || {})[n.name] || {};
+      var FORM_ZH = { Monarchy: '君主制', Republic: '共和制', Theocracy: '神权制', Union: '联合体' };
+      var formText = special ? (n.form || loc.kind || '特殊地点') : (loc.kind || FORM_ZH[n.form] || n.form || '');
+      var f = document.getElementById('ncForm'); f.textContent = formText; f.style.display = formText ? '' : 'none';
+      document.getElementById('ncEnter').style.display = (special || n._ghost) ? 'none' : '';
+      document.getElementById('ncDesc').textContent = n.desc || loc.desc || '该地区由地图生成器自动划定，暂无设定。';
+      var gn = card.querySelector('.ghost-note');
+      if (!gn) { gn = document.createElement('p'); gn.className = 'ghost-note'; document.getElementById('ncDesc').insertAdjacentElement('afterend', gn); }
+      gn.textContent = n._ghost ? '尚未登场：目前没有角色归属于此地。' : '';
+      gn.style.display = n._ghost ? '' : 'none';
       hots.forEach(function (h) { h.classList.remove('active'); });
       if (btn) btn.classList.add('active');
       card.classList.add('show');
     }
+    var ghostBtn = document.getElementById('ghostToggle');
+    ghostBtn.addEventListener('click', function () {
+      var on = ghostBtn.getAttribute('aria-pressed') !== 'true';
+      ghostBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      stage.classList.toggle('show-ghosts', on);
+      if (!on) closeCard();
+      apply();
+    });
     function closeCard() { card.classList.remove('show'); hots.forEach(function (h) { h.classList.remove('active'); }); }
     document.getElementById('ncClose').onclick = closeCard;
     document.getElementById('ncEnter').onclick = function () { location.href = 'gallery.html?cat=ideology'; };
