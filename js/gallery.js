@@ -1819,8 +1819,10 @@
   function linkifyPlaces(v) {
     return String(v).split('·').map(function (part) {
       var name = part.trim();
-      if (typeof LOCATION_DATA !== 'undefined' && LOCATION_DATA[name]) {
-        return '<a class="loc-link" data-loc="' + esc(name) + '">' + esc(name) + '</a>';
+      var key = name;
+      if (typeof LOCATION_DATA !== 'undefined' && !LOCATION_DATA[key] && typeof LOCATION_ALIAS !== 'undefined' && LOCATION_ALIAS[key]) key = LOCATION_ALIAS[key];
+      if (typeof LOCATION_DATA !== 'undefined' && LOCATION_DATA[key]) {
+        return '<a class="loc-link" data-loc="' + esc(key) + '">' + esc(name) + '</a>';
       }
       return esc(part);
     }).join(' · ');
