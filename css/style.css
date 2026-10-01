@@ -526,6 +526,14 @@ main {
   letter-spacing: 0.4em;
   color: var(--accent);
 }
+.portal-desc {
+  margin-top: 0.55rem;
+  max-width: 78%;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
 .portal-line {
   width: 34px;
   height: 2px;
@@ -1272,3 +1280,7 @@ main {
 :root[data-theme="light"] .theme-cp      { --accent: #b04a52; }
 :root[data-theme="light"] .theme-forum   { --accent: #3f6aa8; }
 :root[data-theme="light"] .theme-search  { --accent: #6f685a; }
+
+@media (max-width: 720px) {
+  .site-header .theme-toggle { position: absolute; top: 0.65rem; right: 1rem; margin: 0; }
+}
