@@ -1,0 +1,12 @@
+# 依赖与临时处理工具（静态站点本身无需依赖）
+node_modules/
+.npmcache/
+package-lock.json
+package.json
+
+# 临时脚本的中间产物
+*.tmp
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
