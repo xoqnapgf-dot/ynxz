@@ -65,10 +65,25 @@
      ============================================================ */
 
 
+  /* 页面用主色：数据里的主色按立绘手调，偏暗的（深红/深蓝/深紫）直接当文字会看不清，
+     这里只向白色提亮到对比度 ≥ 4.5，色相不变；封面与数据本身不受影响 */
+  function relLum(hex) {
+    var c = hexRgb(hex).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+  function readableAccent(hex) {
+    if (!/^#[0-9a-f]{6}$/i.test(hex || '')) return hex;
+    var bg = relLum('#0a0a0e');
+    for (var t = 0; t <= 0.6; t += 0.04) {
+      var c = t ? mixHex(hex, '#ffffff', t) : hex;
+      if ((relLum(c) + 0.05) / (bg + 0.05) >= 4.5) return c;
+    }
+    return mixHex(hex, '#ffffff', 0.6);
+  }
   function themeColors(entry) {
     var th = (entry && entry.theme) || {};
     return {
-      a1: th.accent || entry.accent || '',
+      a1: readableAccent(th.accent || entry.accent || ''),
       a2: th.accent2 || entry.accent2 || '',
       motif: th.motif || entry.motif || ''
     };
@@ -1207,6 +1222,19 @@
         (function () { var s = ''; for (var y = 26; y < H; y += 7) s += '<rect y="' + y + '" width="' + W + '" height="1" fill="' + line + '" opacity="0.06"/>'; return s; })() +
         '<rect width="' + W + '" height="' + H + '" fill="url(#aura)"/>' +
         '<circle cx="200" cy="256" r="118" fill="' + a1 + '" opacity="0.14" filter="url(#soft)"/>' +
+        /* 徽章环：细双环 + 刻度，托住中央纹样，让封面像一枚徽章 */
+        (function () {
+          var g = '<g fill="none" stroke="' + a1 + '" transform="translate(200 256)">' +
+            '<circle r="152" stroke-width="1" opacity="0.28"/>' +
+            '<circle r="140" stroke-width="0.8" opacity="0.16" stroke-dasharray="2 6"/>';
+          for (var k = 0; k < 48; k++) {
+            var ang = k * 7.5 * Math.PI / 180, big = k % 6 === 0, r1 = big ? 152 : 152, r2 = big ? 162 : 158;
+            g += '<line x1="' + (Math.cos(ang) * r1).toFixed(1) + '" y1="' + (Math.sin(ang) * r1).toFixed(1) +
+                 '" x2="' + (Math.cos(ang) * r2).toFixed(1) + '" y2="' + (Math.sin(ang) * r2).toFixed(1) +
+                 '" stroke-width="' + (big ? 1.4 : 0.8) + '" opacity="' + (big ? 0.5 : 0.26) + '"/>';
+          }
+          return g + '</g>';
+        })() +
         motifDeco(th.motif, a1) +
         '<rect width="' + W + '" height="' + H + '" fill="url(#vig)"/>' +
         /* 双层细框 + 四角刻度 */
@@ -1315,8 +1343,8 @@
     fig.setAttribute('aria-label', ideo.name);
     var cCount = (ideo.characters || []).length;
     fig.innerHTML =
-      '<div class="gal-thumb">' + (ideoCover(ideo)
-        ? '<img src="' + esc(ideoCover(ideo)) + '" alt="' + esc(ideo.name) + '" loading="lazy">'
+      '<div class="gal-thumb">' + (ideoCover(ideo, false)
+        ? '<img src="' + esc(ideoCover(ideo, false)) + '" alt="' + esc(ideo.name) + '" loading="lazy">'
         : '<span class="gal-thumb-empty">暂无图</span>') +
         (cCount ? '<span class="gal-thumb-badge">' + cCount + ' 角色</span>' : '') +
       '</div>' +
