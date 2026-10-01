@@ -87,7 +87,7 @@ ynxz/
 | 创世论 | 安娅·萨莫拉 | 帕尔哈南·教廷宗教学者 | 新历509 | 帕尔哈南神权政治 |
 | 存在主义 | 妮可·珀耳塞福涅 | 翁吉亚·旧族后裔·写作者 | 新历521 | 翁吉亚共和国 |
 | 超人类主义 | 神乐坂零 | 璇玑·生命工学研究者 | 新历514 | 璇玑联邦 |
-| 地主所有制 | 沈碧瑶 | 霁川·沈氏田庄主事 | 新历507 | 霁川公国 |
+| 地主所有制 | 沈碧瑶 | 霁川·沈氏田庄主事 | 新历513 | 霁川公国 |
 
 > 关系彩蛋：安那其学院＝安娜琪(院长)、安康、安资、尹紫；伊鲁尼利亚＝戴安娜/塞西莉亚(对外)＋舒彤/舒和/白石真凛/池希(国内多党)；科鲁鲁＝康瑟薇/索菲亚/玛格丽特(旧制度)。
 
@@ -149,7 +149,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 当前版本指针：`style.css v26`、`gallery.css v52`、`gallery.js v72`、`gallery-data.js v89`、`versions-data.js v5`、`locations-data.js v16`、`map-data.js v24`、`cp.js v7`、`search.js v4`、`main.js v1`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v26`、`gallery.css v52`、`gallery.js v72`、`gallery-data.js v90`、`versions-data.js v5`、`locations-data.js v16`、`map-data.js v24`、`cp.js v7`、`search.js v4`、`main.js v1`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
