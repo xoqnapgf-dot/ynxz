@@ -36,8 +36,20 @@
 | `index.html` | 首页 · 项目简介 |
 | `gallery.html` | 画廊：意识形态与角色，首字母索引（可返回页首），主题配色封面 |
 | `map.html` | 世界地图：地形 / 国家切换、拖拽缩放、可点标记、地点志 |
-| `cp.html` | CP 乱炖 |
-| 讨论区 / 搜索 | 站内其它页 |
+| `cp.html` | CP 乱炖：浏览与发布（发布内容存浏览器 localStorage） |
+| `cp-view.html` | CP 帖子详情页 |
+| `forum.html` | 讨论区 |
+| `search.html` | 站内搜索（意识形态 / 角色 / CP / 讨论） |
+
+### 目录结构
+```
+ynxz/
+├─ index.html · gallery.html · map.html · cp.html · cp-view.html · forum.html · search.html
+├─ css/            style.css（全站）· gallery.css · cp.css
+├─ js/             数据：gallery-data / versions-data / map-data / locations-data
+│                  逻辑：main / gallery / cp / search
+└─ 素材/           角色大图 · 画廊预览图 · 历史图＆其他版本 · 地图 · CP区 · 其他（网页压缩版）
+```
 
 ---
 
@@ -116,8 +128,7 @@
 - **静态托管（GitHub Pages 等）**：整站目录直接部署。
 - **图片**：意识形态封面是内联 SVG，任何环境都显示；角色大图/预览图依赖 `素材/`。仓库内 `素材/` 为**网页压缩版**（原图另存），使 Pages 也能加载图片；旧批量压缩脚本已移除，避免误覆盖源图。
 - **在线镜像**：InfinityFree `ynxz.wuaze.com`（含全量素材）。
-- **协作约定**：改动走**分支**、给出**分支 raw 预览链接**、**不主动合并 main**、每次改动**同步更新本 README**。
-- **raw 预览链接格式（必须照用）**：用 HTMLPreview 渲染 GitHub 分支上的页面：`https://htmlpreview.github.io/?https://raw.githubusercontent.com/dacl666-code/ynxz/<branch>/<page>.html`。交付时至少给首页及本次改动页（如 `index.html`、`map.html`、`gallery.html`）的可点击预览链接。单独的 `raw.githubusercontent.com` 文件地址只是源码，不是预览；Arena/E2B Live Preview、`raw.githack.com` 或 localhost 链接也不能替代本项目约定的 raw 预览。
+- **协作约定**：改动在开发分支上完成后直接合并进 `main`，不再使用分支预览链接，也不需要 raw / HTMLPreview 预览；每次改动**同步更新本 README**。
 
 ---
 
