@@ -151,7 +151,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v73`、`gallery-data.js v91`、`versions-data.js v5`、`locations-data.js v17`、`map-data.js v24`、`cp.js v7`、`search.js v4`、`main.js v1`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v74`、`gallery-data.js v91`、`versions-data.js v5`、`locations-data.js v17`、`map-data.js v24`、`cp.js v7`、`search.js v4`、`main.js v1`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
