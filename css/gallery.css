@@ -1238,7 +1238,7 @@
   --mat: clamp(16px, 3vw, 28px);
   border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 22%, var(--hairline));
   border-radius: 0;
-  background: linear-gradient(170deg, color-mix(in srgb, var(--ca, var(--gold)) 7%, #131316), #0c0c0f);
+  background: linear-gradient(170deg, color-mix(in srgb, var(--ca, var(--gold)) 7%, var(--mat-a)), var(--mat-b));
   animation: figIn 0.9s var(--ease) both;
 }
 .fr-ink .ch-figure::before { display: none; }
@@ -1299,13 +1299,20 @@
   animation-duration: calc(var(--drift, 20s) * 0.6);
 }
 /* ---- snow 雪/星屑（冷白，缓慢下落） ---- */
-.dust-snow .stage-dust i, .dust-petal .stage-dust i, .dust-leaf .stage-dust i {
+.dust-snow .stage-dust i, .dust-petal .stage-dust i, .dust-leaf .stage-dust i, .dust-paper .stage-dust i {
   bottom: auto; top: -4%;
   animation-name: dustFall;
 }
 .dust-snow .stage-dust i {
   background: #eaf2ff;
   box-shadow: 0 0 7px 1px color-mix(in srgb, #bcd4ff 80%, transparent);
+}
+/* ---- paper 纸片（米白小方片，飘落翻转） ---- */
+.dust-paper .stage-dust i {
+  width: calc(var(--size, 3px) * 2.4); height: calc(var(--size, 3px) * 3);
+  border-radius: 1px;
+  background: #efe6cf;
+  box-shadow: 0 0 0 1px rgba(60, 46, 20, 0.15);
 }
 /* ---- petal 花瓣（粉红，飘落摇摆） ---- */
 .dust-petal .stage-dust i {
@@ -1377,3 +1384,13 @@
 :root[data-theme="light"] .ch-figure { box-shadow: 0 24px 50px -28px rgba(var(--shadow-rgb), 0.55); }
 :root[data-theme="light"] .ch-figure { animation: figIn 0.8s var(--ease) both, matSweep 9s ease-in-out 1.2s infinite; }
 @media (prefers-reduced-motion: reduce) { :root[data-theme="light"] .ch-figure { animation: none; } }
+
+/* 未写人设的角色：右栏占位块 */
+.ch-pending { margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 28%, var(--hairline)); }
+.ch-pending .ch-facts { margin-top: 0; }
+.ch-pending-def { margin-top: 0.9rem; font-size: 0.88rem; line-height: 2; letter-spacing: 0.05em; color: var(--ink-dim); }
+.ch-pending-note {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-top: 1.1rem; font-size: 0.78rem; letter-spacing: 0.26em; color: var(--ink-faint);
+}
+.ch-pending-note .diamond { width: 7px; height: 7px; transform: rotate(45deg); background: color-mix(in srgb, var(--ca, var(--gold)) 70%, transparent); flex: none; }
