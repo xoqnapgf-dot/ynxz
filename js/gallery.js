@@ -1471,7 +1471,7 @@
     box.innerHTML =
       '<nav class="gal-crumbs"><a href="#" id="crumbHome">画廊</a><span class="crumb-sep">›</span><span>' + esc(ideo.name) + '</span></nav>' +
       '<h2 class="gal-detail-name">' + esc(ideo.name) + '</h2>' +
-      '<p class="gal-detail-kind">意识形态' + (chs.length ? ' · ' + chs.length + ' 名角色' : '') + '</p>' +
+      '<p class="gal-detail-kind">思潮' + (chs.length ? ' · ' + chs.length + ' 名角色' : '') + '</p>' +
       (ideo.desc ? '<div class="ch-body ideo-desc">' + textHtml(ideo.desc) + '</div>' : '') +
       (chs.length
         ? '<div class="ide-ch-grid">' + chHtml + '</div>'
@@ -1623,7 +1623,7 @@
     var first = String(ideo.desc || '').split(/\n\s*\n/)[0].replace(/\s+/g, ' ');
     var cut = first.length > 96 ? first.slice(0, 96).replace(/[，、；：\s]+$/, '') + '…' : first;
     return '<div class="ch-pending">' +
-      '<dl class="ch-facts"><div class="fact-row"><dt>意识形态</dt><dd>' + esc(ideo.name || '') + '</dd></div></dl>' +
+      '<dl class="ch-facts"><div class="fact-row"><dt>思潮</dt><dd>' + esc(ideo.name || '') + '</dd></div></dl>' +
       (cut ? '<p class="ch-pending-def">' + esc(cut) + '</p>' : '') +
       '<p class="ch-pending-note"><span class="diamond"></span>人物设定整理中</p>' +
     '</div>';
