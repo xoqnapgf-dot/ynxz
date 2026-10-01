@@ -80,11 +80,29 @@
     }
     return mixHex(hex, '#ffffff', 0.6);
   }
+  /* 日间模式：向深褐提暗到对比度 ≥ 4.5（底 #f5f0e6），色相不变 */
+  function readableOnLight(hex) {
+    if (!/^#[0-9a-f]{6}$/i.test(hex || '')) return hex;
+    var bg = relLum('#f5f0e6');
+    for (var t = 0; t <= 0.78; t += 0.04) {
+      var c = t ? mixHex(hex, '#1a1408', t) : hex;
+      if ((bg + 0.05) / (relLum(c) + 0.05) >= 4.5) return c;
+    }
+    return mixHex(hex, '#1a1408', 0.78);
+  }
+  /* 主色同时写入夜间/日间两份，由 CSS（style.css 的 --ca 规则）按当前模式选用 */
+  function setAcc(el, a1) {
+    if (a1) { el.style.setProperty('--ca-d', readableAccent(a1)); el.style.setProperty('--ca-l', readableOnLight(a1)); }
+    else { el.style.removeProperty('--ca-d'); el.style.removeProperty('--ca-l'); }
+  }
   function themeColors(entry) {
     var th = (entry && entry.theme) || {};
     return {
-      a1: readableAccent(th.accent || entry.accent || ''),
+      a1: th.accent || entry.accent || '',
       a2: th.accent2 || entry.accent2 || '',
+      hi: th.hi || entry.hi || '',          /* 高光色：名字渐变亮部、装饰亮点 */
+      frame: th.frame || entry.frame || '', /* 画框样式：gilt/iron/ink/glass/regal/organic */
+      dust: th.dust || entry.dust || '',    /* 氛围粒子：gold/ember/snow/petal/leaf */
       motif: th.motif || entry.motif || ''
     };
   }
@@ -149,12 +167,16 @@
   function paintStage(entry, cover) {
     var pg = $('#galDetailPage');
     var t = themeColors(entry, cover);
-    if (t.a1) pg.style.setProperty('--ca', t.a1); else pg.style.removeProperty('--ca');
+    setAcc(pg, t.a1);
     if (t.a2) pg.style.setProperty('--ca2', t.a2); else pg.style.removeProperty('--ca2');
+    if (t.hi) pg.style.setProperty('--ch', t.hi); else pg.style.removeProperty('--ch');
+    pg.className = pg.className.replace(/\b(fr|dust)-\w+/g, '').replace(/\s+/g, ' ').trim();
+    if (t.frame) pg.classList.add('fr-' + t.frame);
+    if (t.dust) pg.classList.add('dust-' + t.dust);
     /* 返回键浮在详情页外，主题色单独同步 */
     var back = $('#detailBack');
     if (back) {
-      if (t.a1) back.style.setProperty('--ca', t.a1); else back.style.removeProperty('--ca');
+      setAcc(back, t.a1);
       if (t.a2) back.style.setProperty('--ca2', t.a2); else back.style.removeProperty('--ca2');
     }
     var bg = $('.stage-tint', pg);
@@ -205,6 +227,9 @@
       theme: {
         accent: a.accent || b.accent || '',
         accent2: a.accent2 || b.accent2 || '',
+        hi: a.hi || b.hi || '',
+        frame: a.frame || b.frame || '',
+        dust: a.dust || b.dust || '',
         motif: a.motif || b.motif || ''
       },
       accent: a.accent || b.accent || '',
@@ -1256,8 +1281,9 @@
 
   function paintTheme(el, entry) {
     var t = themeColors(entry);
-    if (t.a1) el.style.setProperty('--ca', t.a1);
+    setAcc(el, t.a1);
     if (t.a2) el.style.setProperty('--ca2', t.a2);
+    if (t.hi) el.style.setProperty('--ch', t.hi);
     return el;
   }
 
@@ -1652,7 +1678,7 @@
     if (!url) return;
     var vv = ensureVerView();
     var pg = document.getElementById('galDetailPage');
-    if (pg) { var cs = getComputedStyle(pg); var ca = cs.getPropertyValue('--ca').trim(); var ca2 = cs.getPropertyValue('--ca2').trim(); if (ca) vv.style.setProperty('--ca', ca); if (ca2) vv.style.setProperty('--ca2', ca2); }
+    if (pg) { var cs = getComputedStyle(pg); var cad = cs.getPropertyValue('--ca-d').trim(), cal = cs.getPropertyValue('--ca-l').trim(); var ca2 = cs.getPropertyValue('--ca2').trim(); if (cad) vv.style.setProperty('--ca-d', cad); if (cal) vv.style.setProperty('--ca-l', cal); if (ca2) vv.style.setProperty('--ca2', ca2); var chh = cs.getPropertyValue('--ch').trim(); if (chh) vv.style.setProperty('--ch', chh); }
     vv.querySelector('img').src = url;
     vv.querySelector('.ver-view-tag').textContent = label || '';
     var side = vv.querySelector('.ver-view-side');
@@ -1794,7 +1820,7 @@
     var parentLine = d.parent ? '<p class="loc-view-parent">隶属 · <a class="loc-link" data-loc="' + esc(d.parent) + '">' + esc(d.parent) + '</a></p>' : '';
     el.innerHTML = '<div class="loc-view-card"><div class="loc-view-head"><span class="loc-view-kind">' + esc(d.kind || '地点') + '</span><button class="loc-view-x" aria-label="关闭">×</button></div><h3 class="loc-view-name">' + esc(name) + '</h3><p class="loc-view-desc">' + esc(d.desc || '') + '</p>' + parentLine + '</div>';
     var src = document.getElementById('galDetailPage');
-    if (src) { var cs = getComputedStyle(src); el.style.setProperty('--ca', cs.getPropertyValue('--ca')); el.style.setProperty('--ca2', cs.getPropertyValue('--ca2')); }
+    if (src) { var cs = getComputedStyle(src); el.style.setProperty('--ca-d', cs.getPropertyValue('--ca-d')); el.style.setProperty('--ca-l', cs.getPropertyValue('--ca-l')); el.style.setProperty('--ca2', cs.getPropertyValue('--ca2')); }
     el.classList.add('show');
     el.querySelector('.loc-view-x').onclick = function () { el.classList.remove('show'); };
     el.onclick = function (ev) { if (ev.target === el) el.classList.remove('show'); };

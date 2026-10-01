@@ -33,7 +33,7 @@
   user-select: none;
   transition: color 0.25s var(--ease), border-color 0.25s var(--ease), background 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
-.cp-chip.ghost { border-color: rgba(243, 240, 232, 0.08); }
+.cp-chip.ghost { border-color: rgba(var(--ink-rgb), 0.08); }
 .cp-chip:hover { color: var(--ink); border-color: color-mix(in srgb, var(--accent, var(--gold)) 40%, transparent); }
 .cp-chip[aria-pressed="true"] {
   color: #14110a;
@@ -85,7 +85,7 @@
   border-color: color-mix(in srgb, var(--accent, var(--gold)) 50%, transparent);
   transform: translateY(-5px);
   box-shadow:
-    0 24px 50px -20px rgba(0, 0, 0, 0.9),
+    0 24px 50px -20px rgba(var(--shadow-rgb), 0.9),
     0 0 36px -12px color-mix(in srgb, var(--accent, var(--gold)) 32%, transparent);
 }
 
@@ -148,7 +148,7 @@
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   color: var(--ink-dim);
-  background: rgba(10, 10, 14, 0.72);
+  background: rgba(var(--bg-rgb), 0.72);
   border-radius: 3px;
 }
 
@@ -189,7 +189,7 @@
   gap: 0.9rem;
   margin-top: auto;
   padding-top: 0.7rem;
-  border-top: 1px dashed rgba(243, 240, 232, 0.09);
+  border-top: 1px dashed rgba(var(--ink-rgb), 0.09);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   color: var(--ink-faint);
@@ -226,7 +226,7 @@
     var(--bg-soft);
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
-  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 40px 90px -30px rgba(var(--shadow-rgb), 0.95);
 }
 .cp-modal.wide { width: min(760px, 100%); }
 
@@ -253,7 +253,7 @@
   cursor: pointer;
   transition: color 0.25s var(--ease), background 0.25s var(--ease);
 }
-.cp-modal-close:hover { color: var(--ink); background: rgba(243, 240, 232, 0.06); }
+.cp-modal-close:hover { color: var(--ink); background: rgba(var(--ink-rgb), 0.06); }
 
 .cp-modal-title {
   font-family: var(--serif);
@@ -343,8 +343,8 @@
   width: 1.35rem; height: 1.35rem;
   font-size: 0.9rem;
   line-height: 1;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.62);
+  color: var(--ink-max);
+  background: rgba(var(--shadow-rgb), 0.62);
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -461,6 +461,6 @@
   object-fit: contain;
   border-radius: var(--radius);
   border: 1px solid var(--hairline);
-  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 30px 80px -20px rgba(var(--shadow-rgb), 0.9);
 }
 @keyframes cpLbIn { from { opacity: 0; } to { opacity: 1; } }

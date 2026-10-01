@@ -105,19 +105,19 @@
   flex-wrap: wrap;
   margin-bottom: clamp(1.4rem, 3.5vh, 2.2rem);
   padding: 0.55rem 0.65rem;
-  background: rgba(14, 14, 19, 0.82);
+  background: rgba(var(--bg-rgb), 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--hairline);
   border-radius: 999px;
-  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 14px 34px -18px rgba(var(--shadow-rgb), 0.85);
 }
 .gal-group {
   display: flex;
   gap: 0.3rem;
   flex-wrap: wrap;
   padding: 0.2rem;
-  background: rgba(243, 240, 232, 0.03);
+  background: rgba(var(--ink-rgb), 0.03);
   border-radius: 999px;
 }
 .gal-group + .gal-group { padding-left: 0.55rem; }
@@ -164,7 +164,7 @@
   flex-wrap: wrap;
   padding: 0.4rem 0.55rem;
   margin-bottom: 1.8rem;
-  background: rgba(10, 10, 14, 0.78);
+  background: rgba(var(--bg-rgb), 0.78);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--hairline);
@@ -290,7 +290,7 @@
 .gal-item:hover .gal-thumb {
   border-color: color-mix(in srgb, var(--ca, var(--gold)) 55%, transparent);
   box-shadow:
-    0 24px 50px -20px rgba(0, 0, 0, 0.9),
+    0 24px 50px -20px rgba(var(--shadow-rgb), 0.9),
     0 0 36px -8px color-mix(in srgb, var(--ca, var(--gold)) 50%, transparent);
 }
 .gal-item:hover .gal-thumb img { transform: scale(1.045); filter: brightness(1.06); }
@@ -325,8 +325,8 @@
   letter-spacing: 0.14em;
   color: color-mix(in srgb, var(--ca, var(--gold)) 46%, #ded6c2);
   text-align: center;
-  background: rgba(243, 240, 232, 0.028);
-  border: 1px solid rgba(243, 240, 232, 0.07);
+  background: rgba(var(--ink-rgb), 0.028);
+  border: 1px solid rgba(var(--ink-rgb), 0.07);
   border-radius: 3px;
   transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
   white-space: nowrap;
@@ -334,7 +334,7 @@
   text-overflow: ellipsis;
 }
 .gal-item:hover .gal-name {
-  color: color-mix(in srgb, var(--ca, var(--gold)) 60%, #fbf8ef);
+  color: color-mix(in srgb, var(--ca, var(--gold)) 60%, var(--cream));
   border-color: color-mix(in srgb, var(--ca, var(--gold)) 38%, transparent);
 }
 /* 意识形态名：默认隐藏，悬浮 / 聚焦 / 触屏轻点时以居中横框浮现于卡图底部 */
@@ -348,7 +348,7 @@
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.12em;
-  color: color-mix(in srgb, var(--ca, var(--gold)) 55%, #fbf8ef);
+  color: color-mix(in srgb, var(--ca, var(--gold)) 55%, var(--cream));
   background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--ca2, #0a090c) 90%, #000) 72%);
   border-top: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 24%, transparent);
   white-space: nowrap;
@@ -369,8 +369,8 @@
   padding: 0.12rem 0.55rem;
   font-size: 0.66rem;
   letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--ca, var(--gold)) 65%, #fbf8ef);
-  background: rgba(10, 10, 14, 0.78);
+  color: color-mix(in srgb, var(--ca, var(--gold)) 65%, var(--cream));
+  background: rgba(var(--bg-rgb), 0.78);
   border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 48%, transparent);
   border-radius: 999px;
   backdrop-filter: blur(4px);
@@ -406,7 +406,7 @@
     var(--bg-soft);
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
-  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 40px 90px -30px rgba(var(--shadow-rgb), 0.95);
 }
 .gal-modal::before {
   content: "";
@@ -425,13 +425,13 @@
   font-size: 1.5rem;
   line-height: 1;
   color: var(--ink-faint);
-  background: rgba(10, 10, 14, 0.5);
+  background: rgba(var(--bg-rgb), 0.5);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   transition: color 0.25s var(--ease), background 0.25s var(--ease);
 }
-.gal-modal-close:hover { color: var(--ink); background: rgba(243, 240, 232, 0.08); }
+.gal-modal-close:hover { color: var(--ink); background: rgba(var(--ink-rgb), 0.08); }
 
 .gal-detail-img img {
   width: 100%;
@@ -444,7 +444,7 @@
   font-weight: 900;
   font-size: 1.4rem;
   letter-spacing: 0.18em;
-  background: linear-gradient(180deg, #fbf8ef 30%, #d9cfb4 90%);
+  background: linear-gradient(180deg, var(--cream) 30%, #d9cfb4 90%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -467,7 +467,7 @@
   border-bottom: 1px dotted color-mix(in srgb, var(--ca, var(--gold)) 55%, transparent);
   transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
-.gal-detail-kind a:hover { color: #fff; border-color: #fff; }
+.gal-detail-kind a:hover { color: var(--ink-max); border-color: var(--ink-max); }
 
 /* ============================================================
    详情整页（意识形态内页 / 角色界面）
@@ -502,7 +502,7 @@
   inset: 0;
   background:
     radial-gradient(ellipse 80% 60% at 50% 20%, transparent 30%, var(--bg) 100%),
-    linear-gradient(180deg, rgba(10,10,14,0.25), rgba(10,10,14,0.78));
+    linear-gradient(180deg, rgba(var(--bg-rgb), 0.25), rgba(var(--bg-rgb), 0.78));
 }
 
 /* 主题纹样：大装饰 SVG，左右各一，极淡 */
@@ -603,9 +603,9 @@
   overflow: visible;
   background: linear-gradient(105deg,
     var(--ca, var(--gold)) 0%,
-    color-mix(in srgb, var(--ca, var(--gold)) 32%, #fbf8ef) 42%,
+    var(--ch, color-mix(in srgb, var(--ca, var(--gold)) 32%, var(--cream))) 42%,
     var(--ca, var(--gold)) 72%,
-    color-mix(in srgb, var(--ca, var(--gold)) 55%, #e7dcc0) 100%);
+    var(--ch, color-mix(in srgb, var(--ca, var(--gold)) 55%, #e7dcc0)) 100%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -631,7 +631,7 @@
   /* 衬底：主题色微染的暗色 + 一道缓慢扫过的细光（只在衬边可见，画面在其上） */
   background:
     linear-gradient(115deg, transparent 42%, color-mix(in srgb, var(--ca, var(--gold)) 16%, transparent) 50%, transparent 58%) 0 0 / 260% 100% no-repeat,
-    linear-gradient(160deg, color-mix(in srgb, var(--ca, var(--gold)) 9%, #14141a), #0b0b10 58%, color-mix(in srgb, var(--ca2, #000) 22%, #0b0b10));
+    linear-gradient(160deg, color-mix(in srgb, var(--ca, var(--gold)) 9%, var(--mat-a)), var(--mat-b) 58%, color-mix(in srgb, var(--ca2, #000) 22%, var(--mat-b)));
   box-shadow: 0 30px 70px -30px color-mix(in srgb, var(--ca2, #000) 60%, transparent);
   animation: figIn 0.8s var(--ease) both, figGlow 8s ease-in-out 0.8s infinite, matSweep 9s ease-in-out 1.2s infinite;
 }
@@ -757,7 +757,7 @@
 .loc-link:hover { color: var(--ca2, var(--gold-hi)); border-bottom-style: solid; }
 .loc-view { position: fixed; inset: 0; z-index: 1002; display: none; align-items: center; justify-content: center; background: rgba(6, 6, 10, .74); backdrop-filter: blur(3px); padding: 4vh 4vw; }
 .loc-view.show { display: flex; }
-.loc-view-card { width: min(460px, 92vw); background: linear-gradient(180deg, #17151d, #100e14); border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 30%, var(--hairline)); border-radius: 14px; padding: 1.4rem 1.5rem; box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .8); }
+.loc-view-card { width: min(460px, 92vw); background: linear-gradient(180deg, #17151d, #100e14); border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 30%, var(--hairline)); border-radius: 14px; padding: 1.4rem 1.5rem; box-shadow: 0 30px 70px -20px rgba(var(--shadow-rgb), .8); }
 .loc-view-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
 .loc-view-kind { font-size: .74rem; letter-spacing: .18em; color: color-mix(in srgb, var(--ca, var(--gold)) 78%, #fff); }
 .loc-view-x { background: none; border: none; color: var(--ink-faint); font-size: 1.5rem; line-height: 1; cursor: pointer; }
@@ -779,7 +779,7 @@
   font-size: 1.3rem;
   line-height: 1;
   color: var(--ink-dim);
-  background: rgba(243, 240, 232, 0.04);
+  background: rgba(var(--ink-rgb), 0.04);
   border: 1px solid var(--hairline);
   border-radius: 50%;
   cursor: pointer;
@@ -800,7 +800,7 @@
   padding: 0.18rem 0.85rem;
   border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 24%, transparent);
   border-radius: 999px;
-  background: rgba(10, 10, 14, 0.45);
+  background: rgba(var(--bg-rgb), 0.45);
 }
 
 /* ===== 意识形态内页沿用弹窗时代的标题样式 ===== */
@@ -810,7 +810,7 @@
   font-weight: 900;
   font-size: clamp(1.7rem, 4.5vw, 2.5rem);
   letter-spacing: 0.2em;
-  background: linear-gradient(180deg, #fbf8ef 25%, var(--ca, #d9cfb4) 92%);
+  background: linear-gradient(180deg, var(--ch, var(--cream)) 25%, var(--ca, #d9cfb4) 92%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -856,8 +856,8 @@
   padding: 0.12rem 0.55rem;
   font-size: 0.66rem;
   letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--ca, var(--gold)) 60%, #fbf8ef);
-  background: rgba(10, 10, 14, 0.78);
+  color: color-mix(in srgb, var(--ca, var(--gold)) 60%, var(--cream));
+  background: rgba(var(--bg-rgb), 0.78);
   border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 45%, transparent);
   border-radius: 999px;
   backdrop-filter: blur(4px);
@@ -875,14 +875,14 @@
   color: var(--ink-faint);
 }
 .gal-crumbs a {
-  color: color-mix(in srgb, var(--ca, var(--gold)) 82%, #fbf8ef);
+  color: color-mix(in srgb, var(--ca, var(--gold)) 82%, var(--cream));
   text-decoration: none;
   padding-bottom: 1px;
   border-bottom: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 42%, transparent);
   transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
 .gal-crumbs a:hover {
-  color: #fff;
+  color: var(--ink-max);
   border-color: var(--ca, var(--gold));
 }
 .gal-crumbs > span:last-child {
@@ -951,10 +951,10 @@
   gap: 0.42rem;
   padding: 0.55rem 0.82rem;
   color: var(--gold-hi);
-  background: rgba(14, 14, 19, 0.88);
+  background: rgba(var(--bg-rgb), 0.88);
   border: 1px solid var(--hairline);
   border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+  box-shadow: 0 8px 24px rgba(var(--shadow-rgb), 0.32);
   font-family: var(--sans);
   font-size: 0.78rem;
   letter-spacing: 0.06em;
@@ -966,9 +966,9 @@
 }
 .gallery-to-top[hidden] { display: none; }
 .gallery-to-top:hover {
-  color: #fff;
+  color: var(--ink-max);
   border-color: var(--gold-soft);
-  background: rgba(25, 22, 17, 0.94);
+  background: rgba(var(--soft-rgb), 0.96);
   box-shadow: 0 0 20px -5px rgba(216, 178, 90, 0.5);
   transform: translateY(-2px);
 }
@@ -1056,7 +1056,7 @@
   max-width: 100%;
 }
 .ide-ch:hover figcaption {
-  color: color-mix(in srgb, var(--ca, var(--gold)) 55%, #fbf8ef);
+  color: color-mix(in srgb, var(--ca, var(--gold)) 55%, var(--cream));
   text-shadow: 0 0 14px color-mix(in srgb, var(--ca, var(--gold)) 55%, transparent);
 }
 
@@ -1129,20 +1129,20 @@
 .ch-misc-item:hover {
   border-color: color-mix(in srgb, var(--ca, var(--gold)) 55%, transparent);
   transform: translateY(-3px);
-  box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 14px 30px -14px rgba(var(--shadow-rgb), 0.7);
 }
 .ch-misc-item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; display: block; }
 .ch-misc-no {
   position: absolute; top: 0.5rem; left: 0.6rem; z-index: 2;
   font-family: var(--serif); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.1em;
   color: color-mix(in srgb, var(--ca, var(--gold)) 72%, #fff);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 1px 6px rgba(var(--shadow-rgb), 0.85);
 }
 .ch-misc-cap {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
   padding: 1.1rem 0.6rem 0.5rem;
   font-family: var(--serif); font-size: 0.82rem; letter-spacing: 0.1em;
-  color: color-mix(in srgb, var(--ca, var(--gold)) 55%, #fbf8ef);
+  color: color-mix(in srgb, var(--ca, var(--gold)) 55%, var(--cream));
   background: linear-gradient(180deg, transparent, rgba(8, 7, 11, 0.86) 72%);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   pointer-events: none;
@@ -1168,7 +1168,7 @@
   object-fit: contain;
   border-radius: var(--radius);
   border: 1px solid var(--hairline);
-  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 30px 80px -20px rgba(var(--shadow-rgb), 0.9);
 }
 @keyframes galLbIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -1184,19 +1184,19 @@
 .ver-item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; display: block; transition: transform .5s var(--ease); }
 .ver-item:hover img { transform: scale(1.05); }
 .ver-item:hover { border-color: color-mix(in srgb, var(--ca, var(--gold)) 55%, transparent); }
-.ver-tag { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: .32rem .4rem; font-size: .68rem; letter-spacing: .08em; color: #f3f0e8; background: linear-gradient(transparent, rgba(0,0,0,.85)); text-align: center; }
+.ver-tag { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: .32rem .4rem; font-size: .68rem; letter-spacing: .08em; color: #f3f0e8; background: linear-gradient(transparent, rgba(var(--shadow-rgb), .85)); text-align: center; }
 
 /* 版本图 · 页面内小窗口（带 标注+说明） */
 .ver-view { position: fixed; inset: 0; z-index: 1001; background: rgba(8,7,11,.82); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 4vh 4vw; animation: galLbIn .22s var(--ease); }
 .ver-view[hidden] { display: none; }
-.ver-view-card { position: relative; max-width: min(1180px, 96vw); max-height: 94vh; background: #141319; border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 30%, transparent); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px -20px rgba(0,0,0,.85); display: flex; flex-direction: column; }
+.ver-view-card { position: relative; max-width: min(1180px, 96vw); max-height: 94vh; background: #141319; border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 30%, transparent); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px -20px rgba(var(--shadow-rgb), .85); display: flex; flex-direction: column; }
 .ver-view-head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .5rem .85rem; border-bottom: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 20%, transparent); background: color-mix(in srgb, var(--ca, var(--gold)) 8%, transparent); }
 .ver-view-body { display: flex; min-height: 0; flex: 1 1 auto; }
 .ver-view-img { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #0d0c11; }
 .ver-view-img img { max-width: 100%; max-height: 80vh; object-fit: contain; display: block; }
 .ver-view-side { flex: 0 0 320px; max-width: 42vw; border-left: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 20%, transparent); padding: 1rem 1.1rem; overflow-y: auto; }
 .ver-view-side-h { margin: 0 0 .6rem; font: 700 .92rem/1 var(--serif); letter-spacing: .16em; color: var(--ca, var(--gold)); }
-.ver-view-x { border: 0; background: rgba(0,0,0,.35); color: #e9e2cf; font-size: 1.25rem; line-height: 1; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; flex: none; }
+.ver-view-x { border: 0; background: rgba(var(--shadow-rgb), .35); color: #e9e2cf; font-size: 1.25rem; line-height: 1; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; flex: none; }
 .ver-view-x:hover { background: color-mix(in srgb, var(--ca, var(--gold)) 85%, #fff); color: #141008; }
 .ver-view-tag { display: inline-block; font: 700 .72rem/1 var(--serif); letter-spacing: .1em; color: var(--ca, var(--gold)); border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 45%, transparent); border-radius: 999px; padding: .15rem .55rem; }
 .ver-view-note { margin: 0; font-size: 1.05rem; line-height: 1.9; color: #d4cdba; white-space: pre-wrap; }
@@ -1208,3 +1208,172 @@
   .ver-view-img { flex: none; }
   .ver-view-img img { width: 100%; max-height: 58vh; object-fit: contain; }
 }
+
+
+/* ============================================================
+   主题扩展：画框样式 + 氛围粒子（由 theme.frame / theme.dust 选择）
+   默认（不写）= 鎏金框 + 光尘上浮，与旧版一致
+   ============================================================ */
+
+/* ---- 画框：iron 铁艺（硬朗、铆钉、无扫光） ---- */
+.fr-iron .ch-figure {
+  border: 2px solid color-mix(in srgb, var(--ca, var(--gold)) 30%, #6b7078);
+  border-radius: 1px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--ca2, #222) 30%, var(--mat-a)), var(--mat-b));
+  animation: figIn 0.8s var(--ease) both;
+}
+.fr-iron .ch-figure::before { inset: 4px; border: 1px solid color-mix(in srgb, #8a9099 38%, transparent); border-radius: 0; }
+.fr-iron .ch-figure::after {
+  inset: 3px;
+  background:
+    radial-gradient(circle, color-mix(in srgb, #aab0b8 85%, transparent) 0 2.4px, transparent 3px) top left / 14px 14px no-repeat,
+    radial-gradient(circle, color-mix(in srgb, #aab0b8 85%, transparent) 0 2.4px, transparent 3px) top right / 14px 14px no-repeat,
+    radial-gradient(circle, color-mix(in srgb, #aab0b8 85%, transparent) 0 2.4px, transparent 3px) bottom left / 14px 14px no-repeat,
+    radial-gradient(circle, color-mix(in srgb, #aab0b8 85%, transparent) 0 2.4px, transparent 3px) bottom right / 14px 14px no-repeat;
+}
+.fr-iron .ch-fullimg { outline-color: color-mix(in srgb, var(--ca, var(--gold)) 38%, transparent); outline-offset: 5px; }
+
+/* ---- 画框：ink 水墨/素笺（单细线、宽衬边、纸感） ---- */
+.fr-ink .ch-figure {
+  --mat: clamp(16px, 3vw, 28px);
+  border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 22%, var(--hairline));
+  border-radius: 0;
+  background: linear-gradient(170deg, color-mix(in srgb, var(--ca, var(--gold)) 7%, #131316), #0c0c0f);
+  animation: figIn 0.9s var(--ease) both;
+}
+.fr-ink .ch-figure::before { display: none; }
+.fr-ink .ch-figure::after {
+  inset: 10px;
+  background:
+    linear-gradient(var(--ca, var(--gold)), var(--ca, var(--gold))) top left / 36px 1px no-repeat,
+    linear-gradient(var(--ca, var(--gold)), var(--ca, var(--gold))) bottom right / 36px 1px no-repeat;
+  opacity: 0.7;
+}
+.fr-ink .ch-fullimg { outline: 0; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ca, var(--gold)) 18%, transparent); }
+
+/* ---- 画框：glass 琉璃/星辉（圆角、通透、内发光） ---- */
+.fr-glass .ch-figure {
+  border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 55%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(115deg, transparent 42%, color-mix(in srgb, var(--ch, var(--ca, var(--gold))) 20%, transparent) 50%, transparent 58%) 0 0 / 260% 100% no-repeat,
+    linear-gradient(160deg, color-mix(in srgb, var(--ca, var(--gold)) 14%, var(--mat-a)), color-mix(in srgb, var(--ca2, #222) 30%, var(--mat-b)));
+  box-shadow: inset 0 0 28px -10px color-mix(in srgb, var(--ca, var(--gold)) 50%, transparent), 0 30px 70px -30px color-mix(in srgb, var(--ca2, #000) 60%, transparent);
+}
+.fr-glass .ch-figure::before { border-radius: 11px; border-color: color-mix(in srgb, var(--ch, var(--ca, var(--gold))) 30%, transparent); }
+.fr-glass .ch-figure::after { background: none; }
+.fr-glass .ch-fullimg { border-radius: 8px; outline: 0; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ca, var(--gold)) 35%, transparent), 0 0 24px -6px color-mix(in srgb, var(--ca, var(--gold)) 40%, transparent); }
+
+/* ---- 画框：regal 王家（粗双线、菱形角饰、更厚衬边） ---- */
+.fr-regal .ch-figure {
+  --mat: clamp(16px, 2.8vw, 26px);
+  border: 4px double color-mix(in srgb, var(--ca, var(--gold)) 70%, #2a2316);
+  border-radius: 2px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--ca2, #222) 38%, var(--mat-a)), var(--mat-b));
+}
+.fr-regal .ch-figure::before { inset: 6px; border-color: color-mix(in srgb, var(--ca, var(--gold)) 40%, transparent); }
+.fr-regal .ch-figure::after {
+  inset: -1px;
+  background:
+    linear-gradient(45deg, var(--ca, var(--gold)) 0 50%, transparent 50%) top left / 13px 13px no-repeat,
+    linear-gradient(135deg, var(--ca, var(--gold)) 0 50%, transparent 50%) top right / 13px 13px no-repeat,
+    linear-gradient(-45deg, var(--ca, var(--gold)) 0 50%, transparent 50%) bottom left / 13px 13px no-repeat,
+    linear-gradient(-135deg, var(--ca, var(--gold)) 0 50%, transparent 50%) bottom right / 13px 13px no-repeat;
+}
+.fr-regal .ch-fullimg { outline-offset: 7px; outline-color: color-mix(in srgb, var(--ca, var(--gold)) 38%, transparent); }
+
+/* ---- 画框：organic 自然/柔和（大圆角、虚线内框、柔光） ---- */
+.fr-organic .ch-figure {
+  border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 40%, transparent);
+  border-radius: 22px;
+  background: linear-gradient(165deg, color-mix(in srgb, var(--ca, var(--gold)) 11%, var(--mat-a)), color-mix(in srgb, var(--ca2, #222) 26%, var(--mat-b)));
+}
+.fr-organic .ch-figure::before { border-radius: 17px; border-style: dashed; border-color: color-mix(in srgb, var(--ca, var(--gold)) 30%, transparent); }
+.fr-organic .ch-figure::after { background: none; }
+.fr-organic .ch-fullimg { border-radius: 12px; outline: 0; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ca, var(--gold)) 28%, transparent); }
+
+/* ---- 氛围粒子：ember 火星（橙红、更快、上浮闪烁） ---- */
+.dust-ember .stage-dust i {
+  background: color-mix(in srgb, var(--ca, #e06a2a) 55%, #ffb066);
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--ca, #e06a2a) 70%, transparent);
+  animation-duration: calc(var(--drift, 20s) * 0.6);
+}
+/* ---- snow 雪/星屑（冷白，缓慢下落） ---- */
+.dust-snow .stage-dust i, .dust-petal .stage-dust i, .dust-leaf .stage-dust i {
+  bottom: auto; top: -4%;
+  animation-name: dustFall;
+}
+.dust-snow .stage-dust i {
+  background: #eaf2ff;
+  box-shadow: 0 0 7px 1px color-mix(in srgb, #bcd4ff 80%, transparent);
+}
+/* ---- petal 花瓣（粉红，飘落摇摆） ---- */
+.dust-petal .stage-dust i {
+  width: calc(var(--size, 3px) * 2.2); height: calc(var(--size, 3px) * 1.5);
+  border-radius: 80% 20% 80% 20%;
+  background: color-mix(in srgb, var(--ca, #e48aa0) 70%, #ffd7e0);
+  box-shadow: none;
+}
+/* ---- leaf 叶片（绿，飘落摇摆） ---- */
+.dust-leaf .stage-dust i {
+  width: calc(var(--size, 3px) * 2.2); height: calc(var(--size, 3px) * 1.3);
+  border-radius: 90% 10% 90% 10%;
+  background: color-mix(in srgb, var(--ca, #7fa06a) 75%, #cfe6a8);
+  box-shadow: none;
+}
+@keyframes dustFall {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  8%   { opacity: 0.8; }
+  50%  { transform: translate(calc(var(--dx, 1) * 34px), 50vh) rotate(160deg); }
+  85%  { opacity: 0.35; }
+  100% { transform: translate(calc(var(--dx, 1) * -28px), calc(100vh + 40px)) rotate(320deg); opacity: 0; }
+}
+
+
+/* ============================================================
+   日间模式 · 画廊适配
+   ============================================================ */
+/* 灯箱 / 版本查看 / 地点志 弹层：作品展示场景，日间也保持深色，并固定一套夜间变量 */
+:root[data-theme="light"] .ver-view,
+:root[data-theme="light"] .loc-view,
+:root[data-theme="light"] .gal-lightbox {
+  --ink: #f3f0e8; --ink-dim: #bdb8ac; --ink-faint: #8d887c;
+  --ink-rgb: 243, 240, 232; --bg-rgb: 10, 10, 14; --soft-rgb: 18, 18, 23; --shadow-rgb: 0, 0, 0;
+  --hairline: rgba(243, 240, 232, 0.14);
+  --cream: #fbf8ef; --ink-max: #ffffff;
+  --gold: #d8b25a; --gold-hi: #f0d894; --gold-soft: rgba(216, 178, 90, 0.4);
+  color: var(--ink);
+}
+:root[data-theme="light"] .ver-view *,
+:root[data-theme="light"] .loc-view *,
+:root[data-theme="light"] .gal-lightbox * { --ca: var(--ca-d); }
+
+/* 详情页背景：立绘模糊底图在日间调亮、变淡，别把页面压成灰块 */
+:root[data-theme="light"] .stage-tint {
+  filter: blur(70px) saturate(1.15) brightness(1.2); opacity: 0.3;
+  -webkit-mask-image: radial-gradient(ellipse 70% 62% at 50% 38%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 62% at 50% 38%, #000 35%, transparent 100%);
+}
+:root[data-theme="light"] .stage-tint::after {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, transparent 25%, var(--bg) 100%),
+    linear-gradient(180deg, rgba(var(--bg-rgb), 0.2), rgba(var(--bg-rgb), 0.7));
+}
+:root[data-theme="light"] .stage-motif { opacity: 0.09; }
+:root[data-theme="light"] .stage-dust i { opacity: 0.6; box-shadow: none; }
+
+/* 名字渐变：日间从深墨过渡到主题色，保证对比度 */
+:root[data-theme="light"] .ch-name {
+  background-image: linear-gradient(105deg,
+    var(--ca, var(--gold)) 0%,
+    color-mix(in srgb, var(--ca, var(--gold)) 62%, #1f1a12) 45%,
+    var(--ca, var(--gold)) 100%);
+}
+:root[data-theme="light"] .gal-detail-name {
+  background-image: linear-gradient(180deg, #1f1a12 20%, var(--ca, #5a4a2a) 100%);
+}
+
+/* 画框衬边的扫光在日间改为暖白 */
+:root[data-theme="light"] .ch-figure { box-shadow: 0 24px 50px -28px rgba(var(--shadow-rgb), 0.55); }
+:root[data-theme="light"] .ch-figure { animation: figIn 0.8s var(--ease) both, matSweep 9s ease-in-out 1.2s infinite; }
+@media (prefers-reduced-motion: reduce) { :root[data-theme="light"] .ch-figure { animation: none; } }

@@ -17,7 +17,16 @@
   --gold-soft: rgba(216, 178, 90, 0.4);
   --gold-faint: rgba(216, 178, 90, 0.12);
   --crimson:   #a03d3d;
-  --hairline:  rgba(243, 240, 232, 0.14);
+  --hairline:  rgba(var(--ink-rgb), 0.14);
+  /* 可换肤的底层变量（日间模式见文末 :root[data-theme="light"]） */
+  --bg-rgb: 10, 10, 14;
+  --soft-rgb: 18, 18, 23;
+  --ink-rgb: 243, 240, 232;
+  --shadow-rgb: 0, 0, 0;
+  --cream: #fbf8ef;          /* 最亮的文字/高光色 */
+  --ink-max: #ffffff;
+  --mat-a: #14141a;          /* 画框衬底：亮部 / 暗部 */
+  --mat-b: #0b0b10;
   --max:       1160px;
   --radius:    4px;
   --serif: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
@@ -54,7 +63,7 @@ body::before {
   inset: 0;
   z-index: 90;
   pointer-events: none;
-  background: radial-gradient(ellipse 120% 90% at 50% 40%, transparent 58%, rgba(0, 0, 0, 0.5) 100%);
+  background: radial-gradient(ellipse 120% 90% at 50% 40%, transparent 58%, rgba(var(--shadow-rgb), 0.5) 100%);
 }
 body::after {
   content: "";
@@ -81,7 +90,7 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
   gap: 1.5rem;
   padding: 0.9rem clamp(1rem, 4vw, 2.5rem);
-  background: rgba(10, 10, 14, 0.78);
+  background: rgba(var(--bg-rgb), 0.78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--hairline);
@@ -292,7 +301,7 @@ main {
   text-indent: 0.14em;
   white-space: nowrap;
   font-size: clamp(1.6rem, 5vw, 3.1rem);
-  background: linear-gradient(180deg, #fbf8ef 26%, #e8d9ae 58%, #c9a44e 100%);
+  background: linear-gradient(180deg, var(--cream) 26%, #e8d9ae 58%, #c9a44e 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -329,7 +338,7 @@ main {
     var(--bg-soft);
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
-  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 24px 60px -30px rgba(var(--shadow-rgb), 0.9);
 }
 .intro::before {
   content: "";
@@ -477,7 +486,7 @@ main {
   border-color: color-mix(in srgb, var(--accent) 55%, transparent);
   transform: translateY(-6px);
   box-shadow:
-    0 26px 54px -20px rgba(0, 0, 0, 0.9),
+    0 26px 54px -20px rgba(var(--shadow-rgb), 0.9),
     0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
     0 0 42px -12px color-mix(in srgb, var(--accent) 34%, transparent);
 }
@@ -709,7 +718,7 @@ main {
   letter-spacing: 0.24em;
   text-indent: 0.24em;
   line-height: 1.25;
-  background: linear-gradient(180deg, #fbf8ef 30%, #ded0a6 82%);
+  background: linear-gradient(180deg, var(--cream) 30%, #ded0a6 82%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -817,7 +826,7 @@ main {
 .art-frame:focus-visible {
   border-color: rgba(216, 178, 90, 0.5);
   transform: translateY(-5px);
-  box-shadow: 0 22px 48px -20px rgba(0, 0, 0, 0.9), 0 0 34px -12px rgba(216, 178, 90, 0.35);
+  box-shadow: 0 22px 48px -20px rgba(var(--shadow-rgb), 0.9), 0 0 34px -12px rgba(216, 178, 90, 0.35);
 }
 .art-frame .mat-core {
   position: absolute;
@@ -865,7 +874,7 @@ main {
   aspect-ratio: 16 / 9;
   min-height: 320px;
   overflow: hidden;
-  box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.55);
+  box-shadow: inset 0 0 90px rgba(var(--shadow-rgb), 0.55);
 }
 .map-stage .map-center {
   position: absolute;
@@ -993,7 +1002,7 @@ main {
 .sr-item:hover {
   border-color: color-mix(in srgb, var(--src-color) 50%, transparent);
   transform: translateY(-3px);
-  box-shadow: 0 16px 38px -18px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 16px 38px -18px rgba(var(--shadow-rgb), 0.85);
 }
 
 .sr-thumb { flex: none; }
@@ -1182,3 +1191,84 @@ main {
   background: linear-gradient(90deg, var(--gold-faint), transparent 70%);
   letter-spacing: 0.06em;
 }
+
+
+/* ============================================================
+   主题色注入：页面用 --ca（由 JS 写入的 --ca-d / --ca-l 二选一）
+   夜间用「提亮到可读」版，日间用「提暗到可读」版；没写主题色的页面自动回落到金色
+   ============================================================ */
+* { --ca: var(--ca-d); }
+:root[data-theme="light"] * { --ca: var(--ca-l); }
+
+/* ============================================================
+   日间模式 · 柔和暖纸色（不刺眼，保留鎏金气质）
+   ============================================================ */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:        #f4efe5;
+  --bg-soft:   #ece5d6;
+  --bg-lift:   #e3dbc9;
+  --ink:       #2a251d;
+  --ink-dim:   #5a5344;
+  --ink-faint: #7b7364;
+  --gold:      #94701e;
+  --gold-hi:   #6f5212;
+  --gold-soft: rgba(148, 112, 30, 0.42);
+  --gold-faint: rgba(148, 112, 30, 0.13);
+  --crimson:   #9a3a3a;
+  --bg-rgb: 244, 239, 229;
+  --soft-rgb: 236, 229, 214;
+  --ink-rgb: 42, 37, 29;
+  --shadow-rgb: 70, 52, 22;
+  --cream: #1f1a12;
+  --ink-max: #14100a;
+  --mat-a: #efe8d8;
+  --mat-b: #e4dac5;
+}
+:root[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse 95% 55% at 50% -10%, rgba(148, 112, 30, 0.08), transparent 62%),
+    radial-gradient(ellipse 70% 45% at 90% 112%, rgba(160, 61, 61, 0.05), transparent 65%),
+    linear-gradient(180deg, #f6f1e7 0%, #f2ece0 45%, #efe8da 100%);
+}
+:root[data-theme="light"] body::before {
+  background: radial-gradient(ellipse 120% 90% at 50% 40%, transparent 62%, rgba(120, 92, 44, 0.1) 100%);
+}
+:root[data-theme="light"] body::after { opacity: 0.035; mix-blend-mode: multiply; }
+:root[data-theme="light"] ::selection { background: var(--gold); color: #fff8e8; }
+
+/* 主页大标题等写死金色渐变的文字：日间改为深金 */
+:root[data-theme="light"] .hero-title,
+:root[data-theme="light"] .page-title {
+  background-image: linear-gradient(180deg, #3a2e14 20%, #7a5a14 100%);
+}
+
+/* ---- 主题切换按钮（顶栏） ---- */
+.theme-toggle {
+  flex: none;
+  width: 2.1rem; height: 2.1rem;
+  display: inline-grid; place-items: center;
+  margin-left: 0.2rem;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: rgba(var(--ink-rgb), 0.04);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: color .25s var(--ease), border-color .25s var(--ease), transform .4s var(--ease);
+}
+.theme-toggle:hover { color: var(--gold); border-color: var(--gold-soft); transform: rotate(18deg); }
+.theme-toggle:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
+.theme-toggle svg { width: 1.05rem; height: 1.05rem; display: block; }
+.theme-toggle .i-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .i-sun { display: block; }
+:root[data-theme="light"] .theme-toggle .i-moon { display: none; }
+
+.site-header .site-nav { margin-left: auto; }
+
+/* 日间：各分区强调色加深以保证小字可读 */
+:root[data-theme="light"] .theme-gallery { --accent: #94701e; }
+:root[data-theme="light"] .theme-map     { --accent: #2f7d6a; }
+:root[data-theme="light"] .theme-cp      { --accent: #b04a52; }
+:root[data-theme="light"] .theme-forum   { --accent: #3f6aa8; }
+:root[data-theme="light"] .theme-search  { --accent: #6f685a; }
