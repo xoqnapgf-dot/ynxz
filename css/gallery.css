@@ -618,46 +618,76 @@
 }
 @media (prefers-reduced-motion: reduce) { .ch-name { animation: none; } }
 
-/* 左栏：立绘卡——边框完全贴合图片，无内留空 */
+/* 左栏：立绘卡——装裱式画框：框在画面「外面」留出衬边，线条不压在立绘上 */
 .ch-visual { min-width: 0; }
 .ch-figure {
+  --mat: clamp(12px, 2.2vw, 20px);
   position: relative;
   margin: 0;
-  padding: 0;
-  background: var(--bg);
-  border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 40%, var(--hairline));
-  border-radius: var(--radius);
+  padding: var(--mat);
+  border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 42%, var(--hairline));
+  border-radius: calc(var(--radius) + 1px);
   overflow: hidden;
+  /* 衬底：主题色微染的暗色 + 一道缓慢扫过的细光（只在衬边可见，画面在其上） */
+  background:
+    linear-gradient(115deg, transparent 42%, color-mix(in srgb, var(--ca, var(--gold)) 16%, transparent) 50%, transparent 58%) 0 0 / 260% 100% no-repeat,
+    linear-gradient(160deg, color-mix(in srgb, var(--ca, var(--gold)) 9%, #14141a), #0b0b10 58%, color-mix(in srgb, var(--ca2, #000) 22%, #0b0b10));
   box-shadow: 0 30px 70px -30px color-mix(in srgb, var(--ca2, #000) 60%, transparent);
+  animation: figIn 0.8s var(--ease) both, figGlow 8s ease-in-out 0.8s infinite, matSweep 9s ease-in-out 1.2s infinite;
 }
-/* 画框内衬细线（贴边 5px，与外框形成双线，不产生留空感） */
+/* 衬边外侧细线（落在留白区，不碰画面） */
 .ch-figure::before {
   content: "";
   position: absolute;
   inset: 5px;
-  border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 26%, transparent);
+  border-radius: 2px;
   pointer-events: none;
   z-index: 1;
 }
-/* 左上角框饰 */
+/* 四角框饰：同样落在衬边里 */
 .ch-figure::after {
   content: "";
   position: absolute;
-  top: -1px; left: -1px;
-  width: 22px; height: 22px;
-  border-top: 2px solid var(--ca, var(--gold));
-  border-left: 2px solid var(--ca, var(--gold));
+  inset: 2px;
+  pointer-events: none;
+  z-index: 2;
+  --c: var(--ca, var(--gold));
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 20px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top left / 2px 20px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 20px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 2px 20px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 20px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 20px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 20px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 20px no-repeat;
+  opacity: 0.85;
+  transition: opacity 0.4s var(--ease);
 }
-/* 原图：等比完整显示，绝不裁切；由图片本身撑出画框尺寸 */
+/* 原图：等比完整显示，绝不裁切；自带一圈离画面 6px 的内框线（画面之外） */
 .ch-fullimg {
+  position: relative;
   display: block;
   width: 100%;
   height: auto;
   margin: 0 auto;
-  border-radius: 0;
+  border-radius: 1px;
+  outline: 1px solid color-mix(in srgb, var(--ca, var(--gold)) 24%, transparent);
+  outline-offset: 6px;
+  transition: filter 0.5s var(--ease), transform 0.6s var(--ease);
+}
+.ch-figure:hover .ch-fullimg { filter: brightness(1.05) saturate(1.04); }
+.ch-figure:hover::after { opacity: 1; }
+@keyframes figIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes matSweep {
+  0%, 55%, 100% { background-position: 100% 0, 0 0; }
+  80% { background-position: 0% 0, 0 0; }
 }
 /* 立绘轻呼吸：主题色辉光缓慢涨落（reduced-motion 关闭） */
-.ch-figure { animation: figGlow 8s ease-in-out infinite; }
 @keyframes figGlow {
   0%, 100% { box-shadow: 0 30px 70px -30px color-mix(in srgb, var(--ca2, #000) 60%, transparent); }
   50% { box-shadow:
@@ -957,9 +987,9 @@
 /* ===== 意识形态内页：角色网格 ===== */
 .ide-ch-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-top: 1.4rem;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.6rem;
 }
 .ide-ch {
   cursor: pointer;
@@ -1061,7 +1091,8 @@
 @media (max-width: 600px) {
   .ch-layout { grid-template-columns: 1fr; gap: 1.2rem; }
   .ch-visual, .ch-info { width: 100%; }
-  .ch-figure { max-width: 78vw; margin: 0 auto; }
+  .ch-figure { max-width: 82vw; margin: 0 auto; --mat: 11px; }
+  .ch-fullimg { outline-offset: 4px; }
   .ide-ch-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
   .ch-misc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
   .gal-detail-name { font-size: clamp(1.5rem, 8vw, 2.4rem); }
