@@ -1584,6 +1584,18 @@
   /* ============ 角色界面：原图 + 后续文本 ============ */
   var album = { idx: 0 };
 
+  /* 还没写人设的角色：右栏给一块克制的占位（所属意识形态 + 一句释义 + 整理中），避免大片空白 */
+  function pendingHtml(pair, e) {
+    if (e.bio || (e.info && e.info.length) || e.desc || e.text) return '';
+    var ideo = pair.ideo || {};
+    var first = String(ideo.desc || '').split(/\n\s*\n/)[0].replace(/\s+/g, ' ');
+    var cut = first.length > 96 ? first.slice(0, 96).replace(/[，、；：\s]+$/, '') + '…' : first;
+    return '<div class="ch-pending">' +
+      '<dl class="ch-facts"><div class="fact-row"><dt>意识形态</dt><dd>' + esc(ideo.name || '') + '</dd></div></dl>' +
+      (cut ? '<p class="ch-pending-def">' + esc(cut) + '</p>' : '') +
+      '<p class="ch-pending-note"><span class="diamond"></span>人物设定整理中</p>' +
+    '</div>';
+  }
   function openCharacter(pair, fromIdeo) {
     var key = layerKey('character', pair.ch.id);
     var restoreY = layerScrolls[key] || 0;               /* 先取该层上次离开位置 */
@@ -1773,6 +1785,7 @@
           (e.info && e.info.length ? '<dl class="ch-facts">' + e.info.map(function (f) { return '<div class="fact-row"><dt>' + esc(f.k) + '</dt><dd>' + linkifyPlaces(f.v) + '</dd></div>'; }).join('') + '</dl>' : '') +
           (e.desc ? '<div class="ch-body ch-body-note">' + textHtml(e.desc) + '</div>' : '') +
           (e.text ? '<div class="ch-body">' + textHtml(e.text) + '</div>' : '') +
+          pendingHtml(pair, e) +
         '</div>' +
 
       '</div>' +
