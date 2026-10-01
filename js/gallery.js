@@ -251,7 +251,19 @@
   }
 
   /* 纹样徽标：每个 motif 一套构图 */
+  /* 个别纹样原稿偏小、偏细，在徽章环内显得单薄：统一按倍率放大，让整套封面视觉重量接近 */
+  var MOTIF_SCALE = {
+    center: 1.35, solo: 1.25, reach: 1.25, wrench: 1.3, glasslow: 1.25, crescent: 1.3, clasp: 1.5, island: 1.5, dividers: 1.4,
+    bridge: 1.25, qmark: 1.3, halospark: 1.5, geode: 1.3, relarrows: 1.3, dove: 1.4, turnstile: 1.4,
+    helmet: 1.3, lantern: 1.3, prism: 1.3, geoscale: 1.3, peak: 1.2, patchwork: 1.2, quill: 1.2,
+    sprig: 1.2, plumb: 1.2, flagwheat: 1.2, ideacity: 1.2, crownscroll: 1.2, castle: 1.2,
+    deductree: 1.2, coinstack: 1.3, unitnode: 1.4, gearcoin: 1.5, starcoin: 1.4, candles: 1.4, transcend: 1.2, abacus: 1.2, shieldlock: 1.25, imperialorb: 1.3, eagle: 1.3, duality: 1.1, sisyphus: 1.3, ecocycle: 1.2, swordstar: 1.2, fan: 1.15, peony: 1.3, feather: 1.2, web: 1.15, brokenchain: 1.3, ship: 1.2, hourglass: 1.15, unlock: 1.3, crown: 1.3, mirror: 1.15, padlock: 1.15, brokencrown: 1.45, crownslash: 1.55, taiji: 1.2
+  };
   function motifDeco(motif, col) {
+    var g = motifDecoRaw(motif, col), k = MOTIF_SCALE[motif];
+    return k ? '<g transform="translate(200 256) scale(' + k + ') translate(-200 -256)">' + g + '</g>' : g;
+  }
+  function motifDecoRaw(motif, col) {
     var g = '', i, a, r1, r2;
     var C = 200, CY = 256;
     if (motif === 'compass') {
@@ -708,13 +720,14 @@
            '<line x1="-24" y1="44" x2="30" y2="44" stroke-width="2.4" opacity="0.6"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
-    if (motif === 'syndical') {     /* 安那其工团主义：黑红分裂旗 */
-      g += '<line x1="-52" y1="-78" x2="-52" y2="82" stroke-width="3" opacity="0.8"/>' +
-           '<path d="M-52 -74 L46 -74 L46 -4 L-52 -4 Z" stroke-width="2.4" opacity="0.85"/>' +
-           '<path d="M-52 -74 L46 -74 L-52 -4 Z" stroke-width="1.4" opacity="0.5" fill="' + col + '" fill-opacity="0.18"/>' +
-           '<path d="M46 -74 L46 -4 L-52 -4 Z" stroke-width="1.4" opacity="0.5" fill="' + col + '" fill-opacity="0.05"/>' +
-           '<circle cx="-52" cy="-80" r="5" fill="' + col + '" stroke="none" opacity="0.8"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    if (motif === 'syndical') {     /* 安那其工团主义：黑红分裂旗 + 齿轮（工团直接行动） */
+      g += '<line x1="-62" y1="-98" x2="-62" y2="90" stroke-width="4" opacity="0.9"/>' +
+           '<circle cx="-62" cy="-104" r="5" fill="' + col + '" stroke="none" opacity="0.9"/>' +
+           '<path d="M-62 -86 Q-22 -102 18 -86 T76 -86 L-62 -8 Z" stroke-width="2.6" opacity="0.95" fill="' + col + '" fill-opacity="0.5"/>' +
+           '<path d="M76 -86 L76 -8 Q36 8 -2 -8 T-62 -8 Z" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.05"/>' +
+           '<circle cx="8" cy="52" r="17" stroke-width="3.4" opacity="0.9"/><circle cx="8" cy="52" r="6" stroke-width="2.4" opacity="0.8"/>';
+      for (i = 0; i < 8; i++) { a = i * 45 * Math.PI / 180; g += '<line x1="' + (8 + Math.cos(a) * 19).toFixed(1) + '" y1="' + (52 + Math.sin(a) * 19).toFixed(1) + '" x2="' + (8 + Math.cos(a) * 28).toFixed(1) + '" y2="' + (52 + Math.sin(a) * 28).toFixed(1) + '" stroke-width="8" opacity="0.85" stroke-linecap="butt"/>'; }
+      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'handaxe') {      /* 原始主义：打制石手斧 */
       g += '<path d="M0 -80 Q34 -50 30 6 Q26 60 0 84 Q-26 60 -30 6 Q-34 -50 0 -80 Z" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/>' +
@@ -730,13 +743,13 @@
            '<circle cy="' + (R / 2) + '" r="' + (R / 8) + '" stroke-width="1.6" opacity="0.85" fill="' + col + '" fill-opacity="0.5"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'circleA') {      /* 安那其资本主义：圈A（无政府） */
-      g += '<circle r="70" stroke-width="3" opacity="0.85"/>' +
-           '<path d="M-34 46 L0 -48 L34 46" stroke-width="4" opacity="0.9" stroke-linecap="round" fill="none"/>' +
-           '<line x1="-18" y1="12" x2="18" y2="12" stroke-width="4" opacity="0.9" stroke-linecap="round"/>' +
-           '<line x1="-46" y1="-48" x2="-22" y2="-24" stroke-width="3" opacity="0.6" stroke-linecap="round"/>' +
-           '<line x1="46" y1="-48" x2="22" y2="-24" stroke-width="3" opacity="0.6" stroke-linecap="round"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    if (motif === 'circleA') {      /* 安那其资本主义：圈A + 竖杠（$）+ 币缘齿纹 */
+      for (i = 0; i < 40; i++) { a = i * 9 * Math.PI / 180; g += '<line x1="' + (Math.cos(a) * 78).toFixed(1) + '" y1="' + (Math.sin(a) * 78).toFixed(1) + '" x2="' + (Math.cos(a) * 86).toFixed(1) + '" y2="' + (Math.sin(a) * 86).toFixed(1) + '" stroke-width="2" opacity="0.5" stroke-linecap="butt"/>'; }
+      g += '<circle r="70" stroke-width="4.4" opacity="0.95" fill="' + col + '" fill-opacity="0.07"/>' +
+           '<path d="M-44 68 L0 -50 L44 68" stroke-width="6" opacity="0.95"/>' +
+           '<line x1="-68" y1="18" x2="68" y2="18" stroke-width="6" opacity="0.95"/>' +
+           '<line x1="0" y1="-104" x2="0" y2="104" stroke-width="3" opacity="0.7"/>';
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'progress') {   /* 进步主义：上升折线箭头 */
       g += '<line x1="-72" y1="70" x2="72" y2="70" stroke-width="2" opacity="0.5"/>' +
@@ -979,21 +992,25 @@
            '<rect x="-72" y="-72" width="30" height="30" fill="' + col + '" fill-opacity="0.16" stroke="none"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'flagA') {       /* 安那其主义：旗上的圈A */
-      g += '<line x1="-64" y1="-84" x2="-64" y2="84" stroke-width="3" opacity="0.8"/>' +
-           '<path d="M-64 -70 L68 -70 L50 -36 L68 -2 L-64 -2 Z" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/>' +
-           '<circle cx="2" cy="-36" r="20" stroke-width="2.4" opacity="0.9"/>' +
-           '<path d="M2 -56 L-10 -16 M2 -56 L14 -16 M-4 -38 L8 -38" stroke-width="2.4" opacity="0.9"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
+    if (motif === 'flagA') {       /* 安那其主义：迎风黑旗上的圈A */
+      g += '<path d="M-60 -78 Q-14 -98 30 -78 T84 -80 L64 -34 L84 8 Q36 28 -10 8 T-60 10 Z" stroke-width="2" opacity="0.28" transform="translate(7 7)" fill="' + col + '" fill-opacity="0.08"/>' +
+           '<line x1="-68" y1="-100" x2="-68" y2="96" stroke-width="4.4" opacity="0.9"/>' +
+           '<circle cx="-68" cy="-106" r="5" fill="' + col + '" stroke="none" opacity="0.9"/>' +
+           '<path d="M-68 -86 Q-22 -106 22 -86 T76 -88 L56 -42 L76 0 Q28 20 -18 0 T-68 2 Z" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.16"/>' +
+           '<circle cx="2" cy="-44" r="29" stroke-width="3.6" opacity="0.95"/>' +
+           '<path d="M-14 -20 L2 -66 L18 -20" stroke-width="4.4" opacity="0.95"/>' +
+           '<line x1="-30" y1="-34" x2="34" y2="-34" stroke-width="4.4" opacity="0.95"/>' +
+           '<circle cx="-34" cy="60" r="2.6" fill="' + col + '" stroke="none" opacity="0.5"/><circle cx="-10" cy="74" r="1.8" fill="' + col + '" stroke="none" opacity="0.4"/><circle cx="26" cy="64" r="3" fill="' + col + '" stroke="none" opacity="0.45"/><circle cx="50" cy="78" r="1.6" fill="' + col + '" stroke="none" opacity="0.35"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 2) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
-    if (motif === 'wrench') {      /* 安那其共产主义：扳手（工人自治） */
-      g += '<line x1="-40" y1="40" x2="40" y2="-40" stroke-width="11" opacity="0.45" stroke-linecap="round"/>' +
-           '<circle cx="46" cy="-46" r="18" stroke-width="7" opacity="0.5"/>' +
-           '<circle cx="46" cy="-46" r="18" stroke-width="2.4" opacity="0.9"/>' +
-           '<line x1="46" y1="-64" x2="46" y2="-52" stroke-width="7" opacity="0.9"/>' +
-           '<circle cx="-46" cy="46" r="12" stroke-width="2.4" opacity="0.9"/>' +
-           '<circle cx="-46" cy="46" r="5" fill="' + col + '" stroke="none" opacity="0.4"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    if (motif === 'wrench') {      /* 安那其共产主义：扳手（工人自治）压在圈A之上 */
+      g += '<circle r="64" stroke-width="2.4" opacity="0.32" stroke-dasharray="3 7"/>' +
+           '<g transform="rotate(45)">' +
+             '<path d="M-9 -60.4 L-9 -44 A9 9 0 0 0 9 -44 L9 -60.4 A26 26 0 1 1 -9 -60.4 Z" stroke-width="4" opacity="0.95" fill="' + col + '" fill-opacity="0.16"/>' +
+             '<path d="M-8 -11.3 L-8 59.3 M8 -11.3 L8 59.3" stroke-width="4" opacity="0.95"/>' +
+             '<circle cy="74" r="15" stroke-width="4" opacity="0.95" fill="' + col + '" fill-opacity="0.16"/><circle cy="74" r="5.5" stroke-width="2.4" opacity="0.8"/>' +
+           '</g>';
+      return '<g transform="translate(' + (C + 9.5) + ',' + (CY - 9.5) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'brokencrown') { /* 安那其汉族主义：崩裂之冠（无君） */
       g += '<path d="M-52 40 L-52 -20 L-26 4 L0 -28 L26 4 L52 -20 L52 40 Z" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/>' +
@@ -1125,10 +1142,15 @@
            '<path d="M0 -34 L10 -11 L35 -11 L15 5 L23 30 L0 15 L-23 30 L-15 5 L-35 -11 L-10 -11 Z" stroke-width="2" opacity="0.9" fill="' + col + '" fill-opacity="0.16"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linejoin="round">' + g + '</g>';
     }
-    if (motif === 'heartA') {      /* 酷儿安那其主义：心与A */
-      g += '<path d="M0 58 C-50 22 -52 -26 -22 -30 C-8 -32 0 -20 0 -20 C0 -20 8 -32 22 -30 C52 -26 50 22 0 58 Z" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.12"/>' +
-           '<path d="M0 -8 L-11 20 M0 -8 L11 20 M-6 10 L6 10" stroke-width="2.4" opacity="0.9" stroke-linecap="round"/>';
-      return '<g transform="translate(' + C + ',' + (CY + 2) + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    if (motif === 'heartA') {      /* 酷儿安那其主义：心与A，微微倾斜、火花四溅 */
+      g += '<g transform="rotate(-7)">' +
+             '<path d="M0 62 C-58 22 -60 -34 -26 -40 C-8 -42 0 -26 0 -26 C0 -26 8 -42 26 -40 C60 -34 58 22 0 62 Z" stroke-width="4" opacity="0.95" fill="' + col + '" fill-opacity="0.16"/>' +
+             '<path d="M-16 28 L0 -22 L16 28 M-9 12 L9 12" stroke-width="4.6" opacity="0.95"/>' +
+           '</g>' +
+           '<path d="M62 -62 L66 -50 L78 -46 L66 -42 L62 -30 L58 -42 L46 -46 L58 -50 Z" stroke-width="2" opacity="0.85" fill="' + col + '" fill-opacity="0.35"/>' +
+           '<path d="M-66 -44 L-63 -36 L-55 -33 L-63 -30 L-66 -22 L-69 -30 L-77 -33 L-69 -36 Z" stroke-width="1.8" opacity="0.65" fill="' + col + '" fill-opacity="0.25"/>' +
+           '<path d="M-54 72 L-48 80 M-30 82 L-26 92" stroke-width="2.4" opacity="0.5"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 2) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'candles') {     /* 新自由主义：K线 */
       var cd = [[-44, -6, 26], [0, -30, 40], [44, 10, 30]];
@@ -1160,8 +1182,9 @@
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'starA') {       /* 安那其毛泽东主义：五角星含A */
-      g += '<path d="M0 -60 L15 -18 L58 -18 L23 8 L36 50 L0 24 L-36 50 L-23 8 L-58 -18 L-15 -18 Z" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/><path d="M0 -6 L-8 16 M0 -6 L8 16 M-4 8 L4 8" stroke-width="2.2" opacity="0.9" stroke-linecap="round"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linejoin="round">' + g + '</g>';
+      g += '<path d="M0 -84 L21 -26 L82 -26 L32 10 L51 70 L0 34 L-51 70 L-32 10 L-82 -26 L-21 -26 Z" stroke-width="3.6" opacity="0.95" fill="' + col + '" fill-opacity="0.2"/>' +
+           '<path d="M-14 22 L0 -20 L14 22 M-8 8 L8 8" stroke-width="4.4" opacity="0.95"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'heartwave') {   /* 情感主义：心与表达波 */
       g += '<path d="M0 40 C-34 16 -36 -18 -16 -20 C-6 -21 0 -12 0 -12 C0 -12 6 -21 16 -20 C36 -18 34 16 0 40 Z" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.12"/><path d="M-52 56 Q-38 46 -26 56 T0 56 T26 56 T52 56" stroke-width="2" opacity="0.6"/>';
