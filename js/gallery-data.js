@@ -1120,7 +1120,7 @@ var GALLERY_DATA = [
         id: 'conservatism-kangshenwei',
         name: '康瑟薇·贝尔',
         initial: 'K',
-        bio: '康瑟薇·贝尔是科鲁鲁一位教历史的老学者。她不信「越新越好」，也不肯把旧的一股脑连根拔起。\n\n她常说，守护是一种更长远的勇气：不是抗拒时间，而是替后人留下值得留下的东西，比如礼法、记忆、土地，也包括秩序。她还有一句常挂在嘴边的话：一个从不改变的国家，其实也轮不到它来保守。\n\n所以她反对的从来不是变革本身，而是为了推翻而推翻，把几代人攒下的东西一夜烧光的狂热。',
+        bio: '康瑟薇·贝尔是科鲁鲁一位教历史的老学者。她不信「越新越好」，也不肯把旧的一股脑连根拔起。\n\n她常说，守护是一种更长远的勇气：不是抗拒时间，而是替后人留下值得留下的东西，比如礼法、记忆、土地，也包括秩序。她还有一句常挂在嘴边的话：一个全然不肯改变的国家，其实也谈不上保守下去。\n\n所以她反对的从来不是变革本身，而是为了推翻而推翻，把几代人攒下的东西一夜烧光的狂热。',
         info: [
           { k: '身份', v: '科鲁鲁 · 史学学者' },
           { k: '出生日期', v: '新历494年' },
@@ -1282,7 +1282,7 @@ var GALLERY_DATA = [
         id: 'anarcho-syndicalism-rosa',
         name: '罗莎·杜鲁蒂',
         initial: 'L',
-        bio: '罗莎·杜鲁蒂是炼钢厂工人，也是工会组长。她天天守在炉前，最清楚厂子靠工人一双手撑着，拍板的却往往不是工人。她不服这个理，便去问、去想，最后认准一件事：工人本来就能自己管自己，不该总有人骑在头上。\n\n这股劲，她带进车间，也带进职会上。她嗓门大，心思却细；炉火映红脸的时候，最像平日里的她。她带头闹过几回罢工，能争的就去争，争不动的也从不拿空话哄工友。',
+        bio: '罗莎·杜鲁蒂是炼钢厂工人，也是工会组长。她天天守在炉前，最清楚厂子靠工人一双手撑着，拍板的却往往不是工人。她不服这个理，便去问、去想，最后认准一件事：工人本来就能自己管自己，不该总有人骑在头上。\n\n这股劲，她带进车间，也带进职会上。她嗓门大，心思却细；炉火映红脸颊的时候，她看上去最像她自己。她带头闹过几回罢工，能争的就去争，争不动的也从不拿空话哄工友。',
         info: [
           { k: '身份', v: '炼钢厂工人 · 工会组长' },
           { k: '出生日期', v: '新历504年5月4日' },
@@ -2116,7 +2116,7 @@ var GALLERY_DATA = [
         id: 'anarcho-communism-ankang',
         name: '安康',
         initial: 'A',
-        bio: '人如其名，安康把安那其共产主义的愿望落在「让人人安康」上。\n\n学院里的日子很有趣，只是安资小姐待她，总带着点说不清的亲近。\n\n她热情又慷慨，见谁都想塞点东西，也总想拉着人一起做事。仿佛只要大家都有得分享，世界就能离理想近一步。\n\n她热爱这座学院，也盼着有朝一日，能把安那其共产主义带到全世界。',
+        bio: '人如其名，安康把安那其共产主义的愿望落在「让人人安康」上。她热情又慷慨，见谁都想塞点东西，也总想拉着人一起做事，仿佛只要大家都有得分享，世界就能离理想近一步。\n\n学院里的日子很有趣，只是安资小姐待她，总带着点说不清的亲近。\n\n她热爱这座学院，也盼着有朝一日，能把安那其共产主义带到全世界。',
         info: [
           { k: '身份', v: '安那其学院 · 学员' },
           { k: '出生日期', v: '新历520年10月20日' },
@@ -2146,7 +2146,7 @@ var GALLERY_DATA = [
         id: 'anarcho-hannationalism-guyue',
         name: '顾月',
         initial: 'G',
-        bio: '顾月不来自这个世界。裂缝那一头，是另一个世界里的旧邦：礼崩、城破，王朝塌成她脚下的瓦砾。\n\n她从废墟里走出来，没读过多少大道理，只信眼前的事实：皇帝和百官没能护住任何人；最后，守住衣冠、守住乡邻的，还是普通人自己。\n\n于是她举起一面无君的旗，不要皇帝，也不要臣子；「我们是谁、怎么活」这件事，她要交回给我们自己。',
+        bio: '顾月不来自这个世界。裂缝那一头，是另一个世界里的旧邦：礼崩、城破，王朝塌成她脚下的瓦砾。\n\n她从废墟里走出来，没读过多少大道理，只信眼前的事实：皇帝和百官没能护住任何人；最后，守住衣冠、守住乡邻的，还是普通人自己。\n\n于是她举起一面无君的旗，不要皇帝，也不要臣子；「我们是谁、怎么活」这件事，她要交还给大家自己。',
         info: [
           { k: '身份', v: '王朝遗民 · 布衣' },
           { k: '属地', v: '裂缝彼端 · 另一世界' },
@@ -2281,11 +2281,11 @@ var GALLERY_DATA = [
         id: 'agorism-nelly',
         name: '奈莉·布莱克',
         initial: 'N',
-        bio: '奈莉·布莱克是法洛塔的矿工与供货人，总能带来意想不到的东西。夜色里她总会带着金子出现；黑市交易暂歇时，她便亲自进山开采、冶炼金银，手上时隐时现的伤痕就是凭据。\n\n官方眼里，她是个来路不明的投机客；朋友却知道，她靠得住。只要价钱合适、交易谈得成，她总能在天亮前把别人弄不到的东西送到手边。\n\n她不投票，也不请愿。白市之外，市场自己会长出来。',
+        bio: '奈莉·布莱克是法洛塔的矿工，也是供货人，总能弄来旁人想不到的东西。夜色里常见她带着金子现身；黑市交易暂歇时，她便亲自进山开采、冶炼金银，手上时隐时现的伤痕就是凭据。\n\n官方眼里，她是个来路不明的投机客；朋友却知道，她靠得住。只要价钱合适、交易谈得成，她总能在天亮前把别人弄不到的东西送到手边。\n\n她不投票，也不请愿。白市之外，市场自己会长出来。',
         info: [
           { k: '身份', v: '法洛塔 · 矿工与供货人' },
           { k: '出生日期', v: '新历522年1月9日' },
-          { k: '属地', v: '铁枢人民共和国·艾迪州' }
+          { k: '属地', v: '铁枢人民共和国 · 艾迪州' }
         ],
         desc: '',
         text: '',
@@ -2463,7 +2463,7 @@ var GALLERY_DATA = [
     /* 主题：宝蓝 + 暗金，权杖与宝球纹样（abscepter=不可分割的主权） */
     theme: { accent: '#4a5fb0', accent2: '#141a2e', hi: '#e8e4f0', frame: 'regal', motif: 'abscepter' },
     characters: [
-      { id: 'absolutism-isolde', name: '伊索尔德・德・蒙庞西耶', initial: 'Y', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/绝对主义_伊索尔德・德・蒙庞西耶_画廊预览图.png', full: '素材/角色大图/绝对主义_伊索尔德・德・蒙庞西耶_角色大图.png' } ] }
+      { id: 'absolutism-isolde', name: '伊索尔德·德·蒙庞西耶', initial: 'Y', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/绝对主义_伊索尔德・德・蒙庞西耶_画廊预览图.png', full: '素材/角色大图/绝对主义_伊索尔德・德・蒙庞西耶_角色大图.png' } ] }
     ]
   },
   {
@@ -2475,7 +2475,7 @@ var GALLERY_DATA = [
     /* 主题：暖灰褐 + 暗炭，悬置之问纹样（qmark=判断的悬置） */
     theme: { accent: '#a89a7e', accent2: '#1a1a1e', hi: '#e8e2d0', frame: 'ink', motif: 'qmark' },
     characters: [
-      { id: 'skepticism-antia', name: '安提娅・琉卡斯', initial: 'A', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/怀疑主义_安提娅・琉卡斯_画廊预览图.png', full: '素材/角色大图/怀疑主义_安提娅・琉卡斯_角色大图.png' } ] }
+      { id: 'skepticism-antia', name: '安提娅·琉卡斯', initial: 'A', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/怀疑主义_安提娅・琉卡斯_画廊预览图.png', full: '素材/角色大图/怀疑主义_安提娅・琉卡斯_角色大图.png' } ] }
     ]
   },
   {
@@ -2487,7 +2487,7 @@ var GALLERY_DATA = [
     /* 主题：橄榄绿 + 酒红，自发秩序网络纹样（spontnet=无人设计的秩序） */
     theme: { accent: '#8a8450', accent2: '#3a1a30', hi: '#e0d4b0', frame: 'ink', motif: 'spontnet' },
     characters: [
-      { id: 'hayekianism-helena', name: '海伦娜・福格特', initial: 'H', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/哈耶克主义_海伦娜・福格特_画廊预览图.png', full: '素材/角色大图/哈耶克主义_海伦娜・福格特_角色大图.png' } ] }
+      { id: 'hayekianism-helena', name: '海伦娜·福格特', initial: 'H', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/哈耶克主义_海伦娜・福格特_画廊预览图.png', full: '素材/角色大图/哈耶克主义_海伦娜・福格特_角色大图.png' } ] }
     ]
   },
   {
@@ -2499,7 +2499,7 @@ var GALLERY_DATA = [
     /* 主题：钢灰蓝 + 暗铜，棱镜折射纹样（prism=从视角出发的解释） */
     theme: { accent: '#7f8da0', accent2: '#241816', hi: '#d4b898', frame: 'glass', motif: 'prism' },
     characters: [
-      { id: 'perspectivism-camilla', name: '卡米拉・策勒', initial: 'K', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/观点主义_卡米拉・策勒_画廊预览图.png', full: '素材/角色大图/观点主义_卡米拉・策勒_角色大图.png' } ] }
+      { id: 'perspectivism-camilla', name: '卡米拉·策勒', initial: 'K', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/观点主义_卡米拉・策勒_画廊预览图.png', full: '素材/角色大图/观点主义_卡米拉・策勒_角色大图.png' } ] }
     ]
   },
   {
@@ -2511,7 +2511,7 @@ var GALLERY_DATA = [
     /* 主题：墨绿 + 暗紫，王冠加斜杠纹样（crownslash=象征性王权×无国家） */
     theme: { accent: '#4a8a58', accent2: '#1e1830', hi: '#c8b4e8', frame: 'organic', dust: 'leaf', motif: 'crownslash' },
     characters: [
-      { id: 'anarcho-monarchism-feiwen', name: '费雯・道格拉斯', initial: 'F', bio: '费雯住在安那其学院对岸的乡间，那是布图里亚南岸一个凡事自己拿主意的小地方。乡人尊她为王后，为她编花冠、请她坐上那个位置，她却从没向谁下过一道命令。\n\n她心里清楚自己坐在那儿的用处：只要她还坐着，就没人能再坐到那上面，借它去管别人。\n\n平日里，她在集市上走走，替邻里排解几句，把大家凑到一处办事。她像个被所有人照看、也照看着所有人的大姐，而不是谁的主子。', info: [ { k: '身份', v: '乡社共尊的王后' }, { k: '出生日期', v: '新历498年' }, { k: '属地', v: '布图里亚 · 南岸乡社' } ], desc: '', text: '', images: [ { thumb: '素材/画廊预览图/安那其君主主义_费雯・道格拉斯_画廊预览图.png', full: '素材/角色大图/安那其君主主义_费雯・道格拉斯_角色大图.png' } ] }
+      { id: 'anarcho-monarchism-feiwen', name: '费雯·道格拉斯', initial: 'F', bio: '费雯住在安那其学院对岸的乡间，那是布图里亚南岸一个凡事自己拿主意的小地方。乡人尊她为王后，为她编花冠、请她坐上那个位置，她却从没向谁下过一道命令。\n\n她心里清楚自己坐在那儿的用处：只要她还坐着，就没人能再坐到那上面，借它去管别人。\n\n平日里，她在集市上走走，替邻里排解几句，把大家凑到一处办事。她像个被所有人照看、也照看着所有人的大姐，而不是谁的主子。', info: [ { k: '身份', v: '乡社共尊的王后' }, { k: '出生日期', v: '新历498年' }, { k: '属地', v: '布图里亚 · 南岸乡社' } ], desc: '', text: '', images: [ { thumb: '素材/画廊预览图/安那其君主主义_费雯・道格拉斯_画廊预览图.png', full: '素材/角色大图/安那其君主主义_费雯・道格拉斯_角色大图.png' } ] }
     ]
   },
   {
@@ -2547,7 +2547,7 @@ var GALLERY_DATA = [
     /* 主题：鼠尾草绿 + 暗林，环中螺纹样（spiralall=神即自然整体） */
     theme: { accent: '#93a98a', accent2: '#141a14', hi: '#e8f0dc', frame: 'organic', dust: 'leaf', motif: 'spiralall' },
     characters: [
-      { id: 'pantheism-devana', name: '德瓦娜・莱斯娜', initial: 'D', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/泛神论_德瓦娜・莱斯娜_画廊预览图.png', full: '素材/角色大图/泛神论_德瓦娜・莱斯娜_角色大图.png' } ] }
+      { id: 'pantheism-devana', name: '德瓦娜·莱斯娜', initial: 'D', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/泛神论_德瓦娜・莱斯娜_画廊预览图.png', full: '素材/角色大图/泛神论_德瓦娜・莱斯娜_角色大图.png' } ] }
     ]
   },
   {
@@ -2559,7 +2559,7 @@ var GALLERY_DATA = [
     /* 主题：象牙银 + 墨黑，公理推结论树纹样（deductree=由前提必然推出） */
     theme: { accent: '#c0c2c8', accent2: '#141418', hi: '#ffffff', frame: 'glass', motif: 'deductree' },
     characters: [
-      { id: 'deductivism-margaret', name: '玛格丽特・齐格勒', initial: 'M', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/演绎主义_玛格丽特・齐格勒_画廊预览图.png', full: '素材/角色大图/演绎主义_玛格丽特・齐格勒_角色大图.png' } ] }
+      { id: 'deductivism-margaret', name: '玛格丽特·齐格勒', initial: 'M', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/演绎主义_玛格丽特・齐格勒_画廊预览图.png', full: '素材/角色大图/演绎主义_玛格丽特・齐格勒_角色大图.png' } ] }
     ]
   },
   {
@@ -2571,7 +2571,7 @@ var GALLERY_DATA = [
     /* 主题：冷银 + 暗酒，拼图格纹样（patchwork=Moldbug 式竞争主权体） */
     theme: { accent: '#aeb2ba', accent2: '#1c1418', hi: '#d84a4a', frame: 'regal', motif: 'patchwork' },
     characters: [
-      { id: 'neoreaction-vivolin', name: '维洛琳・德・蒙莫朗西', initial: 'W', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/新反动主义_维洛琳・德・蒙莫朗西_画廊预览图.png', full: '素材/角色大图/新反动主义_维洛琳・德・蒙莫朗西_角色大图.png' } ] }
+      { id: 'neoreaction-vivolin', name: '维洛琳·德·蒙莫朗西', initial: 'W', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/新反动主义_维洛琳・德・蒙莫朗西_画廊预览图.png', full: '素材/角色大图/新反动主义_维洛琳・德・蒙莫朗西_角色大图.png' } ] }
     ]
   },
   {
@@ -2583,7 +2583,7 @@ var GALLERY_DATA = [
     /* 主题：铜橙 + 暗褐，双向回旋纹样（relarrows=无中立基准的相对） */
     theme: { accent: '#bd824e', accent2: '#2a2018', hi: '#f4e0c0', frame: 'ink', motif: 'relarrows' },
     characters: [
-      { id: 'relativism-federica', name: '菲德莉卡・兰齐', initial: 'F', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/相对主义_菲德莉卡・兰齐_画廊预览图.png', full: '素材/角色大图/相对主义_菲德莉卡・兰齐_角色大图.png' } ] }
+      { id: 'relativism-federica', name: '菲德莉卡·兰齐', initial: 'F', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/相对主义_菲德莉卡・兰齐_画廊预览图.png', full: '素材/角色大图/相对主义_菲德莉卡・兰齐_角色大图.png' } ] }
     ]
   },
   {
@@ -2595,7 +2595,7 @@ var GALLERY_DATA = [
     /* 主题：珍珠白蓝 + 暗紫，光环灵光纹样（halospark=精神/观念为本） */
     theme: { accent: '#b4bede', accent2: '#181420', hi: '#f4f2ff', frame: 'glass', dust: 'petal', motif: 'halospark' },
     characters: [
-      { id: 'idealism-metaphysical-florentina', name: '芙洛缇娜・拉', initial: 'F', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/唯心主义_芙洛缇娜・拉_画廊预览图.png', full: '素材/角色大图/唯心主义_芙洛缇娜・拉_角色大图.png' } ] }
+      { id: 'idealism-metaphysical-florentina', name: '芙洛缇娜·拉', initial: 'F', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/唯心主义_芙洛缇娜・拉_画廊预览图.png', full: '素材/角色大图/唯心主义_芙洛缇娜・拉_角色大图.png' } ] }
     ]
   },
   {
@@ -2607,7 +2607,7 @@ var GALLERY_DATA = [
     /* 主题：石板灰 + 暗褐，晶石地层纹样（geode=物质为本） */
     theme: { accent: '#8a8e94', accent2: '#181410', hi: '#e0c0a0', frame: 'iron', motif: 'geode' },
     characters: [
-      { id: 'materialism-hedwig', name: '海德维希・默茨', initial: 'H', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/唯物主义_海德维希・默茨_画廊预览图.png', full: '素材/角色大图/唯物主义_海德维希・默茨_角色大图.png' } ] }
+      { id: 'materialism-hedwig', name: '海德维希·默茨', initial: 'H', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/唯物主义_海德维希・默茨_画廊预览图.png', full: '素材/角色大图/唯物主义_海德维希・默茨_角色大图.png' } ] }
     ]
   },
   {
@@ -2619,7 +2619,7 @@ var GALLERY_DATA = [
     /* 主题：靛蓝 + 暗红，旗与麦穗纹样（flagwheat=民族认同与自决） */
     theme: { accent: '#41618f', accent2: '#2a1214', hi: '#f0d8b0', frame: 'organic', motif: 'flagwheat' },
     characters: [
-      { id: 'nationalism-rosalia', name: '罗莎莉亚・蒙特罗', initial: 'L', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/民族主义_罗莎莉亚・蒙特罗_画廊预览图.png', full: '素材/角色大图/民族主义_罗莎莉亚・蒙特罗_角色大图.png' } ] }
+      { id: 'nationalism-rosalia', name: '罗莎莉亚·蒙特罗', initial: 'L', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/民族主义_罗莎莉亚・蒙特罗_画廊预览图.png', full: '素材/角色大图/民族主义_罗莎莉亚・蒙特罗_角色大图.png' } ] }
     ]
   },
   {
@@ -2631,7 +2631,7 @@ var GALLERY_DATA = [
     /* 主题：暗金 + 深靛，星盘纹样（astrolabe=理性与几何的确定） */
     theme: { accent: '#c2a862', accent2: '#141a2c', hi: '#ece0c0', frame: 'ink', motif: 'astrolabe' },
     characters: [
-      { id: 'rationalism-lorenza', name: '洛伦扎・卡佩利', initial: 'L', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/理性主义_洛伦扎・卡佩利_画廊预览图.png', full: '素材/角色大图/理性主义_洛伦扎・卡佩利_角色大图.png' } ] }
+      { id: 'rationalism-lorenza', name: '洛伦扎·卡佩利', initial: 'L', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/理性主义_洛伦扎・卡佩利_画廊预览图.png', full: '素材/角色大图/理性主义_洛伦扎・卡佩利_角色大图.png' } ] }
     ]
   },
   {
@@ -2643,7 +2643,7 @@ var GALLERY_DATA = [
     /* 主题：淡天蓝 + 暗青，理想城纹样（ideacity=规划中的完善社会） */
     theme: { accent: '#a8c2d6', accent2: '#16202a', hi: '#fffaf0', frame: 'glass', dust: 'snow', motif: 'ideacity' },
     characters: [
-      { id: 'utopianism-eudora', name: '尤朵拉・卡利斯忒', initial: 'Y', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/乌托邦主义_尤朵拉・卡利斯忒_画廊预览图.png', full: '素材/角色大图/乌托邦主义_尤朵拉・卡利斯忒_角色大图.png' } ] }
+      { id: 'utopianism-eudora', name: '尤朵拉·卡利斯忒', initial: 'Y', desc: '', text: '', images: [ { thumb: '素材/画廊预览图/乌托邦主义_尤朵拉・卡利斯忒_画廊预览图.png', full: '素材/角色大图/乌托邦主义_尤朵拉・卡利斯忒_角色大图.png' } ] }
     ]
   }
 ];
