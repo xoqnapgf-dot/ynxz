@@ -254,10 +254,10 @@
   /* 个别纹样原稿偏小、偏细，在徽章环内显得单薄：统一按倍率放大，让整套封面视觉重量接近 */
   var MOTIF_SCALE = {
     center: 1.35, solo: 1.25, reach: 1.25, wrench: 1.3, glasslow: 1.25, crescent: 1.3, clasp: 1.5, island: 1.5, dividers: 1.4,
-    bridge: 1.25, qmark: 1.3, halospark: 1.5, geode: 1.3, relarrows: 1.3, dove: 1.4, turnstile: 1.4,
-    helmet: 1.3, lantern: 1.3, prism: 1.3, geoscale: 1.3, peak: 1.2, patchwork: 1.2, quill: 1.2,
+     qmark: 1.3, halospark: 1.05, geode: 1.3, relarrows: 1.3, dove: 1.1, turnstile: 1.4,
+    helmet: 1.3, lantern: 1.3, prism: 1.05, geoscale: 1.3, peak: 1.2, patchwork: 1.2, quill: 1.2,
     sprig: 1.2, plumb: 1.2, flagwheat: 1.2, ideacity: 1.2, crownscroll: 1.2, castle: 1.2,
-    deductree: 1.2, coinstack: 1.3, unitnode: 1.4, gearcoin: 1.5, starcoin: 1.4, candles: 1.4, transcend: 1.2, abacus: 1.2, shieldlock: 1.25, imperialorb: 1.3, eagle: 1.3, duality: 1.1, sisyphus: 1.3, ecocycle: 1.2, swordstar: 1.2, fan: 1.15, peony: 1.3, feather: 1.2, web: 1.15, brokenchain: 1.3, ship: 1.2, hourglass: 1.15, unlock: 1.3, crown: 1.3, mirror: 1.15, padlock: 1.15, brokencrown: 1.45, crownslash: 1.55, taiji: 1.2
+    deductree: 1.2, coinstack: 1.3, unitnode: 1.4, gearcoin: 1.5, starcoin: 1.4, candles: 1.15, transcend: 1.2, abacus: 1.2, shieldlock: 1.1, imperialorb: 1.3, eagle: 1.3, duality: 1.1, sisyphus: 1.15, ecocycle: 1.2, swordstar: 1.2, fan: 1.15, peony: 1.3, feather: 1.0, web: 1.15, brokenchain: 1.3, ship: 1.2, hourglass: 1.15, unlock: 1.3, crown: 1.3, mirror: 1.15, padlock: 1.15, brokencrown: 1.45, crownslash: 1.55, taiji: 1.2
   };
   function motifDeco(motif, col) {
     var g = motifDecoRaw(motif, col), k = MOTIF_SCALE[motif];
@@ -354,22 +354,13 @@
       }
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
     }
-    if (motif === 'laurel') {   /* 桂冠：荣誉/精英 */
-      for (i = -1; i <= 1; i += 2) {
-        for (var k = 0; k < 9; k++) {
-          a = (-72 + k * 17) * Math.PI / 180;
-          var br = 86 - k * 2;
-          var bx = Math.cos(a) * br * i, by = Math.sin(a) * br;
-          var ta = a + i * 0.9;
-          g += '<path d="M' + bx.toFixed(1) + ' ' + by.toFixed(1) +
-               ' q ' + (Math.cos(ta) * 17 * -i).toFixed(1) + ' ' + (Math.sin(ta) * 17).toFixed(1) + ' ' +
-               (Math.cos(a + i * 0.42) * 21 - bx).toFixed(1) + ' ' + (Math.sin(a + i * 0.42) * 21 - by).toFixed(1) +
-               '" stroke-width="2" opacity="0.75"/>';
-        }
-      }
-      g += '<circle r="34" stroke-width="1.4" opacity="0.5"/>' +
-           '<path d="M0,-16 L10,6 L-10,6 Z" fill="' + col + '" stroke="none" opacity="0.6"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    if (motif === 'laurel') {   /* 精英主义：金字塔，塔尖独立于众层之上 */
+      g += '<path d="M0 -88 L21 -48 L-21 -48 Z" stroke-width="3" opacity="0.98" fill="' + col + '" fill-opacity="0.35"/>' +
+           '<path d="M-26 -38 L26 -38 L45 -2 L-45 -2 Z" stroke-width="2.6" opacity="0.85" fill="' + col + '" fill-opacity="0.12"/>' +
+           '<path d="M-49 8 L49 8 L70 48 L-70 48 Z" stroke-width="2.4" opacity="0.7" fill="' + col + '" fill-opacity="0.06"/>' +
+           '<path d="M0 -112 L3 -102 L13 -100 L3 -97 L0 -87 L-3 -97 L-13 -100 L-3 -102 Z" stroke-width="1.6" opacity="0.9" fill="' + col + '" fill-opacity="0.5"/>' +
+           '<path d="M-34 -70 L-52 -80 M34 -70 L52 -80 M-30 -96 L-44 -110 M30 -96 L44 -110" stroke-width="1.6" opacity="0.5"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 18) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'coin') {     /* 铜钱（外圆内方）：资本 */
       g += '<circle r="90" stroke-width="2.4" opacity="0.85"/>' +
@@ -569,12 +560,13 @@
            '<circle r="26" stroke-width="1.6" opacity="0.5"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'door') {         /* 存在：虚掩之门 */
-      g += '<rect x="-38" y="-80" width="78" height="160" stroke-width="2.4" opacity="0.55"/>' +
-           '<path d="M-38 -80 L-84 -60 L-84 92 L-38 80 Z" stroke-width="2.4" opacity="0.85" fill="' + col + '" fill-opacity="0.12"/>' +
-           '<path d="M-34 -58 L32 -78 M-34 0 L46 -10 M-34 58 L32 78" stroke-width="1.4" opacity="0.4"/>' +
-           '<circle cx="-52" cy="6" r="4" fill="' + col + '" stroke="none" opacity="0.85"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    if (motif === 'door') {         /* 存在：虚掩之门（门框居中，光从门缝涌出） */
+      g += '<rect x="-44" y="-84" width="88" height="168" stroke-width="3" opacity="0.8"/>' +
+           '<path d="M-44 -84 L-8 -70 L-8 70 L-44 84 Z" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.16"/>' +
+           '<circle cx="-16" cy="4" r="3.4" fill="' + col + '" stroke="none" opacity="0.9"/>' +
+           '<path d="M-8 -52 L44 -60 M-8 -20 L44 -22 M-8 12 L44 12 M-8 44 L44 52" stroke-width="1.4" opacity="0.28"/>' +
+           '<path d="M-8 70 L44 84 L74 98 L-34 98 Z" stroke-width="1.6" opacity="0.4" fill="' + col + '" fill-opacity="0.1"/>';
+      return '<g transform="translate(' + C + ',' + (CY + -6) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'castle') {       /* 封建：城堡与旗 */
       g += '<path d="M-62 70 L-62 -18 L-48 -18 L-48 -32 L-34 -32 L-34 -18 L-20 -18 L-20 -32 L-6 -32 L-6 -18 L8 -18 L8 -32 L22 -32 L22 -18 L38 -18 L38 -32 L52 -32 L52 -18 L62 -18 L62 70 Z" stroke-width="2.4" opacity="0.85" fill="' + col + '" fill-opacity="0.07"/>' +
@@ -603,14 +595,14 @@
            '<circle r="8" fill="' + col + '" stroke="none" opacity="0.7"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linejoin="round">' + g + '</g>';
     }
-    if (motif === 'parcels') {      /* 地主所有制：田亩与界桩 */
-      g += '<path d="M-72 -46 L72 -58 L82 58 L-62 68 Z" stroke-width="2.4" opacity="0.8"/>' +
-           '<line x1="-22" y1="-52" x2="-16" y2="63" stroke-width="1.4" opacity="0.5"/>' +
-           '<line x1="30" y1="-55" x2="34" y2="60" stroke-width="1.4" opacity="0.5"/>' +
-           '<line x1="-67" y1="6" x2="78" y2="0" stroke-width="1.4" opacity="0.5"/>' +
-           '<line x1="0" y1="4" x2="0" y2="-72" stroke-width="2.2" opacity="0.85"/>' +
-           '<path d="M0 -72 L28 -63 L0 -54 Z" fill="' + col + '" stroke="none" opacity="0.85"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    if (motif === 'parcels') {      /* 地主所有制：田亩与界桩（方正） */
+      g += '<rect x="-62" y="-46" width="124" height="92" stroke-width="3" opacity="0.9" fill="' + col + '" fill-opacity="0.05"/>' +
+           '<path d="M-10 -46 L-10 46 M-10 4 L62 4" stroke-width="2.2" opacity="0.75"/>' +
+           '<rect x="-10" y="4" width="72" height="42" stroke="none" fill="' + col + '" fill-opacity="0.22"/>' +
+           '<path d="M-62 -22 L-10 -22 M-62 -2 L-10 -2 M-62 18 L-10 18 M-62 36 L-10 36" stroke-width="1.2" opacity="0.4"/>' +
+           '<path d="M-62 -46 L-62 -64 M62 -46 L62 -64 M-62 46 L-62 64 M62 46 L62 64" stroke-width="3" opacity="0.7"/>' +
+           '<path d="M-62 -64 L-34 -64 L-44 -72 L-62 -72 Z" stroke-width="1.6" opacity="0.85" fill="' + col + '" fill-opacity="0.3"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'island') {       /* 孤立主义：孤岛 */
       g += '<path d="M-88 46 q 14 -10 28 0 q 14 10 28 0 q 14 -10 28 0 q 14 10 28 0" stroke-width="1.6" opacity="0.5"/>' +
@@ -666,11 +658,16 @@
            '<line x1="-46" y1="72" x2="46" y2="72" stroke-width="2.4" opacity="0.8"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'braid') {        /* 集体：拧成一股绳 */
-      g += '<path d="M-26 -84 C 26 -60 -26 -36 26 -12 C -26 12 26 36 -26 60 L-26 84" stroke-width="3" opacity="0.8"/>' +
-           '<path d="M26 -84 C -26 -60 26 -36 -26 -12 C 26 12 -26 36 26 60 L26 84" stroke-width="3" opacity="0.8"/>' +
-           '<path d="M0 -80 L0 80" stroke-width="1.6" opacity="0.35" stroke-dasharray="5 9"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    if (motif === 'braid') {       /* 集体主义：众人并肩，共撑一顶（个体融入整体） */
+      g += '<path d="M-84 -6 Q0 -88 84 -6" stroke-width="3" opacity="0.9"/>';
+      for (i = 0; i < 5; i++) {
+        var bx = -64 + i * 32;
+        g += '<line x1="' + bx + '" y1="' + (-6 - (1 - Math.pow((bx / 84), 2)) * 40 + 8).toFixed(1) + '" x2="' + bx + '" y2="-10" stroke-width="1.4" opacity="0.4"/>' +
+             '<circle cx="' + bx + '" cy="6" r="8" stroke-width="2.6" opacity="0.95" fill="' + col + '" fill-opacity="0.3"/>' +
+             '<path d="M' + (bx - 13) + ' 44 Q' + bx + ' 16 ' + (bx + 13) + ' 44" stroke-width="2.8" opacity="0.9"/>';
+      }
+      g += '<path d="M-70 38 L70 38" stroke-width="2.4" opacity="0.6"/><line x1="-90" y1="62" x2="90" y2="62" stroke-width="2" opacity="0.4"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 6) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'sunflower') {    /* 乐观：向阳而开 */
       for (i = 0; i < 12; i++) {
@@ -693,14 +690,16 @@
       for (i = 0; i < gp.length; i++) g += '<circle cx="' + gp[i][0] + '" cy="' + gp[i][1] + '" r="14" stroke-width="1.8" opacity="0.7"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'clasp') {        /* 共产主义：团结之握 */
-      g += '<path d="M-84 -8 L-44 -8 Q-30 -8 -22 2" stroke-width="2.6" opacity="0.85" stroke-linecap="round"/>' +
-           '<path d="M84 22 L44 22 Q30 22 22 12" stroke-width="2.6" opacity="0.85" stroke-linecap="round"/>' +
-           '<path d="M-22 2 Q-8 -12 10 -8 Q30 -2 22 12 Q8 24 -10 20 Q-22 16 -22 2 Z" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/>' +
-           '<line x1="-14" y1="0" x2="14" y2="-4" stroke-width="1.6" opacity="0.5"/>' +
-           '<line x1="-12" y1="8" x2="16" y2="4" stroke-width="1.6" opacity="0.5"/>' +
-           '<line x1="-8" y1="16" x2="16" y2="12" stroke-width="1.6" opacity="0.5"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    if (motif === 'clasp') {        /* 共产主义：众人围拢一颗星（团结） */
+      g += '<path d="M0 -34 L9 -11 L34 -11 L14 4 L21 28 L0 14 L-21 28 L-14 4 L-34 -11 L-9 -11 Z" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.28"/>' +
+           '<circle r="66" stroke-width="1.4" opacity="0.3" stroke-dasharray="2 6"/>';
+      for (i = 0; i < 8; i++) {
+        a = i * 45 * Math.PI / 180;
+        g += '<g transform="translate(' + (Math.cos(a) * 78).toFixed(1) + ',' + (Math.sin(a) * 78).toFixed(1) + ') rotate(' + (i * 45 + 90) + ')">' +
+             '<circle cy="-4" r="6.5" stroke-width="2.4" opacity="0.95" fill="' + col + '" fill-opacity="0.35"/>' +
+             '<path d="M-13 14 Q-13 3 0 3 Q13 3 13 14 Z" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.15"/></g>';
+      }
+      return '<g transform="translate(' + C + ',' + (CY + 0) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'rose') {        /* 社会民主主义：玫瑰 */
       g += '<circle r="16" stroke-width="2" opacity="0.85" fill="' + col + '" fill-opacity="0.12"/>' +
@@ -857,15 +856,12 @@
            '<path d="M-72 30 L-72 6 L-54 6 L-54 30 L-36 30 L-36 6 L-18 6 L-18 30 L0 30 L0 6 L18 6 L18 30 L36 30 L36 6 L54 6 L54 30 L72 30 L72 66 L-72 66 Z" stroke-width="2.4" opacity="0.85" fill="' + col + '" fill-opacity="0.06"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linejoin="round">' + g + '</g>';
     }
-    if (motif === 'bridge') {      /* 实用主义：连接观念与事实之桥 */
-      g += '<path d="M-84 24 Q0 -54 84 24" stroke-width="3" opacity="0.9" fill="none"/>' +
-           '<line x1="-84" y1="24" x2="84" y2="24" stroke-width="3" opacity="0.85"/>' +
-           '<line x1="-52" y1="24" x2="-52" y2="-8" stroke-width="2" opacity="0.5"/>' +
-           '<line x1="0" y1="24" x2="0" y2="-30" stroke-width="2" opacity="0.5"/>' +
-           '<line x1="52" y1="24" x2="52" y2="-8" stroke-width="2" opacity="0.5"/>' +
-           '<line x1="-70" y1="24" x2="-70" y2="54" stroke-width="2.6" opacity="0.7"/>' +
-           '<line x1="70" y1="24" x2="70" y2="54" stroke-width="2.6" opacity="0.7"/>';
-      return '<g transform="translate(' + C + ',' + (CY + 6) + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    if (motif === 'bridge') {      /* 实用主义：灯泡里的对勾（有用即真理） */
+      g += '<circle cy="-22" r="40" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.1"/>' +
+           '<path d="M-20 12 L-16 34 L16 34 L20 12 M-14 44 L14 44 M-9 54 L9 54" stroke-width="3" opacity="0.9"/>' +
+           '<path d="M-17 -22 L-4 -9 L19 -38" stroke-width="5" opacity="0.98"/>' +
+           '<path d="M-60 -22 L-72 -22 M60 -22 L72 -22 M-46 -58 L-56 -66 M46 -58 L56 -66 M0 -72 L0 -84" stroke-width="2.2" opacity="0.55"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 12) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'crescent') {    /* 心灵主义：新月与灵光 */
       g += '<path d="M20 -60 A60 60 0 1 0 20 60 A46 46 0 1 1 20 -60 Z" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.12"/>' +
@@ -888,12 +884,14 @@
            '<circle cx="0" cy="30" r="7" stroke-width="1.8" opacity="0.9" fill="none"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'sisyphus') {    /* 荒诞主义：西西弗斯的巨石 */
-      g += '<path d="M-80 66 L70 -30" stroke-width="3" opacity="0.7"/>' +
-           '<circle cx="-6" cy="14" r="34" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/>' +
-           '<path d="M-22 4 Q-6 -8 10 6" stroke-width="1.4" opacity="0.5" fill="none"/>' +
-           '<path d="M44 -46 q22 -14 30 6 M74 -40 l-2 -12 M74 -40 l-12 2" stroke-width="2" opacity="0.6" fill="none" stroke-linecap="round"/>';
-      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    if (motif === 'sisyphus') {    /* 荒诞主义：西西弗斯与他的巨石 */
+      g += '<path d="M-86 62 L84 -28" stroke-width="3.2" opacity="0.95"/>' +
+           '<path d="M-60 76 L-40 66 M-30 92 L-6 80 M-8 70 L10 60 M26 84 L50 72 M40 48 L58 38" stroke-width="1.4" opacity="0.35"/>' +
+           '<circle cx="-2" cy="-10" r="30" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.14"/>' +
+           '<path d="M-20 -20 L-6 -14 L2 -26 M-12 4 L4 0 L12 12" stroke-width="1.4" opacity="0.45"/>' +
+           '<path d="M-24 -52 A 40 40 0 0 1 28 -48" stroke-width="2" opacity="0.6"/><path d="M28 -48 L16 -48 M28 -48 L26 -37" stroke-width="2" opacity="0.6"/>' +
+           '<circle cx="84" cy="-28" r="4" fill="' + col + '" stroke="none" opacity="0.7"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 6) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'lantern') {     /* 犬儒主义：第欧根尼的灯笼 */
       g += '<path d="M0 -72 q14 0 14 12" stroke-width="2" opacity="0.7" fill="none"/>' +
@@ -905,17 +903,19 @@
            '<line x1="-32" y1="40" x2="32" y2="40" stroke-width="2.6" opacity="0.85"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'helix') {       /* 社会达尔文主义：螺旋与选择 */
-      for (i = 0; i < 5; i++) {
-        var yy = -66 + i * 33;
-        var xh = Math.cos(i * 1.25) * 34;
-        g += '<circle cx="' + xh.toFixed(1) + '" cy="' + yy + '" r="5" fill="' + col + '" stroke="none" opacity="0.85"/>' +
-             '<circle cx="' + (-xh).toFixed(1) + '" cy="' + (yy + 16) + '" r="5" fill="' + col + '" stroke="none" opacity="0.85"/>' +
-             '<line x1="' + xh.toFixed(1) + '" y1="' + yy + '" x2="' + (-xh).toFixed(1) + '" y2="' + (yy + 16) + '" stroke-width="1.6" opacity="0.5"/>';
+    if (motif === 'helix') {       /* 社会达尔文主义：DNA 双螺旋 */
+      var h1 = '', h2 = '';
+      for (var y = -88; y <= 88; y += 4) {
+        var xa = Math.sin(y * Math.PI / 44) * 28;
+        h1 += (y === -88 ? 'M' : 'L') + xa.toFixed(1) + ' ' + y;
+        h2 += (y === -88 ? 'M' : 'L') + (-xa).toFixed(1) + ' ' + y;
       }
-      g += '<path d="M-34 -66 C 34 -40 -34 -6 34 20 C -34 46 34 66 -20 78" stroke-width="2.2" opacity="0.7" fill="none"/>' +
-           '<path d="M34 -66 C -34 -40 34 -6 -34 20 C 34 46 -34 66 20 78" stroke-width="2.2" opacity="0.7" fill="none"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+      g += '<path d="' + h1 + '" stroke-width="3.2" opacity="0.95"/><path d="' + h2 + '" stroke-width="3.2" opacity="0.6"/>';
+      for (var y2 = -77; y2 <= 77; y2 += 11) {
+        var xr = Math.sin(y2 * Math.PI / 44) * 28;
+        if (Math.abs(xr) > 8) g += '<line x1="' + xr.toFixed(1) + '" y1="' + y2 + '" x2="' + (-xr).toFixed(1) + '" y2="' + y2 + '" stroke-width="2" opacity="' + (0.25 + Math.abs(xr) / 28 * 0.5).toFixed(2) + '"/>';
+      }
+      return '<g transform="translate(' + C + ',' + (CY + 0) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'ecocycle') {    /* 生态中心主义：生态循环 */
       g += '<path d="M0 -60 A60 60 0 1 1 -42 -42" stroke-width="2.6" opacity="0.85" fill="none"/>' +
@@ -965,16 +965,17 @@
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
     if (motif === 'feather') {     /* 唯美主义：孔雀翎 */
-      g += '<path d="M0 84 C 22 30 24 -30 0 -76 C -24 -30 -22 30 0 84 Z" stroke-width="2.2" opacity="0.85" fill="' + col + '" fill-opacity="0.06"/>' +
-           '<line x1="0" y1="84" x2="0" y2="-60" stroke-width="1.6" opacity="0.6"/>' +
-           '<ellipse cx="0" cy="-44" rx="15" ry="22" stroke-width="2" opacity="0.9"/>' +
-           '<ellipse cx="0" cy="-44" rx="7" ry="11" stroke-width="1.6" opacity="0.8" fill="' + col + '" fill-opacity="0.2"/>';
-      for (i = 0; i < 6; i++) {
-        var fy = -20 + i * 16;
-        g += '<line x1="0" y1="' + fy + '" x2="' + (18 - i * 2) + '" y2="' + (fy - 6) + '" stroke-width="1" opacity="0.4"/>' +
-             '<line x1="0" y1="' + fy + '" x2="' + (-18 + i * 2) + '" y2="' + (fy - 6) + '" stroke-width="1" opacity="0.4"/>';
+      var px = function (t) { return [(1 - t) * (1 - t) * 0 + 2 * (1 - t) * t * -18 + t * t * 16, (1 - t) * (1 - t) * 96 + 2 * (1 - t) * t * 30 + t * t * -30]; };
+      g += '<path d="M0 96 Q-18 30 16 -30" stroke-width="2.6" opacity="0.95"/>';
+      for (var t = 0.1; t <= 0.96; t += 0.045) {
+        var P = px(t), Q = px(t + 0.01), tx = Q[0] - P[0], ty = Q[1] - P[1], tl = Math.sqrt(tx * tx + ty * ty);
+        tx /= tl; ty /= tl;
+        var Ln = 8 + 30 * Math.sin(Math.PI * Math.min(1, t * 1.05)) , nx = -ty, ny = tx;
+        g += '<path d="M' + P[0].toFixed(1) + ' ' + P[1].toFixed(1) + ' Q' + (P[0] + nx * Ln * 0.6 - tx * Ln * 0.2).toFixed(1) + ' ' + (P[1] + ny * Ln * 0.6 - ty * Ln * 0.2).toFixed(1) + ' ' + (P[0] + nx * Ln - tx * Ln * 0.7).toFixed(1) + ' ' + (P[1] + ny * Ln - ty * Ln * 0.7).toFixed(1) + '" stroke-width="1.3" opacity="0.5"/>' +
+             '<path d="M' + P[0].toFixed(1) + ' ' + P[1].toFixed(1) + ' Q' + (P[0] - nx * Ln * 0.6 - tx * Ln * 0.2).toFixed(1) + ' ' + (P[1] - ny * Ln * 0.6 - ty * Ln * 0.2).toFixed(1) + ' ' + (P[0] - nx * Ln + 0 - tx * Ln * 0.7).toFixed(1) + ' ' + (P[1] - ny * Ln - ty * Ln * 0.7).toFixed(1) + '" stroke-width="1.3" opacity="0.5"/>';
       }
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+      g += '<g transform="translate(18 -50) rotate(14)"><ellipse rx="22" ry="32" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.08"/><ellipse rx="14" ry="21" stroke-width="2" opacity="0.7"/><ellipse rx="7" ry="11" stroke-width="2" opacity="0.9" fill="' + col + '" fill-opacity="0.4"/></g>';
+      return '<g transform="translate(' + C + ',' + (CY + 6) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'plumb') {       /* 现实主义：铅垂线 */
       g += '<line x1="0" y1="-84" x2="0" y2="44" stroke-width="2" opacity="0.8" stroke-dasharray="2 7"/>' +
@@ -1050,13 +1051,11 @@
       }
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'shieldlock') {  /* 最小政府主义：守夜之盾 */
-      g += '<path d="M0 -70 L54 -50 L54 12 Q54 54 0 78 Q-54 54 -54 12 L-54 -50 Z" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.08"/>' +
-           '<circle cy="-6" r="16" stroke-width="2.4" opacity="0.9"/>' +
-           '<path d="M-9 -6 L-9 -26 Q-9 -38 0 -38 Q9 -38 9 -26 L9 -6" stroke-width="2.4" opacity="0.8"/>' +
-           '<line x1="0" y1="-6" x2="0" y2="14" stroke-width="3" opacity="0.8"/>' +
-           '<circle cy="6" r="4" fill="' + col + '" stroke="none"/>';
-      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linejoin="round">' + g + '</g>';
+    if (motif === 'shieldlock') {  /* 最小政府主义：守夜之盾，盾上只有一道短杠（职责极简） */
+      g += '<path d="M0 -84 L60 -62 L60 -6 C60 40 32 66 0 86 C-32 66 -60 40 -60 -6 L-60 -62 Z" stroke-width="3.2" opacity="0.95" fill="' + col + '" fill-opacity="0.09"/>' +
+           '<path d="M0 -66 L44 -50 L44 -6 C44 30 24 50 0 66 C-24 50 -44 30 -44 -6 L-44 -50 Z" stroke-width="1.4" opacity="0.4" stroke-dasharray="3 5"/>' +
+           '<line x1="-20" y1="-2" x2="20" y2="-2" stroke-width="6" opacity="0.95"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 0) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'coinstack') {   /* 阿戈拉主义：自由市集的钱 */
       for (i = 0; i < 3; i++) {
@@ -1082,10 +1081,14 @@
            '<line x1="-16" y1="10" x2="16" y2="10" stroke-width="3" opacity="0.7"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
     }
-    if (motif === 'dove') {        /* 自由主义：鸽 */
-      g += '<path d="M-58 6 C-30 -22 6 -26 30 -46 C40 -30 34 -12 12 -2 C34 6 46 4 60 -6 C48 26 12 34 -18 22 C-38 14 -52 14 -58 6 Z" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/>' +
-           '<circle cx="30" cy="-40" r="3" fill="' + col + '" stroke="none"/>';
-      return '<g transform="translate(' + C + ',' + (CY - 4) + ')" stroke="' + col + '" fill="none" stroke-linejoin="round">' + g + '</g>';
+    if (motif === 'dove') {        /* 自由主义：展翅高飞的鸟 */
+      g += '<path d="M-4 -10 Q-30 -62 -92 -58 Q-60 -36 -52 -14 Q-72 -26 -96 -22 Q-56 6 -4 12 Z" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.16"/>' +
+           '<path d="M4 -10 Q30 -62 92 -58 Q60 -36 52 -14 Q72 -26 96 -22 Q56 6 4 12 Z" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.16"/>' +
+           '<path d="M0 -26 Q-10 -8 -6 20 L0 34 L6 20 Q10 -8 0 -26 Z" stroke-width="3" opacity="0.98" fill="' + col + '" fill-opacity="0.3"/>' +
+           '<circle cy="-34" r="8" stroke-width="3" opacity="0.98" fill="' + col + '" fill-opacity="0.3"/>' +
+           '<path d="M-5 34 L-16 70 M0 34 L0 76 M5 34 L16 70" stroke-width="2.6" opacity="0.8"/>' +
+           '<path d="M-64 52 L-84 62 M64 52 L84 62 M-40 74 L-52 90 M40 74 L52 90" stroke-width="1.6" opacity="0.35"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 6) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'transcend') {   /* 超人类主义：破环向上 */
       g += '<circle r="52" stroke-width="2.6" opacity="0.85"/>' +
@@ -1152,12 +1155,12 @@
            '<path d="M-54 72 L-48 80 M-30 82 L-26 92" stroke-width="2.4" opacity="0.5"/>';
       return '<g transform="translate(' + C + ',' + (CY + 2) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
-    if (motif === 'candles') {     /* 新自由主义：K线 */
-      var cd = [[-44, -6, 26], [0, -30, 40], [44, 10, 30]];
-      for (i = 0; i < 3; i++) { var x = cd[i][0], top = cd[i][1], hh = cd[i][2]; g += '<line x1="' + x + '" y1="' + (top - 14) + '" x2="' + x + '" y2="' + (top + hh + 14) + '" stroke-width="1.6" opacity="0.5"/><rect x="' + (x - 9) + '" y="' + top + '" width="18" height="' + hh + '" stroke-width="2.2" opacity="0.9" fill="' + col + '" fill-opacity="0.14"/>'; }
-      g += '<path d="M-64 66 L60 -20" stroke-width="2.4" opacity="0.6" stroke-linecap="round"/>' +
-           '<path d="M60 -20 L44 -18 M60 -20 L58 -4" stroke-width="2.4" opacity="0.7" stroke-linecap="round"/>';
-      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    if (motif === 'candles') {     /* 新自由主义：K线上行、藩篱拆除 */
+      var cd = [[-64, 20, 26, 0], [-32, 2, 30, 1], [0, 8, 22, 0], [32, -22, 36, 1], [64, -50, 40, 1]];
+      for (i = 0; i < 5; i++) { var x = cd[i][0], top = cd[i][1], hh = cd[i][2]; g += '<line x1="' + x + '" y1="' + (top - 14) + '" x2="' + x + '" y2="' + (top + hh + 14) + '" stroke-width="2" opacity="0.6"/><rect x="' + (x - 10) + '" y="' + top + '" width="20" height="' + hh + '" stroke-width="2.6" opacity="0.95" fill="' + col + '" fill-opacity="' + (cd[i][3] ? 0.35 : 0.05) + '"/>'; }
+      g += '<line x1="-84" y1="72" x2="84" y2="72" stroke-width="2.4" opacity="0.7"/>' +
+           '<path d="M-80 62 L86 -74" stroke-width="2.6" opacity="0.6" stroke-dasharray="6 6"/><path d="M86 -74 L64 -72 M86 -74 L78 -53" stroke-width="2.8" opacity="0.8"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'abscepter') {   /* 绝对主义：权杖与宝球 */
       g += '<line x1="0" y1="70" x2="0" y2="-40" stroke-width="4" opacity="0.85" stroke-linecap="round"/><circle cy="-52" r="12" stroke-width="2.4" opacity="0.9"/><path d="M-12 -66 L-12 -80 M0 -66 L0 -84 M12 -66 L12 -80" stroke-width="2.4" opacity="0.8"/><circle cy="72" r="14" stroke-width="2.4" opacity="0.85"/><path d="M-14 72 L14 72 M0 58 L0 86" stroke-width="1.4" opacity="0.5"/>';
@@ -1173,9 +1176,12 @@
       for (i = 0; i < pts.length; i++) { g += '<circle cx="' + pts[i][0] + '" cy="' + pts[i][1] + '" r="' + (i === 3 ? 9 : 6) + '" stroke-width="2" opacity="0.85" fill="' + col + '" fill-opacity="0.4"/>'; }
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'prism') {       /* 观点主义：棱镜折射（视角） */
-      g += '<path d="M0 -56 L52 40 L-52 40 Z" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.08"/><line x1="-70" y1="-6" x2="-14" y2="-6" stroke-width="2" opacity="0.6"/><path d="M22 -2 L70 -22 M26 8 L70 6 M30 18 L70 34" stroke-width="2" opacity="0.6" stroke-linecap="round"/>';
-      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    if (motif === 'prism') {       /* 观点主义：棱镜折射（同一束光，不同视角） */
+      g += '<path d="M0 -58 L50 30 L-50 30 Z" stroke-width="3" opacity="0.95" fill="' + col + '" fill-opacity="0.12"/>' +
+           '<path d="M-96 8 L-25 -14" stroke-width="3" opacity="0.95"/>' +
+           '<path d="M-25 -14 L25 -14" stroke-width="1.6" opacity="0.5" stroke-dasharray="3 4"/>' +
+           '<path d="M25 -14 L98 -42 M25 -14 L100 -20 M25 -14 L100 2 M25 -14 L96 24" stroke-width="2.6" opacity="0.8"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'crownslash') {  /* 安那其君主主义：王冠加斜杠 */
       g += '<path d="M-40 24 L-40 -20 L-20 0 L0 -28 L20 0 L40 -20 L40 24 Z" stroke-width="2.4" opacity="0.85" fill="' + col + '" fill-opacity="0.08"/><line x1="-56" y1="46" x2="56" y2="-46" stroke-width="3.4" opacity="0.9" stroke-linecap="round"/>';
@@ -1210,9 +1216,12 @@
       g += '<path d="M0 -56 A56 56 0 1 1 -40 -40" stroke-width="2.6" opacity="0.85"/><path d="M0 -56 L-14 -48 M0 -56 L-2 -40" stroke-width="2.6" opacity="0.9"/><path d="M0 56 A56 56 0 1 1 40 40" stroke-width="2.6" opacity="0.85"/><path d="M0 56 L14 48 M0 56 L2 40" stroke-width="2.6" opacity="0.9"/>';
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
     }
-    if (motif === 'halospark') {   /* 唯心主义：光环与灵光 */
-      g += '<ellipse cx="0" cy="-44" rx="46" ry="14" stroke-width="2.4" opacity="0.85"/><path d="M0 6 L0 50 M-22 28 L22 28 M-15 13 L15 43 M15 13 L-15 43" stroke-width="2.2" opacity="0.8" stroke-linecap="round"/>';
-      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    if (motif === 'halospark') {   /* 唯心主义：心念生出世界（光球之下，物只是投影） */
+      g += '<circle cy="-52" r="22" stroke-width="3" opacity="0.98" fill="' + col + '" fill-opacity="0.3"/>' +
+           '<circle cy="-52" r="36" stroke-width="1.6" opacity="0.55"/><circle cy="-52" r="50" stroke-width="1.2" opacity="0.3" stroke-dasharray="2 6"/>' +
+           '<path d="M0 -26 L0 12" stroke-width="2" opacity="0.5" stroke-dasharray="3 5"/>' +
+           '<path d="M0 20 L30 38 L30 70 L0 88 L-30 70 L-30 38 Z M0 20 L0 54 L30 38 M0 54 L-30 38 M0 54 L0 88" stroke-width="2" opacity="0.55" stroke-dasharray="4 4" fill="' + col + '" fill-opacity="0.05"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 6) + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     if (motif === 'geode') {       /* 唯物主义：晶石与地层 */
       g += '<path d="M0 -50 L40 -26 L40 22 L0 46 L-40 22 L-40 -26 Z" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.08"/><path d="M0 -50 L0 46 M-40 -26 L40 22 M40 -26 L-40 22" stroke-width="1.2" opacity="0.4"/><path d="M-52 58 L52 58 M-46 70 L46 70" stroke-width="2" opacity="0.5"/>';
