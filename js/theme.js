@@ -39,3 +39,25 @@
     apply(root.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
   });
 })();
+
+/* 主屏幕应用（独立窗口）模式：按设备宽度固定比例，禁用双击/捏合缩放；普通网页访问不受影响。
+   iOS 通过 navigator.standalone 判断，安卓/桌面通过 display-mode: standalone。 */
+(function () {
+  'use strict';
+  var standalone = false;
+  try {
+    standalone = window.navigator.standalone === true ||
+      (window.matchMedia && (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches));
+  } catch (e) { standalone = false; }
+  if (!standalone) return;
+  var root = document.documentElement;
+  root.classList.add('is-app');
+  /* 禁双击放大：touch-action 沿祖先链取交集，不会覆盖地图自己的 none */
+  root.style.touchAction = 'manipulation';
+  var vp = document.querySelector('meta[name="viewport"]');
+  if (vp) vp.setAttribute('content', 'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
+  /* iOS 的捏合手势事件：Safari 独立窗口里 user-scalable=no 并不总被遵守，这里再拦一道 */
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) {
+    document.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false });
+  });
+})();
