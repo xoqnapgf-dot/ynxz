@@ -1284,3 +1284,15 @@ main {
 @media (max-width: 720px) {
   .site-header .theme-toggle { position: absolute; top: 0.65rem; right: 1rem; margin: 0; }
 }
+
+/* ===== 添加到主屏幕后的全屏（standalone）：给刘海 / 状态栏 / 底部横条留安全区 ===== */
+.site-header {
+  padding-top: calc(0.9rem + env(safe-area-inset-top, 0px));
+  padding-left: max(clamp(1rem, 4vw, 2.5rem), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(1rem, 4vw, 2.5rem), env(safe-area-inset-right, 0px));
+}
+.site-footer { padding-bottom: calc(2.4rem + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 720px) {
+  .site-header { padding-top: calc(0.75rem + env(safe-area-inset-top, 0px)); }
+  .site-header .theme-toggle { top: calc(0.65rem + env(safe-area-inset-top, 0px)); }
+}

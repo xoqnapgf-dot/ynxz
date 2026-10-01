@@ -51,6 +51,8 @@
 ```
 ynxz/
 ├─ index.html · gallery.html · map.html · cp.html · cp-view.html · forum.html · search.html
+├─ manifest.webmanifest   添加到主屏幕（iOS / Android）所需清单
+├─ icons/          应用图标：icon.svg（源）· apple-touch-icon.png（180）· icon-192/512.png · favicon-32.png
 ├─ css/            style.css（全站）· gallery.css · cp.css
 ├─ js/             数据：gallery-data / versions-data / map-data / locations-data
 │                  逻辑：main / gallery / cp / search
@@ -149,7 +151,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 当前版本指针：`style.css v26`、`gallery.css v52`、`gallery.js v73`、`gallery-data.js v91`、`versions-data.js v5`、`locations-data.js v17`、`map-data.js v24`、`cp.js v7`、`search.js v4`、`main.js v1`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v73`、`gallery-data.js v91`、`versions-data.js v5`、`locations-data.js v17`、`map-data.js v24`、`cp.js v7`、`search.js v4`、`main.js v1`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
@@ -160,3 +162,10 @@ ynxz/
 - 占位国名中「清」「华清国保护国」已改为「璇玑联邦」「霁川公国」；「平」等译名仍易联想现实地名，下一轮改名优先处理；其余单字/怪译名一并复核。
 - 地图尚未决定是否展示州、市与其他小地点；目前只保留已登场国家和少量特殊地点标记，之后若增加点位，应优先做可切换/按缩放分级的独立覆盖层，避免一屏堆满。
 - 「人物设定整理中」占位（`gallery.js` 的 `pendingHtml`）：角色一旦写了 `bio` / `info` / `desc` / `text` 任一项会自动隐藏，无需手动删；全部角色写完后可连同对应 `.ch-pending` 样式一并移除。
+
+---
+
+## 附：添加到主屏幕（iOS / Android）
+- 各页 `<head>` 已带 `manifest.webmanifest`、`apple-touch-icon`、`apple-mobile-web-app-*` 与 `theme-color`；图标按站点金色菱形 + 环的主视觉设计，源文件 `icons/icon.svg`（改图标后用浏览器把它渲染成 180 / 192 / 512 / 32 的 PNG 覆盖即可）。
+- iOS：Safari 打开站点 → 分享 → 「添加到主屏幕」。以全屏方式打开时状态栏透明，样式已用 `env(safe-area-inset-*)` 给刘海与底部横条留了安全区。
+- 路径全部用相对路径（项目站点部署在 `/ynxz/` 子路径下）；没有 Service Worker，不做离线缓存，因此不影响现有的 `?v=` 版本号缓存策略。

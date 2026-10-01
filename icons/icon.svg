@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0" stop-color="#1c2030"/>
+      <stop offset="0.55" stop-color="#0f1119"/>
+      <stop offset="1" stop-color="#07080c"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f1d98a" stop-opacity="0.42"/>
+      <stop offset="0.5" stop-color="#d8b25a" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#d8b25a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbe9a8"/>
+      <stop offset="0.5" stop-color="#d8b25a"/>
+      <stop offset="1" stop-color="#8f6d2c"/>
+    </linearGradient>
+    <linearGradient id="goldSoft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9cf86" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#a98235" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="512" cy="512" r="400" fill="url(#glow)"/>
+  <!-- 外环与虚环 -->
+  <circle cx="512" cy="512" r="332" fill="none" stroke="url(#gold)" stroke-width="7"/>
+  <circle cx="512" cy="512" r="288" fill="none" stroke="url(#goldSoft)" stroke-width="2.5" stroke-dasharray="3 15" stroke-linecap="round"/>
+  <!-- 十字细线：自环指向菱形顶点 -->
+  <g stroke="url(#goldSoft)" stroke-width="2.5" opacity="0.7">
+    <line x1="512" y1="180" x2="512" y2="352"/>
+    <line x1="512" y1="672" x2="512" y2="844"/>
+    <line x1="180" y1="512" x2="352" y2="512"/>
+    <line x1="672" y1="512" x2="844" y2="512"/>
+  </g>
+  <!-- 环上四枚节点：多元的“人” -->
+  <g fill="url(#gold)">
+    <circle cx="512" cy="180" r="15"/>
+    <circle cx="512" cy="844" r="15"/>
+    <circle cx="180" cy="512" r="15"/>
+    <circle cx="844" cy="512" r="15"/>
+  </g>
+  <!-- 菱形核心：意识形态的“核” -->
+  <path d="M512 352 L672 512 L512 672 L352 512 Z" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M512 410 L614 512 L512 614 L410 512 Z" fill="url(#gold)"/>
+  <path d="M512 410 L614 512 L512 512 Z" fill="#fff6d6" opacity="0.38"/>
+  <circle cx="512" cy="512" r="22" fill="#0b0c12"/>
+</svg>
