@@ -59,6 +59,7 @@
 ```
 ynxz/
 ├─ index.html · gallery.html · map.html · cp.html · cp-view.html · forum.html · search.html
+├─ README.md · AGENTS.md  项目说明 / 给 AI 协作者的入口
 ├─ manifest.webmanifest   添加到主屏幕（iOS / Android）所需清单
 ├─ icons/          应用图标：icon.svg（源）· apple-touch-icon.png（180）· icon-192/512.png · favicon-32.png
 ├─ css/            style.css（全站）· gallery.css · cp.css
