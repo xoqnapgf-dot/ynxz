@@ -140,7 +140,7 @@ ynxz/
 | 利己主义 | 赫卡忒 | 安那其学院·读书会召集人 | 新历 508 | 安那其学院 |
 | 利己主义 | 艾薇塔·塞壬 | 安那其学院·副院长 | 新历 512 | 安那其学院 |
 | 列宁主义 | 阿列芙蒂娜·沃罗诺娃 | 卡法里扬·铁路工区鼓动员 | 新历 514 | 卡法里扬帝国 |
-| 联邦主义 | 顾莲晨 | 伊鲁尼利亚·州际协调官 | 新历 509 | 伊鲁尼利亚共和国 |
+| 联邦主义 | 顾莲晨 | 伊鲁尼利亚·州际协调官 | 新历 511 | 伊鲁尼利亚共和国 |
 | 乐观主义 | 素子 | 霁川·乡塾教员 | 新历 521 | 霁川公国 |
 | 理想主义 | 艾尔皮斯·奥罗拉 | 万知城·公共讲坛辩手 | 新历 516 | 万知城 |
 | 利他主义 | 艾格尼丝·特蕾莎 | 罗歇阿普·河港救济所主持 | 新历 515 | 河港救济所 |
@@ -209,7 +209,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v105`、`versions-data.js v5`、`locations-data.js v22`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v106`、`versions-data.js v5`、`locations-data.js v22`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
