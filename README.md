@@ -191,16 +191,17 @@ ynxz/
 ---
 
 ## 九、维护备忘
-- 编辑 `gallery-data.js` 等时：文件里字符串内的换行是**字面 `\n\n`**；正文里的引号请用全角 `「」`（ASCII 单引号会截断 JS 字符串）。
+- 编辑 `gallery-data.js` 等时：文件里字符串内的换行是**字面 `\n\n`**（单反斜杠 + n，页面渲染成换行）；**写成双反斜杠 `\\n` 会原样显示成 `\n` 乱码**。改完可用 node 逐条 `eval` 数据文件，检查字符串里是否残留反斜杠：`for (const g of GALLERY_DATA) for (const c of g.characters) if (c.bio.includes(String.fromCharCode(92))) console.log(g.name, c.name)`。正文里的引号请用全角 `「」`（ASCII 单引号会截断 JS 字符串）。
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v101`、`versions-data.js v5`、`locations-data.js v21`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v102`、`versions-data.js v5`、`locations-data.js v21`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
 ## 十、待办 / 未完成（备忘）
-- 其余 80 个角色尚未写人设（125 − 45）；多数占位国无介绍；配色仍有成片偏色待逐图复核。
+- 其余 68 个角色尚未写人设（125 − 57）；多数占位国无介绍；配色仍有成片偏色待逐图复核。
+- **J 字头 12 个思潮的角色人设已重写**（建制主义～绝对主义，共 12 人），同时修掉了这批 bio 里把换行写成双反斜杠、页面上直接显示 `\n` 的乱码；其余思潮的人设仍是旧稿。
 - **左翼思潮集中安置（进行中）**：坎普共和国 · 黑岩路矿区定为「尚未执政、偏非暴力改革」的左翼据点（共产主义·康妮已落位，工人夜校／消费合作社／工人联合会这条线）；铁枢人民共和国仍作为「已执政的社会主义国家」一侧。马克思主义(伊尔莎/卡尔拉)、列宁主义(阿列芙蒂娜)、民主集中制(秦望舒)、毛泽东主义(燕归云)、集体主义等后续按这两侧分流。
 - **思潮扩展**：计划加入道家、名家、阴阳家等非政治类思想流派及其他领域的思潮；届时可给每条数据加 `field` 字段（政治 / 哲学 / 宗教 / 经济 / 诸子百家…）并在画廊顶部做可选的分类筛选，默认显示全部。
 - 画廊「思潮」标签已改名，首页大标题与站主声明沿用「意识形态拟人化」原话，不要擅改。
