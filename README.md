@@ -371,7 +371,8 @@ ynxz/
 
 ## 独立视觉草稿 · 3D 星球
 
-- 第六版聚焦学院重设计：撤掉整圈高墙、双塔和大圆台座，保留环形总布局，改成沿山势错层的图书馆、教学楼、工坊与开放庭园，圈 A 融入低矮入口。
-- [查看当前学院原生4K实渲染及说明](drafts/pierteia-globe/README.md)。本轮只交付一张学院成片及学院范围回归；上一批八场景的多图导出已停止，不宣称全部完成。
-- 共8个可选场景、按需构建。正式20坐标、28地点、海陆、湖泊与parent关系不变，主站未改。
-- 独立草稿，未合并main、未自动上线。globe/CSS引用、landmarks、academy-hillside、regional-scenes为v6；archipelago-hq/scene-catalog仍v5，planet-materials仍v3；原站缓存指针不变。
+- 第七版将学院公共阅览室改为Blender 4.2导出的精细GLB资产，含真实窗洞、搭接屋瓦、石材倒角、木构及室内书架；保留环形依山总布局。
+- [查看三张原生4K网页实渲染](drafts/pierteia-globe/README.md)：建筑近景、门窗材质特写、学院总览。不是把Blender离线图片贴进网页。
+- 网页接入独立PBR材质、环境反射和GTAO。当前是一栋建筑的样板，不宣称全院或其他国家场景已同样精修；玻璃是实时近似，未完成全局光照烘焙。
+- 正式20标记/28地点及地理数据不变。独立草稿、不合并main、不自动上线、不改主站。
+- globe/CSS引用、landmarks、academy-hillside及新增academy-asset为v7；未改模块保持原版本。详细来源、检查范围及运行方法见草稿README。

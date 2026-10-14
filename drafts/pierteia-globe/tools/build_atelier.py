@@ -95,7 +95,7 @@ def hoop(name,x,y,z,r,mat,plane='front',thick=.018):
   a=i/48*math.tau;points.append((x+r*math.cos(a),y+r*math.sin(a),z) if plane=='front' else (x+r*math.cos(a),y,z+r*math.sin(a)))
  return tube(name,points,thick,mat)
 
-box('Foundation',(9.1,.34,5.0),(0,-.18,0),stone,.04)
+box('Foundation',(9.1,1.8,5.0),(0,-.92,0),stone,.04)
 # Continuous wall meshes are cut by Boolean window and door openings before beveling.
 def cut_wall(name,size,loc,openings):
  o=box(name,size,loc,plaster,0);o.data=o.data.copy()
@@ -223,6 +223,16 @@ for x in [-1.25,1.25]:
  for dx in [-.09,.09]:box('Lantern frame',(.02,.32,.17),(x+dx,2.04,2.58),metal,.005)
  box('Lantern cap',(.25,.045,.23),(x,2.23,2.58),metal,.008)
 # Laid paving, bevelled joints, outdoor bench, books, planter boxes and herb leaves.
+# A deep continuous footing meets the actual sloping campus ground, not a floating apron.
+box('Apron retaining core',(9.75,1.45,2.30),(0,-.99,3.69),stone,.035)
+for row in range(5):
+ for i in range(21):
+  x=-4.74+i*.47+(row%2)*.23
+  if x>4.75:continue
+  box('Apron retaining course',(.453,.228,.24),(x,-.40-row*.236,4.82),stone,.02)
+for i in range(8):
+ box('Garden access step',(2.55,.16,.34),(0,-.36-i*.15,4.88+i*.30),stone,.025)
+
 for row in range(6):
  for i in range(21):
   x=-4.8+i*.45+(row%2)*.22

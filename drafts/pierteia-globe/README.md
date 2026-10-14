@@ -1,22 +1,51 @@
-# 第七版资产接入中 · Blender 阅览室
+# Pierteia · Blender 建筑资产与网页材质 / 草稿 07
 
-## 当前网页工作近景（1600×1000）
+**本轮三张均由可交互网页实际渲染。** 建筑资产由 Blender 4.2 制作并导出为 GLB，网页负责实时显示、材质、环境反射、阴影和屏幕空间遮蔽；不是把 Blender 离线图片贴到网页上。
 
-![Blender 阅览室网页工作近景](screenshots/v7/22-atelier-working.jpg)
+## 三张原生4K实渲染
 
-**这是真实网页运行截图，不是 Blender 离线成片。** 当前铺地边缘与偏白的玻璃还在调整，此图是工作版本，不是最终4K交付。
+浏览图为1920×1080 JPEG，点击打开3840×2160 PNG。每张4次抖动采样，冻结动画、直接渲染到4K，不是放大旧截图。
 
+### 1. 阅览室建筑近景
 
-已实际使用 Blender 4.2 导出 `assets/atelier/academy-atelier.glb`，保留可旋转三维模型，不是把渲染图贴进网页。真实窗洞、逐片屋瓦、石材倒角、木构、玻璃、室内书架及圈 A 金属构件均在资产中。
+[![阅览室近景](screenshots/v7/previews/23-atelier-exterior.jpg)](screenshots/v7/23-atelier-exterior.png)
 
-当前已接入网页加载、环境反射与接触遮蔽；本次先保存源码、模型和原始材质，网页近景正在验证，尚未把新成片列为已完成。
+### 2. 门窗与材质细节
 
-- 建模重建脚本：`tools/build_atelier.py`；资产来源说明：`assets/atelier/provenance.json`。
-- 全部几何及材质为自行制作的程序化资产，不是扫描材质；没有声称 Blender 离线渲染图等同于网页效果。
-- 仍为独立草稿，不改主站、不合并main、不自动上线。
-- 缓存入口及改动模块为v7；尚未改动的模块保留原版本。
+[![门窗材质细节](screenshots/v7/previews/24-window-materials.jpg)](screenshots/v7/24-window-materials.png)
 
----
+### 3. 学院总览与场地关系
+
+[![学院总览](screenshots/v7/previews/25-campus-context.jpg)](screenshots/v7/25-campus-context.png)
+
+## 这批实际完成的工作
+
+- **Blender独立资产**：公共阅览室替换原来的简化楼体，保持学院环形依山布局。可重复生成的建模源脚本在 `tools/build_atelier.py`，网页使用 `assets/atelier/academy-atelier.glb`。
+- **几何细节**：有厚度的墙与真实窗洞、窗框与开启的木百叶、石材倒角、880片搭接屋瓦、屋脊、檐口、雨水管、门五金、圈 A 金属构件、铺地接缝、入口台阶、书架与阅读家具。铺地补了落地基础与接坡阶梯。
+- **材质**：灰泥、石灰岩、木材和陶瓦各有颜色、粗糙度及法线贴图。贴图为自行制作的程序化材质，不是扫描材质，不声称是照片级资产。
+- **网页光照**：预过滤的自制HDR环境照明场、环境反射、太阳阴影及GTAO接触遮蔽。原始GLB带玻璃材质，网页目前采用薄玻璃透明与反射近似，以避免过白的玻璃面；不是离线路径追踪折射。
+- **加载与交互**：模型为自包含GLB，约14MB；初始载入显示进度。学院提供「全景／建筑近景／材质细节」三个机位，也可继续环绕缩放。
+
+这是一栋建筑的精细样板，不代表全院其他楼体、植被及其他国家场景都已升级到同样细节。当前没有完成全局光照烘焙、离线路径追踪成片或全部场景的统一材质替换。
+
+## 验证与范围
+
+- `tools/verification-v7.json`：三张4K导出、模型与材质加载、细节按钮、Esc返回、搜索与重新进入学院的实际浏览器检查。
+- `node tools/validate.mjs`：正式地理数据SHA、20标记/28地点、GLB结构、图片尺寸和验证记录检查。
+- 浏览器验证基于Chromium软件WebGL，不是实际桌面显卡性能基准，也不声称所有设备已测试。
+- 正式海陆、湖泊、坐标及parent关系不改；仍为独立草稿，不合并main、不自动上线，不替换主站。
+
+## 运行与重建
+
+在本目录运行 `python -m http.server 8134 --bind 0.0.0.0`，通过HTTP打开。需要WebGL 2，不使用运行时CDN。
+
+Blender资产源脚本需要Blender 4.2、NumPy、Pillow、SciPy。可在具备这些Python依赖的Blender环境执行 `blender --background --python tools/build_atelier.py`；输出GLB与材质到 `assets/atelier/`。资产以米为单位，网页按地图场景单位变换；不是正式测绘比例。未启用Draco压缩，不依赖额外在线解码服务。
+
+缓存：globe、landmarks、academy-hillside、academy-asset及页面引用为v7；其余未修改模块保留原版本。
+
+## 历史工作图
+
+[首次接入工作近景](screenshots/v7/22-atelier-working.jpg)保留记录，包含当时尚未修好的铺地和偏白玻璃，不是上方三张成片。
 
 <details><summary>第六版及此前历史记录（不是本轮效果）</summary>
 

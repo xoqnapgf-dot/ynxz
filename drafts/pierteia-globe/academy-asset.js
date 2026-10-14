@@ -10,12 +10,12 @@ export function attachAtelier(parent){
  if(!source)throw Error('Blender atelier asset has not loaded');
  const g=source.clone(true);g.name='Blender academy reading room';g.userData.noBake=true;
  g.position.set(-.119,.056,.163);g.rotation.y=.52;g.scale.setScalar(.01);
- g.traverse(o=>{if(o.isMesh){o.castShadow=!o.material.transmission;o.receiveShadow=true;const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){m.envMapIntensity=.8;if(m.transmission){m.thickness=.0004;m.roughness=.12;m.side=T.DoubleSide;}}}});
+ g.traverse(o=>{if(o.isMesh){o.castShadow=!o.material.transmission;o.receiveShadow=true;const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){m.envMapIntensity=.8;if(m.transmission){m.transmission=0;m.transparent=true;m.opacity=.22;m.depthWrite=false;m.metalness=.04;m.roughness=.12;m.color.set('#9aafaa');m.side=T.FrontSide;}}}});
  parent.add(g);return g;
 }
 export function createDaylight(renderer){
  // Original HDR lighting field, not a photographic/scanned HDRI.
- const w=1024,h=512,data=new Float32Array(w*h*4),sun=new T.Vector3(-1.8,2.3,1.4).normalize();
+ const w=1024,h=512,data=new Float32Array(w*h*4),sun=new T.Vector3(-2.2,3.3,4.5).normalize();
  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
   const t=y/h*Math.PI,p=x/w*Math.PI*2,dx=-Math.cos(p)*Math.sin(t),dy=Math.cos(t),dz=Math.sin(p)*Math.sin(t);
   const haze=Math.exp(-Math.max(0,dy)*5),cloud=Math.pow(Math.max(0,Math.sin(p*7+t*5)*Math.sin(p*3-t*11)),3)*.23*Math.max(0,dy);

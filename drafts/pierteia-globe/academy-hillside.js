@@ -226,5 +226,5 @@ export function createAcademyHillside(g,k){
  for(let i=0;i<24;i++)box(g,k,.029,.0015,.0025,p.wood,.44,.010,.16+i*.0028);
  for(const x of [.427,.453])for(const z of [.16,.19,.222])k.beam(g,[x,-.025,z],[x,.011,z],.0009,p.wood);
  k.boat(g,.477,.20,.7,.1);
- return {focus:.116,eye:[.52,.39,.70],light:[-1.8,2.3,1.4],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]}},meta:{sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:7,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:7,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }

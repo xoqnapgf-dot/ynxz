@@ -2,7 +2,7 @@
   "tool": "Blender 4.2.0",
   "asset": "academy-atelier.glb",
   "units": "meters, glTF Y-up",
-  "triangles": 138950,
+  "triangles": 145670,
   "batches": 15,
   "textures": "Original authored procedural PBR, not scans",
   "seed": 71,
