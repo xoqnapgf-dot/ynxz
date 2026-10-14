@@ -22,8 +22,8 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=4'));assert(html.includes('globe.css?v=4'));
-assert(read('globe.js').toString().includes('landmarks.js?v=4'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=6'));assert(html.includes('globe.css?v=6'));
+assert(read('globe.js').toString().includes('landmarks.js?v=6'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);
 assert(read('globe.js').toString().includes('planet-materials.js?v=3'));
@@ -43,6 +43,19 @@ for(const shot of hq.captures){assert.equal(shot.samples,4);assert.deepEqual(png
 assert.equal(hq.stats.quality,'Desktop HQ');assert.equal(hq.stats.shadowSize,4096);assert.deepEqual(hq.stats.surfaceSize,[6144,3072]);
 const islands=hq.stats.geometry.find(g=>g.id===901);assert.equal(islands.terrainTriangles,819200);assert(islands.triangles>900000);assert.equal(islands.homes,12);assert(islands.trees>200);
 assert(read('globe.js').toString().includes('SSAARenderPass'));assert(!read('globe.js').toString().includes('cv.width=2048'));
-assert(read('landmarks.js').toString().includes('archipelago-hq.js?v=4'));assert(html.includes('data-detail-view="harbor"'));
+assert(read('landmarks.js').toString().includes('archipelago-hq.js?v=5'));assert(html.includes('data-detail-view="harbor"'));
 for(const name of ['archipelago-hq.js','vendor/addons/objects/Water.js','vendor/addons/postprocessing/SSAARenderPass.js'])assert(read(name).length>100);
-console.log('PASS: unchanged official geography; 20 markers / 28 places; full 6K textures; 3 native 4K/4-sample exports; HQ terrain and reflection resources; browser regression record.');
+const academy=JSON.parse(read('tools/verification-v6.json'));
+assert.equal(academy.revision,6);assert.deepEqual(academy.errors,[]);assert.equal(academy.captures.length,1);
+assert.deepEqual(pngSize('screenshots/v6/21-academy-open-campus.png'),[3840,2160]);
+assert(read('screenshots/v6/previews/21-academy-open-campus.jpg').length>1000);
+assert.equal(academy.captures[0].samples,4);assert.equal(academy.stats.activeScene,900);
+assert.equal(academy.stats.markers,20);assert.equal(academy.stats.locations,28);assert.equal(academy.stats.models,8);
+assert.equal(academy.stats.geometry.find(x=>x.id===900).revision,6);
+assert(read('landmarks.js').toString().includes('academy-hillside.js?v=6'));
+assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=6'));
+assert(read('regional-scenes.js').toString().includes('ix.push(a,a+1,a+2,a+1,a+3,a+2)'));
+const {SCENES}=await import('data:text/javascript;base64,'+read('scene-catalog.js').toString('base64'));
+assert.equal(SCENES.length,8);assert.equal(new Set(SCENES.map(s=>s.key)).size,8);
+for(const scene of SCENES)assert(data.locations[scene.name]);
+console.log('PASS: unchanged official geography; 20 markers / 28 places; eight-scene catalog; v6 academy native 4K export and focused browser regression; historical v3/v4 records retained.');

@@ -6,7 +6,7 @@ import { SSAARenderPass } from 'three/addons/postprocessing/SSAARenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { createPlanetMaterials } from './planet-materials.js?v=3';
-import { createLandmark } from './landmarks.js?v=5';
+import { createLandmark } from './landmarks.js?v=6';
 const $=s=>document.querySelector(s),R=3.2,Y=new T.Vector3(0,1,0),GLOBE_UP=new T.Vector3(-.22,.974,.045).normalize();
 import { SCENES, SCENE_BY_NAME } from './scene-catalog.js?v=5';
 const special=Object.fromEntries(SCENES.filter(s=>typeof s.key==='number').map(s=>[s.key,s]));

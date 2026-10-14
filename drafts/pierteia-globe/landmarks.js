@@ -1,7 +1,7 @@
 import * as T from 'three';
 import { createArchipelagoHQ } from './archipelago-hq.js?v=5';
-import { createAcademyHillside } from './academy-hillside.js?v=5';
-import { createRegionalScene } from './regional-scenes.js?v=5';
+import { createAcademyHillside } from './academy-hillside.js?v=6';
+import { createRegionalScene } from './regional-scenes.js?v=6';
 import { mergeGeometries } from 'three/addons/BufferGeometryUtils.js';
 // All architectural forms are draft interpretations. Local Y is the surface normal.
 let seed=5471;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};

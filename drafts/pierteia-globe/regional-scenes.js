@@ -106,7 +106,7 @@ function factory(g,x,z,w,d,k,p){
 }
 export function lane(g,points,width,height,k,m){
  const curve=new T.CatmullRomCurve3(points.map(([x,z])=>new T.Vector3(x,0,z))),p=[],uv=[],ix=[],n=80;
- for(let i=0;i<=n;i++){const t=i/n,v=curve.getPoint(t),d=curve.getTangent(t),normal=new T.Vector3(-d.z,0,d.x);for(const side of [-1,1]){const x=v.x+normal.x*width*.5*side,z=v.z+normal.z*width*.5*side;p.push(x,height(x,z)+.0015,z);uv.push(side+1,t*20);}if(i<n){const a=i*2;ix.push(a,a+2,a+1,a+1,a+2,a+3);}}
+ for(let i=0;i<=n;i++){const t=i/n,v=curve.getPoint(t),d=curve.getTangent(t),normal=new T.Vector3(-d.z,0,d.x);for(const side of [-1,1]){const x=v.x+normal.x*width*.5*side,z=v.z+normal.z*width*.5*side;p.push(x,height(x,z)+.0015,z);uv.push(side+1,t*20);}if(i<n){const a=i*2;ix.push(a,a+1,a+2,a+1,a+3,a+2);}}
  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(p,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setIndex(ix);geo.computeVertexNormals();k.mesh(g,geo,m);
 }
 function fence(g,a,b,height,k,p){const dist=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.ceil(dist/.015);for(let i=0;i<=n;i++){const t=i/n,x=T.MathUtils.lerp(a[0],b[0],t),z=T.MathUtils.lerp(a[1],b[1],t),y=height(x,z);k.cyl(g,.0006,.012,p.steel,x,y+.006,z,6);if(i<n){const nx=T.MathUtils.lerp(a[0],b[0],(i+1)/n),nz=T.MathUtils.lerp(a[1],b[1],(i+1)/n);for(const dy of [.004,.009])k.beam(g,[x,y+dy,z],[nx,height(nx,nz)+dy,nz],.00022,p.steel);}}}
