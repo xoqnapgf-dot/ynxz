@@ -22,8 +22,8 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=9'));assert(html.includes('globe.css?v=9'));
-assert(read('globe.js').toString().includes('landmarks.js?v=9'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=10'));assert(html.includes('globe.css?v=10'));
+assert(read('globe.js').toString().includes('landmarks.js?v=10'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);
 assert(read('globe.js').toString().includes('planet-materials.js?v=9'));
@@ -52,7 +52,7 @@ assert(read('screenshots/v6/previews/21-academy-open-campus.jpg').length>1000);
 assert.equal(academy.captures[0].samples,4);assert.equal(academy.stats.activeScene,900);
 assert.equal(academy.stats.markers,20);assert.equal(academy.stats.locations,28);assert.equal(academy.stats.models,8);
 assert.equal(academy.stats.geometry.find(x=>x.id===900).revision,6);
-assert(read('landmarks.js').toString().includes('academy-hillside.js?v=9'));
+assert(read('landmarks.js').toString().includes('academy-hillside.js?v=10'));
 assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=9'));
 assert(read('regional-scenes.js').toString().includes('ix.push(a,a+1,a+2,a+1,a+3,a+2)'));
 const {SCENES}=await import('data:text/javascript;base64,'+read('scene-catalog.js').toString('base64'));
@@ -88,4 +88,14 @@ for(const item of v9.scenes){assert.equal(item.geometry.finishRevision,9);assert
 const recovery9=JSON.parse(read('tools/verification-loading-v9.json'));assert.deepEqual(recovery9.errors,[]);
 for(const key of ['textureFailureContained','textureRetryPassed','glbFailureContained','cancelPassed','lateLoadDidNotStealScene','glbRetryAndCachePassed','escapePassed','searchAndReentryPassed','detailControlsPassed'])assert.equal(recovery9[key],true,key);
 for(const file of ['vegetation.js','roof-detail.js','vendor/addons/postprocessing/SMAAPass.js','vendor/addons/shaders/SMAAShader.js'])assert(read(file).length>100);
-console.log('PASS: official geography unchanged; historical records intact; v9 geometry/material/AA, eight-scene renders, two close views and loading recovery checked. Art quality still requires visual review.');
+const v10=JSON.parse(read('tools/verification-v10.json'));
+assert.equal(v10.revision,10);assert.deepEqual(v10.errors,[]);assert.equal(v10.scenes.length,8);
+assert.equal(v10.initial.glbRequests,0);assert.equal(v10.final.loadedModels,8);assert.equal(v10.glbRequests,1);
+assert.equal(v10.final.markers,20);assert.equal(v10.final.locations,28);assert.equal(v10.closeViews.length,6);
+const campus10=v10.final.geometry.find(g=>g.id===900);assert.equal(campus10.revision,10);assert(campus10.academyOpenings>100);assert(campus10.piercedLibrary&&campus10.blenderAsset&&campus10.circledA);
+for(const key of ['library','teaching','workshop']){assert(html.includes(`data-detail-view="${key}"`));assert(v10.closeViews.some(v=>v.id===900&&v.preset===key));}
+assert(read('academy-hillside.js').toString().includes('architecture.js?v=10'));
+const recovery10=JSON.parse(read('tools/verification-loading-v10.json'));assert.equal(recovery10.revision,10);assert.deepEqual(recovery10.errors,[]);
+for(const key of ['textureFailureContained','textureRetryPassed','glbFailureContained','cancelPassed','lateLoadDidNotStealScene','glbRetryAndCachePassed','escapePassed','searchAndReentryPassed','detailControlsPassed'])assert.equal(recovery10[key],true,key);
+await import('./test-architecture.mjs');
+console.log('PASS: official geography and historical assets preserved; v10 pierced academy, geometry rays, eight scenes, six close views and loading recovery.');
