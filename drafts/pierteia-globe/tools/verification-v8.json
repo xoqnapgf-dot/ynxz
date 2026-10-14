@@ -21,7 +21,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 7415
+      "elapsedMs": 7565
     },
     {
       "id": 12,
@@ -39,7 +39,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 3808
+      "elapsedMs": 4158
     },
     {
       "id": 11,
@@ -57,7 +57,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 13135
+      "elapsedMs": 13308
     },
     {
       "id": "falota",
@@ -75,7 +75,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 7746
+      "elapsedMs": 7452
     },
     {
       "id": "shiomi",
@@ -93,7 +93,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 5396
+      "elapsedMs": 5647
     },
     {
       "id": 902,
@@ -109,7 +109,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 3122
+      "elapsedMs": 3186
     },
     {
       "id": 901,
@@ -129,7 +129,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 11518
+      "elapsedMs": 11342
     },
     {
       "id": 900,
@@ -150,7 +150,7 @@
       "assetLighting": true,
       "contactOcclusion": true,
       "returnedToGlobe": true,
-      "elapsedMs": 9507
+      "elapsedMs": 8801
     }
   ],
   "initial": {

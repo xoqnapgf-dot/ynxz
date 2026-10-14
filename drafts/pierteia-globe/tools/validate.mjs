@@ -65,4 +65,19 @@ const v7=JSON.parse(read('tools/verification-v7.json'));assert.equal(v7.revision
 for(const shot of v7.captures){assert.equal(shot.samples,4);assert.deepEqual(pngSize('screenshots/v7/'+shot.file),[3840,2160]);assert(read('screenshots/v7/previews/'+shot.file.replace('.png','.jpg')).length>1000);}
 assert(v7.stats.assetLighting);assert(v7.stats.contactOcclusion);assert(v7.stats.geometry.find(g=>g.id===900).blenderAsset);
 for(const name of ['academy-asset.js','tools/build_atelier.py','vendor/addons/loaders/GLTFLoader.js','vendor/addons/postprocessing/GTAOPass.js'])assert(read(name).length>100);
-console.log('PASS: unchanged official geography; Blender GLB structure; three native 4K viewer renders; academy controls/materials regression; historical records retained.');
+// V8 records are independent of the historical image checks above.
+const v8=JSON.parse(read('tools/verification-v8.json'));
+assert.equal(v8.revision,8);assert.deepEqual(v8.errors,[]);assert.equal(v8.scenes.length,8);
+assert.deepEqual(v8.scenes.map(s=>String(s.id)).sort(),SCENES.map(s=>String(s.key)).sort());
+assert.equal(v8.initial.glbRequests,0);assert.equal(v8.initial.loadedModels,0);assert.equal(v8.glbRequests,1);
+assert.equal(v8.final.loadedModels,8);assert.equal(v8.final.markers,20);assert.equal(v8.final.locations,28);
+for(const item of v8.scenes){assert(item.assetLighting&&item.contactOcclusion&&item.returnedToGlobe);assert.equal(item.geometry.finishRevision,8);assert(item.geometry.grassClumps>0);assert(item.geometry.triangles>100000);}
+const loading=JSON.parse(read('tools/verification-loading-v8.json'));
+assert.equal(loading.revision,8);assert.deepEqual(loading.errors,[]);assert.equal(loading.expectedNetworkFailures.length,2);
+for(const key of ['textureFailureContained','textureRetryPassed','glbFailureContained','cancelPassed','lateLoadDidNotStealScene','glbRetryAndCachePassed','escapePassed','searchAndReentryPassed','detailControlsPassed'])assert.equal(loading[key],true,key);
+const wood=JSON.parse(read('assets/world/provenance.json'));assert.deepEqual(wood.size,[1024,1024]);
+for(const item of Object.values(wood.channels))assert.equal(hash(read('assets/world/'+item.file)),item.sha256);
+for(const name of ['world-finish.js','world-occlusion.js','ecology.js','tools/verify-browser.mjs','tools/verify-loading.mjs','tools/build_world_wood.py','vendor/addons/geometries/RoundedBoxGeometry.js'])assert(read(name).length>100);
+assert(html.includes('id="scene-retry"'));assert(html.includes('id="scene-cancel"'));
+assert(read('world-occlusion.js').toString().includes('object.isSprite'));
+console.log('PASS: unchanged official geography; historical GLB and images; v8 eight-scene browser renders, PBR/ecology, optional GLB, cancellation/retry and navigation records.');
