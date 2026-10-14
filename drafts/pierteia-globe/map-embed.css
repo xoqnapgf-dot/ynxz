@@ -1,0 +1,26 @@
+/* Only the map-page iframe uses this skin. Standalone art-review routes remain intact. */
+#embed-tools{display:none}
+.embedded .topbar,.embedded .intro,.embedded .bottom-bar,.embedded .orientation{display:none}
+.embedded .vignette{background:linear-gradient(0deg,#060c1555,transparent 22%)}
+.embedded #embed-tools{position:fixed;z-index:8;left:16px;top:16px;display:flex;gap:6px;padding:5px;border-radius:9px}
+.embedded #embed-tools button{padding:10px 13px;min-height:38px;font-size:12px;border-radius:5px}.embedded #embed-tools button[aria-expanded=true]{background:#c0a76a33;color:#efd9a7}
+.embedded .explorer,.embedded .detail,.embedded .inspection .detail{top:16px;right:16px;left:auto;bottom:auto;width:280px;padding:18px;border-radius:10px;max-height:calc(100dvh - 100px);overflow-y:auto;overscroll-behavior:contain}
+.embedded .detail h2{font-size:24px;margin:18px 0 12px}.embedded .detail #detail-description{max-height:22vh;font-size:12px;line-height:1.9}.embedded .detail-note{font-size:10px}
+.embedded .detail-close{min-width:40px;min-height:40px;right:5px;top:5px}.embedded #fold{min-width:36px;min-height:36px}
+.embedded .panel-heading{padding-bottom:10px}.embedded .place{min-height:48px}.embedded .place-list{max-height:calc(100dvh - 294px)}.embedded .place-text strong{font-size:12px}.embedded .place-text small{font-size:10px}
+.embedded .layers{display:block;top:76px;left:16px;bottom:auto;width:240px;max-height:calc(100dvh - 154px);overflow:auto;z-index:9;padding:18px;border-radius:10px}.embedded .layers label{min-height:34px;margin-bottom:9px;font-size:12px}.embedded .layer-bottom button{min-height:36px}.embedded.layers-open .explorer,.embedded.layers-open .detail{visibility:hidden!important}
+.embedded .view-switch,.embedded .inspection .view-switch{left:16px;right:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:none;border-radius:9px}.embedded .view-switch button{font-size:12px;min-height:40px;padding:10px 13px}
+.embedded .zoom-controls{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));flex-direction:row;border-radius:9px}.embedded .zoom-controls button{width:40px;height:44px}
+.embedded #scene-loading{bottom:82px;border-radius:10px}.embedded #toast{bottom:84px}.embedded #detail-views button{min-height:36px;font-size:11px}
+.embedded .clean #embed-tools{display:none}.embedded .inspection #embed-layers{display:none}
+@media(max-width:700px){
+ .embedded #embed-tools{top:10px;left:10px;gap:0;padding:3px}.embedded #embed-tools button{font-size:11px;padding:9px 11px;min-height:38px}
+ .embedded .explorer,.embedded .detail,.embedded .inspection .detail{top:auto!important;bottom:calc(72px + env(safe-area-inset-bottom,0px));right:10px;left:10px;width:auto;padding:10px 14px;max-height:42dvh}
+ .embedded .explorer .panel-heading{padding-bottom:0;min-height:34px}.embedded .search{display:flex;margin:10px 0}.embedded .search input{font-size:16px}.embedded .filter-tabs{margin:10px 0 0}.embedded .filter-tabs button{font-size:11px;padding-bottom:10px}.embedded .place-list{max-height:140px;display:block}.embedded .place{min-height:42px;padding:9px 0}.embedded .place-text strong{font-size:12px}
+ .embedded .detail h2{font-size:21px;margin:12px 0 8px}.embedded .detail #detail-description{font-size:12px;max-height:12dvh;margin:10px 0}.embedded #detail-views{margin-top:10px}
+ .embedded .layers{top:60px;left:10px;max-height:calc(100dvh - 132px);width:min(280px,calc(100vw - 70px))}
+ .embedded .view-switch,.embedded .inspection .view-switch{left:10px;right:auto;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 68px);padding:4px;gap:0;overflow-x:auto;justify-content:flex-start;white-space:nowrap}.embedded .view-switch button{font-size:10px;padding:10px 9px;min-height:38px}.embedded .view-switch>span{margin:0 1px}
+ .embedded .zoom-controls{right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:column}.embedded .zoom-controls button{width:38px;height:38px}.embedded .zoom-controls #reset{display:none}
+ .embedded .marker{font-size:10px}.embedded .marker.special{font-size:11px}
+}
+@media(max-height:460px) and (min-width:701px){.embedded .explorer,.embedded .detail,.embedded .inspection .detail{max-height:calc(100dvh - 88px);width:260px}.embedded .place-list{max-height:100px}.embedded .detail #detail-description{max-height:56px}.embedded .layers{max-height:calc(100dvh - 146px)}.embedded .view-switch button{min-height:34px}}
