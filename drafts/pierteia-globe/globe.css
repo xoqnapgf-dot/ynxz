@@ -9,3 +9,5 @@
 .inspection .vignette{background:linear-gradient(90deg,#06101a12,transparent 60%,#07121e88),linear-gradient(0deg,#08101b99,transparent 20%,transparent 80%,#08101b66)}
 .inspection .detail{background:linear-gradient(130deg,#111e29e8,#0c1724c9);width:280px;padding:23px}.inspection .detail #detail-description{font-size:10px;max-height:25vh}.inspection .detail h2{font-size:24px}.inspection .detail-note{color:#99a8b0}.inspection .primary-button{display:none}
 @media(max-width:700px){.inspection .detail{width:auto;padding:16px}.inspection .detail #detail-description{max-height:12vh}.inspection .detail h2{font-size:20px}}
+
+#detail-views{display:flex;gap:6px;margin-top:18px}#detail-views button{border:1px solid #bea97455;color:#d3c092;font-size:11px;padding:7px 12px}#capture:disabled{opacity:.55;cursor:wait}
