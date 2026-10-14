@@ -1,6 +1,6 @@
 import * as T from 'three';
-import { finish } from './world-finish.js?v=8';
-import { scatterEcology } from './ecology.js?v=8';
+import { finish } from './world-finish.js?v=9';
+import { scatterEcology } from './ecology.js?v=9';
 import { Water } from 'three/addons/objects/Water.js';
 
 // An interpretive local scene tied to the existing marker, not a new map.
@@ -60,22 +60,13 @@ function terrain(g, kit) {
     const c=rock.clone().lerp(grass,growth*.95).lerp(wet,(1-smooth(-.001,.016,h))*.7);
     if(h<.015&&slope<.8)c.lerp(sand,.45);
     const strata=Math.sin(h*970+fbm(xx*90,zz*90)*4)*.06;
-    c.multiplyScalar(.88+noise(xx*290,zz*290)*.19+strata*(1-growth));
+    c.multiplyScalar(.97+noise(xx*29,zz*29)*.07+strata*(1-growth)*.25);
     pos.set([xx,h,zz],i*3);col.set([c.r,c.g,c.b],i*3);uv.set([xx*54,zz*54],i*2);
     if(x<segments&&z<segments){const a=i,b=i+segments+1;idx.set([a,b,a+1,a+1,b,b+1],k);k+=6;}
   }
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(pos,3));geo.setAttribute('color',new T.BufferAttribute(col,3));geo.setAttribute('uv',new T.BufferAttribute(uv,2));geo.setIndex(new T.BufferAttribute(idx,1));geo.computeVertexNormals();
   const mat=new T.MeshStandardMaterial({color:'#ffffff',vertexColors:true,map:kit.maps.rock.map,normalMap:kit.maps.rock.normal,normalScale:new T.Vector2(.9,.9),roughness:.92});
-  // Fine shader weathering is continuous across the dense indexed terrain.
-  mat.onBeforeCompile=shader=>{
-    shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 materialPosition;').replace('#include <begin_vertex>','#include <begin_vertex>\nmaterialPosition=position;');
-    shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 materialPosition;').replace('#include <color_fragment>',`#include <color_fragment>
-      float grain=sin(materialPosition.x*4270.+sin(materialPosition.z*1381.))*sin(materialPosition.y*3751.+materialPosition.z*2137.);
-      float seams=pow(.5+.5*sin(materialPosition.y*840.+sin(materialPosition.x*192.)*.7),18.);
-      diffuseColor.rgb*=.94+grain*.035-seams*.075;
-    `);
-  };
-  mat.customProgramCacheKey=()=> 'island-strata-hq-4';finish(mat,'terrain');
+  finish(mat,'terrain');
   const mesh=new T.Mesh(geo,mat);mesh.castShadow=mesh.receiveShadow=true;mesh.userData.noBake=true;g.add(mesh);
   return {segments,terrainTriangles:segments*segments*2};
 }
@@ -129,7 +120,7 @@ export function reflectiveSea(env, kit, sampleHeight=islandHeightHQ) {
       vec2 p=vPlane;
       vec3 a=texture2D(normalSampler,p*12.+vec2(time*.006,time*.004)).xyz*2.-1.;
       vec3 b=texture2D(normalSampler,mat2(.8,-.6,.6,.8)*p*31.+vec2(-time*.003,time*.005)).xyz*2.-1.;
-      vec3 localN=normalize(vec3(a.xy*.13+b.xy*.065,1.));
+      vec3 localN=normalize(vec3(a.xy*.075+b.xy*.04,1.));
       vec3 N=normalize(waterBasis*localN),V=normalize(eye-vWorld);
       vec2 bathUv=p/1.3+.5;
       vec2 packed=texture2D(depthField,clamp(bathUv,0.,1.)).rg;
@@ -137,12 +128,12 @@ export function reflectiveSea(env, kit, sampleHeight=islandHeightHQ) {
       if(any(lessThan(bathUv,vec2(0.)))||any(greaterThan(bathUv,vec2(1.))))h=-.065;
       float depth=max(0.,-.001-h);
       float shallow=exp(-depth*108.);
-      vec3 deep=vec3(.009,.043,.066),shoal=vec3(.046,.20,.19);
+      vec3 deep=vec3(.017,.044,.049),shoal=vec3(.075,.15,.12);
       vec3 body=mix(deep,shoal,shallow*.88);
       vec2 distortion=(a.xy*.65+b.xy*.35)*.0013;
       vec3 reflection=texture2D(mirrorSampler,mirrorCoord.xy/mirrorCoord.w+distortion).rgb;
       float F=.035+.78*pow(1.-max(dot(N,V),0.),5.);
-      vec3 color=mix(body,reflection,clamp(F+.15,0.,.88));
+      vec3 color=mix(body,reflection,clamp(F+.065,0.,.88));
       float crest=.5+.5*sin(depth*1900.-time*1.45+(a.x+b.y)*1.2);
       float shore=exp(-depth*520.)*smoothstep(.4,.88,crest);
       float speck=smoothstep(-.15,.55,a.y+b.x);

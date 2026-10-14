@@ -1,7 +1,8 @@
 import * as T from 'three';
-import { finish } from './world-finish.js?v=8';
-import { scatterEcology } from './ecology.js?v=8';
-import { reflectiveSea } from './archipelago-hq.js?v=8';
+import { tiledRoof } from './roof-detail.js?v=9';
+import { finish } from './world-finish.js?v=9';
+import { scatterEcology } from './ecology.js?v=9';
+import { reflectiveSea } from './archipelago-hq.js?v=9';
 
 // Representative neighbourhoods, not miniature whole countries or new official towns.
 // Secondary scenes inherit the parent anchor in the viewer; no coordinates are minted.
@@ -10,7 +11,7 @@ const smooth=(a,b,x)=>{const t=T.MathUtils.clamp((x-a)/(b-a),0,1);return t*t*(3-
 function material(kit,color,type='stone',roughness=.88,extra={}){
  return finish(new T.MeshStandardMaterial({color,map:kit.maps[type].map,normalMap:kit.maps[type].normal,normalScale:new T.Vector2(.28,.28),roughness,...extra}),type==='wood'?'wood':extra.metalness?'metal':type==='roof'?'roof':type==='rock'?'terrain':color==='#895644'?'brick':'stone');
 }
-export function palette(k){return {brick:material(k,'#895644'),cream:material(k,'#c2ba9e'),plaster:material(k,'#b0ae96'),stone:material(k,'#888d83'),steel:material(k,'#596d6c','roof',.5,{metalness:.45}),roof:material(k,'#465c61','roof',.74),wood:material(k,'#685241','wood'),dark:material(k,'#343c3a','rock'),glass:new T.MeshStandardMaterial({color:'#668b92',roughness:.20,metalness:.45}),paper:new T.MeshStandardMaterial({color:'#d1c8a7',roughness:.9}),warm:new T.MeshStandardMaterial({color:'#d6b676',emissive:'#efb46b',emissiveIntensity:1.3,roughness:.65}),ground:material(k,'#656958','rock')};}
+export function palette(k){return {brick:material(k,'#895644'),cream:material(k,'#c2ba9e'),plaster:finish(new T.MeshStandardMaterial({color:'#b7b1a0'}),'plaster'),stone:material(k,'#888d83'),steel:material(k,'#626963','roof',.7,{metalness:.2}),roof:material(k,'#545c56','roof',.84),wood:material(k,'#685241','wood'),dark:material(k,'#343c3a','rock'),glass:finish(new T.MeshStandardMaterial({color:'#343d39'}),'glass'),paper:new T.MeshStandardMaterial({color:'#d1c8a7',roughness:.9}),warm:new T.MeshStandardMaterial({color:'#d6b676',emissive:'#efb46b',emissiveIntensity:1.3,roughness:.65}),ground:material(k,'#656958','rock')};}
 export function gridGround(g,k,height,colors,span=1.5,n=160){
  const p=[],c=[],uv=[],idx=[];
  for(let j=0;j<=n;j++)for(let i=0;i<=n;i++){
@@ -23,8 +24,15 @@ export function gridGround(g,k,height,colors,span=1.5,n=160){
  finish(m,'terrain');const mesh=k.mesh(g,geo,m);mesh.userData.noBake=true;
 }
 function groundEnvironment(env,k,m){const geo=new T.PlaneGeometry(10,10);const uv=geo.attributes.uv,pos=geo.attributes.position;for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)*45,-pos.getY(i)*45);const p=k.mesh(env,geo,m,0,.004,0);p.rotation.x=-Math.PI/2;p.castShadow=false;return null;}
-function pane(g,x,y,z,w,h,k,p){k.box(g,w,h,.0008,p.glass,x,y,z);k.box(g,.0007,h+.001,.0015,p.cream,x,y,z+.0006);k.box(g,w+.001,.0008,.0015,p.cream,x,y-h*.5,z+.0006);}
+function pane(g,x,y,z,w,h,k,p){
+ k.box(g,w+.0015,h+.0015,.0007,p.dark,x,y,z-.00015);
+ k.box(g,w-.0004,h-.0004,.0005,p.glass,x,y,z+.00025);
+ for(const sign of [-1,1]){k.box(g,.00065,h+.0015,.0018,p.wood,x+sign*w*.5,y,z+.0005);k.box(g,w+.0015,.00065,.0018,p.wood,x,y+sign*h*.5,z+.0005);}
+ k.box(g,.00045,h,.0016,p.wood,x,y,z+.00065);
+ k.box(g,w+.002,.001,.0028,p.cream,x,y-h*.5-.0007,z+.0008);
+}
 function pitchedRoof(g,w,d,h,k,m,curved=false){
+ tiledRoof(g,{w,d,rise:h,curved,material:m});
  const p=[],uv=[],idx=[],n=curved?16:2;
  for(let side=0;side<2;side++)for(let i=0;i<=n;i++){
   const t=i/n,z=(side?1:-1)*t*d/2,y=h*(1-t)+(curved?Math.pow(t,4)*h*.28:0);
@@ -33,7 +41,7 @@ function pitchedRoof(g,w,d,h,k,m,curved=false){
  }
  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(p,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();m.side=T.DoubleSide;k.mesh(g,geo,m);
  k.beam(g,[-w/2,h,0],[w/2,h,0],.00085,m);
- for(let i=0;i<Math.ceil(w/.005);i++)for(const sign of [-1,1]){const x=-w*.49+i*.005;const points=[];for(let j=0;j<=6;j++){const t=j/6;points.push([x,h*(1-t)+(curved?Math.pow(t,4)*h*.28:0),sign*t*d/2]);}const tube=new T.TubeGeometry(new T.CatmullRomCurve3(points.map(a=>new T.Vector3(...a))),12,.00033,4,false);k.mesh(g,tube,m);}
+
 }
 function house(g,x,z,w,d,h,angle,k,p,{y=.012,timber=false,curved=false,open=false,floors=2}={}){
  const q=new T.Group();q.position.set(x,y,z);q.rotation.y=angle;g.add(q);

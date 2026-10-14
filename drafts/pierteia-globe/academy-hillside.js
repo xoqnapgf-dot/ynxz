@@ -1,10 +1,11 @@
 import * as T from 'three';
+import { tiledRoof } from './roof-detail.js?v=9';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { finish } from './world-finish.js?v=8';
-import { scatterEcology } from './ecology.js?v=8';
-import { attachAtelier } from './academy-asset.js?v=8';
-import { reflectiveSea } from './archipelago-hq.js?v=8';
-import { gridGround, lane } from './regional-scenes.js?v=8';
+import { finish } from './world-finish.js?v=9';
+import { scatterEcology } from './ecology.js?v=9';
+import { attachAtelier } from './academy-asset.js?v=9';
+import { reflectiveSea } from './archipelago-hq.js?v=9';
+import { gridGround, lane } from './regional-scenes.js?v=9';
 
 // A circular CAMPUS PLAN, not one circular building: separate teaching, library,
 // workshop and common-room masses follow the contour around an open planted garden.
@@ -25,8 +26,8 @@ function makeMaterials(k){
   stone, plaster:new T.MeshStandardMaterial({color:'#c5bfa8',normalMap:k.maps.rock.normal,normalScale:new T.Vector2(.08,.08),roughness:.92}),
   light:new T.MeshStandardMaterial({color:'#e2d4af',roughness:.83}), dark:new T.MeshStandardMaterial({color:'#334441',roughness:.87}),
   wood:new T.MeshStandardMaterial({color:'#78614a',map:k.maps.wood.map,roughness:.88}),
-  copper:roof('#668b7d'), tile:roof('#8a6856'), slate:roof('#617575'),
-  glass:new T.MeshStandardMaterial({color:'#496d70',roughness:.18,metalness:.38}),
+  copper:roof('#657065'), tile:roof('#896b57'), slate:roof('#5c655e'),
+  glass:new T.MeshStandardMaterial({color:'#35413b',roughness:.18,metalness:.38}),
   brass:new T.MeshStandardMaterial({color:'#afa17a',roughness:.48,metalness:.65}),
   red:new T.MeshStandardMaterial({color:'#93483b',roughness:.69}),
   paving:new T.MeshStandardMaterial({color:'#b1aa94',map:k.maps.rock.map,roughness:.94}),
@@ -54,6 +55,7 @@ function panel(g,k,p,x,y,z,w,h,{books=false}={}){
  if(books)for(let i=0;i<6;i++)box(g,k,.0014,.003+(i%3)*.0005,.002,i%2?p.paper:p.red,x-w*.37+i*w*.14,y-h*.28,z+.0025);
 }
 function gableRoof(g,k,p,w,d,y,rise,m){
+ tiledRoof(g,{w:w+.008,d:d*1.12,rise,y,material:m});
  const shape=new T.Shape();shape.moveTo(-d/2,0);shape.lineTo(d/2,0);shape.lineTo(0,rise);shape.closePath();
  for(const side of [-1,1]){const q=new T.Group();q.rotation.y=side*Math.PI/2;g.add(q);const end=k.mesh(q,new T.ShapeGeometry(shape),p.plaster,0,y,w/2);end.material.side=T.DoubleSide;}
  for(const sign of [-1,1]){
@@ -125,6 +127,11 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
   if(i<n){const b=i*3;idx.push(b,b+3,b+1,b+1,b+3,b+4,b+1,b+4,b+2,b+2,b+4,b+5);}
  }
  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();k.mesh(g,geo,roof);
+ // Raised standing seams on the crescent's metal roof, not a flat green sheet.
+ for(let i=0;i<=Math.ceil((end-start)*r/.009);i++){
+  const a=T.MathUtils.lerp(start,end,i/Math.ceil((end-start)*r/.009));
+  for(const radius of [ri-.006,ro+.006])k.beam(g,[Math.sin(a)*radius,y+h+.0009,Math.cos(a)*radius],[Math.sin(a)*r,y+h+.0188,Math.cos(a)*r],.00019,roof);
+ }
  const bays=Math.ceil((end-start)*r/.024);
  for(let i=0;i<bays;i++){
   const a=T.MathUtils.lerp(start+.04,end-.04,i/(bays-1));
@@ -165,7 +172,7 @@ export function createAcademyHillside(g,k){
  const p=makeMaterials(k);for(const key of ['stone','plaster','wood','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');
  gridGround(g,k,height,(x,z,y)=>{
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;
-  return new T.Color(y<.010?'#aba58a':slope>1.25?'#9a9c8a':'#76865b').multiplyScalar(.91+hash(Math.floor(x*130),Math.floor(z*130))*.10);
+  return new T.Color(y<.010?'#aba58a':slope>1.25?'#9a9c8a':'#76865b').multiplyScalar(.98+Math.sin(x*19+Math.cos(z*23))*.025);
  },1.55,320);
  // Only the northern library is a crescent. The other wings have their own massing.
  curvedWing(g,k,p,{r:.204,depth:.051,start:Math.PI*.74,end:Math.PI*1.27,y:.112,h:.055});
@@ -230,5 +237,5 @@ export function createAcademyHillside(g,k){
  for(const x of [.427,.453])for(const z of [.16,.19,.222])k.beam(g,[x,-.025,z],[x,.011,z],.0009,p.wood);
  k.boat(g,.477,.20,.7,.1);
  const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
- return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:8,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:9,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }
