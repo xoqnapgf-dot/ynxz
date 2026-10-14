@@ -1,13 +1,14 @@
 import * as T from 'three';
+import { campusSurface, addCampusLandscape } from './academy-landscape.js?v=12';
 import { studyMaterial, readingCourt, scalePerson } from './academy-study.js?v=11';
 import { wallWithOpenings, bendWall } from './architecture.js?v=10';
-import { tiledRoof } from './roof-detail.js?v=9';
+import { tiledRoof } from './roof-detail.js?v=12';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { finish } from './world-finish.js?v=9';
 import { scatterEcology } from './ecology.js?v=9';
 import { attachAtelier } from './academy-asset.js?v=11';
 import { reflectiveSea } from './archipelago-hq.js?v=9';
-import { gridGround, lane } from './regional-scenes.js?v=9';
+import { gridGround, lane } from './regional-scenes.js?v=12';
 
 // A circular CAMPUS PLAN, not one circular building: separate teaching, library,
 // workshop and common-room masses follow the contour around an open planted garden.
@@ -75,16 +76,16 @@ function panel(g,k,p,x,y,z,w,h,{books=false,recessed=false,louvers=false}={}){
  }
 }
 function gableRoof(g,k,p,w,d,y,rise,m){
- tiledRoof(g,{w:w+.008,d:d*1.12,rise,y,material:m});
+ tiledRoof(g,{w:w+.008,d:d*1.12,rise,y,bed:.00052,material:m});
  const shape=new T.Shape();shape.moveTo(-d/2,0);shape.lineTo(d/2,0);shape.lineTo(0,rise);shape.closePath();
  for(const side of [-1,1]){const q=new T.Group();q.rotation.y=side*Math.PI/2;g.add(q);const end=k.mesh(q,new T.ShapeGeometry(shape),p.plaster,0,y,w/2);end.material.side=T.DoubleSide;}
  for(const sign of [-1,1]){
-  const slope=box(g,k,w+.008,.0012,Math.hypot(d*.56,rise),m,0,y+rise/2,sign*d*.28);slope.rotation.x=sign*Math.atan2(rise,d*.56);
+  const slope=box(g,k,w+.008,.00065,Math.hypot(d*.56,rise),m,0,y+rise/2,sign*d*.28);slope.rotation.x=sign*Math.atan2(rise,d*.56);
   k.beam(g,[-w*.55,y,sign*d*.57],[w*.55,y,sign*d*.57],.00055,p.dark);
   for(let i=0;i<Math.ceil(w/.007);i++)box(g,k,.0007,.0018,.009,p.wood,-w*.48+i*.007,y-.001,sign*d*.49);
  }
  k.beam(g,[-w*.56,y+rise,0],[w*.56,y+rise,0],.00085,m);
- for(let i=0;i<Math.ceil(w/.006);i++)for(const sign of [-1,1])k.beam(g,[-w*.50+i*.006,y+rise,0],[-w*.50+i*.006,y,sign*d*.56],.0002,m);
+
 }
 function rail(g,k,p,a,b){
  const dist=new T.Vector3(...a).distanceTo(new T.Vector3(...b)),n=Math.ceil(dist/.007);
@@ -186,12 +187,25 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
   k.mesh(endFace,wallWithOpenings({width:depth,height:h,openings:ends}),p.plaster);
   for(const a of ends)panel(endFace,k,p,a.x,a.y,0,a.w,a.h,{books:true,recessed:true});
  }
+ // One thin annular canopy follows the library; no overlapping shelf-like boxes.
+ const cp=[],ci=[],cu=[];
+ for(let i=0;i<=n;i++){
+  const a=T.MathUtils.lerp(start,end,i/n);
+  for(const rr of [ri-.026,ri+.001]){cp.push(Math.sin(a)*rr,y+.030+(rr-(ri-.026))*.075,Math.cos(a)*rr);cu.push(i*.04,rr*48);}
+  if(i<n){const b=i*2;ci.push(b,b+1,b+2,b+1,b+3,b+2);}
+ }
+ const canopy=new T.BufferGeometry();canopy.setAttribute('position',new T.Float32BufferAttribute(cp,3));canopy.setAttribute('uv',new T.Float32BufferAttribute(cu,2));canopy.setIndex(ci);canopy.computeVertexNormals();k.mesh(g,canopy,p.copper);
+ for(const rr of [ri-.026,ri+.001]){
+  const points=[];for(let i=0;i<=60;i++){const a=T.MathUtils.lerp(start,end,i/60);points.push(new T.Vector3(Math.sin(a)*rr,y+.030+(rr-(ri-.026))*.075,Math.cos(a)*rr));}
+  k.mesh(g,new T.TubeGeometry(new T.CatmullRomCurve3(points),80,.00025,5,false),p.dark);
+ }
  // Gable closures at the two ends of the crescent; no open roof voids.
  for(const a of [start,end]){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute([Math.sin(a)*ri,y+h,Math.cos(a)*ri,Math.sin(a)*r,y+h+.018,Math.cos(a)*r,Math.sin(a)*ro,y+h,Math.cos(a)*ro],3));geo.computeVertexNormals();p.plaster.side=T.DoubleSide;k.mesh(g,geo,p.plaster);}
 }
 function qPergola(g,k,p,a,r,y,h){
  const q=new T.Group();q.rotation.y=a;g.add(q);
- k.beam(q,[0,y,r],[0,y+h,r],.0008,p.wood);box(q,k,.022,.0014,.020,p.wood,0,y+h,r+.006);box(q,k,.022,.001,.021,p.slate,0,y+h+.001,r+.006);
+ k.beam(q,[0,y,r],[0,y+h,r],.00065,p.wood);
+ k.beam(q,[0,y+h-.006,r],[0,y+h,r+.006],.00035,p.wood);
 }
 function coveredWalk(g,k,p,points){
  for(let i=0;i<points.length-1;i++){
@@ -224,11 +238,13 @@ function circledA(g,k,p,x,y,z,r){
  k.beam(g,[x-r*.65,y-r*.76,z],[x,y+r*.82,z],.00075,p.red);k.beam(g,[x,y+r*.82,z],[x+r*.65,y-r*.76,z],.00075,p.red);k.beam(g,[x-r*.57,y-r*.16,z],[x+r*.57,y-r*.16,z],.0006,p.red);
 }
 export function createAcademyHillside(g,k){
- const p=makeMaterials(k);for(const key of ['stone','plaster','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');p.wood=studyMaterial('wood');p.masonry=studyMaterial('stone');p.plaster.color.set('#dad7cc');p.plaster.normalScale.set(.23,.23);
+ const p=makeMaterials(k);for(const key of ['stone','plaster','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');p.wood=studyMaterial('wood');p.masonry=studyMaterial('stone');p.plaster.color.set('#dad7cc');p.plaster.normalScale.set(.23,.23);p.paving=campusSurface('path');
+ const groundIndex=g.children.length;
  gridGround(g,k,height,(x,z,y)=>{
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;
   return new T.Color(y<.010?'#aba58a':slope>1.25?'#9a9c8a':'#76865b').multiplyScalar(.98+Math.sin(x*19+Math.cos(z*23))*.025);
  },1.55,320);
+ const landscape=addCampusLandscape(g,k,height,g.children[groundIndex]);
  // Only the northern library is a crescent. The other wings have their own massing.
  curvedWing(g,k,p,{r:.204,depth:.051,start:Math.PI*.74,end:Math.PI*1.27,y:.112,h:.055});
  const teaching=[{x:-.210,z:.046,angle:1.30,w:.078,d:.047,h:.051,y:.069},{x:-.216,z:-.059,angle:1.78,w:.072,d:.046,h:.056,y:.089},{x:-.170,z:-.142,angle:2.28,w:.073,d:.047,h:.049,y:.109}];
@@ -283,7 +299,9 @@ export function createAcademyHillside(g,k){
   const x=(hash(i,6)-.5)*1.2,z=(hash(i,11)-.5)*1.2,r=Math.hypot(x,z),y=height(x,z);
   if(Math.hypot(x+.065,z-.257)<.09||r<.284||y<.020||Math.abs(x)<.050&&z>.20||Math.hypot(x-.40,z-.17)<.045)continue;
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;if(slope>1.65)continue;
-  k.tree(g,x,z,.60+hash(i,81)*.90,y,i%5===0);trees++;
+  const grove=.5+.25*Math.sin(x*24+Math.sin(z*13))+.25*Math.cos(z*27-x*8);
+  if(hash(i,29)>.30+grove*.56)continue;
+  k.tree(g,x,z,1.05+hash(i,81)*.80,y,i%5===0);trees++;
  }
  for(let i=0;i<12;i++){const a=(i+.35)/12*TAU,r=.154,x=Math.sin(a)*r,z=Math.cos(a)*r;scalePerson(g,x,z,height(x,z)+.0015,{yaw:a+.4,variant:i%4});}
  for(let i=0;i<12;i++){const a=i/12*TAU,x=Math.sin(a)*.145,z=Math.cos(a)*.145;k.lamp(g,x,z,height(x,z)+.002);}
@@ -293,5 +311,5 @@ export function createAcademyHillside(g,k){
  k.boat(g,.477,.20,.7,.1);
  const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x+.065,z-.257)<.09||Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
  let academyOpenings=0;g.traverse(o=>academyOpenings+=o.geometry?.userData.openingCount||0);
- return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:11,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{hillside:{eye:[.29,.20,.035],target:[-.06,.18,-.31]},courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:12,...landscape,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }

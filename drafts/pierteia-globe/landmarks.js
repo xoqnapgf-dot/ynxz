@@ -1,12 +1,12 @@
 import * as T from 'three';
-import { plantTree, batchVegetation } from './vegetation.js?v=9';
-import { tiledRoof } from './roof-detail.js?v=9';
+import { plantTree, batchVegetation } from './vegetation.js?v=12';
+import { tiledRoof } from './roof-detail.js?v=12';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { finish, upgradeSharedSurfaces } from './world-finish.js?v=9';
 import { scatterEcology } from './ecology.js?v=9';
 import { createArchipelagoHQ } from './archipelago-hq.js?v=9';
-import { createAcademyHillside } from './academy-hillside.js?v=11';
-import { createRegionalScene } from './regional-scenes.js?v=9';
+import { createAcademyHillside } from './academy-hillside.js?v=12';
+import { createRegionalScene } from './regional-scenes.js?v=12';
 import { mergeGeometries } from 'three/addons/BufferGeometryUtils.js';
 // All architectural forms are draft interpretations. Local Y is the surface normal.
 let seed=5471;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};

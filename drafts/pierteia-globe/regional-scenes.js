@@ -1,5 +1,5 @@
 import * as T from 'three';
-import { tiledRoof } from './roof-detail.js?v=9';
+import { tiledRoof } from './roof-detail.js?v=12';
 import { finish } from './world-finish.js?v=9';
 import { scatterEcology } from './ecology.js?v=9';
 import { reflectiveSea } from './archipelago-hq.js?v=9';
@@ -77,7 +77,7 @@ function house(g,x,z,w,d,h,angle,k,p,{y=.012,timber=false,curved=false,open=fals
    pane(face,a.x,a.y,d/2,a.w,a.h,k,p,true);
    for(const sign of [-1,1]){const shutter=k.box(face,.0021,a.h+.001,.0011,timber?p.wood:p.roof,a.x+sign*(a.w*.5+.0014),a.y,d/2+.001);shutter.rotation.y=sign*.28;}
   }
-  k.box(face,w,.0016,.002,p.wood,0,h*.56,d*.515);
+  for(let f=1;f<floors;f++)k.box(face,w,.0012,.002,p.wood,0,.003+f*h/floors,d*.515);
   for(const x of [-w*.46,w*.46])k.box(face,.0015,h,.002,p.wood,x,h*.5+.003,d*.515);
   // Timber lintel, front door and stone doorstep.
   k.box(face,door.w,door.h,.0012,p.wood,door.x,door.y,d/2-.0006);
