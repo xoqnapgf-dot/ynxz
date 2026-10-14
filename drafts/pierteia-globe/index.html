@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080f19"><title>Pierteia · 星球图志 / 3D 草稿</title>
+<link rel="stylesheet" href="globe.css?v=1">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}</script>
+</head>
+<body>
+<div id="viewport" aria-label="可旋转缩放的Pierteia三维星球"></div>
+<div class="vignette"></div><div id="labels"></div>
+<header class="topbar">
+ <a class="brand" href="./"><span class="brand-mark">✧</span><span>PIERTEIA<small>WORLD ATLAS / 世界图志</small></span></a>
+ <div class="edition"><span class="live-dot"></span> 三维地理档案 <i>/</i> 新历 540 年</div>
+ <div class="top-actions"><span class="draft">DRAFT 01</span><button id="capture" title="下载当前三维画面的PNG，不含界面">保存画面 <span>↗</span></button><button id="clean" title="隐藏界面；H键恢复">纯净视图</button></div>
+</header>
+<main class="interface">
+ <section class="intro">
+  <p class="eyebrow"><span></span> A WORLD, TAKING SHAPE</p>
+  <h1>山海之间，<br>万象共生。</h1>
+  <p class="intro-copy">两片大陆，一道海峡。<br>沿着山脉与水系，重新看见 Pierteia。</p>
+  <div class="intro-rule"></div>
+  <div class="intro-stats"><div><strong>20</strong><span>已定位地区</span></div><div><strong>04</strong><span>地标场景</span></div><div><strong>360°</strong><span>环绕探索</span></div></div>
+ </section>
+ <section class="layers panel" aria-label="图层控制">
+  <div class="panel-heading"><span>显示图层</span><small>LAYERS</small></div>
+  <label><span><i class="layer-icon">◌</i> 云层与气象</span><input type="checkbox" id="clouds" checked><span class="switch"></span></label>
+  <label><span><i class="layer-icon">⌗</i> 国界参考</span><input type="checkbox" id="borders"><span class="switch"></span></label>
+  <label><span><i class="layer-icon">⊕</i> 经纬网格</span><input type="checkbox" id="grid"><span class="switch"></span></label>
+  <label><span><i class="layer-icon">◇</i> 地名与地标</span><input type="checkbox" id="markers" checked><span class="switch"></span></label>
+  <div class="layer-bottom"><button id="rotate" aria-pressed="false"><span>↻</span> 自动巡航</button><button id="lighting" aria-pressed="false">◐ 昼夜光照</button></div>
+ </section>
+ <aside class="explorer panel">
+  <div class="panel-heading"><span>探索目的地</span><small>EXPLORE</small><button id="fold" aria-label="折叠或展开探索面板">−</button></div>
+  <div id="explorer-content">
+   <label class="search"><span>⌕</span><input id="search" placeholder="寻找国家、城邦或特殊地点…" aria-label="搜索地点"><kbd>/</kbd></label>
+   <div class="filter-tabs"><button data-filter="special" class="active">特殊地点 <span>04</span></button><button data-filter="all">全部地点 <span>28</span></button></div>
+   <div id="place-list" class="place-list"></div>
+   <div class="list-foot"><span class="legend-dot"></span> 正式坐标 <span class="legend-diamond">◇</span> 独立地标 <span class="unmapped">下级地点沿属地查看</span></div>
+  </div>
+ </aside>
+ <section id="detail" class="detail panel" hidden>
+  <button class="detail-close" id="close-detail" aria-label="关闭地点详情">×</button>
+  <div class="detail-top"><span id="detail-tag"></span><small id="detail-number"></small></div>
+  <h2 id="detail-title"></h2><p id="detail-coordinates"></p>
+  <p id="detail-description"></p>
+  <div id="children"></div>
+  <button id="inspect" class="primary-button">进入地标特写 <span>↗</span></button>
+  <p class="detail-note" id="detail-note"></p>
+ </section>
+</main>
+<div class="view-switch panel"><button data-view="overview" class="active">星球全景</button><span></span><button data-view="west">西大陆</button><button data-view="east">东大陆</button><button data-view="strait">海峡</button></div>
+<div class="zoom-controls panel"><button id="zoom-in" aria-label="放大">＋</button><button id="zoom-out" aria-label="缩小">−</button><button id="reset" aria-label="恢复全景" title="恢复全景">⌂</button></div>
+<div class="orientation"><span>N</span><div class="compass">↑</div><small id="view-coordinates">00° E · 00° N</small></div>
+<footer class="bottom-bar"><div><span class="live-dot"></span><b id="status">地形资料载入中</b><i>·</i><span>原始地理数据 / 独立视觉草稿</span></div><div class="gestures">拖动旋转 <i>·</i> 滚轮缩放 <i>·</i> 点击地标探索 <kbd>H</kbd> 隐藏界面</div></footer>
+<button id="restore-ui" hidden>显示界面 <kbd>H</kbd></button>
+<div id="toast" role="status"></div>
+<div id="loading"><div class="loader-orbit"><div></div><i></i></div><span>PIERTEIA</span><p id="loading-text">正在展开山海与星辰</p><small>3D WORLD ATLAS · DRAFT 01</small></div>
+<noscript><div class="fatal">此草稿需要 JavaScript 和支持 WebGL 2 的浏览器。</div></noscript>
+<script type="module" src="globe.js?v=1"></script>
+</body></html>

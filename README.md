@@ -368,3 +368,9 @@ ynxz/
 - iOS：Safari 打开站点 → 分享 → 「添加到主屏幕」。以全屏方式打开时状态栏透明，样式已用 `env(safe-area-inset-*)` 给刘海与底部横条留了安全区。
 - 路径全部用相对路径（项目站点部署在 `/ynxz/` 子路径下）；没有 Service Worker，不做离线缓存，因此不影响现有的 `?v=` 版本号缓存策略。
 - 独立窗口（主屏幕启动）下，`js/theme.js` 会固定视口比例（`maximum-scale=1`、`touch-action: manipulation`、拦截 iOS `gesture*` 事件），禁用双击与捏合缩放；普通浏览器访问仍可正常缩放。地图页自己的捏合缩放不受影响。
+
+## 独立视觉草稿 · 3D 星球
+
+- 新增 `drafts/pierteia-globe/`：基于现有地图的独立WebGL星球、20个坐标标记、28处地点资料与4个程序化地标。
+- `screenshots/` 内有全景和四处地标的5张实际渲染截图；[手机直接看截图与说明](drafts/pierteia-globe/README.md)，无需访问 Arena 沙盒。
+- 按本次要求仅保存草稿，未接入主站导航、未替换原地图、未自动合并或发布。建筑、比例和局部材质仍是视觉演绎。

@@ -1,0 +1,25 @@
+{
+  "source": "素材/地图/Pierteia Full 2026-09-19-01-11.json",
+  "sourceSize": [
+    3000,
+    935
+  ],
+  "textureSize": [
+    4096,
+    2048
+  ],
+  "cells": 12450,
+  "projection": "lon=360*x-180; lat=90-180*y",
+  "coordinates": {
+    "latT": 180,
+    "latN": 90,
+    "latS": -90,
+    "lonT": 360,
+    "lonW": -180,
+    "lonE": 180
+  },
+  "relief": "visual exaggeration; no absolute height conversion",
+  "seed": 59812824,
+  "borders": 1732,
+  "rivers": 91
+}
