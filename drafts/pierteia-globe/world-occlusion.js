@@ -6,7 +6,7 @@ export class WorldGTAOPass extends GTAOPass {
  overrideVisibility(){
   super.overrideVisibility();
   this.scene.traverse(object=>{
-   if(object.isSprite||[object.material].flat().some(m=>m&&(m.transparent||m.alphaTest>0||m.depthWrite===false)))object.visible=false;
+   if(object.isSprite||[object.material].flat().some(m=>m&&(m.transparent||m.transmission>0||m.alphaTest>0||m.depthWrite===false)))object.visible=false;
   });
  }
 }

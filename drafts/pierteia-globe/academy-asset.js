@@ -1,5 +1,5 @@
 import * as T from 'three';
-import { finish } from './world-finish.js?v=9';
+import { finishAtelier } from './academy-study.js?v=11';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 let source,loadJob;
 export function loadAtelier(progress=()=>{}){
@@ -7,14 +7,14 @@ export function loadAtelier(progress=()=>{}){
  const loader=new GLTFLoader();
  loadJob=loader.loadAsync(new URL('./assets/atelier/academy-atelier.glb',import.meta.url).href,e=>progress(e.total?Math.round(e.loaded/e.total*100):null)).then(gltf=>{
   source=gltf.scene;
-  source.traverse(o=>{if(!o.isMesh)return;for(const m of [o.material].flat()){if(m.name==='Oak')finish(m,'wood');}});
+
  }).catch(e=>{loadJob=null;throw e;});return loadJob;
 }
 export function attachAtelier(parent){
  if(!source)throw Error('Blender atelier asset has not loaded');
  const g=source.clone(true);g.name='Blender academy reading room';g.userData.noBake=true;
  g.position.set(-.119,.056,.163);g.rotation.y=.52;g.scale.setScalar(.01);
- g.traverse(o=>{if(o.isMesh){o.castShadow=!o.material.transmission;o.receiveShadow=true;const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){m.envMapIntensity=.8;if(m.transmission){m.transmission=0;m.transparent=true;m.opacity=.22;m.depthWrite=false;m.metalness=.04;m.roughness=.12;m.color.set('#9aafaa');m.side=T.FrontSide;}}}});
+ g.traverse(o=>{if(o.isMesh){o.castShadow=!o.material.transmission;o.receiveShadow=true;}});finishAtelier(g);
  parent.add(g);return g;
 }
 export function createDaylight(renderer){

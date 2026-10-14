@@ -1,10 +1,11 @@
 import * as T from 'three';
+import { studyMaterial, readingCourt, scalePerson } from './academy-study.js?v=11';
 import { wallWithOpenings, bendWall } from './architecture.js?v=10';
 import { tiledRoof } from './roof-detail.js?v=9';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { finish } from './world-finish.js?v=9';
 import { scatterEcology } from './ecology.js?v=9';
-import { attachAtelier } from './academy-asset.js?v=9';
+import { attachAtelier } from './academy-asset.js?v=11';
 import { reflectiveSea } from './archipelago-hq.js?v=9';
 import { gridGround, lane } from './regional-scenes.js?v=9';
 
@@ -106,7 +107,7 @@ function lessonTable(g,k,p,x,z,y){
 }
 function building(g,k,p,{x,z,w,d,h,y=height(x,z)+.006,angle=0,roof=p.tile,bookshop=false,balcony=false,profile=0}){
  const q=new T.Group();q.position.set(x,y,z);q.rotation.y=angle;g.add(q);
- box(q,k,w+.005,.021,d+.005,p.stone,0,-.008,0);
+ box(q,k,w+.005,.021,d+.005,p.masonry,0,-.008,0);
  const floors=h>.038?2:1,floorHeight=h/floors,count=Math.max(2,Math.floor(w/(bookshop?.032:.024)));
  const windowW=bookshop?.019:profile===1?.0135:.012,windowH=Math.min(bookshop?.018:.017,floorHeight*.66);
  for(let floor=0;floor<=floors;floor++)box(q,k,w-.002,.001,d-.002,p.wood,0,floor*floorHeight,0);
@@ -170,7 +171,7 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
    const openings=[{x:0,y:.015,w:.016,h:.022},{x:0,y:.041,w:.016,h:.018}];
    k.mesh(g,bendWall(wallWithOpenings({width:rr*(end-start)/bays,height:h,openings}),rr,a,inner?-1:1),p.plaster,0,y,0);
    q.position.set(Math.sin(a)*rr,y,Math.cos(a)*rr);q.rotation.y=a+(inner?Math.PI:0);g.add(q);
-   panel(q,k,p,0,.015,0,.016,.022,{books:true,recessed:true});panel(q,k,p,0,.041,0,.016,.018,{books:true,recessed:true});
+   panel(q,k,p,0,.015,0,.016,.022,{books:inner&&i%4===1,recessed:true});panel(q,k,p,0,.041,0,.016,.018,{books:inner&&i%3===1,recessed:true});
    box(q,k,.0015,h,.002,p.wood,.010,h/2,.002);
   }
   const beamRadius=ri-.012;qPergola(g,k,p,a,beamRadius,y,.030);
@@ -220,7 +221,7 @@ function circledA(g,k,p,x,y,z,r){
  k.beam(g,[x-r*.65,y-r*.76,z],[x,y+r*.82,z],.00075,p.red);k.beam(g,[x,y+r*.82,z],[x+r*.65,y-r*.76,z],.00075,p.red);k.beam(g,[x-r*.57,y-r*.16,z],[x+r*.57,y-r*.16,z],.0006,p.red);
 }
 export function createAcademyHillside(g,k){
- const p=makeMaterials(k);for(const key of ['stone','plaster','wood','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');
+ const p=makeMaterials(k);for(const key of ['stone','plaster','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');p.wood=studyMaterial('wood');p.masonry=studyMaterial('stone');p.plaster.color.set('#dad7cc');p.plaster.normalScale.set(.23,.23);
  gridGround(g,k,height,(x,z,y)=>{
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;
   return new T.Color(y<.010?'#aba58a':slope>1.25?'#9a9c8a':'#76865b').multiplyScalar(.98+Math.sin(x*19+Math.cos(z*23))*.025);
@@ -236,7 +237,7 @@ export function createAcademyHillside(g,k){
   for(let i=0;i<3;i++)lessonTable(q,k,p,-b.w*.30+i*b.w*.28,b.d*.90,.002);
  }
  // Common room at the south-west and a smaller, low entrance porch. No gate towers.
- attachAtelier(g);
+ attachAtelier(g);const court=readingCourt(g,k,height);
  const entry=new T.Group();entry.position.set(.017,.047,.223);entry.rotation.y=.06;g.add(entry);
  box(entry,k,.076,.008,.037,p.stone,0,-.003,0);
  box(entry,k,.021,.041,.025,p.plaster,-.025,.020,0);
@@ -277,11 +278,11 @@ export function createAcademyHillside(g,k){
  // A planted shoulder, not a temple or round tower on the summit.
  let trees=0;for(let i=0;i<950;i++){
   const x=(hash(i,6)-.5)*1.2,z=(hash(i,11)-.5)*1.2,r=Math.hypot(x,z),y=height(x,z);
-  if(r<.284||y<.020||Math.abs(x)<.050&&z>.20||Math.hypot(x-.40,z-.17)<.045)continue;
+  if(Math.hypot(x+.065,z-.257)<.09||r<.284||y<.020||Math.abs(x)<.050&&z>.20||Math.hypot(x-.40,z-.17)<.045)continue;
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;if(slope>1.65)continue;
   k.tree(g,x,z,.60+hash(i,81)*.90,y,i%5===0);trees++;
  }
- for(let i=0;i<45;i++){const a=hash(i,88)*TAU,r=.141+hash(i,22)*.024,x=Math.sin(a)*r,z=Math.cos(a)*r;k.person(g,x,z,height(x,z)+.003);}
+ for(let i=0;i<12;i++){const a=(i+.35)/12*TAU,r=.154,x=Math.sin(a)*r,z=Math.cos(a)*r;scalePerson(g,x,z,height(x,z)+.0007,{yaw:a+.4,variant:i%4});}
  for(let i=0;i<12;i++){const a=i/12*TAU,x=Math.sin(a)*.145,z=Math.cos(a)*.145;k.lamp(g,x,z,height(x,z)+.002);}
  // Small coastal landing keeps the island setting without dominating the campus.
  for(let i=0;i<24;i++)box(g,k,.029,.0015,.0025,p.wood,.44,.010,.16+i*.0028);
@@ -289,5 +290,5 @@ export function createAcademyHillside(g,k){
  k.boat(g,.477,.20,.7,.1);
  const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
  let academyOpenings=0;g.traverse(o=>academyOpenings+=o.geometry?.userData.openingCount||0);
- return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:10,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:11,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }
