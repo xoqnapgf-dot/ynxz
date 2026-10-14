@@ -1,4 +1,5 @@
 import * as T from 'three';
+import { wallWithOpenings, bendWall } from './architecture.js?v=10';
 import { tiledRoof } from './roof-detail.js?v=9';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { finish } from './world-finish.js?v=9';
@@ -27,6 +28,7 @@ function makeMaterials(k){
   light:new T.MeshStandardMaterial({color:'#e2d4af',roughness:.83}), dark:new T.MeshStandardMaterial({color:'#334441',roughness:.87}),
   wood:new T.MeshStandardMaterial({color:'#78614a',map:k.maps.wood.map,roughness:.88}),
   copper:roof('#657065'), tile:roof('#896b57'), slate:roof('#5c655e'),
+  clearGlass:new T.MeshPhysicalMaterial({color:'#b5beb4',roughness:.20,metalness:0,transparent:true,opacity:.18,depthWrite:false,envMapIntensity:.45}),
   glass:new T.MeshStandardMaterial({color:'#35413b',roughness:.18,metalness:.38}),
   brass:new T.MeshStandardMaterial({color:'#afa17a',roughness:.48,metalness:.65}),
   red:new T.MeshStandardMaterial({color:'#93483b',roughness:.69}),
@@ -45,14 +47,23 @@ function box(g,k,w,h,d,m,x=0,y=0,z=0){
  }
  return k.mesh(g,geo,m,x,y,z);
 }
-function panel(g,k,p,x,y,z,w,h,{books=false}={}){
- box(g,k,w+.002,h+.002,.0014,p.dark,x,y,z);
- box(g,k,w,h,.001,p.glass,x,y,z+.001);
- for(const side of [-1,1]){box(g,k,.0008,h+.003,.002,p.wood,x+side*w/2,y,z+.002);box(g,k,w+.002,.0008,.002,p.wood,x,y+side*h/2,z+.002);}
- box(g,k,w,.0006,.002,p.wood,x,y+h*.12,z+.002);
- for(let i=1;i<Math.ceil(w/.006);i++)box(g,k,.00045,h,.002,p.light,x-w/2+i*w/Math.ceil(w/.006),y,z+.0022);
- box(g,k,w+.004,.0014,.005,p.light,x,y-h/2-.001,z+.002);
- if(books)for(let i=0;i<6;i++)box(g,k,.0014,.003+(i%3)*.0005,.002,i%2?p.paper:p.red,x-w*.37+i*w*.14,y-h*.28,z+.0025);
+function panel(g,k,p,x,y,z,w,h,{books=false,recessed=false,louvers=false}={}){
+ box(g,k,w+.001,h+.001,.0006,p.dark,x,y,z+(recessed?-.003:0));
+ const glass=box(g,k,w,h,.00025,recessed?p.clearGlass:p.glass,x,y,z+(recessed?-.0005:.001));glass.castShadow=!recessed;
+ for(const side of [-1,1]){box(g,k,.0007,h+.0018,.0014,p.wood,x+side*w/2,y,z+.0005);box(g,k,w+.0018,.0007,.0014,p.wood,x,y+side*h/2,z+.0005);}
+ box(g,k,w,.00055,.0014,p.wood,x,y+h*.12,z+.00065);
+ for(let i=1;i<Math.ceil(w/.007);i++)box(g,k,.0004,h,.0014,p.wood,x-w/2+i*w/Math.ceil(w/.007),y,z+.00065);
+ box(g,k,w+.003,.0011,.003,p.light,x,y-h/2-.0007,z+.0008);
+ box(g,k,w+.002,.0007,.002,p.light,x,y+h/2+.0006,z+.0003);
+ if(books)for(const yy of [-h*.29,h*.08]){
+  box(g,k,w*.92,.0006,.0015,p.wood,x,y+yy-.0003,z-.0016);
+  for(let i=0;i<7;i++)box(g,k,.0011,.0026+(i%3)*.0004,.0012,i%3?p.paper:p.red,x-w*.39+i*w*.13,y+yy+.0012,z-.0016);
+ }
+ if(louvers)for(const side of [-1,1]){
+  const q=new T.Group();q.position.set(x+side*(w/2+.0012),y,z+.001);q.rotation.y=side*.45;g.add(q);
+  for(const dx of [-.0015,.0015])box(q,k,.00045,h+.001,.0007,p.wood,dx,0,0);
+  for(let i=0;i<7;i++){const slat=box(q,k,.0034,.00065,.0007,p.wood,0,-h*.43+i*h*.143,0);slat.rotation.x=-.30;}
+ }
 }
 function gableRoof(g,k,p,w,d,y,rise,m){
  tiledRoof(g,{w:w+.008,d:d*1.12,rise,y,material:m});
@@ -88,30 +99,44 @@ function lessonTable(g,k,p,x,z,y){
  for(const sign of [-1,1])bench(g,k,p,x,z+sign*.010,y,sign<0?0:Math.PI);
  box(g,k,.004,.0006,.003,p.paper,x-.004,y+.008,z);box(g,k,.004,.0008,.003,p.red,x+.004,y+.008,z+.001);
 }
-function building(g,k,p,{x,z,w,d,h,y=height(x,z)+.006,angle=0,roof=p.tile,bookshop=false,balcony=false}){
+function building(g,k,p,{x,z,w,d,h,y=height(x,z)+.006,angle=0,roof=p.tile,bookshop=false,balcony=false,profile=0}){
  const q=new T.Group();q.position.set(x,y,z);q.rotation.y=angle;g.add(q);
  box(q,k,w+.005,.021,d+.005,p.stone,0,-.008,0);
- box(q,k,w,h,d,p.plaster,0,h/2,0);
- box(q,k,w+.002,.002,d+.002,p.light,0,h*.51,0);
- const floors=h>.038?2:1,count=Math.max(2,Math.floor(w/.022));
+ const floors=h>.038?2:1,floorHeight=h/floors,count=Math.max(2,Math.floor(w/(bookshop?.032:.024)));
+ const windowW=bookshop?.019:profile===1?.0135:.012,windowH=Math.min(bookshop?.018:.017,floorHeight*.66);
+ for(let floor=0;floor<=floors;floor++)box(q,k,w-.002,.001,d-.002,p.wood,0,floor*floorHeight,0);
  for(const side of [-1,1]){
-  const f=new T.Group();f.rotation.y=side<0?Math.PI:0;q.add(f);
-  for(let row=0;row<floors;row++)for(let i=0;i<count;i++)panel(f,k,p,-w*.36+i*w*.72/(count-1),.012+row*.025,d/2+.001,.012,.016,{books:bookshop});
-  for(const x of [-w*.47,w*.47]){box(f,k,.0025,h,.0025,p.wood,x,h/2,d*.51);k.beam(f,[x,.001,d*.51],[x,h,d*.51],.0005,p.dark);}
-  box(f,k,.009,.020,.001,p.dark,0,.010,d/2+.002);box(f,k,.001,.021,.002,p.wood,.0047,.0105,d/2+.003);
+  const f=new T.Group();f.rotation.y=side<0?Math.PI:0;q.add(f);const openings=[];
+  for(let row=0;row<floors;row++)for(let i=0;i<count;i++){
+   const xx=-w*.34+i*w*.68/(count-1),yy=(row+.53)*floorHeight;
+   if(row===0&&Math.abs(xx)<windowW/2+.0055)continue;
+   openings.push({x:xx,y:yy,w:windowW,h:windowH});
+  }
+  const doorHeight=Math.min(.021,floorHeight*.84),door={x:0,y:.0004+doorHeight/2,w:.009,h:doorHeight};
+  k.mesh(f,wallWithOpenings({width:w,height:h,openings:[...openings,door]}),p.plaster,0,0,d/2);
+  for(const a of openings)panel(f,k,p,a.x,a.y,d/2,a.w,a.h,{books:bookshop||profile===2,recessed:true,louvers:!bookshop&&profile===1});
+  for(let row=1;row<floors;row++)box(f,k,w+.001,.0014,.0016,p.light,0,row*floorHeight,d/2+.0004);
+  for(const xx of [-w*.48,w*.48])box(f,k,.0014,h,.0016,bookshop?p.wood:p.light,xx,h/2,d/2+.0004);
+  box(f,k,.0087,doorHeight,.0009,p.wood,0,door.y,d/2-.0006);
+  for(const sign of [-1,1])box(f,k,.0008,doorHeight+.001,.0018,p.light,sign*.005,door.y,d/2+.0004);
+  box(f,k,.011,.0012,.002,p.light,0,doorHeight+.001,d/2+.0004);
+  box(f,k,.0003,.003,.0005,p.brass,.0028,doorHeight*.46,d/2+.00005);
+  box(f,k,.013,.0018,.006,p.stone,0,0,d/2+.002);
  }
  for(const side of [-1,1]){
   const f=new T.Group();f.rotation.y=side*Math.PI/2;q.add(f);
-  for(let row=0;row<floors;row++)panel(f,k,p,0,.012+row*.025,w/2+.001,.014,.016);
+  const openings=Array.from({length:floors},(_,row)=>({x:0,y:(row+.53)*floorHeight,w:bookshop?.021:.014,h:windowH}));
+  k.mesh(f,wallWithOpenings({width:d,height:h,openings}),p.plaster,0,0,w/2);
+  for(const a of openings)panel(f,k,p,a.x,a.y,w/2,a.w,a.h,{recessed:true,books:bookshop});
  }
- gableRoof(q,k,p,w,d,h,.013,roof);
+ gableRoof(q,k,p,w,d,h,bookshop?.011:profile===1?.016:.013,roof);
  if(balcony){
-  box(q,k,w+.008,.002,.014,p.wood,0,.024,d*.65);
-  rail(q,k,p,[-w*.53,.025,d*.79],[w*.53,.025,d*.79]);
-  for(const x of [-w*.46,0,w*.46])k.beam(q,[x,-.005,d*.76],[x,h+.001,d*.76],.0007,p.wood);
+  const deck=floorHeight-.001;box(q,k,w+.008,.002,.014,p.wood,0,deck,d*.65);
+  rail(q,k,p,[-w*.53,deck+.001,d*.79],[w*.53,deck+.001,d*.79]);
+  for(const xx of [-w*.46,0,w*.46])k.beam(q,[xx,-.005,d*.76],[xx,h+.001,d*.76],.0007,p.wood);
   const canopy=box(q,k,w+.012,.001,.018,roof,0,h+.002,d*.69);canopy.rotation.x=.13;
+  for(const xx of [-w*.46,w*.46])k.beam(q,[xx,deck-.001,d*.72],[xx,deck-.009,d*.52],.0006,p.wood);
  }
- // Chimney caps, rainpipes, doors, shelf contents and individual rafters.
  box(q,k,.004,.018,.005,p.stone,-w*.27,h+.007,-d*.24);box(q,k,.005,.001,.006,p.dark,-w*.27,h+.016,-d*.24);
  for(const side of [-1,1])k.beam(q,[w*.46,0,side*d*.52],[w*.46,h,side*d*.52],.00045,p.dark);
  return {group:q,y};
@@ -120,7 +145,7 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
  const shape=new T.Shape(),n=100,ri=r-depth/2,ro=r+depth/2;
  for(let i=0;i<=n;i++){const a=T.MathUtils.lerp(start,end,i/n),x=Math.sin(a)*ro,z=-Math.cos(a)*ro;i?shape.lineTo(x,z):shape.moveTo(x,z);}
  for(let i=n;i>=0;i--){const a=T.MathUtils.lerp(start,end,i/n);shape.lineTo(Math.sin(a)*ri,-Math.cos(a)*ri);}shape.closePath();
- for(const [bottom,hh,m]of [[y-.024,.026,p.stone],[y,h,p.plaster],[y+h*.50,.002,p.light]]){const mesh=k.mesh(g,new T.ExtrudeGeometry(shape,{depth:hh,bevelEnabled:false}),m,0,bottom,0);mesh.rotation.x=-Math.PI/2;}
+ for(const [bottom,hh,m]of [[y-.024,.024,p.stone],[y,.0012,p.wood],[y+h*.50,.0012,p.wood],[y+h-.0012,.0012,p.wood]]){const mesh=k.mesh(g,new T.ExtrudeGeometry(shape,{depth:hh,bevelEnabled:false}),m,0,bottom,0);mesh.rotation.x=-Math.PI/2;}
  const pos=[],uv=[],idx=[];
  for(let i=0;i<=n;i++){
   const a=T.MathUtils.lerp(start,end,i/n);for(const [j,rr]of [ri-.006,r,ro+.006].entries()){pos.push(Math.sin(a)*rr,y+h+(j===1?.018:0),Math.cos(a)*rr);uv.push(i*.05,j*1.1);}
@@ -134,10 +159,13 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
  }
  const bays=Math.ceil((end-start)*r/.024);
  for(let i=0;i<bays;i++){
-  const a=T.MathUtils.lerp(start+.04,end-.04,i/(bays-1));
+  const a=start+(i+.5)*(end-start)/bays;
   for(const inner of [true,false]){
-   const q=new T.Group(),rr=inner?ri:ro;q.position.set(Math.sin(a)*rr,y,Math.cos(a)*rr);q.rotation.y=a+(inner?Math.PI:0);g.add(q);
-   panel(q,k,p,0,.015,.001,.016,.022,{books:true});panel(q,k,p,0,.041,.001,.016,.018);
+   const q=new T.Group(),rr=inner?ri:ro;
+   const openings=[{x:0,y:.015,w:.016,h:.022},{x:0,y:.041,w:.016,h:.018}];
+   k.mesh(g,bendWall(wallWithOpenings({width:rr*(end-start)/bays,height:h,openings}),rr,a,inner?-1:1),p.plaster,0,y,0);
+   q.position.set(Math.sin(a)*rr,y,Math.cos(a)*rr);q.rotation.y=a+(inner?Math.PI:0);g.add(q);
+   panel(q,k,p,0,.015,0,.016,.022,{books:true,recessed:true});panel(q,k,p,0,.041,0,.016,.018,{books:true,recessed:true});
    box(q,k,.0015,h,.002,p.wood,.010,h/2,.002);
   }
   const beamRadius=ri-.012;qPergola(g,k,p,a,beamRadius,y,.030);
@@ -145,7 +173,9 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
  }
  for(const [a,sign]of [[start,-1],[end,1]]){
   const endFace=new T.Group();endFace.position.set(Math.sin(a)*r,y,Math.cos(a)*r);endFace.rotation.y=a+sign*Math.PI/2;g.add(endFace);
-  for(const x of [-depth*.23,depth*.23])for(const yy of [.015,.041])panel(endFace,k,p,x,yy,.0008,.013,.018,{books:true});
+  const ends=[];for(const x of [-depth*.23,depth*.23])for(const yy of [.015,.041])ends.push({x,y:yy,w:.013,h:.018});
+  k.mesh(endFace,wallWithOpenings({width:depth,height:h,openings:ends}),p.plaster);
+  for(const a of ends)panel(endFace,k,p,a.x,a.y,0,a.w,a.h,{books:true,recessed:true});
  }
  // Gable closures at the two ends of the crescent; no open roof voids.
  for(const a of [start,end]){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute([Math.sin(a)*ri,y+h,Math.cos(a)*ri,Math.sin(a)*r,y+h+.018,Math.cos(a)*r,Math.sin(a)*ro,y+h,Math.cos(a)*ro],3));geo.computeVertexNormals();p.plaster.side=T.DoubleSide;k.mesh(g,geo,p.plaster);}
@@ -177,7 +207,7 @@ export function createAcademyHillside(g,k){
  // Only the northern library is a crescent. The other wings have their own massing.
  curvedWing(g,k,p,{r:.204,depth:.051,start:Math.PI*.74,end:Math.PI*1.27,y:.112,h:.055});
  const teaching=[{x:-.210,z:.046,angle:1.30,w:.078,d:.047,h:.051,y:.069},{x:-.216,z:-.059,angle:1.78,w:.072,d:.046,h:.056,y:.089},{x:-.170,z:-.142,angle:2.28,w:.073,d:.047,h:.049,y:.109}];
- for(const b of teaching)building(g,k,p,{...b,balcony:true,roof:p.tile});
+ for(const [profile,b]of teaching.entries())building(g,k,p,{...b,profile,balcony:true,roof:profile===2?p.slate:p.tile});
  // Shared workshops: lower brick-and-timber volumes with northlight roof monitors.
  for(const b of [{x:.210,z:.015,angle:-1.35,w:.100,d:.055,h:.029,y:.074},{x:.181,z:-.098,angle:-2.10,w:.077,d:.050,h:.043,y:.097}]){
   const {group:q}=building(g,k,p,{...b,roof:p.slate,bookshop:true});
@@ -237,5 +267,6 @@ export function createAcademyHillside(g,k){
  for(const x of [.427,.453])for(const z of [.16,.19,.222])k.beam(g,[x,-.025,z],[x,.011,z],.0009,p.wood);
  k.boat(g,.477,.20,.7,.1);
  const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
- return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:9,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ let academyOpenings=0;g.traverse(o=>academyOpenings+=o.geometry?.userData.openingCount||0);
+ return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:10,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }

@@ -5,7 +5,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { finish, upgradeSharedSurfaces } from './world-finish.js?v=9';
 import { scatterEcology } from './ecology.js?v=9';
 import { createArchipelagoHQ } from './archipelago-hq.js?v=9';
-import { createAcademyHillside } from './academy-hillside.js?v=9';
+import { createAcademyHillside } from './academy-hillside.js?v=10';
 import { createRegionalScene } from './regional-scenes.js?v=9';
 import { mergeGeometries } from 'three/addons/BufferGeometryUtils.js';
 // All architectural forms are draft interpretations. Local Y is the surface normal.
