@@ -5,8 +5,8 @@
     935
   ],
   "textureSize": [
-    4096,
-    2048
+    6144,
+    3072
   ],
   "cells": 12450,
   "projection": "lon=360*x-180; lat=90-180*y",
@@ -18,8 +18,9 @@
     "lonW": -180,
     "lonE": 180
   },
-  "relief": "visual exaggeration; no absolute height conversion",
+  "relief": "source-constrained procedural sub-cell ridges; no absolute height conversion or measured erosion",
   "seed": 59812824,
   "borders": 1732,
-  "rivers": 91
+  "rivers": 91,
+  "revision": 2
 }
