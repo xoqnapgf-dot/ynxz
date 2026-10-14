@@ -1,0 +1,302 @@
+{
+  "revision": 8,
+  "scope": "Eight interactive scenes, ordinary-resolution shader/render and navigation regression; no new 4K delivery",
+  "viewport": [
+    800,
+    500
+  ],
+  "errors": [],
+  "scenes": [
+    {
+      "id": 9,
+      "geometry": {
+        "id": 9,
+        "anchorId": 9,
+        "triangles": 175878,
+        "batches": 42,
+        "finishRevision": 8,
+        "grassClumps": 950,
+        "talusRocks": 0
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 7415
+    },
+    {
+      "id": 12,
+      "geometry": {
+        "id": 12,
+        "anchorId": 12,
+        "triangles": 238842,
+        "batches": 25,
+        "finishRevision": 8,
+        "grassClumps": 870,
+        "talusRocks": 108,
+        "sceneType": "rail-and-steel neighbourhood",
+        "scope": "representative district, not the whole country"
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 3808
+    },
+    {
+      "id": 11,
+      "geometry": {
+        "id": 11,
+        "anchorId": 11,
+        "triangles": 374534,
+        "batches": 33,
+        "finishRevision": 8,
+        "grassClumps": 900,
+        "talusRocks": 17,
+        "sceneType": "landlocked lake research/workshop district",
+        "scope": "representative district; no seaport"
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 13135
+    },
+    {
+      "id": "falota",
+      "geometry": {
+        "id": "falota",
+        "anchorId": 12,
+        "triangles": 572572,
+        "batches": 42,
+        "finishRevision": 8,
+        "grassClumps": 900,
+        "talusRocks": 11,
+        "sceneType": "working coastal harbour and market streets",
+        "scope": "secondary place; no independent coordinates"
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 7746
+    },
+    {
+      "id": "shiomi",
+      "geometry": {
+        "id": "shiomi",
+        "anchorId": 31,
+        "triangles": 441018,
+        "batches": 36,
+        "finishRevision": 8,
+        "grassClumps": 900,
+        "talusRocks": 3,
+        "sceneType": "tidal port town, narrow shops and small shrine",
+        "scope": "secondary place; no independent coordinates"
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 5396
+    },
+    {
+      "id": 902,
+      "geometry": {
+        "id": 902,
+        "anchorId": 902,
+        "triangles": 308704,
+        "batches": 13,
+        "finishRevision": 8,
+        "grassClumps": 973,
+        "talusRocks": 204
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 3122
+    },
+    {
+      "id": 901,
+      "geometry": {
+        "id": 901,
+        "anchorId": 901,
+        "triangles": 995908,
+        "batches": 29,
+        "finishRevision": 8,
+        "segments": 640,
+        "terrainTriangles": 819200,
+        "grassClumps": 577,
+        "talusRocks": 132,
+        "trees": 287,
+        "homes": 12
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 11518
+    },
+    {
+      "id": 900,
+      "geometry": {
+        "id": 900,
+        "anchorId": 900,
+        "triangles": 550050,
+        "batches": 47,
+        "finishRevision": 8,
+        "grassClumps": 1200,
+        "talusRocks": 144,
+        "sceneType": "open circular hillside campus / separated academic wings",
+        "circledA": true,
+        "trees": 331,
+        "revision": 8,
+        "blenderAsset": true
+      },
+      "assetLighting": true,
+      "contactOcclusion": true,
+      "returnedToGlobe": true,
+      "elapsedMs": 9507
+    }
+  ],
+  "initial": {
+    "markers": 20,
+    "models": 8,
+    "loadedModels": 0,
+    "activeScene": null,
+    "quality": "Desktop HQ",
+    "revision": 8,
+    "pendingScene": null,
+    "lastSceneError": null,
+    "assetLighting": false,
+    "contactOcclusion": false,
+    "shadowSize": 4096,
+    "surfaceSize": [
+      6144,
+      3072
+    ],
+    "locations": 28,
+    "renderer": {
+      "frame": 15,
+      "calls": 1,
+      "triangles": 1,
+      "points": 0,
+      "lines": 0
+    },
+    "inspection": false,
+    "geometry": [],
+    "glbRequests": 0
+  },
+  "final": {
+    "markers": 20,
+    "models": 8,
+    "loadedModels": 8,
+    "activeScene": null,
+    "quality": "Desktop HQ",
+    "revision": 8,
+    "pendingScene": null,
+    "lastSceneError": null,
+    "assetLighting": false,
+    "contactOcclusion": false,
+    "shadowSize": 4096,
+    "surfaceSize": [
+      6144,
+      3072
+    ],
+    "locations": 28,
+    "renderer": {
+      "frame": 215,
+      "calls": 1,
+      "triangles": 1,
+      "points": 0,
+      "lines": 0
+    },
+    "inspection": false,
+    "geometry": [
+      {
+        "id": 9,
+        "anchorId": 9,
+        "triangles": 175878,
+        "batches": 42,
+        "finishRevision": 8,
+        "grassClumps": 950,
+        "talusRocks": 0
+      },
+      {
+        "id": 12,
+        "anchorId": 12,
+        "triangles": 238842,
+        "batches": 25,
+        "finishRevision": 8,
+        "grassClumps": 870,
+        "talusRocks": 108,
+        "sceneType": "rail-and-steel neighbourhood",
+        "scope": "representative district, not the whole country"
+      },
+      {
+        "id": 11,
+        "anchorId": 11,
+        "triangles": 374534,
+        "batches": 33,
+        "finishRevision": 8,
+        "grassClumps": 900,
+        "talusRocks": 17,
+        "sceneType": "landlocked lake research/workshop district",
+        "scope": "representative district; no seaport"
+      },
+      {
+        "id": "falota",
+        "anchorId": 12,
+        "triangles": 572572,
+        "batches": 42,
+        "finishRevision": 8,
+        "grassClumps": 900,
+        "talusRocks": 11,
+        "sceneType": "working coastal harbour and market streets",
+        "scope": "secondary place; no independent coordinates"
+      },
+      {
+        "id": "shiomi",
+        "anchorId": 31,
+        "triangles": 441018,
+        "batches": 36,
+        "finishRevision": 8,
+        "grassClumps": 900,
+        "talusRocks": 3,
+        "sceneType": "tidal port town, narrow shops and small shrine",
+        "scope": "secondary place; no independent coordinates"
+      },
+      {
+        "id": 902,
+        "anchorId": 902,
+        "triangles": 308704,
+        "batches": 13,
+        "finishRevision": 8,
+        "grassClumps": 973,
+        "talusRocks": 204
+      },
+      {
+        "id": 901,
+        "anchorId": 901,
+        "triangles": 995908,
+        "batches": 29,
+        "finishRevision": 8,
+        "segments": 640,
+        "terrainTriangles": 819200,
+        "grassClumps": 577,
+        "talusRocks": 132,
+        "trees": 287,
+        "homes": 12
+      },
+      {
+        "id": 900,
+        "anchorId": 900,
+        "triangles": 550050,
+        "batches": 47,
+        "finishRevision": 8,
+        "grassClumps": 1200,
+        "talusRocks": 144,
+        "sceneType": "open circular hillside campus / separated academic wings",
+        "circledA": true,
+        "trees": 331,
+        "revision": 8,
+        "blenderAsset": true
+      }
+    ]
+  },
+  "glbRequests": 1
+}

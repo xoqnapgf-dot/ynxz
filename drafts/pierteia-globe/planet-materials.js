@@ -56,10 +56,15 @@ export function createPlanetMaterials(textures) {
         float lit = max(dot(N,L), 0.0);
         float daylight = smoothstep(-.12,.17,sun);
         vec3 base = texture2D(albedoMap,vUv).rgb;
+        // Planet-scale variation follows the existing land mask, never redraws a coast.
+        float reliefGrain=sin(radial.x*733.+sin(radial.z*311.))*sin(radial.y*613.+radial.z*277.);
+        base*=1.+reliefGrain*land*.009;
         // Cloud shadow is sampled at the same moving longitude as the cloud shell.
         vec2 shadowUv = vUv - vec2(cloudRotation,0.0);
         shadowUv += vec2(dot(L,east),dot(L,north)) * .0018;
-        float shadow = texture2D(weatherMap,shadowUv).a * cloudVisibility;
+        float shadow = texture2D(weatherMap,shadowUv).a;
+        shadow=shadow*.65+texture2D(weatherMap,shadowUv+vec2(.0007,-.0003)).a*.35;
+        shadow*=cloudVisibility;
         vec3 illumination = vec3(.11,.15,.20) * (.06 + daylight*.23)
           + vec3(1.0,.975,.93) * lit * mix(1.7,1.06,land) * (1.0-shadow*.36);
         vec3 color = base * illumination;
@@ -107,7 +112,10 @@ export function createPlanetMaterials(textures) {
           float diffuse=max(dot(cloudNormal,L),0.);
           vec3 light=vec3(.003,.006,.013)+vec3(.15,.19,.24)*day
             +vec3(1.,.985,.955)*diffuse*.95;
-          float selfShade=.88+.12*pow(density,.5);
+          vec2 towardSun=vec2(dot(L,E),dot(L,B))*.0018;
+          float upstream=texture2D(map,vUv+towardSun).a;
+          float selfShade=.83+.17*pow(density,.5)-max(0.,upstream-density)*.16;
+          light+=vec3(.13,.10,.075)*pow(max(dot(normalize(cameraPosition-vWorld),-L),0.),8.)*day*(1.-density)*.3;
           vec3 color=light*selfShade;
           float alpha=density*(high>.5?.52:.96);
           gl_FragColor=vec4(color,alpha);

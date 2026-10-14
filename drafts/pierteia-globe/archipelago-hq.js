@@ -1,4 +1,6 @@
 import * as T from 'three';
+import { finish } from './world-finish.js?v=8';
+import { scatterEcology } from './ecology.js?v=8';
 import { Water } from 'three/addons/objects/Water.js';
 
 // An interpretive local scene tied to the existing marker, not a new map.
@@ -73,7 +75,7 @@ function terrain(g, kit) {
       diffuseColor.rgb*=.94+grain*.035-seams*.075;
     `);
   };
-  mat.customProgramCacheKey=()=> 'island-strata-hq-4';
+  mat.customProgramCacheKey=()=> 'island-strata-hq-4';finish(mat,'terrain');
   const mesh=new T.Mesh(geo,mat);mesh.castShadow=mesh.receiveShadow=true;mesh.userData.noBake=true;g.add(mesh);
   return {segments,terrainTriangles:segments*segments*2};
 }
@@ -182,6 +184,7 @@ function cottage(g,x,z,w,d,angle,kit) {
     beam(group,[xx,height+.005,d*.60],[clamp(xx,-w*.32,w*.32),height+w*.28+.005,0],.00035,wood);
   }
   box(group,.0035,.012,.004,darkStone,-w*.28,height+.012,-d*.2);
+  for(const side of [-1,1]){beam(group,[-w*.55,height+.004,side*d*.59],[w*.55,height+.004,side*d*.59],.0004,kit.gold);beam(group,[w*.45,.004,side*d*.52],[w*.45,height+.004,side*d*.52],.0003,kit.gold);}
   return {x,z,r:Math.max(w,d)*.9};
 }
 function path(g,points,width,kit) {
@@ -303,8 +306,9 @@ export function createArchipelagoHQ(g,kit) {
     if(h<-.015||h>.05)continue;
     const o=kit.mesh(g,new T.IcosahedronGeometry(.002+hash(i,53)*.006,0),kit.cliffMat,x,h+.001,z);o.scale.set(1.5,.6+hash(i,64),.8);o.rotation.set(hash(i,6),hash(i,7)*3,hash(i,8));
   }
+  const ecology=scatterEcology(g,{height:islandHeightHQ,bounds:[-.52,.52,-.46,.38],count:1100,exclude:(x,z)=>occupied.some(p=>Math.hypot(x-p.x,z-p.z)<p.r+.012),seed:901});
   const effects=rift(g,kit);
-  return {focus:.132,eye:[.73,.49,1.0],light:[-1.7,1.7,.65],meta:{...meta,trees,homes:homes.length},
+  return {focus:.132,eye:[.73,.49,1.0],light:[-1.7,1.7,.65],meta:{...meta,...ecology,trees,homes:homes.length},
     environment(env){return reflectiveSea(env,kit);},
     update(t){effects.material.uniforms.time.value=t;effects.dust.position.y=Math.sin(t*.2)*.0007;effects.fog.forEach((f,i)=>f.material.opacity=.16+Math.sin(t*.16+i)*.04);}
   };

@@ -1,10 +1,14 @@
 import * as T from 'three';
+import { finish } from './world-finish.js?v=8';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-let source;
-export async function loadAtelier(progress=()=>{}){
+let source,loadJob;
+export function loadAtelier(progress=()=>{}){
+ if(source)return Promise.resolve();if(loadJob)return loadJob;
  const loader=new GLTFLoader();
- const gltf=await loader.loadAsync(new URL('./assets/atelier/academy-atelier.glb',import.meta.url).href,e=>progress(e.total?Math.round(e.loaded/e.total*100):null));
- source=gltf.scene;
+ loadJob=loader.loadAsync(new URL('./assets/atelier/academy-atelier.glb',import.meta.url).href,e=>progress(e.total?Math.round(e.loaded/e.total*100):null)).then(gltf=>{
+  source=gltf.scene;
+  source.traverse(o=>{if(!o.isMesh)return;for(const m of [o.material].flat()){if(m.name==='Oak')finish(m,'wood');}});
+ }).catch(e=>{loadJob=null;throw e;});return loadJob;
 }
 export function attachAtelier(parent){
  if(!source)throw Error('Blender atelier asset has not loaded');

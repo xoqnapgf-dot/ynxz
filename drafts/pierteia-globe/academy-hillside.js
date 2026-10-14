@@ -1,7 +1,10 @@
 import * as T from 'three';
-import { attachAtelier } from './academy-asset.js?v=7';
-import { reflectiveSea } from './archipelago-hq.js?v=5';
-import { gridGround, lane } from './regional-scenes.js?v=6';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { finish } from './world-finish.js?v=8';
+import { scatterEcology } from './ecology.js?v=8';
+import { attachAtelier } from './academy-asset.js?v=8';
+import { reflectiveSea } from './archipelago-hq.js?v=8';
+import { gridGround, lane } from './regional-scenes.js?v=8';
 
 // A circular CAMPUS PLAN, not one circular building: separate teaching, library,
 // workshop and common-room masses follow the contour around an open planted garden.
@@ -34,7 +37,7 @@ function makeMaterials(k){
 }
 // Brick courses use physical-sized UVs instead of stretching one texture over a wall.
 function box(g,k,w,h,d,m,x=0,y=0,z=0){
- const geo=new T.BoxGeometry(w,h,d),p=geo.attributes.position,n=geo.attributes.normal,uv=geo.attributes.uv;
+ const geo=Math.min(w,h,d)>.004?new RoundedBoxGeometry(w,h,d,1,Math.min(w,h,d)*.035):new T.BoxGeometry(w,h,d),p=geo.attributes.position,n=geo.attributes.normal,uv=geo.attributes.uv;
  for(let i=0;i<p.count;i++){
   if(Math.abs(n.getY(i))>.5)uv.setXY(i,p.getX(i)*48,p.getZ(i)*48);
   else uv.setXY(i,(Math.abs(n.getX(i))>.5?p.getZ(i):p.getX(i))*48,p.getY(i)*48);
@@ -159,7 +162,7 @@ function circledA(g,k,p,x,y,z,r){
  k.beam(g,[x-r*.65,y-r*.76,z],[x,y+r*.82,z],.00075,p.red);k.beam(g,[x,y+r*.82,z],[x+r*.65,y-r*.76,z],.00075,p.red);k.beam(g,[x-r*.57,y-r*.16,z],[x+r*.57,y-r*.16,z],.0006,p.red);
 }
 export function createAcademyHillside(g,k){
- const p=makeMaterials(k);
+ const p=makeMaterials(k);for(const key of ['stone','plaster','wood','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');
  gridGround(g,k,height,(x,z,y)=>{
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;
   return new T.Color(y<.010?'#aba58a':slope>1.25?'#9a9c8a':'#76865b').multiplyScalar(.91+hash(Math.floor(x*130),Math.floor(z*130))*.10);
@@ -226,5 +229,6 @@ export function createAcademyHillside(g,k){
  for(let i=0;i<24;i++)box(g,k,.029,.0015,.0025,p.wood,.44,.010,.16+i*.0028);
  for(const x of [.427,.453])for(const z of [.16,.19,.222])k.beam(g,[x,-.025,z],[x,.011,z],.0009,p.wood);
  k.boat(g,.477,.20,.7,.1);
- return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:7,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
+ return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]},materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:8,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }
