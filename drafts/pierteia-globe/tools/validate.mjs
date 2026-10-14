@@ -22,8 +22,8 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=11'));assert(html.includes('globe.css?v=11'));
-assert(read('globe.js').toString().includes('landmarks.js?v=11'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=12'));assert(html.includes('globe.css?v=11'));
+assert(read('globe.js').toString().includes('landmarks.js?v=12'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);
 assert(read('globe.js').toString().includes('planet-materials.js?v=9'));
@@ -52,8 +52,8 @@ assert(read('screenshots/v6/previews/21-academy-open-campus.jpg').length>1000);
 assert.equal(academy.captures[0].samples,4);assert.equal(academy.stats.activeScene,900);
 assert.equal(academy.stats.markers,20);assert.equal(academy.stats.locations,28);assert.equal(academy.stats.models,8);
 assert.equal(academy.stats.geometry.find(x=>x.id===900).revision,6);
-assert(read('landmarks.js').toString().includes('academy-hillside.js?v=11'));
-assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=9'));
+assert(read('landmarks.js').toString().includes('academy-hillside.js?v=12'));
+assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=12'));
 assert(read('regional-scenes.js').toString().includes('ix.push(a,a+1,a+2,a+1,a+3,a+2)'));
 const {SCENES}=await import('data:text/javascript;base64,'+read('scene-catalog.js').toString('base64'));
 assert.equal(SCENES.length,8);assert.equal(new Set(SCENES.map(s=>s.key)).size,8);
@@ -107,4 +107,12 @@ for(const name of ['courtyard','joinery'])assert(html.includes(`data-detail-view
 const recovery11=JSON.parse(read('tools/verification-loading-v11.json'));assert.equal(recovery11.revision,11);assert.deepEqual(recovery11.errors,[]);assert.equal(recovery11.expectedNetworkFailures.length,4);
 for(const key of ['studyMapFailureContained','hdrFailureContained','studyAssetsRetryPassed','textureFailureContained','textureRetryPassed','glbFailureContained','cancelPassed','lateLoadDidNotStealScene','glbRetryAndCachePassed','escapePassed','searchAndReentryPassed','detailControlsPassed'])assert.equal(recovery11[key],true,key);
 await import('./test-study.mjs');
-console.log('PASS: unchanged official geography; v11 study resources/scale/grounding, eight scenes and new resource recovery. Art approval is not inferred from these checks.');
+const v12=JSON.parse(read('tools/verification-v12.json'));assert.equal(v12.revision,12);assert.deepEqual(v12.errors,[]);assert.equal(v12.scenes.length,8);assert.equal(v12.closeViews.length,9);
+assert.equal(v12.initial.glbRequests,0);assert.equal(v12.glbRequests,1);assert.equal(v12.final.loadedModels,8);
+for(const s of v12.scenes){assert.equal(s.geometry.vegetationRevision,12);assert(s.returnedToGlobe);}
+const campus12=v12.scenes.find(s=>s.id===900).geometry;assert.equal(campus12.revision,12);assert.equal(campus12.landscapeRevision,12);assert(campus12.exposedRockLedges>20);assert.equal(campus12.plantedShrubs,45);
+assert(v12.closeViews.some(v=>v.preset==='hillside'));assert(html.includes('data-detail-view="hillside"'));assert(read('academy-hillside.js').toString().includes('academy-landscape.js?v=12'));
+const recovery12=JSON.parse(read('tools/verification-loading-v12.json'));assert.equal(recovery12.revision,12);assert.deepEqual(recovery12.errors,[]);assert.equal(recovery12.expectedNetworkFailures.length,4);
+for(const key of ['studyMapFailureContained','hdrFailureContained','studyAssetsRetryPassed','textureFailureContained','textureRetryPassed','glbFailureContained','cancelPassed','lateLoadDidNotStealScene','glbRetryAndCachePassed','escapePassed','searchAndReentryPassed','detailControlsPassed'])assert.equal(recovery12[key],true,key);
+await import('./test-landscape.mjs');
+console.log('PASS: unchanged official geography; v12 terrain/trees/roof geometry, eight scenes and failure recovery. Art approval is not inferred from these checks.');

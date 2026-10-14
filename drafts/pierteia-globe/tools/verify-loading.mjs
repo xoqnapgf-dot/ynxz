@@ -1,5 +1,5 @@
 import {chromium} from 'playwright';import c from '@sparticuz/chromium';import fs from 'node:fs';import assert from 'node:assert/strict';
-const report={revision:11,scope:'Failure injection, retry, cancellation, rapid scene switch, UI navigation',errors:[],expectedNetworkFailures:[]};
+const report={revision:12,scope:'Failure injection, retry, cancellation, rapid scene switch, UI navigation',errors:[],expectedNetworkFailures:[]};
 const b=await chromium.launch({executablePath:await c.executablePath(),args:c.args,headless:true});
 try{
  const p=await b.newPage({viewport:{width:1000,height:650}});p.setDefaultTimeout(120000);
@@ -30,5 +30,5 @@ try{
  await p.locator('#search').fill('学院');await p.locator('#place-list button').click();await p.locator('#inspect').click();await p.waitForFunction(()=>__globe.stats().activeScene===900);report.searchAndReentryPassed=true;
  await p.locator('[data-detail-view="materials"]').click();await p.locator('#close-detail').click();assert.equal(await p.evaluate(()=>__globe.stats().activeScene),null);report.detailControlsPassed=true;
  assert.deepEqual(report.errors,[]);assert.equal(report.expectedNetworkFailures.length,4);
- fs.writeFileSync(new URL('./verification-loading-v11.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('COMPLETE',JSON.stringify(report));
+ fs.writeFileSync(new URL('./verification-loading-v12.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('COMPLETE',JSON.stringify(report));
 }finally{await b.close();}

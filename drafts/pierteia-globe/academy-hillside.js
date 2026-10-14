@@ -20,7 +20,10 @@ function height(x,z){
  const campus=.041+.067*smooth(.20,-.26,z);
  const hills=.185*Math.exp(-((x+.12)**2*15+(z+.405)**2*38))+.095*Math.exp(-((x-.22)**2*34+(z+.39)**2*42));
  const strata=.004*Math.sin(x*73+Math.sin(z*47))+.003*Math.sin(z*105+x*31);
- const natural=T.MathUtils.lerp(-.055,campus+(hills+strata)*smooth(.25,.36,r),1-smooth(edge-.10,edge+.025,r));
+ // Shallow warped drainage cuts change the silhouette and normals, not just colour.
+ const channels=Math.pow(.5+.5*Math.sin(x*98+2.4*Math.sin(z*23)+.8*Math.sin(x*53-z*19)),10);
+ const erosion=(-.010*channels+.0021*Math.sin(z*187+Math.sin(x*29)*1.7))*smooth(-.265,-.345,z);
+ const natural=T.MathUtils.lerp(-.055,campus+(hills+strata+erosion)*smooth(.25,.36,r),1-smooth(edge-.10,edge+.025,r));
  const dx=x+.119,dz=z-.163,lx=(dx*Math.cos(.52)-dz*Math.sin(.52))*100,lz=(dx*Math.sin(.52)+dz*Math.cos(.52))*100;
  const courtDistance=Math.max(Math.abs(lx)-4.9,Math.abs(lz-9.95)-3.2);
  return T.MathUtils.lerp(natural,.0407,1-smooth(-.2,1.3,courtDistance));
