@@ -1,8 +1,8 @@
 import {chromium} from 'playwright';
 import c from '@sparticuz/chromium';
 import fs from 'node:fs';import assert from 'node:assert/strict';
-const out=new URL('./verification-v8.json',import.meta.url);
-const report={revision:8,scope:'Eight interactive scenes, ordinary-resolution shader/render and navigation regression; no new 4K delivery',viewport:[800,500],errors:[],scenes:[]};
+const out=new URL('./verification-v9.json',import.meta.url);
+const report={revision:9,scope:'Eight interactive scenes, ordinary-resolution shader/render and navigation regression; no new 4K delivery',viewport:[800,500],errors:[],scenes:[],closeViews:[]};
 const b=await chromium.launch({executablePath:await c.executablePath(),args:c.args,headless:true});
 try{
  const p=await b.newPage({viewport:{width:800,height:500}});p.setDefaultTimeout(180000);
@@ -20,8 +20,14 @@ try{
   const u=await p.evaluate(()=>__globe.captureHQ({width:800,height:500,samples:1,download:false}));
   assert(u.startsWith('data:image/png;base64,')); // ordinary-resolution render, not a screenshot deliverable
   const stats=await p.evaluate(()=>__globe.stats());assert.equal(stats.activeScene,id);assert(stats.assetLighting&&stats.contactOcclusion);assert.equal(stats.markers,20);assert.equal(stats.locations,28);
-  const geo=stats.geometry.find(g=>g.id===id);assert.equal(geo.finishRevision,8);assert(geo.grassClumps>0,'missing ecology '+id);
-  await p.evaluate(()=>__globe.frame('street'));await p.evaluate(()=>__globe.frame('wide'));
+  const geo=stats.geometry.find(g=>g.id===id);assert.equal(geo.finishRevision,9);assert(geo.grassClumps>0,'missing ecology '+id);assert(geo.botanicalTrees>0);assert(geo.treePrototypes<=8);if([12,11,'falota','shiomi'].includes(id))assert(geo.piercedFacades);assert.equal(stats.edgeAntialias,'SMAA');assert(stats.antialiasSamples>0);
+  await p.evaluate(()=>__globe.frame('street'));
+  if(id===900||id==='falota'){
+   const close=await p.evaluate(()=>__globe.captureHQ({width:1100,height:700,samples:1,download:false}));
+   assert(close.startsWith('data:image/png;base64,'));
+   report.closeViews.push({id,preset:'street',width:1100,height:700});
+  }
+  await p.evaluate(()=>__globe.frame('wide'));
   await p.evaluate(()=>{__globe.setClean(false);__globe.view('overview');__globe.settle();});
   const exit=await p.evaluate(()=>__globe.stats());assert.equal(exit.activeScene,null);assert(!exit.assetLighting&&!exit.contactOcclusion);
   report.scenes.push({id,geometry:geo,assetLighting:stats.assetLighting,contactOcclusion:stats.contactOcclusion,returnedToGlobe:true,elapsedMs:Date.now()-start});console.log('PASS',id,JSON.stringify(geo));

@@ -59,7 +59,10 @@ export function finish(material,kind='stone'){
    diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.07,.85,.69),vegetation*(1.-cover)*.36);
    diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.09,1.035,.88),smoothstep(.40,.72,macro)*.32);
    float mineral=pow(.5+.5*sin(atlasPosition.y*530.+age*5.),10.);
-   diffuseColor.rgb*=1.-mineral*(1.-upward)*.055;
+   float rockSurface=(1.-vegetation)*(1.-smoothstep(.5,.70,max(diffuseColor.r,diffuseColor.g)));
+   float runoff=atlasNoise(atlasPosition*vec3(178.,12.,178.));
+   diffuseColor.rgb*=1.-rockSurface*(1.-upward)*(mineral*.13+pow(1.-runoff,3.)*.18);
+   diffuseColor.rgb*=1.+(grit-.5)*.10*rockSurface;
    `:''}
    ${kind==='glass'?`
    // A restrained dark interior behind each pane; not a luminous blue rectangle.
@@ -72,7 +75,9 @@ export function finish(material,kind='stone'){
    ${kind==='metal'?'diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.64,.85,.79),pow(age,3.)*.28);':''}
   `);
   if(kind==='terrain')shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
-   float microHeight=atlasNoise(atlasPosition*780.)*.000013+atlasNoise(atlasPosition*183.)*.000025;
+   float footprint=max(length(dFdx(atlasPosition)),length(dFdy(atlasPosition)));
+   float detailFade=1.-smoothstep(.0005,.0022,footprint);
+   float microHeight=(atlasNoise(atlasPosition*780.)*.000013+atlasNoise(atlasPosition*183.)*.000025+atlasNoise(atlasPosition*431.)*.00014*rockSurface*(1.-upward))*detailFade;
    vec3 q0=dFdx(-vViewPosition),q1=dFdy(-vViewPosition);
    vec3 r1=cross(q1,normal),r2=cross(normal,q0);
    float det=dot(q0,r1);

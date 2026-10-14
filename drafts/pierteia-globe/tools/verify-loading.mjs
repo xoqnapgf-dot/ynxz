@@ -1,5 +1,5 @@
 import {chromium} from 'playwright';import c from '@sparticuz/chromium';import fs from 'node:fs';import assert from 'node:assert/strict';
-const report={revision:8,scope:'Failure injection, retry, cancellation, rapid scene switch, UI navigation',errors:[],expectedNetworkFailures:[]};
+const report={revision:9,scope:'Failure injection, retry, cancellation, rapid scene switch, UI navigation',errors:[],expectedNetworkFailures:[]};
 const b=await chromium.launch({executablePath:await c.executablePath(),args:c.args,headless:true});
 try{
  const p=await b.newPage({viewport:{width:1000,height:650}});p.setDefaultTimeout(120000);
@@ -17,12 +17,12 @@ try{
  await p.locator('#scene-cancel').click();assert.equal(await p.evaluate(()=>__globe.stats().pendingScene),null);assert(await p.locator('#scene-loading').isHidden());report.cancelPassed=true;
  assert(await p.evaluate(()=>__globe.inspect(12)));release();
  // The cancelled request is permitted to finish caching, never to activate itself.
- await p.evaluate(async()=>{const {loadAtelier}=await import('./academy-asset.js?v=8');await loadAtelier();});
+ await p.evaluate(async()=>{const {loadAtelier}=await import('./academy-asset.js?v=9');await loadAtelier();});
  assert.equal(await p.evaluate(()=>__globe.stats().activeScene),12);report.lateLoadDidNotStealScene=true;
  assert(await p.evaluate(()=>__globe.inspect(900)));assert.equal(await p.evaluate(()=>__globe.stats().activeScene),900);assert.equal(attempt,2);report.glbRetryAndCachePassed=true;
  await p.evaluate(()=>__globe.frame('materials'));await p.keyboard.press('Escape');assert.equal(await p.evaluate(()=>__globe.stats().activeScene),null);report.escapePassed=true;
  await p.locator('#search').fill('学院');await p.locator('#place-list button').click();await p.locator('#inspect').click();await p.waitForFunction(()=>__globe.stats().activeScene===900);report.searchAndReentryPassed=true;
  await p.locator('[data-detail-view="materials"]').click();await p.locator('#close-detail').click();assert.equal(await p.evaluate(()=>__globe.stats().activeScene),null);report.detailControlsPassed=true;
  assert.deepEqual(report.errors,[]);assert.equal(report.expectedNetworkFailures.length,2);
- fs.writeFileSync(new URL('./verification-loading-v8.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('COMPLETE',JSON.stringify(report));
+ fs.writeFileSync(new URL('./verification-loading-v9.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('COMPLETE',JSON.stringify(report));
 }finally{await b.close();}

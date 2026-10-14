@@ -23,10 +23,10 @@ export function gridGround(g,k,height,colors,span=1.5,n=160){
  const m=new T.MeshStandardMaterial({vertexColors:true,map:k.maps.rock.map,normalMap:k.maps.rock.normal,normalScale:new T.Vector2(.48,.48),roughness:.95});
  finish(m,'terrain');const mesh=k.mesh(g,geo,m);mesh.userData.noBake=true;
 }
-function groundEnvironment(env,k,m){const geo=new T.PlaneGeometry(10,10);const uv=geo.attributes.uv,pos=geo.attributes.position;for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)*45,-pos.getY(i)*45);const p=k.mesh(env,geo,m,0,.004,0);p.rotation.x=-Math.PI/2;p.castShadow=false;return null;}
-function pane(g,x,y,z,w,h,k,p){
- k.box(g,w+.0015,h+.0015,.0007,p.dark,x,y,z-.00015);
- k.box(g,w-.0004,h-.0004,.0005,p.glass,x,y,z+.00025);
+function groundEnvironment(env,k,m){const geo=new T.PlaneGeometry(10,10);geo.rotateX(-Math.PI/2);const uv=geo.attributes.uv,pos=geo.attributes.position;for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)*45,pos.getZ(i)*45);const p=k.mesh(env,geo,m,0,.004,0);p.castShadow=false;return null;}
+function pane(g,x,y,z,w,h,k,p,recessed=false){
+ k.box(g,w+.0015,h+.0015,.0007,p.dark,x,y,z+(recessed?-.0022:-.00015));
+ k.box(g,w-.0004,h-.0004,.0005,p.glass,x,y,z+(recessed?-.00065:.00025));
  for(const sign of [-1,1]){k.box(g,.00065,h+.0015,.0018,p.wood,x+sign*w*.5,y,z+.0005);k.box(g,w+.0015,.00065,.0018,p.wood,x,y+sign*h*.5,z+.0005);}
  k.box(g,.00045,h,.0016,p.wood,x,y,z+.00065);
  k.box(g,w+.002,.001,.0028,p.cream,x,y-h*.5-.0007,z+.0008);
@@ -43,38 +43,65 @@ function pitchedRoof(g,w,d,h,k,m,curved=false){
  k.beam(g,[-w/2,h,0],[w/2,h,0],.00085,m);
 
 }
+function windowBays(w,h,floors){
+ const count=Math.max(2,Math.floor(w/.014)),result=[];
+ for(let f=0;f<floors;f++)for(let i=0;i<count;i++){
+  const x=-w*.36+i*w*.72/(count-1),y=.003+(f+.52)*h/floors;
+  if(f===0&&Math.abs(x-w*.21)<w*.07+.0042)continue; // Leave room for a real doorway.
+  result.push({x,y,w:w*.14,h:h*.25,f});
+ }
+ return result;
+}
+function piercedWall(g,width,height,depth,openings,k,material){
+ const shape=new T.Shape();shape.moveTo(-width/2,.003);shape.lineTo(width/2,.003);shape.lineTo(width/2,height+.003);shape.lineTo(-width/2,height+.003);shape.closePath();
+ for(const a of openings){
+  const hole=new T.Path();hole.moveTo(a.x-a.w/2,a.y-a.h/2);hole.lineTo(a.x-a.w/2,a.y+a.h/2);hole.lineTo(a.x+a.w/2,a.y+a.h/2);hole.lineTo(a.x+a.w/2,a.y-a.h/2);hole.closePath();shape.holes.push(hole);
+ }
+ const geo=new T.ExtrudeGeometry(shape,{depth:.0018,steps:1,bevelEnabled:true,bevelSize:.000045,bevelThickness:.000045,bevelSegments:1});
+ const pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)*45,pos.getY(i)*45);
+ k.mesh(g,geo,material,0,0,depth/2-.0018);
+}
 function house(g,x,z,w,d,h,angle,k,p,{y=.012,timber=false,curved=false,open=false,floors=2}={}){
  const q=new T.Group();q.position.set(x,y,z);q.rotation.y=angle;g.add(q);
- k.box(q,w+.002,.004,d+.002,p.stone,0,.002,0);k.box(q,w,h,d,timber?p.wood:p.plaster,0,h*.5+.003,0);
+ k.box(q,w+.002,.004,d+.002,p.stone,0,.002,0);
+ const bays=windowBays(w,h,floors);
+ for(let floor=0;floor<=floors;floor++)k.box(q,w-.002,.001,d-.002,p.wood,0,.003+floor*h/floors,0);
  // Four complete facades, recesses and sills instead of a single printed front.
  for(const side of [-1,1]){
   const face=new T.Group();face.rotation.y=side===-1?Math.PI:0;q.add(face);
-  const count=Math.max(2,Math.floor(w/.014));
-  for(let f=0;f<floors;f++)for(let i=0;i<count;i++){
-   const xx=-w*.36+i*w*.72/(count-1),yy=.014+f*h/floors;
-   k.box(face,w*.18,h*.29,.001,p.dark,xx,yy,d*.505);
-   pane(face,xx,yy,d*.53,w*.14,h*.25,k,p);
-   for(const sign of [-1,1]){const shutter=k.box(face,.0021,h*.29,.0011,timber?p.wood:p.roof,xx+sign*w*.10,yy,d*.545);shutter.rotation.y=sign*.28;}
+  const shop=open&&side===1,windows=bays.filter(a=>!shop||a.f>0);
+  const doorHeight=Math.min(h*.38,h/floors*.86),door={x:w*.21,y:.004+doorHeight*.5,w:.007,h:doorHeight};
+  const display={x:-w*.035,y:.005+h*.225,w:w*.87,h:h*.45};
+  piercedWall(face,w,h,d,[...windows,...(shop?[display]:[door])],k,timber?p.wood:p.plaster);
+  for(const a of windows){
+   pane(face,a.x,a.y,d/2,a.w,a.h,k,p,true);
+   for(const sign of [-1,1]){const shutter=k.box(face,.0021,a.h+.001,.0011,timber?p.wood:p.roof,a.x+sign*(a.w*.5+.0014),a.y,d/2+.001);shutter.rotation.y=sign*.28;}
   }
   k.box(face,w,.0016,.002,p.wood,0,h*.56,d*.515);
   for(const x of [-w*.46,w*.46])k.box(face,.0015,h,.002,p.wood,x,h*.5+.003,d*.515);
   // Timber lintel, front door and stone doorstep.
-  k.box(face,.007,h*.38,.0014,p.dark,w*.21,h*.19+.004,d*.52);
-  k.box(face,.009,.0015,.002,p.wood,w*.21,h*.39+.004,d*.53);
+  k.box(face,door.w,door.h,.0012,p.wood,door.x,door.y,d/2-.0006);
+  for(const dx of [-.004,.004])k.box(face,.0007,door.h+.001,.0018,p.wood,door.x+dx,door.y,d/2+.0002);
+  k.box(face,.009,.0015,.002,p.wood,door.x,door.y+door.h*.5+.0005,d*.53);
   k.box(face,.011,.002,.007,p.stone,w*.21,.004,d*.58);
  }
  for(const side of [-1,1]){
   const end=new T.Group();end.rotation.y=side*Math.PI/2;q.add(end);
-  for(let f=0;f<floors;f++)pane(end,0,.014+f*h/floors,w*.505,d*.25,h*.25,k,p);
+  const endWindows=Array.from({length:floors},(_,f)=>({x:0,y:.003+(f+.52)*h/floors,w:d*.25,h:h*.25}));
+  piercedWall(end,d,h,w,endWindows,k,timber?p.wood:p.plaster);
+  for(const a of endWindows)pane(end,a.x,a.y,w/2,a.w,a.h,k,p,true);
   const shape=new T.Shape();shape.moveTo(-d*.5,0);shape.lineTo(d*.5,0);shape.lineTo(0,h*.32);shape.closePath();
   const gable=k.mesh(end,new T.ShapeGeometry(shape),timber?p.wood:p.plaster,0,h+.003,w/2);gable.material.side=T.DoubleSide;
   k.beam(end,[-d*.52,h+.003,w*.52],[0,h*1.33,w*.52],.0006,p.wood);k.beam(end,[0,h*1.33,w*.52],[d*.52,h+.003,w*.52],.0006,p.wood);
  }
- if(timber)for(let i=0;i<Math.ceil(w/.004);i++)k.box(q,.0004,h*.46,.0012,p.dark,-w*.48+i*.004,h*.24+.003,d*.52);
+ if(timber&&!open)for(let i=0;i<Math.ceil(w/.004);i++){
+  const x=-w*.48+i*.004;if(bays.some(a=>a.f===0&&Math.abs(x-a.x)<a.w*.5+.0005)||Math.abs(x-w*.21)<.0042)continue;
+  k.box(q,.0004,h*.46,.0012,p.dark,x,h*.24+.003,d*.52);
+ }
  const roof=new T.Group();roof.position.y=h+.003;q.add(roof);pitchedRoof(roof,w*1.18,d*1.25,h*.32,k,p.roof,curved);
  if(!timber)k.box(q,.004,.013,.005,p.brick,-w*.24,h+.012,-d*.23);
  if(open){
-  k.box(q,w*.65,h*.33,.001,p.dark,-w*.10,h*.22,d*.54);
+  k.box(q,w*.65,h*.33,.001,p.dark,-w*.10,h*.22,d/2-.003);
   for(let shelf=0;shelf<2;shelf++)for(let i=0;i<10;i++)k.box(q,.0019,.003+(i%3)*.0005,.002,i%3?p.cream:p.brick,-w*.37+i*w*.045,.008+shelf*.005,d*.56);
   k.box(q,w*.70,.0012,.006,p.wood,-w*.09,.012,d*.60);
   const canopy=k.box(q,w*1.03,.001,.014,p.roof,0,h*.55,d*.65);canopy.rotation.x=.17;
@@ -201,7 +228,7 @@ function iron(g,k,p){
  for(let i=0;i<16;i++){const x=-.42+hash(i,9)*.81,z=-.38+hash(i,2)*.76;if(Math.abs(x)>.32)k.tree(g,x,z,.6,h(x,z),true);}for(let i=0;i<30;i++)k.person(g,-.25+hash(i,13)*.40,.25+hash(i,19)*.08,.013);
  industrialContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.44&&x<.46&&z>-.46&&z<.38,seed:12});
- return {views:{street:{eye:[.31,.16,.36],target:[.11,.05,.04]}},focus:.06,eye:[.60,.47,.78],light:[-1.6,2.3,1.1],meta:{...ecology,sceneType:'rail-and-steel neighbourhood',scope:'representative district, not the whole country'},environment:env=>groundEnvironment(env,k,p.ground)};
+ return {views:{street:{eye:[.31,.16,.36],target:[.11,.05,.04]}},focus:.06,eye:[.60,.47,.78],light:[-1.6,2.3,1.1],meta:{...ecology,sceneType:'rail-and-steel neighbourhood',piercedFacades:true,scope:'representative district, not the whole country'},environment:env=>groundEnvironment(env,k,p.ground)};
 }
 function xuanji(g,k,p){
  const shoreline=x=>.105+Math.sin(x*9)*.024;
@@ -232,7 +259,7 @@ function xuanji(g,k,p){
  crane(g,.18,.09,k,p,.65);
  lakeContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.40&&x<.46&&z>-.40&&z<.24,seed:11});
- return {views:{street:{eye:[.23,.17,.34],target:[-.05,.045,-.06]}},focus:.060,eye:[.53,.41,.73],light:[-1.7,2.4,1.3],meta:{...ecology,sceneType:'landlocked lake research/workshop district',scope:'representative district; no seaport'},environment:env=>reflectiveSea(env,k,h)};
+ return {views:{street:{eye:[.23,.17,.34],target:[-.05,.045,-.06]}},focus:.060,eye:[.53,.41,.73],light:[-1.7,2.4,1.3],meta:{...ecology,sceneType:'landlocked lake research/workshop district',piercedFacades:true,scope:'representative district; no seaport'},environment:env=>reflectiveSea(env,k,h)};
 }
 function marketStall(g,x,z,k,p,color){const q=new T.Group();q.position.set(x,.027,z);g.add(q);for(const a of [-1,1])for(const b of [-1,1])k.cyl(q,.0005,.014,p.wood,a*.009,.007,b*.005,6);const fabric=new T.MeshStandardMaterial({color,roughness:1,side:T.DoubleSide});const roof=k.box(q,.022,.0006,.014,fabric,0,.016,0);roof.rotation.x=.13;k.box(q,.020,.0015,.008,p.wood,0,.006,0);for(let i=0;i<5;i++)k.mesh(q,new T.SphereGeometry(.0015,6,4),i%2?p.cream:p.brick,-.008+i*.004,.008,0);}
 function falota(g,k,p){
@@ -257,7 +284,7 @@ function falota(g,k,p){
  for(let i=0;i<36;i++){const x=-.41+hash(i,30)*.82,z=-.34-hash(i,16)*.12;k.tree(g,x,z,.55+hash(i,13)*.3,h(x,z));}
  harbourContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.41&&x<.43&&z>-.39&&z<.29,seed:61});
- return {views:{street:{eye:[.27,.14,.44],target:[0,.049,.083]}},focus:.073,eye:[.50,.40,.79],light:[-1.7,1.6,1.0],meta:{...ecology,sceneType:'working coastal harbour and market streets',scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
+ return {views:{street:{eye:[.27,.14,.44],target:[0,.049,.083]}},focus:.073,eye:[.50,.40,.79],light:[-1.7,1.6,1.0],meta:{...ecology,sceneType:'working coastal harbour and market streets',piercedFacades:true,scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
 }
 function shiomi(g,k,p){
  const edge=x=>.075+Math.sin(x*10)*.015;
@@ -280,6 +307,6 @@ function shiomi(g,k,p){
  for(let i=0;i<24;i++)k.person(g,-.047+(hash(i,9)-.5)*.035,.04-hash(i,18)*.27,h(-.047,.04-hash(i,18)*.27)+.001);
  townContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.23&&x<.34&&z>-.37&&z<.18,seed:31});
- return {views:{street:{eye:[-.15,.100,.17],target:[-.055,.036,-.11]}},focus:.062,eye:[.50,.36,.71],light:[-1.9,2.6,.9],meta:{...ecology,sceneType:'tidal port town, narrow shops and small shrine',scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
+ return {views:{street:{eye:[-.15,.100,.17],target:[-.055,.036,-.11]}},focus:.062,eye:[.50,.36,.71],light:[-1.9,2.6,.9],meta:{...ecology,sceneType:'tidal port town, narrow shops and small shrine',piercedFacades:true,scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
 }
 export function createRegionalScene(g,key,kit){const p=palette(kit);const builders={12:iron,11:xuanji,falota,shiomi};if(!builders[key])throw Error('Unknown regional scene: '+key);return builders[key](g,kit,p);}

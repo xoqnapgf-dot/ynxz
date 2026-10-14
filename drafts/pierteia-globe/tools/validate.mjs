@@ -22,11 +22,11 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=8'));assert(html.includes('globe.css?v=8'));
-assert(read('globe.js').toString().includes('landmarks.js?v=8'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=9'));assert(html.includes('globe.css?v=9'));
+assert(read('globe.js').toString().includes('landmarks.js?v=9'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);
-assert(read('globe.js').toString().includes('planet-materials.js?v=8'));
+assert(read('globe.js').toString().includes('planet-materials.js?v=9'));
 const hash=data=>createHash('sha256').update(data).digest('hex');
 const preserved={
  'assets/places.json':'15808ba2d908b64954062182e95f00fea08a580b7268db667b6562a7334a8a67',
@@ -43,7 +43,7 @@ for(const shot of hq.captures){assert.equal(shot.samples,4);assert.deepEqual(png
 assert.equal(hq.stats.quality,'Desktop HQ');assert.equal(hq.stats.shadowSize,4096);assert.deepEqual(hq.stats.surfaceSize,[6144,3072]);
 const islands=hq.stats.geometry.find(g=>g.id===901);assert.equal(islands.terrainTriangles,819200);assert(islands.triangles>900000);assert.equal(islands.homes,12);assert(islands.trees>200);
 assert(read('globe.js').toString().includes('SSAARenderPass'));assert(!read('globe.js').toString().includes('cv.width=2048'));
-assert(read('landmarks.js').toString().includes('archipelago-hq.js?v=8'));assert(html.includes('data-detail-view="harbor"'));
+assert(read('landmarks.js').toString().includes('archipelago-hq.js?v=9'));assert(html.includes('data-detail-view="harbor"'));
 for(const name of ['archipelago-hq.js','vendor/addons/objects/Water.js','vendor/addons/postprocessing/SSAARenderPass.js'])assert(read(name).length>100);
 const academy=JSON.parse(read('tools/verification-v6.json'));
 assert.equal(academy.revision,6);assert.deepEqual(academy.errors,[]);assert.equal(academy.captures.length,1);
@@ -52,8 +52,8 @@ assert(read('screenshots/v6/previews/21-academy-open-campus.jpg').length>1000);
 assert.equal(academy.captures[0].samples,4);assert.equal(academy.stats.activeScene,900);
 assert.equal(academy.stats.markers,20);assert.equal(academy.stats.locations,28);assert.equal(academy.stats.models,8);
 assert.equal(academy.stats.geometry.find(x=>x.id===900).revision,6);
-assert(read('landmarks.js').toString().includes('academy-hillside.js?v=8'));
-assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=8'));
+assert(read('landmarks.js').toString().includes('academy-hillside.js?v=9'));
+assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=9'));
 assert(read('regional-scenes.js').toString().includes('ix.push(a,a+1,a+2,a+1,a+3,a+2)'));
 const {SCENES}=await import('data:text/javascript;base64,'+read('scene-catalog.js').toString('base64'));
 assert.equal(SCENES.length,8);assert.equal(new Set(SCENES.map(s=>s.key)).size,8);
@@ -80,4 +80,12 @@ for(const item of Object.values(wood.channels))assert.equal(hash(read('assets/wo
 for(const name of ['world-finish.js','world-occlusion.js','ecology.js','tools/verify-browser.mjs','tools/verify-loading.mjs','tools/build_world_wood.py','vendor/addons/geometries/RoundedBoxGeometry.js'])assert(read(name).length>100);
 assert(html.includes('id="scene-retry"'));assert(html.includes('id="scene-cancel"'));
 assert(read('world-occlusion.js').toString().includes('object.isSprite'));
-console.log('PASS: unchanged official geography; historical GLB and images; v8 eight-scene browser renders, PBR/ecology, optional GLB, cancellation/retry and navigation records.');
+const v9=JSON.parse(read('tools/verification-v9.json'));
+assert.equal(v9.revision,9);assert.deepEqual(v9.errors,[]);assert.equal(v9.scenes.length,8);
+assert.equal(v9.initial.glbRequests,0);assert.equal(v9.final.loadedModels,8);assert.equal(v9.glbRequests,1);
+assert.equal(v9.final.edgeAntialias,'SMAA');assert.equal(v9.final.antialiasSamples,4);assert.equal(v9.closeViews.length,2);
+for(const item of v9.scenes){assert.equal(item.geometry.finishRevision,9);assert(item.geometry.botanicalTrees>0);assert(item.geometry.treePrototypes<=8);assert(item.returnedToGlobe);if([12,11,'falota','shiomi'].includes(item.id))assert(item.geometry.piercedFacades);}
+const recovery9=JSON.parse(read('tools/verification-loading-v9.json'));assert.deepEqual(recovery9.errors,[]);
+for(const key of ['textureFailureContained','textureRetryPassed','glbFailureContained','cancelPassed','lateLoadDidNotStealScene','glbRetryAndCachePassed','escapePassed','searchAndReentryPassed','detailControlsPassed'])assert.equal(recovery9[key],true,key);
+for(const file of ['vegetation.js','roof-detail.js','vendor/addons/postprocessing/SMAAPass.js','vendor/addons/shaders/SMAAShader.js'])assert(read(file).length>100);
+console.log('PASS: official geography unchanged; historical records intact; v9 geometry/material/AA, eight-scene renders, two close views and loading recovery checked. Art quality still requires visual review.');
