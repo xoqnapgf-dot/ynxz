@@ -1,9 +1,13 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import * as T from '../vendor/three.module.js';
-const root=new URL('../',import.meta.url),read=name=>fs.readFileSync(new URL(name,root),'utf8');
+const root=new URL('../',import.meta.url),read=name=>execFileSync('git',['show',`0f7f1ae:drafts/pierteia-globe/${name}`],{cwd:fileURLToPath(root),encoding:'utf8'});
 const landmarks=read('landmarks.js'),campus=read('academy-hillside.js'),asset=read('academy-asset.js');
+// Historical v10 audit: read the pinned commit, never silently reinterpret it as current v11.
+// Requires repository history containing 0f7f1ae. Current study is tested in test-study.mjs.
 // Evaluate only the local, version-controlled geometry/height constructors below.
 // This audit never fetches or executes third-party prompts or downloaded skills.
 function declaration(source,name){

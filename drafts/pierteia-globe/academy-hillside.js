@@ -19,7 +19,10 @@ function height(x,z){
  const campus=.041+.067*smooth(.20,-.26,z);
  const hills=.185*Math.exp(-((x+.12)**2*15+(z+.405)**2*38))+.095*Math.exp(-((x-.22)**2*34+(z+.39)**2*42));
  const strata=.004*Math.sin(x*73+Math.sin(z*47))+.003*Math.sin(z*105+x*31);
- return T.MathUtils.lerp(-.055,campus+(hills+strata)*smooth(.25,.36,r),1-smooth(edge-.10,edge+.025,r));
+ const natural=T.MathUtils.lerp(-.055,campus+(hills+strata)*smooth(.25,.36,r),1-smooth(edge-.10,edge+.025,r));
+ const dx=x+.119,dz=z-.163,lx=(dx*Math.cos(.52)-dz*Math.sin(.52))*100,lz=(dx*Math.sin(.52)+dz*Math.cos(.52))*100;
+ const courtDistance=Math.max(Math.abs(lx)-4.9,Math.abs(lz-9.95)-3.2);
+ return T.MathUtils.lerp(natural,.0407,1-smooth(-.2,1.3,courtDistance));
 }
 function makeMaterials(k){
  const stone=new T.MeshStandardMaterial({color:'#a6a594',map:k.maps.stone.map,normalMap:k.maps.stone.normal,normalScale:new T.Vector2(.26,.26),roughness:.9});
@@ -282,13 +285,13 @@ export function createAcademyHillside(g,k){
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;if(slope>1.65)continue;
   k.tree(g,x,z,.60+hash(i,81)*.90,y,i%5===0);trees++;
  }
- for(let i=0;i<12;i++){const a=(i+.35)/12*TAU,r=.154,x=Math.sin(a)*r,z=Math.cos(a)*r;scalePerson(g,x,z,height(x,z)+.0007,{yaw:a+.4,variant:i%4});}
+ for(let i=0;i<12;i++){const a=(i+.35)/12*TAU,r=.154,x=Math.sin(a)*r,z=Math.cos(a)*r;scalePerson(g,x,z,height(x,z)+.0015,{yaw:a+.4,variant:i%4});}
  for(let i=0;i<12;i++){const a=i/12*TAU,x=Math.sin(a)*.145,z=Math.cos(a)*.145;k.lamp(g,x,z,height(x,z)+.002);}
  // Small coastal landing keeps the island setting without dominating the campus.
  for(let i=0;i<24;i++)box(g,k,.029,.0015,.0025,p.wood,.44,.010,.16+i*.0028);
  for(const x of [.427,.453])for(const z of [.16,.19,.222])k.beam(g,[x,-.025,z],[x,.011,z],.0009,p.wood);
  k.boat(g,.477,.20,.7,.1);
- const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
+ const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x+.065,z-.257)<.09||Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
  let academyOpenings=0;g.traverse(o=>academyOpenings+=o.geometry?.userData.openingCount||0);
  return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:11,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }

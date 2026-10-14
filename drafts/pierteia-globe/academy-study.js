@@ -1,4 +1,5 @@
 import * as T from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 let resources,job;
 export function loadStudyAssets(renderer,progress=()=>{}){
@@ -68,7 +69,7 @@ export function readingCourt(parent,k,height){
  const g=new T.Group();g.name='Reading courtyard';g.position.set(-.119,.056,.163);g.rotation.y=.52;g.scale.setScalar(.01);parent.add(g);
  const wood=studyMaterial('wood'),stone=new T.MeshStandardMaterial({color:'#aaa49a',roughness:.87}),joint=new T.MeshStandardMaterial({color:'#56564e',roughness:1});
  const box=(w,h,d,x,y,z,m)=>{
-  const geo=new T.BoxGeometry(w,h,d),p=geo.attributes.position,n=geo.attributes.normal,uv=geo.attributes.uv;
+  const geo=new RoundedBoxGeometry(w,h,d,2,Math.min(.012,Math.min(w,h,d)*.08)),p=geo.attributes.position,n=geo.attributes.normal,uv=geo.attributes.uv;
   for(let i=0;i<p.count;i++)uv.setXY(i,(Math.abs(n.getX(i))>.5?p.getZ(i):p.getX(i))*.5,(Math.abs(n.getY(i))>.5?p.getZ(i):p.getY(i))*.5);
   return k.mesh(g,geo,m,x,y,z);
  };
@@ -87,9 +88,13 @@ export function readingCourt(parent,k,height){
  // The path actually reaches the old apron stair foot at local z=7.0.
  box(2.55,.08,.50,0,-1.43,7.05,stone);
  const localToScene=(x,y,z)=>new T.Vector3(x,y,z).multiplyScalar(.01).applyAxisAngle(new T.Vector3(0,1,0),.52).add(g.position);
- const positions=[[2.95,8.75,.8,0],[-3.15,10.6,-.9,2]];
+ const positions=[[-3.2,8.0,.8,0]];
  for(const [x,z,yaw,variant]of positions){const v=localToScene(x,-1.375,z);scalePerson(parent,v.x,v.z,v.y,{yaw:yaw+.52,variant});}
- const eye=localToScene(2.2,-1.375+1.65,12.6),target=localToScene(-.5,1.5,2.3);
- const close=localToScene(2.8,-.25+1.65,4.0),detail=localToScene(2.7,1.6,2.4);
- return {eye:eye.toArray(),target:target.toArray(),walkableY:localToScene(2.2,-1.375,12.6).y,eyeHeightMeters:1.65,detail:{eye:close.toArray(),target:detail.toArray()}};
+ return courtView();
+}
+export function courtView(){
+ const localToScene=(x,y,z)=>new T.Vector3(x,y,z).multiplyScalar(.01).applyAxisAngle(new T.Vector3(0,1,0),.52).add(new T.Vector3(-.119,.056,.163));
+ const eye=localToScene(2.2,-1.375+1.65,12.6),target=localToScene(.2,1.5,2.3);
+ const close=localToScene(3.1,-.25+1.65,5.8),detail=localToScene(2.7,1.6,2.4);
+ return {eye:eye.toArray(),target:target.toArray(),fov:47,walkableY:localToScene(2.2,-1.375,12.6).y,eyeHeightMeters:1.65,detail:{eye:close.toArray(),target:detail.toArray()}};
 }
