@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { createArchipelagoHQ } from './archipelago-hq.js?v=5';
-import { createAcademyHillside } from './academy-hillside.js?v=6';
+import { createAcademyHillside } from './academy-hillside.js?v=7';
 import { createRegionalScene } from './regional-scenes.js?v=6';
 import { mergeGeometries } from 'three/addons/BufferGeometryUtils.js';
 // All architectural forms are draft interpretations. Local Y is the surface normal.

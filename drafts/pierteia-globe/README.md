@@ -1,3 +1,18 @@
+# 第七版资产接入中 · Blender 阅览室
+
+已实际使用 Blender 4.2 导出 `assets/atelier/academy-atelier.glb`，保留可旋转三维模型，不是把渲染图贴进网页。真实窗洞、逐片屋瓦、石材倒角、木构、玻璃、室内书架及圈 A 金属构件均在资产中。
+
+当前已接入网页加载、环境反射与接触遮蔽；本次先保存源码、模型和原始材质，网页近景正在验证，尚未把新成片列为已完成。
+
+- 建模重建脚本：`tools/build_atelier.py`；资产来源说明：`assets/atelier/provenance.json`。
+- 全部几何及材质为自行制作的程序化资产，不是扫描材质；没有声称 Blender 离线渲染图等同于网页效果。
+- 仍为独立草稿，不改主站、不合并main、不自动上线。
+- 缓存入口及改动模块为v7；尚未改动的模块保留原版本。
+
+---
+
+<details><summary>第六版及此前历史记录（不是本轮效果）</summary>
+
 # Pierteia · 学院重设计 / 草稿 06
 
 这次只改学院。上一版的整圈高墙、双塔门楼和同心台阶已经撤掉；**保留环形总布局，改成沿山势错层的独立楼群与开放庭园**。仍是可运行的 Three.js 场景，不是概念图。
@@ -127,5 +142,7 @@ node drafts/pierteia-globe/tools/validate.mjs
 - `screenshots/01`—`10`：前轮记录，不作为本轮4K成片；`11-islands-work-preview.png`为收尾前工作预览，不冒充最终成片。
 
 [第三版球面制作记录（历史版本）](https://github.com/xoqnapgf-dot/ynxz/blob/811c8bc/drafts/pierteia-globe/README.md)
+
+</details>
 
 </details>

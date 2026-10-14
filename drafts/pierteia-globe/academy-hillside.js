@@ -1,4 +1,5 @@
 import * as T from 'three';
+import { attachAtelier } from './academy-asset.js?v=7';
 import { reflectiveSea } from './archipelago-hq.js?v=5';
 import { gridGround, lane } from './regional-scenes.js?v=6';
 
@@ -174,7 +175,7 @@ export function createAcademyHillside(g,k){
   for(let i=0;i<3;i++)lessonTable(q,k,p,-b.w*.30+i*b.w*.28,b.d*.90,.002);
  }
  // Common room at the south-west and a smaller, low entrance porch. No gate towers.
- building(g,k,p,{x:-.119,z:.163,w:.090,d:.049,h:.038,y:.056,angle:.52,roof:p.tile,bookshop:true});
+ attachAtelier(g);
  const entry=new T.Group();entry.position.set(.017,.047,.223);entry.rotation.y=.06;g.add(entry);
  box(entry,k,.076,.008,.037,p.stone,0,-.003,0);
  box(entry,k,.021,.041,.025,p.plaster,-.025,.020,0);
@@ -225,5 +226,5 @@ export function createAcademyHillside(g,k){
  for(let i=0;i<24;i++)box(g,k,.029,.0015,.0025,p.wood,.44,.010,.16+i*.0028);
  for(const x of [.427,.453])for(const z of [.16,.19,.222])k.beam(g,[x,-.025,z],[x,.011,z],.0009,p.wood);
  k.boat(g,.477,.20,.7,.1);
- return {focus:.116,eye:[.52,.39,.70],light:[-1.8,2.3,1.4],views:{street:{eye:[.16,.143,.34],target:[0,.078,.136]}},meta:{sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:6},environment:env=>reflectiveSea(env,k,height)};
+ return {focus:.116,eye:[.52,.39,.70],light:[-1.8,2.3,1.4],views:{street:{eye:[-.007,.105,.237],target:[-.119,.077,.170]}},meta:{sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:7,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }
