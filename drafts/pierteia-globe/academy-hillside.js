@@ -87,10 +87,20 @@ function gableRoof(g,k,p,w,d,y,rise,m){
  k.beam(g,[-w*.56,y+rise,0],[w*.56,y+rise,0],.00085,m);
 
 }
+// Shallow northlight: glazed front, sloping opaque back, closed triangular cheeks.
+function roofMonitor(parent,k,p,x,y,w=.017,d=.013,h=.006){
+ const q=new T.Group();q.position.set(x,y,0);parent.add(q);
+ const vertices=[-w/2,0,-d/2,w/2,0,-d/2,-w/2,h,d/2,w/2,h,d/2,-w/2,0,d/2,w/2,0,d/2];
+ const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(vertices,3));geo.setAttribute('uv',new T.Float32BufferAttribute([0,0,1,0,0,1,1,1,0,0,1,0],2));geo.setIndex([0,2,1,1,2,3,0,4,2,1,3,5]);geo.computeVertexNormals();k.mesh(q,geo,p.slate);
+ const glass=box(q,k,w-.001,h-.0007,.0002,p.clearGlass,0,h/2,d/2-.0003);glass.castShadow=false;
+ box(q,k,w,.0005,d,p.dark,0,0,0);
+ for(const xx of [-w/2,0,w/2])box(q,k,.0004,h,.0007,p.wood,xx,h/2,d/2);
+ for(const yy of [0,h])box(q,k,w+.001,.0004,.0008,p.dark,0,yy,d/2);
+}
 function rail(g,k,p,a,b){
  const dist=new T.Vector3(...a).distanceTo(new T.Vector3(...b)),n=Math.ceil(dist/.007);
- for(let i=0;i<=n;i++){const v=new T.Vector3(...a).lerp(new T.Vector3(...b),i/n);k.beam(g,v.toArray(),[v.x,v.y+.009,v.z],.0004,p.wood);}
- k.beam(g,[a[0],a[1]+.010,a[2]],[b[0],b[1]+.010,b[2]],.00055,p.wood);
+ for(let i=0;i<=n;i++){const v=new T.Vector3(...a).lerp(new T.Vector3(...b),i/n);k.beam(g,v.toArray(),[v.x,v.y+.009,v.z],.00025,p.wood);}
+ k.beam(g,[a[0],a[1]+.010,a[2]],[b[0],b[1]+.010,b[2]],.00028,p.wood);
 }
 function steps(g,k,p,x,z,width,from,to,count=12,angle=0){
  const q=new T.Group();q.position.set(x,0,z);q.rotation.y=angle;g.add(q);
@@ -143,8 +153,8 @@ function building(g,k,p,{x,z,w,d,h,y=height(x,z)+.006,angle=0,roof=p.tile,booksh
  if(balcony){
   const deck=floorHeight-.001;box(q,k,w+.008,.002,.014,p.wood,0,deck,d*.65);
   rail(q,k,p,[-w*.53,deck+.001,d*.79],[w*.53,deck+.001,d*.79]);
-  for(const xx of [-w*.46,0,w*.46])k.beam(q,[xx,-.005,d*.76],[xx,h+.001,d*.76],.0007,p.wood);
-  const canopy=box(q,k,w+.012,.001,.018,roof,0,h+.002,d*.69);canopy.rotation.x=.13;
+  for(const xx of [-w*.46,0,w*.46])k.beam(q,[xx,-.005,d*.76],[xx,deck+.011,d*.76],.00055,p.wood);
+
   for(const xx of [-w*.46,w*.46])k.beam(q,[xx,deck-.001,d*.72],[xx,deck-.009,d*.52],.0006,p.wood);
  }
  box(q,k,.004,.018,.005,p.stone,-w*.27,h+.007,-d*.24);box(q,k,.005,.001,.006,p.dark,-w*.27,h+.016,-d*.24);
@@ -178,8 +188,8 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
    panel(q,k,p,0,.015,0,.016,.022,{books:inner&&i%4===1,recessed:true});panel(q,k,p,0,.041,0,.016,.018,{books:inner&&i%3===1,recessed:true});
    box(q,k,.0015,h,.002,p.wood,.010,h/2,.002);
   }
-  const beamRadius=ri-.012;qPergola(g,k,p,a,beamRadius,y,.030);
-  if(i%3===0){const q=new T.Group();q.position.set(Math.sin(a)*r,y+h+.012,Math.cos(a)*r);q.rotation.y=a;g.add(q);box(q,k,.016,.009,.012,p.glass,0,.004,0);for(const x of [-.008,0,.008])box(q,k,.0006,.010,.013,p.brass,x,.004,0);}
+  const beamRadius=ri-.015;qPergola(g,k,p,a,beamRadius,y,.030);
+  if(i%3===0){const q=new T.Group();q.position.set(Math.sin(a)*r,y+h+.016,Math.cos(a)*r);q.rotation.y=a+Math.PI;g.add(q);roofMonitor(q,k,p,0,0,.016,.012,.0045);}
  }
  for(const [a,sign]of [[start,-1],[end,1]]){
   const endFace=new T.Group();endFace.position.set(Math.sin(a)*r,y,Math.cos(a)*r);endFace.rotation.y=a+sign*Math.PI/2;g.add(endFace);
@@ -191,12 +201,12 @@ function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
  const cp=[],ci=[],cu=[];
  for(let i=0;i<=n;i++){
   const a=T.MathUtils.lerp(start,end,i/n);
-  for(const rr of [ri-.026,ri+.001]){cp.push(Math.sin(a)*rr,y+.030+(rr-(ri-.026))*.075,Math.cos(a)*rr);cu.push(i*.04,rr*48);}
+  for(const rr of [ri-.017,ri+.001]){cp.push(Math.sin(a)*rr,y+.030+(rr-(ri-.017))*.075,Math.cos(a)*rr);cu.push(i*.04,rr*48);}
   if(i<n){const b=i*2;ci.push(b,b+1,b+2,b+1,b+3,b+2);}
  }
  const canopy=new T.BufferGeometry();canopy.setAttribute('position',new T.Float32BufferAttribute(cp,3));canopy.setAttribute('uv',new T.Float32BufferAttribute(cu,2));canopy.setIndex(ci);canopy.computeVertexNormals();k.mesh(g,canopy,p.copper);
- for(const rr of [ri-.026,ri+.001]){
-  const points=[];for(let i=0;i<=60;i++){const a=T.MathUtils.lerp(start,end,i/60);points.push(new T.Vector3(Math.sin(a)*rr,y+.030+(rr-(ri-.026))*.075,Math.cos(a)*rr));}
+ for(const rr of [ri-.017,ri+.001]){
+  const points=[];for(let i=0;i<=60;i++){const a=T.MathUtils.lerp(start,end,i/60);points.push(new T.Vector3(Math.sin(a)*rr,y+.030+(rr-(ri-.017))*.075,Math.cos(a)*rr));}
   k.mesh(g,new T.TubeGeometry(new T.CatmullRomCurve3(points),80,.00025,5,false),p.dark);
  }
  // Gable closures at the two ends of the crescent; no open roof voids.
@@ -216,19 +226,19 @@ function coveredWalk(g,k,p,points){
   const indices=[0,2,1,0,3,2,4,5,6,4,6,7];for(let j=0;j<4;j++){const n=(j+1)%4;indices.push(j,n,j+4,j+4,n,n+4);}
   const deck=new T.BufferGeometry();deck.setAttribute('position',new T.Float32BufferAttribute(vertices,3));deck.setAttribute('uv',new T.Float32BufferAttribute(vertices.flatMap((_,j)=>j%3===0?[vertices[j]*48,vertices[j+2]*48]:[]),2));deck.setIndex(indices);deck.computeVertexNormals();k.mesh(g,deck,p.wood);
   // Continuous shallow-pitched roof, with a narrow ridge and standing seams.
-  const rp=[],uv=[];for(const [end,t]of [[a,0],[b,1]])for(const sign of [-1,0,1]){const q=end.clone().addScaledVector(right,sign*.012);q.y+=.027+(sign===0?.002:0);rp.push(q.x,q.y,q.z);uv.push(t*length*48,(sign+1)*.5);}
+  const rp=[],uv=[];for(const [end,t]of [[a,0],[b,1]])for(const sign of [-1,0,1]){const q=end.clone().addScaledVector(right,sign*.010);q.y+=.027+(sign===0?.002:0);rp.push(q.x,q.y,q.z);uv.push(t*length*48,(sign+1)*.5);}
   const roof=new T.BufferGeometry();roof.setAttribute('position',new T.Float32BufferAttribute(rp,3));roof.setAttribute('uv',new T.Float32BufferAttribute(uv,2));roof.setIndex([0,3,1,1,3,4,1,4,2,2,4,5]);roof.computeVertexNormals();k.mesh(g,roof,p.slate);
   for(const sign of [-1,1]){
-   const ea=a.clone().addScaledVector(right,sign*.012),eb=b.clone().addScaledVector(right,sign*.012);ea.y+=.027;eb.y+=.027;k.beam(g,ea.toArray(),eb.toArray(),.00045,p.dark);
+   const ea=a.clone().addScaledVector(right,sign*.010),eb=b.clone().addScaledVector(right,sign*.010);ea.y+=.027;eb.y+=.027;k.beam(g,ea.toArray(),eb.toArray(),.00045,p.dark);
    const ra=a.clone().addScaledVector(right,sign*.009),rb=b.clone().addScaledVector(right,sign*.009);rail(g,k,p,ra.toArray(),rb.toArray());
   }
   const seams=Math.ceil(length/.012);for(let j=0;j<=seams;j++){
    const mid=a.clone().lerp(b,j/seams);mid.y+=.029;
-   for(const sign of [-1,1]){const edge=mid.clone().addScaledVector(right,sign*.012);edge.y-=.002;k.beam(g,mid.toArray(),edge.toArray(),.00012,p.slate);}
+   for(const sign of [-1,1]){const edge=mid.clone().addScaledVector(right,sign*.010);edge.y-=.002;k.beam(g,mid.toArray(),edge.toArray(),.00012,p.slate);}
   }
   const posts=Math.ceil(length/.025);for(let j=0;j<=posts;j++)for(const sign of [-1,1]){
    const v=a.clone().lerp(b,j/posts).addScaledVector(right,sign*.009),top=v.clone();top.y+=.027;
-   k.beam(g,[v.x,height(v.x,v.z)-.004,v.z],top.toArray(),.00065,p.wood);
+   k.beam(g,[v.x,height(v.x,v.z)-.004,v.z],top.toArray(),.00045,p.wood);
    if(j<posts){const brace=top.clone().addScaledVector(along,.007);k.beam(g,[v.x,top.y-.007,v.z],brace.toArray(),.00035,p.wood);}
   }
  }
@@ -252,7 +262,7 @@ export function createAcademyHillside(g,k){
  // Shared workshops: lower brick-and-timber volumes with northlight roof monitors.
  for(const b of [{x:.210,z:.015,angle:-1.35,w:.100,d:.055,h:.029,y:.074},{x:.181,z:-.098,angle:-2.10,w:.077,d:.050,h:.043,y:.097}]){
   const {group:q}=building(g,k,p,{...b,roof:p.slate,bookshop:true});
-  for(let i=0;i<3;i++){const x=-b.w*.27+i*b.w*.27;box(q,k,.017,.006,.013,p.glass,x,b.h+.012,0);box(q,k,.019,.001,.015,p.slate,x,b.h+.016,0);}
+  for(let i=0;i<3;i++)roofMonitor(q,k,p,-b.w*.27+i*b.w*.27,b.h+.009);
   for(let i=0;i<3;i++)lessonTable(q,k,p,-b.w*.30+i*b.w*.28,b.d*.90,.002);
  }
  // Common room at the south-west and a smaller, low entrance porch. No gate towers.

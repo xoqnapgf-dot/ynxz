@@ -42,15 +42,15 @@ function prototype(pine,variant){
  }else{
   branch(V(0,0,0),lean.clone().multiplyScalar(.67),.0014);
   const spread=variant%2===0?1:.78;
-  for(let limb=0;limb<5;limb++){
-   const angle=limb*2.399+rand()*.3,t=.36+limb*.05,r=(.010+rand()*.004)*spread;
-   const start=lean.clone().multiplyScalar(t),end=V(lean.x+Math.cos(angle)*r,height*(.73+rand()*.13),lean.z+Math.sin(angle)*r);branch(start,end,.00064-limb*.00005);
-   for(let twig=0;twig<4;twig++){
-    const root=start.clone().lerp(end,.48+twig*.12),az=angle+(twig-1.5)*.68;
-    const tip=end.clone().add(V(Math.cos(az)*.005*spread,(rand()-.2)*.006,Math.sin(az)*.005*spread));branch(root,tip,.00022);
-    for(let shoot=0;shoot<5;shoot++){
-     const from=root.clone().lerp(tip,.25+shoot*.17),a=az+(shoot%2?1:-1)*.8;
-     const to=from.clone().add(V(Math.cos(a)*(.0025+rand()*.002),.001+rand()*.002,Math.sin(a)*(.0025+rand()*.002)));branch(from,to,.000055);
+  for(let limb=0;limb<6;limb++){
+   const angle=limb*2.399+rand()*.3,t=.30+limb*.052,r=(.010+rand()*.004)*spread;
+   const start=lean.clone().multiplyScalar(t),end=V(lean.x+Math.cos(angle)*r,height*(.65+rand()*.27),lean.z+Math.sin(angle)*r);branch(start,end,.00064-limb*.00005);
+   for(let twig=0;twig<5;twig++){
+    const root=start.clone().lerp(end,.28+twig*.14),az=angle+(twig-2)*.83;
+    const tip=end.clone().add(V(Math.cos(az)*(.003+rand()*.006)*spread,(rand()-.2)*.006,Math.sin(az)*(.003+rand()*.006)*spread));branch(root,tip,.00022);
+    for(let shoot=0;shoot<7;shoot++){
+     const from=root.clone().lerp(tip,.12+shoot*.14),a=az+(shoot%2?1:-1)*.8;
+     const to=from.clone().add(V(Math.cos(a)*(.0024+rand()*.0032),.001+rand()*.002,Math.sin(a)*(.0024+rand()*.0032)));branch(from,to,.000055);
      for(let i=0;i<12;i++){
       const c=from.clone().lerp(to,(i+.5)/12),offset=(i%2?1:-1)*(.00045+rand()*.00025);
       c.x+=Math.cos(a+Math.PI/2)*offset;c.z+=Math.sin(a+Math.PI/2)*offset;c.y+=(rand()-.5)*.00045;

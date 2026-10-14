@@ -1,6 +1,6 @@
 import * as T from 'three';
 const hash=(x,z)=>{const n=Math.sin(x*127.1+z*311.7)*43758.5453;return n-Math.floor(n);};
-const palette={grass:'#657052',soil:'#746753',rock:'#81847c',path:'#aaa08b',litter:'#68604c'};
+const palette={grass:'#657052',soil:'#746753',rock:'#74776c',path:'#aaa08b',litter:'#68604c'};
 // Authored material layers, not a scan. Distances here are campus scene units (0.01 scene unit = 1 metre).
 export function campusSurface(kind='ground'){
  const m=new T.MeshStandardMaterial({name:'Campus '+kind+' / v12',color:'#ffffff',roughness:.96,envMapIntensity:.8});
@@ -19,30 +19,34 @@ export function campusSurface(kind='ground'){
    float rockMask=${kind==='rock'?'1.':kind==='path'?'0.':'1.-smoothstep(.48,.83,landUp)'};
    vec3 soilMix=mix(land_soil,land_litter,patches);
    vec3 surface=mix(soilMix,land_grass,smoothstep(.25,.70,patches));
-   surface=mix(surface,land_rock,rockMask);
+   surface=mix(surface,land_rock,rockMask*.78);
    ${kind==='path'?'surface=land_path;diffuseColor.a*=smoothstep(0.,.18,min(landUV.x,2.-landUV.x));':''}
    float bands=landNoise(vec3(landPosition.x*80.,landPosition.y*650.,landPosition.z*80.));
+   float weathering=landNoise(landPosition*155.)*.6+landNoise(landPosition*420.)*.4;
    float fleck=landNoise(landPosition*1300.);
    float landPixel=max(length(dFdx(landPosition)),length(dFdy(landPosition)));
    float landFade=1.-smoothstep(.000025,.00022,landPixel);
    diffuseColor.rgb=surface*(.94+.10*patches)*mix(1.,.91+.14*bands,rockMask);
-   diffuseColor.rgb*=1.+(fleck-.5)*.12*landFade;
+   diffuseColor.rgb*=.87+.26*weathering;
+   diffuseColor.rgb*=1.+(fleck-.5)*.16*landFade;
   `).replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
    float relief=(landNoise(landPosition*vec3(720.,1250.,720.))*.000020*rockMask+landNoise(landPosition*2600.)*.000006)*landFade;
    vec3 landQ0=dFdx(-vViewPosition),landQ1=dFdy(-vViewPosition);
    vec3 landR1=cross(landQ1,normal),landR2=cross(normal,landQ0);
    float landDet=dot(landQ0,landR1);
-   normal=normalize(abs(landDet)*normal-sign(landDet)*(dFdx(relief)*landR1+dFdy(relief)*landR2));
+   vec3 landBump=abs(landDet)*normal-sign(landDet)*(dFdx(relief)*landR1+dFdy(relief)*landR2);
+   float landLength=length(landBump);if(landLength>1.e-16)normal=landBump/landLength;
   `);
  };
  m.customProgramCacheKey=()=> 'campus-surface-12/'+kind;return m;
 }
 export function makeOutcrop(height,x,z,w,d,h,seed=0){
- const p=[],uv=[],index=[],top=height(x,z)+h*.36,n=10;
- const ring=Array.from({length:n},(_,j)=>{const a=j/n*Math.PI*2,scale=.84+hash(j,seed)*.20;return [x+Math.cos(a)*w*.5*scale,z+Math.sin(a)*d*.5*scale];});
+ const p=[],uv=[],index=[],n=14;
+ const ring=Array.from({length:n},(_,j)=>{const a=j/n*Math.PI*2,scale=.66+hash(j,seed)*.34;return [x+Math.cos(a)*w*.5*scale,z+Math.sin(a)*d*.5*scale];});
  for(let level=0;level<3;level++)for(let j=0;j<n;j++){
-  const [xx,zz]=ring[j],y=level===0?Math.min(height(xx,zz)-.003,top-h):top+(xx-x)*.14-(level===1?h*.37:0);
-  const inset=level===2?.93:1;p.push(x+(xx-x)*inset,y,z+(zz-z)*inset);uv.push(xx*48,zz*48);
+  const [xx,zz]=ring[j],inset=level===2?.91:1;
+  const localGround=height(x+(xx-x)*inset,z+(zz-z)*inset);
+  const y=level===0?localGround-.004:localGround+h*(.22+hash(j,seed+11)*.24)-(level===1?h*.23:0);p.push(x+(xx-x)*inset,y,z+(zz-z)*inset);uv.push(xx*48,zz*48);
  }
  for(let level=0;level<2;level++)for(let j=0;j<n;j++){const a=level*n+j,b=level*n+(j+1)%n;index.push(a,a+n,b,b,a+n,b+n);}
  for(let j=1;j<n-1;j++)index.push(2*n,2*n+j+1,2*n+j);
@@ -53,10 +57,11 @@ export function addCampusLandscape(g,k,height,ground){
  const old=ground.material;ground.material=campusSurface();old.dispose();ground.name='Graded soil, meadow and exposed bedrock';
  const rock=campusSurface('rock');let outcrops=0;
  // Embedded ledges along the exposed northern shoulder, not randomly floating boulders.
- for(let row=0;row<3;row++)for(let j=0;j<8;j++){
-  const x=-.28+j*.076+(hash(j,row)-.5)*.030,z=-.285-row*.030-.017*Math.cos(x*16);
+ for(let row=0;row<4;row++)for(let j=0;j<11;j++){
+  if(hash(j,row+17)>.77)continue;
+  const x=-.31+j*.061+(hash(j,row)-.5)*.046,z=-.282-row*.027-.021*Math.cos(x*16+row*.5);
   if(height(x,z)<.11)continue;
-  k.mesh(g,makeOutcrop(height,x,z,.045+hash(j,2+row)*.055,.025+hash(j,4+row)*.018,.009+hash(j,7+row)*.010,row*17+j),rock);outcrops++;
+  k.mesh(g,makeOutcrop(height,x,z,.024+hash(j,2+row)*.046,.009+hash(j,4+row)*.008,.005+hash(j,7+row)*.008,row*17+j),rock);outcrops++;
  }
  // Small planted groups on unused shoulders; the central lawn remains open.
  let shrubs=0;
