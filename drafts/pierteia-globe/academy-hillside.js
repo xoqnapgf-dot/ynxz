@@ -28,13 +28,14 @@ function makeMaterials(k){
   light:new T.MeshStandardMaterial({color:'#e2d4af',roughness:.83}), dark:new T.MeshStandardMaterial({color:'#334441',roughness:.87}),
   wood:new T.MeshStandardMaterial({color:'#78614a',map:k.maps.wood.map,roughness:.88}),
   copper:roof('#657065'), tile:roof('#896b57'), slate:roof('#5c655e'),
-  clearGlass:new T.MeshPhysicalMaterial({color:'#b5beb4',roughness:.20,metalness:0,transparent:true,opacity:.18,depthWrite:false,envMapIntensity:.45}),
+  clearGlass:new T.MeshPhysicalMaterial({color:'#b5beb4',roughness:.20,metalness:0,transparent:true,opacity:.25,depthWrite:false,envMapIntensity:.45}),
   glass:new T.MeshStandardMaterial({color:'#35413b',roughness:.18,metalness:.38}),
   brass:new T.MeshStandardMaterial({color:'#afa17a',roughness:.48,metalness:.65}),
   red:new T.MeshStandardMaterial({color:'#93483b',roughness:.69}),
   paving:new T.MeshStandardMaterial({color:'#b1aa94',map:k.maps.rock.map,roughness:.94}),
   earth:new T.MeshStandardMaterial({color:'#69734b',roughness:1}),
   water:new T.MeshStandardMaterial({color:'#5b9291',metalness:.42,roughness:.16}),
+  books:['#a99b7e','#785c50','#5b6b60','#79807c','#b3a78f','#6d6573'].map(color=>new T.MeshStandardMaterial({color,roughness:.96})),
   paper:new T.MeshStandardMaterial({color:'#c9bb98',roughness:.98})
  };
 }
@@ -57,7 +58,11 @@ function panel(g,k,p,x,y,z,w,h,{books=false,recessed=false,louvers=false}={}){
  box(g,k,w+.002,.0007,.002,p.light,x,y+h/2+.0006,z+.0003);
  if(books)for(const yy of [-h*.29,h*.08]){
   box(g,k,w*.92,.0006,.0015,p.wood,x,y+yy-.0003,z-.0016);
-  for(let i=0;i<7;i++)box(g,k,.0011,.0026+(i%3)*.0004,.0012,i%3?p.paper:p.red,x-w*.39+i*w*.13,y+yy+.0012,z-.0016);
+  for(let i=0;i<8;i++){
+   const n=hash(i+g.position.x*123+yy*100,g.position.z*913+y*718);if(n>.86)continue;
+   const hh=.0020+n*.0018,book=box(g,k,.0008+n*.0003,hh,.0012,p.books[Math.floor(n*p.books.length)],x-w*.40+i*w*.112,y+yy+hh/2,z-.0016);
+   if(n<.16)book.rotation.z=.12;
+  }
  }
  if(louvers)for(const side of [-1,1]){
   const q=new T.Group();q.position.set(x+side*(w/2+.0012),y,z+.001);q.rotation.y=side*.45;g.add(q);
@@ -186,11 +191,27 @@ function qPergola(g,k,p,a,r,y,h){
 }
 function coveredWalk(g,k,p,points){
  for(let i=0;i<points.length-1;i++){
-  const a=points[i],b=points[i+1],length=Math.hypot(b[0]-a[0],b[2]-a[2]),n=Math.ceil(length/.013),right=new T.Vector3(b[2]-a[2],0,a[0]-b[0]).normalize();
-  for(let j=0;j<=n;j++){
-   const v=new T.Vector3(...a).lerp(new T.Vector3(...b),j/n),q=new T.Group();q.position.copy(v);q.rotation.y=Math.atan2(b[0]-a[0],b[2]-a[2]);g.add(q);
-   box(q,k,.018,.002,.0135,p.wood,0,0,0);box(q,k,.023,.0015,.014,p.slate,0,.026,0);
-   if(j%2===0)for(const sign of [-1,1]){const x=v.x+right.x*.008*sign,z=v.z+right.z*.008*sign;k.beam(g,[x,height(x,z)-.004,z],[x,v.y+.026,z],.00065,p.wood);}
+  const a=new T.Vector3(...points[i]),b=new T.Vector3(...points[i+1]),delta=b.clone().sub(a),length=Math.hypot(delta.x,delta.z);
+  const right=new T.Vector3(delta.z,0,-delta.x).normalize(),along=delta.clone().normalize();
+  // One continuous deck per sloping run, rather than overlapping square plates.
+  const vertices=[];for(const dy of [0,-.002])for(const [v,sign]of [[a,1],[b,1],[b,-1],[a,-1]]){const q=v.clone().addScaledVector(right,.009*sign);q.y+=dy;vertices.push(q.x,q.y,q.z);}
+  const indices=[0,2,1,0,3,2,4,5,6,4,6,7];for(let j=0;j<4;j++){const n=(j+1)%4;indices.push(j,n,j+4,j+4,n,n+4);}
+  const deck=new T.BufferGeometry();deck.setAttribute('position',new T.Float32BufferAttribute(vertices,3));deck.setAttribute('uv',new T.Float32BufferAttribute(vertices.flatMap((_,j)=>j%3===0?[vertices[j]*48,vertices[j+2]*48]:[]),2));deck.setIndex(indices);deck.computeVertexNormals();k.mesh(g,deck,p.wood);
+  // Continuous shallow-pitched roof, with a narrow ridge and standing seams.
+  const rp=[],uv=[];for(const [end,t]of [[a,0],[b,1]])for(const sign of [-1,0,1]){const q=end.clone().addScaledVector(right,sign*.012);q.y+=.027+(sign===0?.002:0);rp.push(q.x,q.y,q.z);uv.push(t*length*48,(sign+1)*.5);}
+  const roof=new T.BufferGeometry();roof.setAttribute('position',new T.Float32BufferAttribute(rp,3));roof.setAttribute('uv',new T.Float32BufferAttribute(uv,2));roof.setIndex([0,3,1,1,3,4,1,4,2,2,4,5]);roof.computeVertexNormals();k.mesh(g,roof,p.slate);
+  for(const sign of [-1,1]){
+   const ea=a.clone().addScaledVector(right,sign*.012),eb=b.clone().addScaledVector(right,sign*.012);ea.y+=.027;eb.y+=.027;k.beam(g,ea.toArray(),eb.toArray(),.00045,p.dark);
+   const ra=a.clone().addScaledVector(right,sign*.009),rb=b.clone().addScaledVector(right,sign*.009);rail(g,k,p,ra.toArray(),rb.toArray());
+  }
+  const seams=Math.ceil(length/.012);for(let j=0;j<=seams;j++){
+   const mid=a.clone().lerp(b,j/seams);mid.y+=.029;
+   for(const sign of [-1,1]){const edge=mid.clone().addScaledVector(right,sign*.012);edge.y-=.002;k.beam(g,mid.toArray(),edge.toArray(),.00012,p.slate);}
+  }
+  const posts=Math.ceil(length/.025);for(let j=0;j<=posts;j++)for(const sign of [-1,1]){
+   const v=a.clone().lerp(b,j/posts).addScaledVector(right,sign*.009),top=v.clone();top.y+=.027;
+   k.beam(g,[v.x,height(v.x,v.z)-.004,v.z],top.toArray(),.00065,p.wood);
+   if(j<posts){const brace=top.clone().addScaledVector(along,.007);k.beam(g,[v.x,top.y-.007,v.z],brace.toArray(),.00035,p.wood);}
   }
  }
 }
