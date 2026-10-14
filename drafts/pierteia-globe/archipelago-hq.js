@@ -78,23 +78,23 @@ function terrain(g, kit) {
   return {segments,terrainTriangles:segments*segments*2};
 }
 
-function heightTexture() {
+function heightTexture(sampleHeight=islandHeightHQ) {
   const n=1024,a=new Uint8Array(n*n*4);
   for(let z=0;z<n;z++)for(let x=0;x<n;x++){
-    const h=islandHeightHQ((x/(n-1)-.5)*1.3,(z/(n-1)-.5)*1.3),i=(z*n+x)*4;
+    const h=sampleHeight((x/(n-1)-.5)*1.3,(z/(n-1)-.5)*1.3),i=(z*n+x)*4;
     const encoded=Math.round(clamp((h+.065)/.23,0,1)*65535);
     a[i]=encoded>>8;a[i+1]=encoded&255;a[i+2]=0;a[i+3]=255;
   }
   const t=new T.DataTexture(a,n,n);t.needsUpdate=true;t.magFilter=t.minFilter=T.LinearFilter;return t;
 }
 
-function reflectiveSea(env, kit) {
+export function reflectiveSea(env, kit, sampleHeight=islandHeightHQ) {
   const water=new Water(new T.PlaneGeometry(10,10,128,128),{
     textureWidth:1024,textureHeight:1024,waterNormals:kit.maps.water.normal,
     alpha:1,clipBias:.00005,distortionScale:.002,waterColor:'#153f49',sunColor:'#ffebc9',fog:true
   });
   water.rotation.x=-Math.PI/2;water.position.y=-.001;water.renderOrder=1;
-  const m=water.material;m.uniforms.depthField={value:heightTexture()};
+  const m=water.material;m.uniforms.depthField={value:heightTexture(sampleHeight)};
   m.vertexShader=`
     uniform mat4 textureMatrix;
     varying vec4 mirrorCoord;
@@ -212,39 +212,50 @@ function pier(g,x,z,len,angle,kit) {
 
 function rift(g,kit) {
   const effects=new T.Group();effects.userData.noBake=true;g.add(effects);
-  const n=180,positions=[],uv=[],idx=[];
-  // Piecewise jagged silhouette, tapering aperture: not a smooth black tube.
-  const knots=[0,.022,-.010,.012,-.016,.015,-.012,.009,-.003];
+  const n=320,cross=12,positions=[],uv=[],idx=[];
+  // A long fracture suspended ACROSS the sky; its spine is world-space horizontal.
+  // Thickness and vertical deviations are independent, not a rotated vertical tube.
+  const knots=[.010,-.016,.005,.026,-.010,.012,-.021,.013,-.002,.019,-.005];
+  const spine=t=>{
+    const k=t*(knots.length-1),i=Math.min(knots.length-2,Math.floor(k));
+    const jag=T.MathUtils.lerp(knots[i],knots[i+1],k-i)+(noise(t*97,5)-.5)*.004;
+    const distance=(t-.5)*1.23;
+    return new T.Vector3(distance*.81,.325+jag,-.035-distance*.586);
+  };
   for(let i=0;i<=n;i++){
-    const t=i/n,k=t*(knots.length-1),a=Math.min(knots.length-2,Math.floor(k));
-    const center=T.MathUtils.lerp(knots[a],knots[a+1],k-a)+(noise(t*73,5)-.5)*.004;
-    const w=(.0015+.008*Math.pow(Math.sin(t*Math.PI),.8))*(.65+noise(t*49,9)*.55);
-    for(const sign of [-1,1]){positions.push(center+sign*w,.017+t*.325,Math.sin(t*8)*.005);uv.push(sign>0?1:0,t);}
-    if(i<n){const j=i*2;idx.push(j,j+1,j+2,j+1,j+3,j+2);}
+    const t=i/n,center=spine(t);
+    const width=(.0003+.016*Math.pow(Math.sin(t*Math.PI),.72))*(.28+noise(t*61,9)*1.25);
+    for(let j=0;j<=cross;j++){
+      const u=j/cross,sign=u*2-1;
+      const tear=(noise(t*217,sign*9)-.5)*.004*Math.abs(sign);
+      const depth=-.029*(1-sign*sign)*Math.sin(t*Math.PI);
+      positions.push(center.x+depth*.586,center.y+sign*width+tear,center.z+depth*.81);uv.push(u,t);
+      if(i<n&&j<cross){const a=i*(cross+1)+j;idx.push(a,a+1,a+cross+1,a+1,a+cross+2,a+cross+1);}
+    }
   }
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(positions,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();
   const material=new T.ShaderMaterial({uniforms:{time:{value:0}},side:T.DoubleSide,transparent:true,depthWrite:false,
     vertexShader:'varying vec2 U;void main(){U=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
     fragmentShader:`varying vec2 U;uniform float time;void main(){
       float x=abs(U.x*2.-1.),tip=pow(sin(U.y*3.14159),.3);
-      float edge=pow(x,12.);float filament=.5+.5*sin(U.y*170.-time*.8);
-      vec3 color=mix(vec3(.007,.011,.025),vec3(.18,.70,.85)*3.8,edge);
-      color+=vec3(.22,.11,.44)*pow(x,4.)*(.35+filament*.3);
+      float edge=pow(x,22.);float filament=.5+.5*sin(U.y*170.-time*.8);
+      vec3 color=mix(vec3(.001,.002,.005),vec3(.18,.70,.85)*3.5,edge);
+      color+=vec3(.06,.035,.15)*pow(x,6.)*(.25+filament*.3);
       float stars=step(.996,fract(sin(dot(floor(U*vec2(40.,400.)),vec2(12.9898,78.233)))*43758.5453));
       color+=stars*vec3(.2,.6,.8)*.4;
-      gl_FragColor=vec4(color,tip*.96);
+      gl_FragColor=vec4(color,smoothstep(0.,.05,tip));
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
     }`
   });
-  const tear=new T.Mesh(geo,material);tear.rotation.y=-.20;effects.add(tear);
-  for(const t of [.24,.47,.70]){
-    const j=Math.floor(t*n)*6,xx=positions[j],yy=.017+t*.325,sign=t<.5?-1:1;
-    kit.tube(effects,[[xx,yy,0],[xx+sign*.010,yy+.004,.003],[xx+sign*.018,yy+.020,0],[xx+sign*.019,yy+.034,-.002]],'#aadce4',.00023);
+  const tear=new T.Mesh(geo,material);effects.add(tear);
+  for(const t of [.16,.31,.57,.77,.88]){
+    const p=spine(t),sign=t<.5?1:-1;
+    kit.tube(effects,[p.toArray(),[p.x+.015,p.y+sign*.017,p.z-.007],[p.x+.028,p.y+sign*.024,p.z-.017],[p.x+.042,p.y+sign*.043,p.z-.022]],'#b1d9e0',.00022);
   }
   const fog=[];for(let i=0;i<9;i++)fog.push(kit.mist(effects,(i%3-1)*.11,.015+hash(i,5)*.025,(Math.floor(i/3)-1)*.13,.26,'#b2c7c9'));
-  const dust=kit.particles(effects,260,'#98d9e0',.075,.32);dust.material.size=.0013;
-  const light=new T.PointLight('#67b9d5',.045,.26,2);light.position.set(0,.09,0);effects.add(light);
+  const dust=kit.particles(effects,260,'#98d9e0',.075,.32);dust.material.size=.0012;const dp=dust.geometry.attributes.position;for(let i=0;i<dp.count;i++){const t=hash(i,19),p=spine(t);dp.setXYZ(i,p.x+(hash(i,71)-.5)*.025,p.y+(hash(i,23)-.5)*.044,p.z+(hash(i,29)-.5)*.026);}dp.needsUpdate=true;
+  const light=new T.PointLight('#67b9d5',.026,.70,2);light.position.set(0,.29,-.035);effects.add(light);
   return {material,fog,dust};
 }
 
@@ -293,8 +304,8 @@ export function createArchipelagoHQ(g,kit) {
     const o=kit.mesh(g,new T.IcosahedronGeometry(.002+hash(i,53)*.006,0),kit.cliffMat,x,h+.001,z);o.scale.set(1.5,.6+hash(i,64),.8);o.rotation.set(hash(i,6),hash(i,7)*3,hash(i,8));
   }
   const effects=rift(g,kit);
-  return {focus:.103,eye:[.64,.43,.88],light:[-1.7,1.7,.65],meta:{...meta,trees,homes:homes.length},
+  return {focus:.132,eye:[.73,.49,1.0],light:[-1.7,1.7,.65],meta:{...meta,trees,homes:homes.length},
     environment(env){return reflectiveSea(env,kit);},
-    update(t){effects.material.uniforms.time.value=t;effects.dust.rotation.y=t*.01;effects.fog.forEach((f,i)=>f.material.opacity=.16+Math.sin(t*.16+i)*.04);}
+    update(t){effects.material.uniforms.time.value=t;effects.dust.position.y=Math.sin(t*.2)*.0007;effects.fog.forEach((f,i)=>f.material.opacity=.16+Math.sin(t*.16+i)*.04);}
   };
 }
