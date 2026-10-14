@@ -36,7 +36,7 @@
       notice('球体需要通过网站打开', '直接双击文件无法读取三维资源。请使用网站或本地 HTTP 服务；平面地图仍可使用。', true); return;
     }
     frame = document.createElement('iframe'); frame.id = 'globeFrame'; frame.title = 'Pierteia 球体地图，可旋转、缩放并探索地点';
-    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '13');
+    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '13.1');
     // Optional deep links retain the existing scene/camera route; ordinary selection does not load a model.
     const query = new URLSearchParams(location.search);
     if (selected && query.has('inspect')) { url.searchParams.set('site', selected); url.searchParams.set('inspect', ''); if (query.has('frame')) url.searchParams.set('frame', query.get('frame')); lastSent = selected; }
@@ -68,6 +68,7 @@
     if (e.origin !== origin || e.source !== frame?.contentWindow || e.data?.channel !== channel) return;
     const message = e.data;
     if (message.type === 'ready') { ready = true; clearTimeout(timer); $('globeNotice').hidden = true; sync(); }
+    if (message.type === 'cleared') { selected = ''; lastSent = ''; $('mapPlace').value = ''; window.__flatMap.clear(); const url = new URL(location.href); url.searchParams.delete('inspect'); url.searchParams.delete('frame'); history.replaceState({}, '', url); writeURL(); }
     if (message.type === 'selected' && typeof message.name === 'string') select(message.name, 'globe');
     if (message.type === 'error') { ready = false; clearTimeout(timer); notice('球体暂时无法显示', '图形环境或资源加载遇到问题。可重新加载球体，或返回平面地图继续查看。', true); }
     if (message.type === 'flat') { setMode('flat'); $('viewFlat').focus(); }
@@ -82,6 +83,7 @@
   addEventListener('popstate', () => {
     const route = fromURL(); selected = route.name; $('mapPlace').value = selected;
     setMode(route.mode, false);
+    if (!selected) { window.__flatMap.clear(); if (ready && route.mode === 'globe') send('overview'); }
   });
   const route = fromURL(); selected = route.name; $('mapPlace').value = selected;
   if (selected) window.__flatMap.select(selected);

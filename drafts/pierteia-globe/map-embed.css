@@ -15,7 +15,7 @@
 .embedded .clean #embed-tools{display:none}.embedded .inspection #embed-layers{display:none}
 @media(max-width:700px){
  .embedded #embed-tools{top:10px;left:10px;gap:0;padding:3px}.embedded #embed-tools button{font-size:11px;padding:9px 11px;min-height:38px}
- .embedded .explorer,.embedded .detail,.embedded .inspection .detail{top:auto!important;bottom:calc(72px + env(safe-area-inset-bottom,0px));right:10px;left:10px;width:auto;padding:10px 14px;max-height:42dvh}
+ .embedded .explorer,.embedded .detail,.embedded .inspection .detail{top:auto!important;bottom:calc(100px + env(safe-area-inset-bottom,0px));right:10px;left:10px;width:auto;padding:10px 14px;max-height:42dvh}
  .embedded .explorer .panel-heading{padding-bottom:0;min-height:34px}.embedded .search{display:flex;margin:10px 0}.embedded .search input{font-size:16px}.embedded .filter-tabs{margin:10px 0 0}.embedded .filter-tabs button{font-size:11px;padding-bottom:10px}.embedded .place-list{max-height:140px;display:block}.embedded .place{min-height:42px;padding:9px 0}.embedded .place-text strong{font-size:12px}
  .embedded .detail h2{font-size:21px;margin:12px 0 8px}.embedded .detail #detail-description{font-size:12px;max-height:12dvh;margin:10px 0}.embedded #detail-views{margin-top:10px}
  .embedded .layers{top:60px;left:10px;max-height:calc(100dvh - 132px);width:min(280px,calc(100vw - 70px))}
@@ -24,3 +24,7 @@
  .embedded .marker{font-size:10px}.embedded .marker.special{font-size:11px}
 }
 @media(max-height:460px) and (min-width:701px){.embedded .explorer,.embedded .detail,.embedded .inspection .detail{max-height:calc(100dvh - 88px);width:260px}.embedded .place-list{max-height:100px}.embedded .detail #detail-description{max-height:56px}.embedded .layers{max-height:calc(100dvh - 146px)}.embedded .view-switch button{min-height:34px}}
+
+@media(max-height:460px) and (min-width:701px){
+ .embedded .explorer{padding:10px 14px}.embedded .explorer .panel-heading{padding-bottom:0;min-height:30px}.embedded .explorer .search{margin:6px 0}.embedded .explorer .filter-tabs,.embedded .explorer .list-foot{display:none}
+}

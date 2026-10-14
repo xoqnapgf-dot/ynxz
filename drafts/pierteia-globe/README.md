@@ -1,3 +1,18 @@
+# Pierteia · 地图页双视图接入 / 互动版 13
+
+本轮按用户新要求，把球体接到主站 `map.html` 的「平面 / 球体」切换中。独立入口继续保留，沿用v12地形与模型，不复制大型资源，也不自动合并或部署。
+
+- 地图页：`../../map.html?view=globe`；统一地点选择、前进/后退、平面状态保留。
+- 独立入口：本目录 `index.html`；原 `site/inspect/frame` 参数继续有效。
+- 嵌入模式：`?embed=map` 且存在父窗口才启用；隐藏展示页大标题和重复导航，显示紧凑工具栏、可折叠图层与响应式地点面板。
+- 隐藏球体时停止动画调度及渲染，取消未完成的场景进入；切回时恢复，避免重新下载。图形上下文中断或启动失败时，父页面保留返回平面和重试入口。
+- 球体地名按选中状态优先排布，避让面板、边缘和其他地名；目录图标使用自制SVG。保留桌面高质量渲染参数，没有为界面适配降低地形或贴图精度。
+
+新验证入口在仓库 `tools/test-map-integration.mjs` 与 `tools/validate-map.mjs`；报告 `tools/verification-map-v13.json`。本轮是地图集成、交互与显示优化，不把v12的八景报告当成v13重新执行的结果。场景模型没有再次整体重做，山体轮廓、地被、室内光照及其他地区的独立精修仍待继续。
+
+---
+<details><summary>v12山坡、植被与屋面的制作说明</summary>
+
 # Pierteia · 山坡、植被与屋面 / 互动草稿 12
 
 继续实际修改学院，不重复交付v11阅览室：这轮处理**山坡、树冠、教学楼屋瓦、连廊和屋顶采光窗**。共享树木与瓦片组件同时影响其他七景，但不代表它们已经逐区精修完成。开放环形布局、分散楼群、低入口圈A和正式地理保持不变。
@@ -370,6 +385,8 @@ node drafts/pierteia-globe/tools/validate.mjs
 - `screenshots/01`—`10`：前轮记录，不作为本轮4K成片；`11-islands-work-preview.png`为收尾前工作预览，不冒充最终成片。
 
 [第三版球面制作记录（历史版本）](https://github.com/xoqnapgf-dot/ynxz/blob/811c8bc/drafts/pierteia-globe/README.md)
+
+</details>
 
 </details>
 

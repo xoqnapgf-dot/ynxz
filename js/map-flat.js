@@ -155,6 +155,7 @@
     // Retain pan, zoom and layer when hidden; never lay out a zero-sized stage.
     if (window.ResizeObserver && hdr) new ResizeObserver(setHH).observe(hdr);
     window.__flatMap = {
+      clear() { curNation = null; closeCard(); },
       resize() { setHH(); if (!stage.hidden) { layout(); clampT(); apply(); } },
       select(name, center = true) {
         if (!Object.hasOwn(window.LOCATION_DATA,name)) return false;

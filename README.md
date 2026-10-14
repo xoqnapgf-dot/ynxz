@@ -294,7 +294,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v1`、`js/map-flat.js v1`、`js/map-view.js v1`；复用 `drafts/pierteia-globe/globe.js v13`、`map-bridge.js v13`、`map-embed.css v13`。未修改的全站样式和数据版本保持不变。
+- 地图接入版本：`css/map-view.css v1`、`js/map-flat.js v2`、`js/map-view.js v2`；复用 `drafts/pierteia-globe/globe.js v13.1`、`map-bridge.js v13.1`、`map-embed.css v13.1`。未修改的全站样式和数据版本保持不变。
 - 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -383,10 +383,20 @@ ynxz/
 - 路径全部用相对路径（项目站点部署在 `/ynxz/` 子路径下）；没有 Service Worker，不做离线缓存，因此不影响现有的 `?v=` 版本号缓存策略。
 - 独立窗口（主屏幕启动）下，`js/theme.js` 会固定视口比例（`maximum-scale=1`、`touch-action: manipulation`、拦截 iOS `gesture*` 事件），禁用双击与捏合缩放；普通浏览器访问仍可正常缩放。地图页自己的捏合缩放不受影响。
 
-## 独立视觉草稿 · 3D 星球
+## 三维星球 · 独立入口与地图页接入
 
+- **第十三版地图接入**：在 `map.html` 内懒加载复用球体；独立展示入口仍保留。完善视图/地点同步、后台暂停、面板避让、窄屏与故障恢复，场景目录改用不依赖字体的SVG图标。
+- **第十二版学院**：细化树冠与屋瓦、北坡浅沟槽和埋地露头；连廊减重、移除重复雨棚、重做坡面采光窗。
 - **第十一版实际接入**：学院阅览室/入口庭院的人眼机位、1.70米尺度人物、接坡石板庭院、MaterialX参考木材/砌体和摄影HDR照明；保留开放环形总体布局。新增「庭院人眼」「窗与木作」近景按钮。
 - [在线运行方式、改动边界与验证](drafts/pierteia-globe/README.md)。此轮不是全图写实完工，未完成GI烘焙及其他区域同标准返工；先看互动，不新增4K图集。
 - [此前资料研究与审计](drafts/pierteia-globe/research/README.md)、[美术标准](drafts/pierteia-globe/DESIGN.md)仍保留，不以功能测试或面数代替美术判断。
-- **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线、不改主站。
-- 正式20标记、28地点、parent及地理数据不变；globe、landmarks、academy、study和AO相关模块为v11，未改的共享模块维持原版本。
+- **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
+- 正式20标记、28地点、parent及地理数据不变；球体入口为v13.1，学院/树木/屋瓦为v12，study和AO维持v11，未修改模块不统一强行升版。
+
+### 地图双视图验证
+
+- 浏览器记录：`tools/verification-map-v13.json`。覆盖平面零三维下载、地点双向同步、前进/后退、隐藏暂停与恢复、取消迟到的模型激活、学院近景、WebGL中断/不可用及贴图失败重试。
+- UI检查宽高：1440×900、1024×768、390×844、320×640、844×390。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
+- `node tools/validate-map.mjs`：核对两个视图的20个正式坐标、28份地点志、入口版本及本轮实际测试源码SHA。
+- `node drafts/pierteia-globe/tools/validate.mjs`：保留正式地理SHA、场景资产及历史报告检查，不把历史测试冒充本轮执行。
+- 重跑浏览器检查需开发工具 `playwright@1.51.1`、`@sparticuz/chromium@131.0.1` 及对应系统库；网站运行不依赖这些包。启动根目录HTTP服务后执行 `ATLAS_URL=http://127.0.0.1:8135/ node tools/test-map-integration.mjs`。若工具装在外部目录，可用 `NODE_PATH` 指向其 `node_modules`；`CHECK_IMAGES` 是可选内部检查输出目录，不会默认新增截图资产。
