@@ -371,10 +371,8 @@ ynxz/
 
 ## 独立视觉草稿 · 3D 星球
 
-- **2026-10-15 美术复盘**：用户仍不认可v10画面，不能以几何数量或回归通过代替效果。新增[资料研究与实际尺度审计](drafts/pierteia-globe/research/README.md)、[候选美术标准](drafts/pierteia-globe/DESIGN.md)，下一步先重做统一尺度、真实材料基线和人眼视角的小型样板。本轮没有发布新画面。
-
-- 第十版继续精修学院：三栋教学楼、两栋工坊和弧形图书馆采用厚墙与真实门窗洞口，增加内凹窗面、窗套、窗台、百叶及窗内书架；保持原开放环形山地布局和Blender阅览室。
-- 新增「图书馆／教学楼／工坊」近景机位。**本轮先看互动，不新增4K图集。** [运行方法、范围与测试](drafts/pierteia-globe/README.md)。旧版图片为历史记录。
-- **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步GitHub，回复附提交号。** 不合并main、不自动上线、不改主站。
-- 正式20标记、28地点、parent及地理数据不变。当前不是全部资产完工的写实成品，未完成完整室内、扫描材质与全局光照烘焙。
-- 本轮globe/CSS、landmarks、academy-hillside及新architecture模块为v10；未改的共享模块继续使用v9。
+- **第十一版实际接入**：学院阅览室/入口庭院的人眼机位、1.70米尺度人物、接坡石板庭院、MaterialX参考木材/砌体和摄影HDR照明；保留开放环形总体布局。新增「庭院人眼」「窗与木作」近景按钮。
+- [在线运行方式、改动边界与验证](drafts/pierteia-globe/README.md)。此轮不是全图写实完工，未完成GI烘焙及其他区域同标准返工；先看互动，不新增4K图集。
+- [此前资料研究与审计](drafts/pierteia-globe/research/README.md)、[美术标准](drafts/pierteia-globe/DESIGN.md)仍保留，不以功能测试或面数代替美术判断。
+- **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线、不改主站。
+- 正式20标记、28地点、parent及地理数据不变；globe、landmarks、academy、study和AO相关模块为v11，未改的共享模块维持原版本。

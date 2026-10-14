@@ -3,6 +3,7 @@
   "scope": "Academy study only; no claim that other region scale or whole-scene aesthetics are approved",
   "personHeightMeters": 1.7,
   "feetAtSurface": true,
+  "pavingClearOfTerrain": true,
   "courtyard": {
     "eye": [
       -0.03730108067878085,
