@@ -1,4 +1,15 @@
-# Pierteia · 手机界面 18 / 地方环境 17
+# 当前入口：v19独立3D页面 / v18渲染器 / v17环境
+
+站主反馈v18简化后的导航不如原版。本轮恢复地图页原导航及平面工具；3D独立到[`globe.html`](../../globe.html)，[`map.html`](../../map.html)只保留平面地图。两页通过真实链接互相访问并携带所选地点，不再在同一个页面切换渲染器。
+
+- 页面样式`map-view.css v5`、入口脚本`map-view.js v9`；不再加载`map-mobile.js`。其他站点页面未改。
+- 3D iframe中的v18布局修复保留，几何、材质、天气、正式地理及渲染参数未变。
+- 新测试：`tools/test-map-pages.mjs`，8项检查、9张截图，覆盖原导航、平面零3D下载、28地点、往返页面、旧链接、纯净恢复、搜索、图层、慢加载选择、贴图/上下文重试、无WebGL回退。
+- [本轮截图](screenshots/pages-v19/index.html)。v18及v17报告为历史，validator区分当前页面与未变动的渲染模块，不宣称本轮重跑全部旧截图或八景美术验收。未测试实机Safari。
+
+---
+
+## v18历史 · 手机界面 / 地方环境17
 
 这轮减少常驻界面占位，不重做场景和材质。
 
@@ -9,7 +20,7 @@
 
 [实际前后对照及全尺寸截图](screenshots/mobile-v18/index.html) · [查修记录与限制](research/v18-mobile-review.md) · [打开地图](../../map.html?view=globe)
 
-当前版本：globe.js / responsive-ui.js / compact-tools.js / map-bridge.js / map-embed.css v18，map-view.js v8、map-mobile.js v1、map-view.css v4。globe.css和地方环境模块仍为v17，学院建筑基底仍为v14。
+v18当轮版本：globe.js / responsive-ui.js / compact-tools.js / map-bridge.js / map-embed.css v18，map-view.js v8、map-mobile.js v1、map-view.css v4。globe.css和地方环境模块仍为v17，学院建筑基底仍为v14。
 
 本轮检查：仓库根目录`tools/test-map-mobile.mjs`、`tools/test-map-integration.mjs`及对应validator，输出v18新报告。v17八景报告保留历史，环境validator核对未变动的区域模块及v18当前UI源码，不声称本轮重新渲染全部八景。仅推送当前开发分支，不合并main。
 

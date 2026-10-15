@@ -14,6 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="意拟小站" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script src="js/theme.js?v=2"></script>
+  <script>if(new URLSearchParams(location.search).get('view')==='globe'){const u=new URL('globe.html',location.href);u.search=location.search;u.searchParams.delete('view');u.hash=location.hash;location.replace(u.href);}</script>
   <style>
     html, body { overflow: hidden; }
     .map-main { position: fixed; left: 0; right: 0; bottom: 0; top: var(--hh, 64px); max-width: none; padding: 0; height: auto; }
@@ -81,10 +82,10 @@
       .map-scalebar { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 10px; }
     }
   </style>
-  <link rel="stylesheet" href="css/map-view.css?v=4" />
+  <link rel="stylesheet" href="css/map-view.css?v=5" />
 </head>
-<body data-page="map" class="theme-map">
-  <header class="site-header" id="mapNavigation">
+<body data-page="map" class="theme-map" data-map-view="flat">
+  <header class="site-header">
     <a class="brand" href="index.html"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
     <nav class="site-nav" aria-label="主导航">
       <a href="gallery.html">画廊</a>
@@ -97,24 +98,15 @@
 
   <main class="map-main">
     <div class="map-toolbar">
-      <button id="mapMenu" type="button" aria-label="网站导航" aria-expanded="false" aria-controls="mapNavigation">导航</button>
       <h1 class="map-heading">PIERTEIA<small>主世界 · 地图与地点志</small></h1>
-      <div class="map-projection" role="group" aria-label="地图视图">
-        <button type="button" id="viewFlat" data-projection="flat" aria-pressed="true" aria-controls="mapStage">平面</button>
-        <button type="button" id="viewGlobe" data-projection="globe" aria-pressed="false" aria-controls="globeHost">球体</button>
-      </div>
+      <nav class="map-projection" aria-label="地图页面">
+        <a id="viewFlat" href="map.html" aria-current="page">平面</a>
+        <a id="viewGlobe" href="globe.html">3D地球</a>
+      </nav>
       <label class="map-locate" for="mapPlace">定位地点<select id="mapPlace"><option value="">选择国家或地点…</option></select></label>
       <span class="map-help" id="mapHelp">拖动平移 · 滚轮缩放</span>
     </div>
     <div class="map-workspace">
-    <section id="globeHost" aria-label="球体地图" hidden>
-      <button id="mapRestoreUI" type="button" hidden title="恢复球体界面，不离开当前场景">恢复界面</button>
-      <div class="globe-notice" id="globeNotice" data-state="loading" role="status">
-        <h2 id="globeNoticeTitle">正在展开球体地图</h2>
-        <p id="globeNoticeText">首次打开需要加载高清地形。平面地图随时可用，局部建筑仅在进入场景时加载。</p>
-        <div class="notice-actions"><button id="retryGlobe" type="button" hidden>重新加载球体</button><button id="fallbackFlat" type="button">返回平面地图</button></div>
-      </div>
-    </section>
     <div id="mapStage" class="map-stage2">
       <div id="mapCanvas" class="map-canvas">
         <img id="baseTerrain" class="map-base" src="素材/地图/terrain.png?v=4" alt="地形图">
@@ -171,8 +163,7 @@
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
   <script src="js/map-flat.js?v=2"></script>
-  <script src="js/map-mobile.js?v=1"></script>
-  <script src="js/map-view.js?v=8"></script>
+  <script src="js/map-view.js?v=9"></script>
 
 </body>
 </html>

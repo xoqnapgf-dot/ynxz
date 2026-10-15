@@ -5,12 +5,16 @@ const places=JSON.parse(read('drafts/pierteia-globe/assets/places.json'));
 assert.deepEqual(JSON.parse(JSON.stringify(context.LOCATION_DATA)),places.locations,'flat and globe location records must agree');
 const official=context.MAP_NATIONS.filter(n=>Object.hasOwn(context.LOCATION_DATA,n.name));assert.equal(official.length,20);assert.equal(Object.keys(places.locations).length,28);
 for(const marker of places.markers){const flat=official.find(n=>n.name===marker.name);assert(flat);assert.equal(flat.x,marker.x);assert.equal(flat.y,marker.y);assert.equal(flat.id,marker.id);}
-const html=read('map.html');for(const id of ['viewFlat','viewGlobe','mapPlace','mapStage','globeHost','fallbackFlat','retryGlobe','mapRestoreUI'])assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1);
-assert(html.includes('map-mobile.js?v=1'));
-assert(!html.includes('<iframe'),'3D iframe must be lazy');assert(html.includes('map-view.css?v=4'));assert(html.includes('map-flat.js?v=2'));assert(html.includes('map-view.js?v=8'));
+const html=read('map.html');for(const id of ['viewFlat','viewGlobe','mapPlace','mapStage'])assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1);
+assert(!html.includes('map-mobile.js'));assert(!html.includes('id="mapMenu"'));assert(!html.includes('id="globeHost"'));
+const globe=read('globe.html');assert(globe.includes('id="globeHost"'));assert(!globe.includes('map-flat.js'));assert(!globe.includes('id="mapStage"'));for(const page of [html,globe]){assert(page.includes('href="map.html"'));assert(page.includes('href="globe.html"'));assert(page.includes('map-view.css?v=5'));assert(page.includes('map-view.js?v=9'));}
+assert(!html.includes('<iframe'),'3D iframe must be lazy');assert(html.includes('map-view.css?v=5'));assert(html.includes('map-flat.js?v=2'));assert(html.includes('map-view.js?v=9'));
 assert(read('drafts/pierteia-globe/index.html').includes('globe.js?v=18'));assert(read('drafts/pierteia-globe/index.html').includes('map-embed.css?v=18'));
-const report=JSON.parse(read('tools/verification-map-v18.json'));assert.equal(report.revision,18);assert.deepEqual(report.errors,[]);
-for(const key of ['flatDoesNotLoad3D','flatStateAndSuspendedRenderer','historyAndSingleFrame','bidirectionalParentLocation','messageOriginSourceAndNameGuards','responsivePanels','hiddenLoadCannotActivate','optionalAcademyAndCamera','scenePreservedAcrossSwitch','contextLossAndRetry','noWebGLFlatFallback','failedTextureRetry','standaloneRetained','cleanExitClickKeyboardParentAndResponsive','layerSelectionAndEscapePriority','samePlaceReopensDetails','emptySelectionClearsBothViews','shortcutEditingModifiersAndRepeat','sceneCleanRestoreAndSearch','standaloneCleanRestore','latestChoiceWinsDuringInitialLoad','academyDeepLinkAndCleanRestore','touchEmulatedCleanExit','shortScreenSearchAndTapReturn','responsiveModeRestoredAfterHiddenFrame'])assert.equal(report.checks[key],true,key);
-assert.equal(report.viewports.length,4);for(const [file,sha]of Object.entries(report.sourceHashes))assert.equal(hash(file),sha,'browser report is stale: '+file);
-assert.equal(report.academy.activeScene,900);assert.equal(report.academy.markers,20);assert.equal(report.academy.locations,28);assert.equal(report.academy.geometry[0].revision,14);assert.equal(report.academy.geometry[0].craftRevision,14);assert(report.academy.geometry[0].meadowTufts>2000);
-console.log('PASS: 20 shared coordinates / 28 identical location records, versioned lazy entry, v18 integration checks and tested source hashes.');
+const report=JSON.parse(read('tools/verification-map-pages-v19.json'));assert.equal(report.revision,19);assert.deepEqual(report.errors,[]);
+for(const key of ['restoredNavigationAndFlatControls','flatZero3DAndAll28Places','realPageNavigationAndBack','cleanSearchLayersAndMessageGuards','legacyLinksSceneAndReturn','latestChoiceDuringLoad','textureAndContextRetry','noWebGLFlatFallback'])assert.equal(report.checks[key],true,key);
+for(const [file,sha]of Object.entries(report.sourceHashes))assert.equal(hash(file),sha,'stale v19 page report: '+file);
+assert.equal(report.screenshots.length,9);for(const name of report.screenshots){const image=fs.readFileSync(new URL(`drafts/pierteia-globe/screenshots/pages-v19/${name}.jpg`,root));assert(image.length>2000);assert.equal(image[0],255);assert.equal(image[1],216);}
+// The 3D implementation is unchanged from the fully tested v18 renderer.
+const old=JSON.parse(read('tools/verification-map-v18.json')),shell=new Set(['map.html','js/map-view.js','css/map-view.css']);
+for(const [file,sha]of Object.entries(old.sourceHashes))if(!shell.has(file))assert.equal(hash(file),sha,'changed renderer needs a fresh full regression: '+file);
+console.log('PASS: v19 separate pages, restored navigation, zero flat-page 3D downloads, 28 places, nine images and eight current checks; unchanged v18 renderer.');

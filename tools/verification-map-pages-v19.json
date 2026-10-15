@@ -1,0 +1,51 @@
+{
+  "revision": 19,
+  "scope": "Separate pages and restored site navigation; v18 renderer unchanged. Chromium, not physical Safari.",
+  "checks": {
+    "restoredNavigationAndFlatControls": true,
+    "flatZero3DAndAll28Places": true,
+    "realPageNavigationAndBack": true,
+    "cleanSearchLayersAndMessageGuards": true,
+    "legacyLinksSceneAndReturn": true,
+    "latestChoiceDuringLoad": true,
+    "textureAndContextRetry": true,
+    "noWebGLFlatFallback": true
+  },
+  "screenshots": [
+    "320-flat",
+    "390-flat",
+    "844-flat",
+    "1440-flat",
+    "390-globe-selected",
+    "390-globe-overview",
+    "844-globe",
+    "390-globe-scene",
+    "390-no-webgl"
+  ],
+  "errors": [],
+  "sourceHashes": {
+    "map.html": "4b918a6d07822ba94de3939f31bd6bd689cc6bff3774ec806758a4822c64843a",
+    "js/map-mobile.js": "b4de09c3e3414fe7c95ccb4a3261c43c685df9715e9d5ecbe95906ac75c40352",
+    "drafts/pierteia-globe/compact-tools.js": "ec5b65049ca967689ecbe92c31c738b75fdf257fae1fb8c63738e19e0c698898",
+    "css/map-view.css": "e6a3d57a8beeb8ec5d7977c5c8549a91d397d2028b62f0ee02066d8af2f3edc0",
+    "js/map-flat.js": "81f489132b00945656055519d69c17ededb14b61b9fe18049923fb9abdc3bfaf",
+    "js/map-view.js": "ab39fa6b7e218642a1f2ed5b1e2b1b1f97d6b244ed9cb80de4bfb71b18655016",
+    "drafts/pierteia-globe/globe.js": "e42d67c9ca51144c957b6be0724e98d168e28c10f15581f42a95afab6a960128",
+    "drafts/pierteia-globe/globe.css": "11bda945b2fdf63003b8056582a8404783e05e03a973c9ce723d62b6e02557c6",
+    "drafts/pierteia-globe/responsive-ui.js": "cc6a5198c156645a6e532267617a1d9c770de57b6e74e0b16125f1bc1045a204",
+    "drafts/pierteia-globe/map-bridge.js": "0d8d292a6c04dd4fe6e482e6b7bcef15ed55f5ca075246eed1fec0388645bf69",
+    "drafts/pierteia-globe/map-embed.css": "3bb9294e3ada26a421c061db179030f9fdb5bec93f48e102b39cf7cf7ee19dbc",
+    "drafts/pierteia-globe/atlas-icons.js": "99096421f15990c01d7cf8d05965a6df32ee03ef40bb61b175d178104efe921a",
+    "drafts/pierteia-globe/index.html": "6c8df205c6945ea9a124de385e59ced8cd37625db8a718766d892467febc3fe1",
+    "drafts/pierteia-globe/academy-hillside.js": "eb2382b8811cb9aa2eb4bb73c5b0c20762a9d039e7b064347f6eaa6aae1c9310",
+    "drafts/pierteia-globe/academy-landscape.js": "d82f6aeffc719ec7f448e1f123549bf621b8709b09715cd8b171f3dd7aa678e0",
+    "drafts/pierteia-globe/academy-craft.js": "ffa59af7a959085fffa7c62a43c26816df3dee6b27e6e2868729fe6189ae3156",
+    "drafts/pierteia-globe/landmarks.js": "2b76e4fe543fb40a5563a6be92f5482495d6abb4ae628605691e27b69e8fd9b0",
+    "drafts/pierteia-globe/archipelago-hq.js": "ffe518ef3989499f8451156b224a6b1a982471c6d4bdcaa8170f88db8cc12e63",
+    "drafts/pierteia-globe/regional-scenes.js": "c810392dab55796d89b814c91d8ab5c5706b9a1305b25a256107b2bffe55a1a1",
+    "drafts/pierteia-globe/regional-profiles.js": "9ac07e34964842d2206d7425dba0e43beef3ee9a8035fdc459fc6190ae66fe62",
+    "drafts/pierteia-globe/regional-surfaces.js": "80d15dce179a5e06fc8ac19e92d7e5774a5abcfa57a61d52ab8def219571fadc",
+    "drafts/pierteia-globe/regional-environment.js": "33121be2371d1f6af1c803fd95bd16b426b7afab0db2ef3698c8c0526b15d33e",
+    "globe.html": "db09c6bcd83935cd1e2ffbcdad82df9af3239e38e77f8ebfd93dd81c762b8518"
+  }
+}
