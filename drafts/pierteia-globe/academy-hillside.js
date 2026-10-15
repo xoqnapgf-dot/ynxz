@@ -1,5 +1,6 @@
 import * as T from 'three';
-import { campusSurface, addCampusLandscape } from './academy-landscape.js?v=12';
+import { alignTimber, addRainwater, plankWalk } from './academy-craft.js?v=14';
+import { campusSurface, addCampusLandscape } from './academy-landscape.js?v=14';
 import { studyMaterial, readingCourt, scalePerson } from './academy-study.js?v=11';
 import { wallWithOpenings, bendWall } from './architecture.js?v=10';
 import { tiledRoof } from './roof-detail.js?v=12';
@@ -18,12 +19,14 @@ const hash=(x,z)=>{const v=Math.sin(x*127.1+z*311.7)*43758.5453;return v-Math.fl
 function height(x,z){
  const r=Math.hypot(x,z),a=Math.atan2(z,x),edge=.57+.035*Math.sin(a*5)+.020*Math.cos(a*9);
  const campus=.041+.067*smooth(.20,-.26,z);
- const hills=.185*Math.exp(-((x+.12)**2*15+(z+.405)**2*38))+.095*Math.exp(-((x-.22)**2*34+(z+.39)**2*42));
- const strata=.004*Math.sin(x*73+Math.sin(z*47))+.003*Math.sin(z*105+x*31);
- // Shallow warped drainage cuts change the silhouette and normals, not just colour.
- const channels=Math.pow(.5+.5*Math.sin(x*98+2.4*Math.sin(z*23)+.8*Math.sin(x*53-z*19)),10);
- const erosion=(-.010*channels+.0021*Math.sin(z*187+Math.sin(x*29)*1.7))*smooth(-.265,-.345,z);
- const natural=T.MathUtils.lerp(-.055,campus+(hills+strata+erosion)*smooth(.25,.36,r),1-smooth(edge-.10,edge+.025,r));
+ // An oblique shoulder with separate spurs; no single gaussian dome behind the library.
+ const ridge=z+.43+.055*Math.sin(x*9);
+ const spurs=.132*Math.exp(-((x+.19)**2*28+ridge*ridge*70))+.098*Math.exp(-((x-.19)**2*46+(ridge-.028)**2*90));
+ const fold=Math.sin(x*67+Math.sin(z*21)*2.2),cuts=Math.pow(.5+.5*fold,6);
+ const shelves=.0045*Math.tanh(Math.sin(z*166+x*24)*2.8);
+ const strata=.003*Math.sin(x*73+Math.sin(z*47))+.002*Math.sin(z*105+x*31);
+ const sculpt=spurs+strata+(-.019*cuts+shelves)*smooth(-.25,-.35,z);
+ const natural=T.MathUtils.lerp(-.055,campus+sculpt*smooth(.25,.405,r),1-smooth(edge-.10,edge+.025,r));
  const dx=x+.119,dz=z-.163,lx=(dx*Math.cos(.52)-dz*Math.sin(.52))*100,lz=(dx*Math.sin(.52)+dz*Math.cos(.52))*100;
  const courtDistance=Math.max(Math.abs(lx)-4.9,Math.abs(lz-9.95)-3.2);
  return T.MathUtils.lerp(natural,.0407,1-smooth(-.2,1.3,courtDistance));
@@ -54,6 +57,7 @@ function box(g,k,w,h,d,m,x=0,y=0,z=0){
   if(Math.abs(n.getY(i))>.5)uv.setXY(i,p.getX(i)*48,p.getZ(i)*48);
   else uv.setXY(i,(Math.abs(n.getX(i))>.5?p.getZ(i):p.getX(i))*48,p.getY(i)*48);
  }
+ if(m.userData.grainAligned)alignTimber(geo,[w,h,d]);
  return k.mesh(g,geo,m,x,y,z);
 }
 function panel(g,k,p,x,y,z,w,h,{books=false,recessed=false,louvers=false}={}){
@@ -161,7 +165,7 @@ function building(g,k,p,{x,z,w,d,h,y=height(x,z)+.006,angle=0,roof=p.tile,booksh
   for(const xx of [-w*.46,w*.46])k.beam(q,[xx,deck-.001,d*.72],[xx,deck-.009,d*.52],.0006,p.wood);
  }
  box(q,k,.004,.018,.005,p.stone,-w*.27,h+.007,-d*.24);box(q,k,.005,.001,.006,p.dark,-w*.27,h+.016,-d*.24);
- for(const side of [-1,1])k.beam(q,[w*.46,0,side*d*.52],[w*.46,h,side*d*.52],.00045,p.dark);
+ addRainwater(q,k,{w,d,h,ground:height});
  return {group:q,y};
 }
 function curvedWing(g,k,p,{r,depth,start,end,y,h,roof=p.copper}){
@@ -226,8 +230,8 @@ function coveredWalk(g,k,p,points){
   const right=new T.Vector3(delta.z,0,-delta.x).normalize(),along=delta.clone().normalize();
   // One continuous deck per sloping run, rather than overlapping square plates.
   const vertices=[];for(const dy of [0,-.002])for(const [v,sign]of [[a,1],[b,1],[b,-1],[a,-1]]){const q=v.clone().addScaledVector(right,.009*sign);q.y+=dy;vertices.push(q.x,q.y,q.z);}
-  const indices=[0,2,1,0,3,2,4,5,6,4,6,7];for(let j=0;j<4;j++){const n=(j+1)%4;indices.push(j,n,j+4,j+4,n,n+4);}
-  const deck=new T.BufferGeometry();deck.setAttribute('position',new T.Float32BufferAttribute(vertices,3));deck.setAttribute('uv',new T.Float32BufferAttribute(vertices.flatMap((_,j)=>j%3===0?[vertices[j]*48,vertices[j+2]*48]:[]),2));deck.setIndex(indices);deck.computeVertexNormals();k.mesh(g,deck,p.wood);
+  const indices=[4,5,6,4,6,7];for(let j=0;j<4;j++){const n=(j+1)%4;indices.push(j,n,j+4,j+4,n,n+4);}
+  const deck=new T.BufferGeometry();deck.setAttribute('position',new T.Float32BufferAttribute(vertices,3));deck.setAttribute('uv',new T.Float32BufferAttribute(vertices.flatMap((_,j)=>j%3===0?[vertices[j]*48,vertices[j+2]*48]:[]),2));deck.setIndex(indices);deck.computeVertexNormals();k.mesh(g,deck,p.wood);plankWalk(g,k,a,b,p.wood);
   // Continuous shallow-pitched roof, with a narrow ridge and standing seams.
   const rp=[],uv=[];for(const [end,t]of [[a,0],[b,1]])for(const sign of [-1,0,1]){const q=end.clone().addScaledVector(right,sign*.010);q.y+=.027+(sign===0?.002:0);rp.push(q.x,q.y,q.z);uv.push(t*length*48,(sign+1)*.5);}
   const roof=new T.BufferGeometry();roof.setAttribute('position',new T.Float32BufferAttribute(rp,3));roof.setAttribute('uv',new T.Float32BufferAttribute(uv,2));roof.setIndex([0,3,1,1,3,4,1,4,2,2,4,5]);roof.computeVertexNormals();k.mesh(g,roof,p.slate);
@@ -251,12 +255,13 @@ function circledA(g,k,p,x,y,z,r){
  k.beam(g,[x-r*.65,y-r*.76,z],[x,y+r*.82,z],.00075,p.red);k.beam(g,[x,y+r*.82,z],[x+r*.65,y-r*.76,z],.00075,p.red);k.beam(g,[x-r*.57,y-r*.16,z],[x+r*.57,y-r*.16,z],.0006,p.red);
 }
 export function createAcademyHillside(g,k){
- const p=makeMaterials(k);for(const key of ['stone','plaster','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');p.wood=studyMaterial('wood');p.masonry=studyMaterial('stone');p.plaster.color.set('#dad7cc');p.plaster.normalScale.set(.23,.23);p.paving=campusSurface('path');
+ const originalBeam=k.beam;k={...k,beam:(...args)=>{const o=originalBeam(...args);if(o.material.userData.grainAligned)alignTimber(o.geometry,[args[3]*2,new T.Vector3(...args[2]).distanceTo(new T.Vector3(...args[1])),args[3]*2]);return o;}};
+ const p=makeMaterials(k);for(const key of ['stone','plaster','glass'])finish(p[key],key);for(const key of ['tile','slate'])finish(p[key],'roof');finish(p.copper,'metal');p.wood=studyMaterial('wood');p.wood.userData.grainAligned=true;p.masonry=studyMaterial('stone');p.plaster.color.set('#dad7cc');p.plaster.normalScale.set(.23,.23);p.paving=campusSurface('path');
  const groundIndex=g.children.length;
  gridGround(g,k,height,(x,z,y)=>{
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;
   return new T.Color(y<.010?'#aba58a':slope>1.25?'#9a9c8a':'#76865b').multiplyScalar(.98+Math.sin(x*19+Math.cos(z*23))*.025);
- },1.55,320);
+ },1.55,384);
  const landscape=addCampusLandscape(g,k,height,g.children[groundIndex]);
  // Only the northern library is a crescent. The other wings have their own massing.
  curvedWing(g,k,p,{r:.204,depth:.051,start:Math.PI*.74,end:Math.PI*1.27,y:.112,h:.055});
@@ -324,5 +329,5 @@ export function createAcademyHillside(g,k){
  k.boat(g,.477,.20,.7,.1);
  const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x+.065,z-.257)<.09||Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
  let academyOpenings=0;g.traverse(o=>academyOpenings+=o.geometry?.userData.openingCount||0);
- return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{hillside:{eye:[.29,.20,.035],target:[-.06,.18,-.31]},courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:12,...landscape,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{hillside:{eye:[.29,.20,.035],target:[-.06,.18,-.31]},courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:14,craftRevision:14,drainageRuns:10,...landscape,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }

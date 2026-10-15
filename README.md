@@ -294,7 +294,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v1`、`js/map-flat.js v2`、`js/map-view.js v2`；复用 `drafts/pierteia-globe/globe.js v13.1`、`map-bridge.js v13.1`、`map-embed.css v13.1`。未修改的全站样式和数据版本保持不变。
+- 地图接入版本：`css/map-view.css v1`、`js/map-flat.js v2`、`js/map-view.js v3`；复用 `drafts/pierteia-globe/globe.js v14`、`map-bridge.js v13.1`、`map-embed.css v13.1`。未修改的全站样式和数据版本保持不变。
 - 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -385,13 +385,15 @@ ynxz/
 
 ## 三维星球 · 独立入口与地图页接入
 
+- **第十四版美术改动**：重塑学院后山山肩/沟谷、更新嵌地岩石、补成簇地被；木纹沿构件走向，连廊使用独立铺板，五栋翼楼增加开口檐沟和接地落水管。保持开放环形校园；正在本轮地图页内做近景和回归检查，不宣称全图写实完成。
+
 - **第十三版地图接入**：在 `map.html` 内懒加载复用球体；独立展示入口仍保留。完善视图/地点同步、后台暂停、面板避让、窄屏与故障恢复，场景目录改用不依赖字体的SVG图标。
 - **第十二版学院**：细化树冠与屋瓦、北坡浅沟槽和埋地露头；连廊减重、移除重复雨棚、重做坡面采光窗。
 - **第十一版实际接入**：学院阅览室/入口庭院的人眼机位、1.70米尺度人物、接坡石板庭院、MaterialX参考木材/砌体和摄影HDR照明；保留开放环形总体布局。新增「庭院人眼」「窗与木作」近景按钮。
 - [在线运行方式、改动边界与验证](drafts/pierteia-globe/README.md)。此轮不是全图写实完工，未完成GI烘焙及其他区域同标准返工；先看互动，不新增4K图集。
 - [此前资料研究与审计](drafts/pierteia-globe/research/README.md)、[美术标准](drafts/pierteia-globe/DESIGN.md)仍保留，不以功能测试或面数代替美术判断。
 - **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
-- 正式20标记、28地点、parent及地理数据不变；球体入口为v13.1，学院/树木/屋瓦为v12，study和AO维持v11，未修改模块不统一强行升版。
+- 正式20标记、28地点、parent及地理数据不变；球体入口和学院为v14，树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
 
 ### 地图双视图验证
 

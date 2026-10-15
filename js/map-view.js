@@ -36,7 +36,7 @@
       notice('球体需要通过网站打开', '直接双击文件无法读取三维资源。请使用网站或本地 HTTP 服务；平面地图仍可使用。', true); return;
     }
     frame = document.createElement('iframe'); frame.id = 'globeFrame'; frame.title = 'Pierteia 球体地图，可旋转、缩放并探索地点';
-    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '13.1');
+    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '14');
     // Optional deep links retain the existing scene/camera route; ordinary selection does not load a model.
     const query = new URLSearchParams(location.search);
     if (selected && query.has('inspect')) { url.searchParams.set('site', selected); url.searchParams.set('inspect', ''); if (query.has('frame')) url.searchParams.set('frame', query.get('frame')); lastSent = selected; }
