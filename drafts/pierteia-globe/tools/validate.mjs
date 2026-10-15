@@ -22,8 +22,8 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=16'));assert(html.includes('globe.css?v=15'));
-assert(read('globe.js').toString().includes('landmarks.js?v=14.1'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=17'));assert(html.includes('globe.css?v=17'));
+assert(read('globe.js').toString().includes('landmarks.js?v=17'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);
 assert(read('globe.js').toString().includes('planet-materials.js?v=9'));
@@ -43,7 +43,7 @@ for(const shot of hq.captures){assert.equal(shot.samples,4);assert.deepEqual(png
 assert.equal(hq.stats.quality,'Desktop HQ');assert.equal(hq.stats.shadowSize,4096);assert.deepEqual(hq.stats.surfaceSize,[6144,3072]);
 const islands=hq.stats.geometry.find(g=>g.id===901);assert.equal(islands.terrainTriangles,819200);assert(islands.triangles>900000);assert.equal(islands.homes,12);assert(islands.trees>200);
 assert(read('globe.js').toString().includes('SSAARenderPass'));assert(!read('globe.js').toString().includes('cv.width=2048'));
-assert(read('landmarks.js').toString().includes('archipelago-hq.js?v=9'));assert(html.includes('data-detail-view="harbor"'));
+assert(read('landmarks.js').toString().includes('archipelago-hq.js?v=17'));assert(html.includes('data-detail-view="harbor"'));
 for(const name of ['archipelago-hq.js','vendor/addons/objects/Water.js','vendor/addons/postprocessing/SSAARenderPass.js'])assert(read(name).length>100);
 const academy=JSON.parse(read('tools/verification-v6.json'));
 assert.equal(academy.revision,6);assert.deepEqual(academy.errors,[]);assert.equal(academy.captures.length,1);
@@ -52,8 +52,8 @@ assert(read('screenshots/v6/previews/21-academy-open-campus.jpg').length>1000);
 assert.equal(academy.captures[0].samples,4);assert.equal(academy.stats.activeScene,900);
 assert.equal(academy.stats.markers,20);assert.equal(academy.stats.locations,28);assert.equal(academy.stats.models,8);
 assert.equal(academy.stats.geometry.find(x=>x.id===900).revision,6);
-assert(read('landmarks.js').toString().includes('academy-hillside.js?v=14.1'));
-assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=12'));
+assert(read('landmarks.js').toString().includes('academy-hillside.js?v=17'));
+assert(read('academy-hillside.js').toString().includes('regional-scenes.js?v=17'));
 assert(read('regional-scenes.js').toString().includes('ix.push(a,a+1,a+2,a+1,a+3,a+2)'));
 const {SCENES}=await import('data:text/javascript;base64,'+read('scene-catalog.js').toString('base64'));
 assert.equal(SCENES.length,8);assert.equal(new Set(SCENES.map(s=>s.key)).size,8);
@@ -118,4 +118,5 @@ await import('./test-landscape.mjs');
 const v14=JSON.parse(read('tools/verification-v14.json'));assert.equal(v14.revision,14);assert.deepEqual(v14.errors,[]);assert.equal(v14.scenes.length,8);assert.equal(v14.closeViews.length,9);assert.equal(v14.initial.glbRequests,0);assert.equal(v14.glbRequests,1);
 const campus14=v14.scenes.find(s=>s.id===900).geometry;assert.equal(campus14.revision,14);assert.equal(campus14.craftRevision,14);assert.equal(campus14.landscapeRevision,14);assert.equal(campus14.drainageRuns,10);assert(campus14.meadowTufts>2000);
 await import('./test-craft.mjs');
-console.log('PASS: unchanged official geography; v14 crafted timber, drainage, meadow and eight rendered scenes. Art approval is not inferred from these checks.');
+await import('../../../tools/validate-map-environments.mjs');
+console.log('PASS: unchanged official geography; historical v3–v14 fixtures, retained academy craft, and current v17 environment/source validation. Art approval is not inferred.');

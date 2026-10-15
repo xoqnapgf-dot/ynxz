@@ -8,8 +8,8 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { finish } from './world-finish.js?v=9';
 import { scatterEcology } from './ecology.js?v=9';
 import { attachAtelier } from './academy-asset.js?v=11';
-import { reflectiveSea } from './archipelago-hq.js?v=9';
-import { gridGround, lane } from './regional-scenes.js?v=12';
+import { reflectiveSea } from './archipelago-hq.js?v=17';
+import { gridGround, lane } from './regional-scenes.js?v=17';
 
 // A circular CAMPUS PLAN, not one circular building: separate teaching, library,
 // workshop and common-room masses follow the contour around an open planted garden.
@@ -329,5 +329,5 @@ export function createAcademyHillside(g,k){
  k.boat(g,.477,.20,.7,.1);
  const ecology=scatterEcology(g,{height,bounds:[-.53,.53,-.53,.47],count:1200,exclude:(x,z)=>Math.hypot(x+.065,z-.257)<.09||Math.hypot(x,z)<.29||Math.abs(x-.40)<.04&&Math.abs(z-.17)<.08,seed:900});
  let academyOpenings=0;g.traverse(o=>academyOpenings+=o.geometry?.userData.openingCount||0);
- return {focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{hillside:{eye:[.29,.20,.035],target:[-.06,.18,-.31]},courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:14,craftRevision:14,drainageRuns:10,...landscape,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
+ return {habitat:{height,bounds:[-.48,.48,-.50,-.28],exclude:(x,z)=>Math.hypot(x,z)<.32},focus:.116,eye:[.52,.39,.70],light:[-2.2,3.3,4.5],views:{hillside:{eye:[.29,.20,.035],target:[-.06,.18,-.31]},courtyard:court,joinery:court.detail,library:{eye:[.10,.205,-.075],target:[-.01,.14,-.196]},teaching:{eye:[-.075,.136,.115],target:[-.21,.093,.035]},workshop:{eye:[.09,.133,.14],target:[.208,.095,.015]},street:court,materials:{eye:[-.054,.080,.202],target:[-.081,.076,.170]}},meta:{...ecology,sceneType:'open circular hillside campus / separated academic wings',circledA:true,trees,revision:14,craftRevision:14,drainageRuns:10,...landscape,humanScaleMeters:1.70,courtyardEyeHeightMeters:1.65,photographicIBL:true,referenceWood:true,academyOpenings,piercedLibrary:true,blenderAsset:true},environment:env=>reflectiveSea(env,k,height)};
 }

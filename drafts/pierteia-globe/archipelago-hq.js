@@ -88,6 +88,7 @@ export function reflectiveSea(env, kit, sampleHeight=islandHeightHQ) {
   });
   water.rotation.x=-Math.PI/2;water.position.y=-.001;water.renderOrder=1;
   const m=water.material;m.uniforms.depthField={value:heightTexture(sampleHeight)};
+  Object.assign(m.uniforms,{regionDeep:{value:new T.Color().setRGB(.017,.044,.049)},regionShallow:{value:new T.Color().setRGB(.075,.15,.12)},regionRain:{value:0},regionWave:{value:1},regionFoam:{value:1},regionLevel:{value:-.001},regionWind:{value:new T.Vector2(.8,.6)},regionSun:{value:new T.Vector3(-.65,-.28,.7).normalize()}});
   m.vertexShader=`
     uniform mat4 textureMatrix;
     varying vec4 mirrorCoord;
@@ -109,6 +110,7 @@ export function reflectiveSea(env, kit, sampleHeight=islandHeightHQ) {
   m.fragmentShader=`
     uniform sampler2D mirrorSampler,normalSampler,depthField;
     uniform float time;
+    uniform vec3 regionDeep,regionShallow,regionSun;uniform float regionWave,regionFoam,regionLevel,regionRain;uniform vec2 regionWind;
     uniform vec3 eye;
     varying vec4 mirrorCoord;
     varying vec3 vWorld;
@@ -118,29 +120,32 @@ export function reflectiveSea(env, kit, sampleHeight=islandHeightHQ) {
     #include <fog_pars_fragment>
     void main(){
       vec2 p=vPlane;
-      vec3 a=texture2D(normalSampler,p*12.+vec2(time*.006,time*.004)).xyz*2.-1.;
-      vec3 b=texture2D(normalSampler,mat2(.8,-.6,.6,.8)*p*31.+vec2(-time*.003,time*.005)).xyz*2.-1.;
-      vec3 localN=normalize(vec3(a.xy*.075+b.xy*.04,1.));
+      vec3 a=texture2D(normalSampler,p*12.+regionWind*time*.007).xyz*2.-1.;
+      vec3 b=texture2D(normalSampler,mat2(.8,-.6,.6,.8)*p*31.+vec2(-regionWind.y,regionWind.x)*time*.005).xyz*2.-1.;
+      vec2 cell=floor(p*110.),rippleP=fract(p*110.)-.5;
+      float cycle=fract(time*.85+fract(sin(dot(cell,vec2(12.9898,78.233)))*43758.5453));
+      float ripple=exp(-pow((length(rippleP)-cycle*.43)*45.,2.))*(1.-cycle)*regionRain;
+      vec3 localN=normalize(vec3((a.xy*.075+b.xy*.04)*regionWave+normalize(rippleP+vec2(.0001))*ripple*.018,1.));
       vec3 N=normalize(waterBasis*localN),V=normalize(eye-vWorld);
       vec2 bathUv=p/1.3+.5;
       vec2 packed=texture2D(depthField,clamp(bathUv,0.,1.)).rg;
       float h=(packed.r*65280.+packed.g*255.)/65535.*.23-.065;
       if(any(lessThan(bathUv,vec2(0.)))||any(greaterThan(bathUv,vec2(1.))))h=-.065;
-      float depth=max(0.,-.001-h);
+      float depth=max(0.,regionLevel-h);
       float shallow=exp(-depth*108.);
-      vec3 deep=vec3(.017,.044,.049),shoal=vec3(.075,.15,.12);
+      vec3 deep=regionDeep,shoal=regionShallow;
       vec3 body=mix(deep,shoal,shallow*.88);
-      vec2 distortion=(a.xy*.65+b.xy*.35)*.0013;
+      vec2 distortion=(a.xy*.65+b.xy*.35)*.0013*regionWave;
       vec3 reflection=texture2D(mirrorSampler,mirrorCoord.xy/mirrorCoord.w+distortion).rgb;
       float F=.035+.78*pow(1.-max(dot(N,V),0.),5.);
       vec3 color=mix(body,reflection,clamp(F+.065,0.,.88));
       float crest=.5+.5*sin(depth*1900.-time*1.45+(a.x+b.y)*1.2);
       float shore=exp(-depth*520.)*smoothstep(.4,.88,crest);
       float speck=smoothstep(-.15,.55,a.y+b.x);
-      color=mix(color,vec3(.57,.69,.65),shore*speck*.56);
-      vec3 L=normalize(waterBasis*vec3(-.65,-.28,.7));
+      color=mix(color,vec3(.57,.69,.65),shore*speck*.56*regionFoam);
+      vec3 L=normalize(waterBasis*regionSun);
       float glint=pow(max(dot(N,normalize(V+L)),0.),170.);
-      color+=vec3(.45,.37,.22)*glint*.17;
+      color+=vec3(.45,.37,.22)*glint*.17+vec3(.035,.04,.04)*ripple;
       gl_FragColor=vec4(color,1.);
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
@@ -299,7 +304,7 @@ export function createArchipelagoHQ(g,kit) {
   }
   const ecology=scatterEcology(g,{height:islandHeightHQ,bounds:[-.52,.52,-.46,.38],count:1100,exclude:(x,z)=>occupied.some(p=>Math.hypot(x-p.x,z-p.z)<p.r+.012),seed:901});
   const effects=rift(g,kit);
-  return {focus:.132,eye:[.73,.49,1.0],light:[-1.7,1.7,.65],meta:{...meta,...ecology,trees,homes:homes.length},
+  return {habitat:{height:islandHeightHQ,bounds:[-.52,.52,-.46,.38],exclude:(x,z)=>occupied.some(p=>Math.hypot(x-p.x,z-p.z)<p.r+.016)},focus:.132,eye:[.73,.49,1.0],light:[-1.7,1.7,.65],meta:{...meta,...ecology,trees,homes:homes.length},
     environment(env){return reflectiveSea(env,kit);},
     update(t){effects.material.uniforms.time.value=t;effects.dust.position.y=Math.sin(t*.2)*.0007;effects.fog.forEach((f,i)=>f.material.opacity=.16+Math.sin(t*.16+i)*.04);}
   };

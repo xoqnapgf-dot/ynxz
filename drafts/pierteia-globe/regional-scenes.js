@@ -1,8 +1,9 @@
 import * as T from 'three';
 import { tiledRoof } from './roof-detail.js?v=12';
 import { finish } from './world-finish.js?v=9';
+import { regionalProfile } from './regional-profiles.js?v=17';
 import { scatterEcology } from './ecology.js?v=9';
-import { reflectiveSea } from './archipelago-hq.js?v=9';
+import { reflectiveSea } from './archipelago-hq.js?v=17';
 
 // Representative neighbourhoods, not miniature whole countries or new official towns.
 // Secondary scenes inherit the parent anchor in the viewer; no coordinates are minted.
@@ -11,7 +12,7 @@ const smooth=(a,b,x)=>{const t=T.MathUtils.clamp((x-a)/(b-a),0,1);return t*t*(3-
 function material(kit,color,type='stone',roughness=.88,extra={}){
  return finish(new T.MeshStandardMaterial({color,map:kit.maps[type].map,normalMap:kit.maps[type].normal,normalScale:new T.Vector2(.28,.28),roughness,...extra}),type==='wood'?'wood':extra.metalness?'metal':type==='roof'?'roof':type==='rock'?'terrain':color==='#895644'?'brick':'stone');
 }
-export function palette(k){return {brick:material(k,'#895644'),cream:material(k,'#c2ba9e'),plaster:finish(new T.MeshStandardMaterial({color:'#b7b1a0'}),'plaster'),stone:material(k,'#888d83'),steel:material(k,'#626963','roof',.7,{metalness:.2}),roof:material(k,'#545c56','roof',.84),wood:material(k,'#685241','wood'),dark:material(k,'#343c3a','rock'),glass:finish(new T.MeshStandardMaterial({color:'#343d39'}),'glass'),paper:new T.MeshStandardMaterial({color:'#d1c8a7',roughness:.9}),warm:new T.MeshStandardMaterial({color:'#d6b676',emissive:'#efb46b',emissiveIntensity:1.3,roughness:.65}),ground:material(k,'#656958','rock')};}
+export function palette(k,key){const p={brick:material(k,'#895644'),cream:material(k,'#c2ba9e'),plaster:finish(new T.MeshStandardMaterial({color:'#b7b1a0'}),'plaster'),stone:material(k,'#888d83'),steel:material(k,'#626963','roof',.7,{metalness:.2}),roof:material(k,'#545c56','roof',.84),wood:material(k,'#685241','wood'),dark:material(k,'#343c3a','rock'),glass:finish(new T.MeshStandardMaterial({color:'#343d39'}),'glass'),paper:new T.MeshStandardMaterial({color:'#d1c8a7',roughness:.9}),warm:new T.MeshStandardMaterial({color:'#d6b676',emissive:'#efb46b',emissiveIntensity:1.3,roughness:.65}),ground:material(k,'#656958','rock')};for(const [role,m]of Object.entries(p)){m.userData.regionalRole=role;if(key&&regionalProfile(key).palette?.[role])m.color.set(regionalProfile(key).palette[role]);}return p;}
 export function gridGround(g,k,height,colors,span=1.5,n=160){
  const p=[],c=[],uv=[],idx=[];
  for(let j=0;j<=n;j++)for(let i=0;i<=n;i++){
@@ -22,6 +23,14 @@ export function gridGround(g,k,height,colors,span=1.5,n=160){
  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(p,3));geo.setAttribute('color',new T.Float32BufferAttribute(c,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();
  const m=new T.MeshStandardMaterial({vertexColors:true,map:k.maps.rock.map,normalMap:k.maps.rock.normal,normalScale:new T.Vector2(.48,.48),roughness:.95});
  finish(m,'terrain');const mesh=k.mesh(g,geo,m);mesh.userData.noBake=true;
+ // Preserve the dense foreground grid; a separate low-density apron carries
+ // mainland terrain to the fog horizon instead of ending as a square island.
+ if(span>=3){
+  const ap=[],ac=[],au=[],ai=[],n=64,far=10;
+  for(let j=0;j<=n;j++)for(let i=0;i<=n;i++){const x=(i/n-.5)*far,z=(j/n-.5)*far,h=height(x,z)-.001,v=colors(x,z,h);ap.push(x,h,z);ac.push(v.r,v.g,v.b);au.push(x*45,z*45);
+   if(i<n&&j<n){const x1=x+far/n,z1=z+far/n;if(x>=-span/2&&x1<=span/2&&z>=-span/2&&z1<=span/2)continue;const a=j*(n+1)+i;ai.push(a,a+n+1,a+1,a+1,a+n+1,a+n+2);}}
+  const apron=new T.BufferGeometry();apron.setAttribute('position',new T.Float32BufferAttribute(ap,3));apron.setAttribute('color',new T.Float32BufferAttribute(ac,3));apron.setAttribute('uv',new T.Float32BufferAttribute(au,2));apron.setIndex(ai);apron.computeVertexNormals();const horizon=k.mesh(g,apron,m);horizon.name='mainland-terrain-apron';horizon.userData.noBake=true;horizon.castShadow=false;
+ }
 }
 function groundEnvironment(env,k,m){const geo=new T.PlaneGeometry(10,10);geo.rotateX(-Math.PI/2);const uv=geo.attributes.uv,pos=geo.attributes.position;for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)*45,pos.getZ(i)*45);const p=k.mesh(env,geo,m,0,.004,0);p.castShadow=false;return null;}
 function pane(g,x,y,z,w,h,k,p,recessed=false){
@@ -62,6 +71,7 @@ function piercedWall(g,width,height,depth,openings,k,material){
  k.mesh(g,geo,material,0,0,depth/2-.0018);
 }
 function house(g,x,z,w,d,h,angle,k,p,{y=.012,timber=false,curved=false,open=false,floors=2}={}){
+ (g.userData.weatherShelters||=[]).push({x,z,w:w*1.18,d:d*1.25,angle,top:y+h*1.32+.004});
  const q=new T.Group();q.position.set(x,y,z);q.rotation.y=angle;g.add(q);
  k.box(q,w+.002,.004,d+.002,p.stone,0,.002,0);
  const bays=windowBays(w,h,floors);
@@ -217,8 +227,8 @@ function iron(g,k,p){
  gridGround(g,k,h,(x,z)=>new T.Color('#726d59').multiplyScalar(.87+hash(Math.floor(x*170),Math.floor(z*170))*.15),3.4,240);
  rails(g,-.16,0,.88,k,p);rails(g,-.10,0,.88,k,p);rails(g,-.035,0,.88,k,p);train(g,-.10,.17,k,p);
  factory(g,.13,-.12,.19,.105,k,p);factory(g,.17,.070,.135,.08,k,p);
- const smoke=new T.Group();smoke.userData.noBake=true;g.add(smoke);
- for(const [x,z,height]of [[.21,-.23,.145],[.28,-.13,.119]]){k.mesh(g,new T.CylinderGeometry(.007,.013,height,20),p.brick,x,.012+height/2,z);for(let i=0;i<6;i++)k.cyl(g,.013-i*.0009,.002,p.stone,x,.028+i*height*.15,z,20);for(let i=0;i<6;i++)k.mist(smoke,x-i*.008,.012+height+i*.014,z,.033+i*.006,'#9b9d95');}
+ const smoke=new T.Group();smoke.userData.noBake=true;g.add(smoke);const plumes=[];
+ for(const [x,z,height]of [[.21,-.23,.145],[.28,-.13,.119]]){k.mesh(g,new T.CylinderGeometry(.007,.013,height,20),p.brick,x,.012+height/2,z);for(let i=0;i<6;i++)k.cyl(g,.013-i*.0009,.002,p.stone,x,.028+i*height*.15,z,20);for(let i=0;i<8;i++){const puff=k.mist(smoke,x,.012+height,z,.04,'#b3b6b0');plumes.push({puff,x,y:.012+height,z,phase:i/8});}}
  // Elevated service pipe rack and steel-braced water tower.
  for(let i=0;i<5;i++){const zz=-.22+i*.08;for(const xx of [.008,.031])k.beam(g,[xx,.01,zz],[xx,.064,zz],.0013,p.steel);k.beam(g,[.008,.064,zz],[.031,.064,zz],.0013,p.steel);}for(const xx of [.012,.021,.029])k.beam(g,[xx,.066,-.25],[xx,.066,.15],.002,p.steel);
  const tx=-.27,tz=-.22;for(const dx of [-.011,.011])for(const dz of [-.011,.011])k.beam(g,[tx+dx,.012,tz+dz],[tx+dx,.073,tz+dz],.0013,p.steel);for(const z of [-.011,.011]){k.beam(g,[tx-.011,.016,tz+z],[tx+.011,.070,tz+z],.0007,p.steel);k.beam(g,[tx+.011,.016,tz+z],[tx-.011,.070,tz+z],.0007,p.steel);}k.cyl(g,.021,.026,p.steel,tx,.084,tz,40);k.mesh(g,new T.ConeGeometry(.022,.009,40),p.roof,tx,.102,tz);
@@ -228,11 +238,11 @@ function iron(g,k,p){
  for(let i=0;i<16;i++){const x=-.42+hash(i,9)*.81,z=-.38+hash(i,2)*.76;if(Math.abs(x)>.32)k.tree(g,x,z,.6,h(x,z),true);}for(let i=0;i<30;i++)k.person(g,-.25+hash(i,13)*.40,.25+hash(i,19)*.08,.013);
  industrialContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.44&&x<.46&&z>-.46&&z<.38,seed:12});
- return {views:{street:{eye:[.31,.16,.36],target:[.11,.05,.04]}},focus:.06,eye:[.60,.47,.78],light:[-1.6,2.3,1.1],meta:{...ecology,sceneType:'rail-and-steel neighbourhood',piercedFacades:true,scope:'representative district, not the whole country'},environment:env=>groundEnvironment(env,k,p.ground)};
+ return {habitat:{height:h,bounds:[-.85,.85,-.85,.55],exclude:(x,z)=>Math.abs(x)<.56&&z>-.6},update(t){for(const a of plumes){const phase=(a.phase+t*.065)%1;a.puff.position.set(a.x-phase*.09,a.y+phase*.12,a.z+phase*.018);a.puff.scale.set(.025+phase*.09,.018+phase*.045,1);a.puff.material.opacity=Math.sin(phase*Math.PI)*.38;}},views:{street:{eye:[.31,.16,.36],target:[.11,.05,.04]}},focus:.06,eye:[.60,.47,.78],light:[-1.6,2.3,1.1],meta:{...ecology,sceneType:'rail-and-steel neighbourhood',piercedFacades:true,scope:'representative district, not the whole country'},environment:env=>groundEnvironment(env,k,p.ground)};
 }
 function xuanji(g,k,p){
  const shoreline=x=>.105+Math.sin(x*9)*.024;
- const h=(x,z)=>T.MathUtils.lerp(-.045,.021+Math.exp(-((x+.52)**2+(z+.44)**2)*22)*.05,smooth(-.035,.014,shoreline(x)-z));
+ const h=(x,z)=>T.MathUtils.lerp(-.045,.021+Math.exp(-((x+.52)**2+(z+.44)**2)*22)*.05,smooth(-.035-smooth(.34,.50,Math.abs(x))*.045,.014+smooth(.34,.50,Math.abs(x))*.025,shoreline(x)-z));
  gridGround(g,k,h,(x,z,y)=>new T.Color(y<0?'#766f5b':Math.abs(x)<.38&&z>-.33?'#909e8d':'#607453'),3.6,320);
  const white=material(k,'#c4ccc5'),glass=new T.MeshStandardMaterial({color:'#688f96',roughness:.19,metalness:.5}),metal=material(k,'#a2b0ad','roof',.4,{metalness:.55});
  // Compact research buildings and workshop wings, not a skyline of invented skyscrapers.
@@ -259,12 +269,12 @@ function xuanji(g,k,p){
  crane(g,.18,.09,k,p,.65);
  lakeContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.40&&x<.46&&z>-.40&&z<.24,seed:11});
- return {views:{street:{eye:[.23,.17,.34],target:[-.05,.045,-.06]}},focus:.060,eye:[.53,.41,.73],light:[-1.7,2.4,1.3],meta:{...ecology,sceneType:'landlocked lake research/workshop district',piercedFacades:true,scope:'representative district; no seaport'},environment:env=>reflectiveSea(env,k,h)};
+ return {habitat:{height:h,bounds:[-.8,.8,-.45,.55],exclude:(x,z)=>Math.abs(x)<.42},views:{street:{eye:[.23,.17,.34],target:[-.05,.045,-.06]}},focus:.060,eye:[.53,.41,.73],light:[-1.7,2.4,1.3],meta:{...ecology,sceneType:'landlocked lake research/workshop district',piercedFacades:true,scope:'representative district; no seaport'},environment:env=>reflectiveSea(env,k,h)};
 }
-function marketStall(g,x,z,k,p,color){const q=new T.Group();q.position.set(x,.027,z);g.add(q);for(const a of [-1,1])for(const b of [-1,1])k.cyl(q,.0005,.014,p.wood,a*.009,.007,b*.005,6);const fabric=new T.MeshStandardMaterial({color,roughness:1,side:T.DoubleSide});const roof=k.box(q,.022,.0006,.014,fabric,0,.016,0);roof.rotation.x=.13;k.box(q,.020,.0015,.008,p.wood,0,.006,0);for(let i=0;i<5;i++)k.mesh(q,new T.SphereGeometry(.0015,6,4),i%2?p.cream:p.brick,-.008+i*.004,.008,0);}
+function marketStall(g,x,z,k,p,color){(g.userData.weatherShelters||=[]).push({x,z,w:.023,d:.015,angle:0,top:.045});const q=new T.Group();q.position.set(x,.027,z);g.add(q);for(const a of [-1,1])for(const b of [-1,1])k.cyl(q,.0005,.014,p.wood,a*.009,.007,b*.005,6);const fabric=new T.MeshStandardMaterial({color,roughness:1,side:T.DoubleSide});const roof=k.box(q,.022,.0006,.014,fabric,0,.016,0);roof.rotation.x=.13;k.box(q,.020,.0015,.008,p.wood,0,.006,0);for(let i=0;i<5;i++)k.mesh(q,new T.SphereGeometry(.0015,6,4),i%2?p.cream:p.brick,-.008+i*.004,.008,0);}
 function falota(g,k,p){
  const edge=x=>.10+Math.sin(x*7)*.018;
- const h=(x,z)=>T.MathUtils.lerp(-.055,.022+Math.min(.18,Math.max(0,-z-.23)*.22),smooth(-.025,.010,edge(x)-z));
+ const h=(x,z)=>T.MathUtils.lerp(-.055,.022+Math.min(.18,Math.max(0,-z-.23)*.22),smooth(-.025-smooth(.40,.53,Math.abs(x))*.045,.010+smooth(.40,.53,Math.abs(x))*.025,edge(x)-z));
  gridGround(g,k,h,(x,z,y)=>new T.Color(y<0?'#786f58':z<-.27?'#738063':'#868273'),3.6,320);
  road(g,0,-.01,.68,.042,k,p.stone,.024);road(g,-.06,-.13,.032,.29,k,p.stone,.024);
  for(let i=0;i<8;i++){
@@ -284,7 +294,7 @@ function falota(g,k,p){
  for(let i=0;i<36;i++){const x=-.41+hash(i,30)*.82,z=-.34-hash(i,16)*.12;k.tree(g,x,z,.55+hash(i,13)*.3,h(x,z));}
  harbourContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.41&&x<.43&&z>-.39&&z<.29,seed:61});
- return {views:{street:{eye:[.27,.14,.44],target:[0,.049,.083]}},focus:.073,eye:[.50,.40,.79],light:[-1.7,1.6,1.0],meta:{...ecology,sceneType:'working coastal harbour and market streets',piercedFacades:true,scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
+ return {habitat:{height:h,bounds:[-.8,.8,-.45,.55],exclude:(x,z)=>Math.abs(x)<.43},views:{street:{eye:[.27,.14,.44],target:[0,.049,.083]}},focus:.073,eye:[.50,.40,.79],light:[-1.7,1.6,1.0],meta:{...ecology,sceneType:'working coastal harbour and market streets',piercedFacades:true,scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
 }
 function shiomi(g,k,p){
  const edge=x=>.075+Math.sin(x*10)*.015;
@@ -307,6 +317,6 @@ function shiomi(g,k,p){
  for(let i=0;i<24;i++)k.person(g,-.047+(hash(i,9)-.5)*.035,.04-hash(i,18)*.27,h(-.047,.04-hash(i,18)*.27)+.001);
  townContext(g,k,p,h);
  const ecology=scatterEcology(g,{height:h,bounds:[-.70,.70,-.72,.40],count:900,exclude:(x,z)=>x>-.23&&x<.34&&z>-.37&&z<.18,seed:31});
- return {views:{street:{eye:[-.15,.100,.17],target:[-.055,.036,-.11]}},focus:.062,eye:[.50,.36,.71],light:[-1.9,2.6,.9],meta:{...ecology,sceneType:'tidal port town, narrow shops and small shrine',piercedFacades:true,scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
+ return {habitat:{height:h,bounds:[-.8,.8,-.45,.55],exclude:(x,z)=>Math.abs(x)<.39},views:{street:{eye:[-.15,.100,.17],target:[-.055,.036,-.11]}},focus:.062,eye:[.50,.36,.71],light:[-1.9,2.6,.9],meta:{...ecology,sceneType:'tidal port town, narrow shops and small shrine',piercedFacades:true,scope:'secondary place; no independent coordinates'},environment:env=>reflectiveSea(env,k,h)};
 }
-export function createRegionalScene(g,key,kit){const p=palette(kit);const builders={12:iron,11:xuanji,falota,shiomi};if(!builders[key])throw Error('Unknown regional scene: '+key);return builders[key](g,kit,p);}
+export function createRegionalScene(g,key,kit){const p=palette(kit,key);const builders={12:iron,11:xuanji,falota,shiomi};if(!builders[key])throw Error('Unknown regional scene: '+key);return builders[key](g,kit,p);}

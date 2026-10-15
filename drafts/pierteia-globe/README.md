@@ -1,4 +1,27 @@
-# Pierteia · 手机界面修复 16 / 美术 14
+# Pierteia · 地方自然环境 17 / 建筑基底 14
+
+八个现有场景分别完善地表、天气、植被、水面、照明与材质，不把所有地方套成同一种海港、同一片绿地。
+
+- 学院：海峡晴隙与林坡海风，保留开放依山环形、暖木与灰瓦。
+- 群岛：湿岩深木、林地蕨草和海雾，保留横空裂隙。
+- 雪峰：冷岩、非对称山脊、坡面雪层、低处草本、飘雪和局部源区溪流。
+- 万知城：浅石、铜绿屋面、暖色民居瓦与低草甸。
+- 铁枢：阴天铁路工区、赤褐砖、冷灰钢和局部锈迹。
+- 璇玑：内陆湖港，浅墙与金属玻璃、轻微湖面扰动和缓岸芦草。
+- 法洛塔：海风、盐斑、晒旧木与货栈抹灰，外围地表接入远景。
+- 汐见町：梅雨、湿石路、灰蓝瓦、退潮泥岸和雨点水纹；船体与水位一起调整。
+
+正式海陆、20标记、28地点和parent不变。具体取景天气、植物与局部地貌为视觉演绎，不新增正式气候或河道设定。雨雪与近地雾可以在折叠介绍里关闭，系统减少动态偏好也会关闭这些叠加。
+
+[看八景实图与手机页面](screenshots/environments-v17/index.html) · [设定依据、目视查修、实现边界](research/v17-environment-review.md) · [打开地图](../../map.html?view=globe)
+
+当前缓存：globe.js / globe.css / landmarks.js / academy-hillside.js / archipelago-hq.js / regional-scenes.js 与三个regional环境模块 v17；map-view.js v7。map-bridge.js / map-embed.css / responsive-ui.js 仍为v16，学院建筑与木作基底仍为v14；未改的模块不统一升版。
+
+本轮检查：`../../tools/test-map-environments.mjs`、`../../tools/test-map-integration.mjs`，输出独立v17报告；对应`validate-map-environments.mjs` / `validate-map.mjs`。地被/材质隔离单测在`tools/test-regional-environments.mjs`。v16完整手机图集是历史记录，不冒充本轮重拍；新的天气控件另做手机检查。没有降低模型/纹理/阴影质量，没有新增4K图集，也不合并main。
+
+---
+
+# 上轮记录：手机界面修复 16 / 建筑基底 14
 
 本轮按选地点、进入场景等状态的实际截图处理遮挡，不继续更换美术资源。
 
@@ -9,9 +32,9 @@
 
 [浏览全部实际截图与前后对照](screenshots/mobile-v16/index.html) · [查修记录与限制](research/v16-mobile-review.md)
 
-当前入口：`../../map.html?view=globe`。模型仍为v14；UI缓存版本globe.js/map-bridge.js/map-embed.css/responsive-ui.js v16，map-view.js v6、map-view.css v3；未修改的globe.css维持v15。
+当轮入口：`../../map.html?view=globe`。当轮模型为v14；UI缓存版本globe.js/map-bridge.js/map-embed.css/responsive-ui.js v16，map-view.js v6、map-view.css v3；未修改的globe.css维持v15。
 
-验证脚本：仓库根目录 `tools/test-map-mobile.mjs`、`tools/test-map-integration.mjs`，对应v16报告与validator。旧v15/v14报告保留为历史，不把它们当成本轮新测试。截图为普通视口分辨率，不新增4K图集。仅同步开发分支，不合并main。
+当轮验证脚本：仓库根目录 `tools/test-map-mobile.mjs`、`tools/test-map-integration.mjs`，当时输出v16报告；当前脚本输出v17，旧报告保留。旧v15/v14报告保留为历史，不把它们当成本轮新测试。截图为普通视口分辨率，不新增4K图集。仅同步开发分支，不合并main。
 
 ---
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080f19"><title>Pierteia · 星球图志 / 3D 草稿</title>
 <script>if(window.parent!==window&&new URLSearchParams(location.search).get('embed')==='map')document.documentElement.classList.add('embedded');</script>
-<link rel="stylesheet" href="globe.css?v=15">
+<link rel="stylesheet" href="globe.css?v=17">
 <link rel="stylesheet" href="map-embed.css?v=16">
 <script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}</script>
 </head>
@@ -51,6 +51,7 @@
   <h2 id="detail-title"></h2><div id="detail-copy"><p id="detail-coordinates"></p>
   <p id="detail-description"></p>
   <div id="children"></div>
+  <div id="scene-environment" class="scene-environment" hidden><strong id="environment-label"></strong><p id="environment-style"></p><label><input type="checkbox" id="weather-effects" checked> 显示雨雪与近地雾效</label><small>局部场景演绎，非实时天气或新增气候设定。</small></div>
   <p class="detail-note" id="detail-note"></p></div>
   <button id="inspect" class="primary-button">进入场景特写 <span>↗</span></button>
   <div id="detail-views" hidden><button data-detail-view="wide">全景</button><button data-detail-view="harbor">海岸</button><button data-detail-view="courtyard" hidden>庭院人眼</button><button data-detail-view="joinery" hidden>窗与木作</button><button data-detail-view="street" hidden>建筑近景</button><button data-detail-view="hillside" hidden>山坡与林地</button><button data-detail-view="library" hidden>图书馆</button><button data-detail-view="teaching" hidden>教学楼</button><button data-detail-view="workshop" hidden>工坊</button><button data-detail-view="materials" hidden>材质细节</button><button data-detail-view="rift">裂缝</button></div><label class="camera-picker" hidden>镜头<select id="scene-camera" aria-label="选择场景镜头"></select></label>
@@ -68,5 +69,5 @@
 <div id="toast" role="status"></div>
 <div id="loading"><div class="loader-orbit"><div></div><i></i></div><span>PIERTEIA</span><p id="loading-text">正在展开山海与星辰</p><small>3D WORLD ATLAS · DRAFT 14 / HQ</small></div>
 <noscript><div class="fatal">此草稿需要 JavaScript 和支持 WebGL 2 的浏览器。</div></noscript>
-<script type="module" src="globe.js?v=16"></script>
+<script type="module" src="globe.js?v=17"></script>
 </body></html>

@@ -1,8 +1,8 @@
 import {createRequire} from 'node:module';import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url),{chromium}=require('playwright'),c=require('@sparticuz/chromium');
 const root=new URL('../',import.meta.url),base=process.env.ATLAS_URL||'http://127.0.0.1:8135/';
-const report={revision:16,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
-for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/globe.css','drafts/pierteia-globe/responsive-ui.js','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html','drafts/pierteia-globe/academy-hillside.js','drafts/pierteia-globe/academy-landscape.js','drafts/pierteia-globe/academy-craft.js'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
+const report={revision:17,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
+for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/globe.css','drafts/pierteia-globe/responsive-ui.js','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html','drafts/pierteia-globe/academy-hillside.js','drafts/pierteia-globe/academy-landscape.js','drafts/pierteia-globe/academy-craft.js','drafts/pierteia-globe/landmarks.js','drafts/pierteia-globe/archipelago-hq.js','drafts/pierteia-globe/regional-scenes.js','drafts/pierteia-globe/regional-profiles.js','drafts/pierteia-globe/regional-surfaces.js','drafts/pierteia-globe/regional-environment.js'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
 if(process.env.TEST_FONT)await c.font(process.env.TEST_FONT);
 const b=await chromium.launch({executablePath:await c.executablePath(),args:c.args.filter(a=>a!=='--disable-web-security'),headless:true});
 const shot=async(p,name)=>{if(process.env.CHECK_IMAGES)await p.screenshot({path:`${process.env.CHECK_IMAGES}/${name}.png`});};
@@ -111,5 +111,5 @@ try{
  report.checks.touchEmulatedCleanExit=true;
  await touch.setViewportSize({width:390,height:480});await tf.locator('#embed-search').tap();await tf.locator('#search').fill('学院');
  assert(await tf.locator('#place-list .place').first().isVisible());await tf.locator('#fold').tap();await tf.locator('#explorer-content').waitFor({state:'hidden'});assert(await tf.locator('#embed-search').isVisible());report.checks.shortScreenSearchAndTapReturn=true;await touchContext.close();
- assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v16.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
+ assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v17.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
 }finally{await b.close();}
