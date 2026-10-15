@@ -6,7 +6,8 @@ export function alignTimber(geo,dimensions){
   const v=[p.getX(i),p.getY(i),p.getZ(i)],normal=[n.getX(i),n.getY(i),n.getZ(i)];
   const face=normal.map(Math.abs).indexOf(Math.max(...normal.map(Math.abs)));
   const cross=[0,1,2].find(a=>a!==axis&&a!==face)??(axis+1)%3;
-  uv.setXY(i,v[Math.abs(normal[axis])>.8?(axis+1)%3:axis]*28,v[cross]*110);
+  const end=Math.abs(normal[axis])>.8,others=[0,1,2].filter(a=>a!==axis);
+  uv.setXY(i,v[end?others[0]:axis]*28,v[end?others[1]:cross]*110);
  }
  uv.needsUpdate=true;geo.userData.grainAxis=axis;
 }

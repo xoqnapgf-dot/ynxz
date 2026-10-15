@@ -1,3 +1,24 @@
+# Pierteia · 山肩、地被与木作 / 互动版 14
+
+本轮继续实际改学院画面，保留地图页的平面/球体切换，不重排开放环形校园。
+
+## 直接看改动
+
+- 地图页：`../../map.html?view=globe&place=安那其学院&inspect&frame=hillside`。
+- 教学楼：同一路径把 `frame` 改成 `teaching`；木纹、逐条铺板、檐沟与落水管可近看。
+- 原独立入口的 `?site=900&inspect&frame=...` 也保留。
+
+## 本轮内容
+
+后山重塑为分开的山肩和沟谷；薄片岩层换成嵌地的不规则岩块；补成簇矮草；窗框、立柱及木构件调整纹理方向；有顶连廊采用有板缝的独立铺板；五栋翼楼加入开口檐沟、弯接落水管、管箍与托件。学院环境/日光/接触遮蔽重新平衡，保留既有摄影HDR与参考表面，不宣称新增了扫描资产或GI烘焙。
+
+制作及目视判断见 [v14记录](research/v14-visual-review.md)。新检查：`tools/test-craft.mjs`、`tools/verification-v14.json`，以及仓库根目录的 `tools/verification-map-v14.json`。正式地理与地点数据不变，没有上传新的4K图集，没有合并main。
+
+仍需继续完善山石细部、树形多样性、地被覆盖、室内空间和其他地区的独立美术；本轮不是全图完成。
+
+---
+<details><summary>v13地图页接入记录（历史）</summary>
+
 # Pierteia · 地图页双视图接入 / 互动版 13
 
 本轮按用户新要求，把球体接到主站 `map.html` 的「平面 / 球体」切换中。独立入口继续保留，沿用v12地形与模型，不复制大型资源，也不自动合并或部署。
@@ -385,6 +406,8 @@ node drafts/pierteia-globe/tools/validate.mjs
 - `screenshots/01`—`10`：前轮记录，不作为本轮4K成片；`11-islands-work-preview.png`为收尾前工作预览，不冒充最终成片。
 
 [第三版球面制作记录（历史版本）](https://github.com/xoqnapgf-dot/ynxz/blob/811c8bc/drafts/pierteia-globe/README.md)
+
+</details>
 
 </details>
 

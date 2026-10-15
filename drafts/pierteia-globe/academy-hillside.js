@@ -1,5 +1,5 @@
 import * as T from 'three';
-import { alignTimber, addRainwater, plankWalk } from './academy-craft.js?v=14';
+import { alignTimber, addRainwater, plankWalk } from './academy-craft.js?v=14.1';
 import { campusSurface, addCampusLandscape } from './academy-landscape.js?v=14';
 import { studyMaterial, readingCourt, scalePerson } from './academy-study.js?v=11';
 import { wallWithOpenings, bendWall } from './architecture.js?v=10';

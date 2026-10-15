@@ -1,8 +1,8 @@
 import {createRequire} from 'node:module';import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url),{chromium}=require('playwright'),c=require('@sparticuz/chromium');
 const root=new URL('../',import.meta.url),base=process.env.ATLAS_URL||'http://127.0.0.1:8135/';
-const report={revision:13,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
-for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
+const report={revision:14,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
+for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html','drafts/pierteia-globe/academy-hillside.js','drafts/pierteia-globe/academy-landscape.js','drafts/pierteia-globe/academy-craft.js'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
 if(process.env.TEST_FONT)await c.font(process.env.TEST_FONT);
 const b=await chromium.launch({executablePath:await c.executablePath(),args:c.args.filter(a=>a!=='--disable-web-security'),headless:true});
 const shot=async(p,name)=>{if(process.env.CHECK_IMAGES)await p.screenshot({path:`${process.env.CHECK_IMAGES}/${name}.png`});};
@@ -62,5 +62,5 @@ try{
  await failed.goto(new URL('map.html?view=globe&place=万知城',base).href);await failed.locator('#globeNotice[data-state=error]').waitFor();await failed.locator('#retryGlobe').click();const recovered=await ready(failed);await recovered.evaluate(()=>__globe.pause(true));assert.equal(await failed.locator('#mapPlace').inputValue(),'万知城');report.checks.failedTextureRetry=true;await failed.close();
  // Direct draft routes still work; integration does not force a parent page.
  console.log('PASS missing texture retry');const standalone=await context.newPage();await standalone.setViewportSize({width:1000,height:650});watch(standalone);await standalone.goto(new URL('drafts/pierteia-globe/?site=900',base).href);await standalone.waitForFunction(()=>window.__globe?.ready);assert(!await standalone.locator('html').evaluate(el=>el.classList.contains('embedded')));assert(await standalone.locator('.topbar').isVisible());await standalone.evaluate(()=>__globe.pause(true));report.checks.standaloneRetained=true;await standalone.close();
- assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v13.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
+ assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v14.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
 }finally{await b.close();}
