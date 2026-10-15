@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
+  <meta name="site-release" content="21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>地图 · 意拟小站</title>
   <link rel="stylesheet" href="css/style.css?v=27" />
@@ -14,7 +15,7 @@
   <meta name="apple-mobile-web-app-title" content="意拟小站" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script src="js/theme.js?v=2"></script>
-  <script>if(new URLSearchParams(location.search).get('view')==='globe'){const u=new URL('globe.html',location.href);u.search=location.search;u.searchParams.delete('view');u.hash=location.hash;location.replace(u.href);}</script>
+  <script>if(new URLSearchParams(location.search).get('view')==='globe'){const u=new URL('globe.html',location.href);u.search=location.search;u.searchParams.delete('view');u.searchParams.set('release','21');u.hash=location.hash;location.replace(u.href);}</script>
   <style>
     html, body { overflow: hidden; }
     .map-main { position: fixed; left: 0; right: 0; bottom: 0; top: var(--hh, 64px); max-width: none; padding: 0; height: auto; }
@@ -86,13 +87,13 @@
 </head>
 <body data-page="map" class="theme-map" data-map-view="flat">
   <header class="site-header">
-    <a class="brand" href="index.html"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
+    <a class="brand" href="index.html?release=21"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
     <nav class="site-nav" aria-label="主导航">
-      <a href="gallery.html">画廊</a>
-      <a href="map.html" aria-current="page">地图</a>
-      <a href="cp.html">CP乱炖</a>
-      <a href="forum.html">讨论区</a>
-      <a href="search.html">搜索</a>
+      <a href="gallery.html?release=21">画廊</a>
+      <a href="map.html?release=21" aria-current="page">地图</a>
+      <a href="cp.html?release=21">CP乱炖</a>
+      <a href="forum.html?release=21">讨论区</a>
+      <a href="search.html?release=21">搜索</a>
     </nav>
   </header>
 
@@ -100,8 +101,8 @@
     <div class="map-toolbar">
       <h1 class="map-heading">PIERTEIA<small>主世界 · 地图与地点志</small></h1>
       <nav class="map-projection" aria-label="地图页面">
-        <a id="viewFlat" href="map.html" aria-current="page">平面</a>
-        <a id="viewGlobe" href="globe.html">3D地球</a>
+        <a id="viewFlat" href="map.html?release=21" aria-current="page">平面</a>
+        <a id="viewGlobe" href="globe.html?release=21">3D地球</a>
       </nav>
       <label class="map-locate" for="mapPlace">定位地点<select id="mapPlace"><option value="">选择国家或地点…</option></select></label>
       <span class="map-help" id="mapHelp">拖动平移 · 滚轮缩放</span>
@@ -163,7 +164,7 @@
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
   <script src="js/map-flat.js?v=2"></script>
-  <script src="js/map-view.js?v=9"></script>
+  <script src="js/map-view.js?v=10"></script>
 
 </body>
 </html>

@@ -1,5 +1,7 @@
 # 意拟小站 · IDEOLOGICAL HUMANS
 
+> **当前唯一网站入口：[GitHub Pages](https://xoqnapgf-dot.github.io/ynxz/)**。当前发布开发分支`arena/4c4cfaac-ynxz`，不合并main。旧raw.githack固定提交链接不会跟随新提交更新；InfinityFree镜像不在本次发布范围内。
+
 以意识形态（今后扩展为各领域的「思潮」）拟人化角色和原创架空世界 Pierteia 为核心，包含画廊、世界地图、地点志、CP乱炖与讨论区的静态展示站。纯 HTML/CSS/JS，**无构建、无依赖**，本地双击 `index.html` 即可运行，也可整体部署到任意静态托管（GitHub Pages 等）。
 
 > **接手的 AI 请先读「十一、接手指南」**（工作流、怎么加内容、行文与设定禁忌、用户的沟通习惯）。
@@ -284,7 +286,7 @@ ynxz/
 - **本地**：普通页面可双击 `index.html`（`file://`）；地图球体需HTTP服务，例如仓库根目录运行 `python -m http.server 8135 --bind 0.0.0.0` 后打开 `/map.html`，无需构建。
 - **静态托管（GitHub Pages 等）**：整站目录直接部署。
 - **图片**：意识形态封面是内联 SVG，任何环境都显示；角色大图/预览图依赖 `素材/`。仓库内 `素材/` 为**网页压缩版**（原图另存），使 Pages 也能加载图片；旧批量压缩脚本已移除，避免误覆盖源图。
-- **在线镜像**：InfinityFree `ynxz.wuaze.com`（含全量素材）。
+- **历史镜像**：InfinityFree `ynxz.wuaze.com`不在本次更新范围，不能作为当前开发版验收地址。
 - **协作约定**：改动在开发分支上完成后直接合并进 `main`，不再使用分支预览链接，也不需要 raw / HTMLPreview 预览；每次改动**同步更新本 README**。
 
 ---
@@ -294,7 +296,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v5`、`js/map-flat.js v2`、`js/map-view.js v9`（原`map-mobile.js`不再加载）；`drafts/pierteia-globe/globe.js v18`、`responsive-ui.js v18`、`compact-tools.js v18`、`globe.css v17`、`map-bridge.js v18`、`map-embed.css v18`。未修改的全站样式和数据版本保持不变。
+- 地图接入版本：`css/map-view.css v5`、`js/map-flat.js v2`、`js/map-view.js v10`（原`map-mobile.js`不再加载）；`drafts/pierteia-globe/globe.js v18`、`responsive-ui.js v18`、`compact-tools.js v18`、`globe.css v17`、`map-bridge.js v18`、`map-embed.css v18`。未修改的全站样式和数据版本保持不变。
 - 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -395,7 +397,14 @@ ynxz/
 - **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
 - 正式20标记、28地点、parent及地理数据不变；球体交互入口为v18、环境基底为v17，学院模块缓存升为v17（建筑与木作基底仍为v14），树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
 
-### v20资源交付排查 / Pages准备（尚未切换成功）
+### v21入口统一及真实线上验证
+
+- 保留原导航与平面地图布局。首页新增明确的「3D地球」直达入口，原「地图」仍打开平面地图。
+- 所有站内HTML导航统一携带`release=21`，地图页内跳转也保留该版号；iframe文档使用新版本参数，避免从新入口继续访问旧缓存地址。首页页脚显示「开发预览 · 版本21」。这些是缓存防护和入口修正，不等于已证明用户故障只由缓存引起。
+- Pages源已由用户改为开发分支，不能再把当前问题归因于未改分支。新增GitHub Actions真实线上检查：先比对Pages返回的HTML/JS/CSS及关键图片/GLB字节，再用浏览器从首页点入地图和3D；不允许用本地服务或拦截模拟来替代正向线上加载。故障回退测试单独注入预期故障。
+- 检查结果将由工作流写回当前开发分支：`docs/pages-live-v21.json`、`docs/pages-http-v21.json`、`tools/verification-map-pages-v21.json`及`screenshots/pages-v21`。当前检查结果以这些实际生成文件为准，不以此说明文字或Pages构建成功判定加载成功。
+
+### v20历史资源交付排查 / Pages准备（尚未切换成功）
 
 - 用户反馈raw.githack中的图片和球体无法加载。已核实开发分支远端包含完整资源，并从公开API实际下载底图、球面贴图和GLB，与本地逐字节一致；不再把本地测试通过等同于公共预览可用。
 - 用户已允许Pages暂时发布`arena/4c4cfaac-ynxz`，仍不合并main。更新Pages设置的API返回403，当前连接缺少对应权限，**切换尚未生效**。需站主在[Pages设置](https://github.com/xoqnapgf-dot/ynxz/settings/pages)把发布分支改为该开发分支、目录`/ (root)`。

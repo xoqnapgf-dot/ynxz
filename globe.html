@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
+  <meta name="site-release" content="21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>3D地球 · 意拟小站</title>
   <link rel="stylesheet" href="css/style.css?v=27" />
@@ -19,13 +20,13 @@
 </head>
 <body data-page="map" class="theme-map" data-map-view="globe">
   <header class="site-header">
-    <a class="brand" href="index.html"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
+    <a class="brand" href="index.html?release=21"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
     <nav class="site-nav" aria-label="主导航">
-      <a href="gallery.html">画廊</a>
-      <a href="map.html" aria-current="page">地图</a>
-      <a href="cp.html">CP乱炖</a>
-      <a href="forum.html">讨论区</a>
-      <a href="search.html">搜索</a>
+      <a href="gallery.html?release=21">画廊</a>
+      <a href="map.html?release=21" aria-current="page">地图</a>
+      <a href="cp.html?release=21">CP乱炖</a>
+      <a href="forum.html?release=21">讨论区</a>
+      <a href="search.html?release=21">搜索</a>
     </nav>
   </header>
 
@@ -33,8 +34,8 @@
     <div class="map-toolbar">
       <h1 class="map-heading">PIERTEIA<small>主世界 · 3D地球</small></h1>
       <nav class="map-projection" aria-label="地图页面">
-        <a id="viewFlat" href="map.html">平面</a>
-        <a id="viewGlobe" href="globe.html" aria-current="page">3D地球</a>
+        <a id="viewFlat" href="map.html?release=21">平面</a>
+        <a id="viewGlobe" href="globe.html?release=21" aria-current="page">3D地球</a>
       </nav>
       <label class="map-locate" for="mapPlace">定位地点<select id="mapPlace"><option value="">选择国家或地点…</option></select></label>
       <span class="map-help" id="mapHelp">拖动旋转 · 点击地标探索</span>
@@ -45,7 +46,7 @@
       <div class="globe-notice" id="globeNotice" data-state="loading" role="status">
         <h2 id="globeNoticeTitle">正在展开球体地图</h2>
         <p id="globeNoticeText">首次打开需要加载高清地形。平面地图随时可用，局部建筑仅在进入场景时加载。</p>
-        <div class="notice-actions"><button id="retryGlobe" type="button" hidden>重新加载球体</button><a id="fallbackFlat" href="map.html">返回平面地图</a></div>
+        <div class="notice-actions"><button id="retryGlobe" type="button" hidden>重新加载球体</button><a id="fallbackFlat" href="map.html?release=21">返回平面地图</a></div>
       </div>
     </section>
     </div>
@@ -54,7 +55,7 @@
 
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
-  <script src="js/map-view.js?v=9"></script>
+  <script src="js/map-view.js?v=10"></script>
 
 </body>
 </html>

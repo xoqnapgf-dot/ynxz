@@ -1,4 +1,4 @@
-/* v19: separate flat/globe pages, with the original visible site navigation. */
+/* v21: separate flat/globe pages, with the original visible site navigation. */
 (() => {
  'use strict';
  const $=id=>document.getElementById(id),locations=window.LOCATION_DATA||{},channel='pierteia-map-v1',origin=location.origin;
@@ -6,7 +6,7 @@
  let selected='',frame=null,ready=false,clean=false,lastSent='',clearPending=false,timer;
  const valid=name=>typeof name==='string'&&Object.hasOwn(locations,name);
  function route(){const q=new URLSearchParams(location.search),site=q.get('place')||q.get('site');const name=valid(site)?site:(window.MAP_NATIONS||[]).find(n=>String(n.id)===site)?.name;return valid(name)?name:'';}
- function link(page){const u=new URL(page,location.href);if(selected)u.searchParams.set('place',selected);return u.href;}
+ function link(page){const u=new URL(page,location.href);u.searchParams.set('release','21');if(selected)u.searchParams.set('place',selected);return u.href;}
  function links(){ $('viewFlat').href=link('map.html');$('viewGlobe').href=link('globe.html');if($('fallbackFlat'))$('fallbackFlat').href=link('map.html'); }
  function writeURL(){const u=new URL(location.href);u.searchParams.delete('view');u.searchParams.delete('site');if(selected)u.searchParams.set('place',selected);else u.searchParams.delete('place');if(u.href!==location.href)history.replaceState({},'',u);links();}
  function clearSceneRoute(){const u=new URL(location.href);u.searchParams.delete('inspect');u.searchParams.delete('frame');history.replaceState({},'',u);}
@@ -26,7 +26,7 @@
   notice('正在展开3D地球','首次打开需要加载高清地形。局部建筑按需加载；可随时返回平面地图。');
   if(location.protocol==='file:'){notice('球体需要通过网站打开','请使用网站或本地HTTP服务；平面地图仍可使用。',true);return;}
   frame=document.createElement('iframe');frame.id='globeFrame';frame.title='Pierteia 3D地球，可旋转、缩放并探索地点';
-  const u=new URL('drafts/pierteia-globe/index.html',location.href);u.searchParams.set('embed','map');u.searchParams.set('v','18');
+  const u=new URL('drafts/pierteia-globe/index.html',location.href);u.searchParams.set('embed','map');u.searchParams.set('v','21');
   const q=new URLSearchParams(location.search);
   if(selected&&q.has('inspect')){u.searchParams.set('site',selected);u.searchParams.set('inspect','');if(q.has('frame'))u.searchParams.set('frame',q.get('frame'));lastSent=selected;}
   frame.src=u.href;$('globeHost').prepend(frame);

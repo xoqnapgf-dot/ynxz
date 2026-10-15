@@ -119,4 +119,4 @@ const v14=JSON.parse(read('tools/verification-v14.json'));assert.equal(v14.revis
 const campus14=v14.scenes.find(s=>s.id===900).geometry;assert.equal(campus14.revision,14);assert.equal(campus14.craftRevision,14);assert.equal(campus14.landscapeRevision,14);assert.equal(campus14.drainageRuns,10);assert(campus14.meadowTufts>2000);
 await import('./test-craft.mjs');
 await import('../../../tools/validate-map-environments.mjs');
-console.log('PASS: unchanged official geography; historical v3–v14 fixtures, retained academy craft, v17 regional rendering inheritance and current v19 page validation. Art approval is not inferred.');
+console.log('PASS: unchanged official geography; historical v3–v14 fixtures, retained academy craft, v17 regional rendering inheritance and current v21 page validation. Art approval is not inferred.');
