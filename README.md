@@ -58,7 +58,8 @@
 |---|---|
 | `index.html` | 首页 · 项目简介 |
 | `gallery.html` | 画廊：意识形态与角色，首字母索引（可返回页首），主题配色封面 |
-| `map.html` | 世界地图：平面 / 球体切换，统一地点定位；平面地形 / 国家图层，球体地标与局部场景 |
+| `map.html` | 平面世界地图：地形 / 国家图层、28地点定位，可带地点跳转3D页 |
+| `globe.html` | 独立3D地球：球体地标与局部场景，可返回平面地图 |
 | `cp.html` | CP 乱炖：浏览与发布（发布内容存浏览器 localStorage） |
 | `cp-view.html` | CP 帖子详情页 |
 | `forum.html` | 讨论区 |
@@ -400,15 +401,16 @@ ynxz/
 ### v21入口统一及真实线上验证
 
 - 保留原导航与平面地图布局。首页新增明确的「3D地球」直达入口，原「地图」仍打开平面地图。
-- 所有站内HTML导航统一携带`release=21`，地图页内跳转也保留该版号；iframe文档使用新版本参数，避免从新入口继续访问旧缓存地址。首页页脚显示「开发预览 · 版本21」。这些是缓存防护和入口修正，不等于已证明用户故障只由缓存引起。
+- 首页、画廊、地图、3D、CP、讨论和搜索七个入口页的静态HTML导航携带`release=21`，地图页内跳转也保留该版号；iframe文档使用新版本参数，避免从新入口继续访问旧缓存地址。首页页脚显示「开发预览 · 版本21」。这些是缓存防护和入口修正，不等于已证明用户故障只由缓存引起。
 - Pages源已由用户改为开发分支，不能再把当前问题归因于未改分支。新增GitHub Actions真实线上检查：先比对Pages返回的HTML/JS/CSS及关键图片/GLB字节，再用浏览器从首页点入地图和3D；不允许用本地服务或拦截模拟来替代正向线上加载。故障回退测试单独注入预期故障。
-- 检查结果将由工作流写回当前开发分支：`docs/pages-live-v21.json`、`docs/pages-http-v21.json`、`tools/verification-map-pages-v21.json`及`screenshots/pages-v21`。当前检查结果以这些实际生成文件为准，不以此说明文字或Pages构建成功判定加载成功。
+- 已在真实Pages上完成首次检查：[Actions运行38750572261](https://github.com/xoqnapgf-dot/ynxz/actions/runs/38750572261)，应用提交`49fd288`。5项页面/脚本/样式及4项关键二进制与仓库SHA一致；11项浏览器检查通过，`errors=[]`。人物图片为预览图和角色大图各抽一张，不是全部图片遍历；WebGL为Chromium/SwiftShader，不是用户实机Safari。
+- [10张真实线上截图](drafts/pierteia-globe/screenshots/pages-v21/index.html)已保存。可复核[HTTP资源记录](docs/pages-http-v21.json)、[浏览器报告](tools/verification-map-pages-v21.json)和[最近运行](docs/pages-live-v21.json)。详见[本轮交付说明](docs/preview-delivery-v21.md)；不以部署绿色代替实际绘制，不声称已确定用户此前故障的全部根因。
 
-### v20历史资源交付排查 / Pages准备（尚未切换成功）
+### v20历史资源交付排查 / Pages准备（已由v21线上验收接续）
 
 - 用户反馈raw.githack中的图片和球体无法加载。已核实开发分支远端包含完整资源，并从公开API实际下载底图、球面贴图和GLB，与本地逐字节一致；不再把本地测试通过等同于公共预览可用。
-- 用户已允许Pages暂时发布`arena/4c4cfaac-ynxz`，仍不合并main。更新Pages设置的API返回403，当前连接缺少对应权限，**切换尚未生效**。需站主在[Pages设置](https://github.com/xoqnapgf-dot/ynxz/settings/pages)把发布分支改为该开发分支、目录`/ (root)`。
-- 已添加`.nojekyll`作静态发布准备，没有重压图片或更改3D画质。[排查证据与操作说明](docs/preview-delivery-v20.md)。待真实发布后再核对线上页面与资源，暂不宣称问题已解决。
+- 当时更新Pages设置的API返回403。用户随后已手动改为`arena/4c4cfaac-ynxz`、目录`/ (root)`并成功部署，**无需再次修改设置，不合并main**。
+- 已添加`.nojekyll`作静态发布准备，没有重压图片或更改3D画质。[历史排查证据](docs/preview-delivery-v20.md)。当前线上检查见v21，旧记录不代表仍待切源。
 
 ### v19恢复原导航，3D地球独立页面
 
@@ -416,7 +418,7 @@ ynxz/
 - `map.html`现在只承载平面地图；`globe.html`是独立3D页面，两页使用同样的原站点导航。顶部入口为真实页面链接，地点卡也可带着所选地点跳转；平面页不创建3D iframe、不下载三维资源。
 - 旧`map.html?view=globe`链接自动转到新页面，保留地点及镜头参数。3D页仍有纯净返回、备用恢复、加载错误提示、重试和返回平面的入口。
 - 3D内部已修复的取景、关闭按钮及搜索焦点继续保留；场景、地理、材质和天气均不变。本轮只拆分页面及恢复外层布局，不把v18的35张旧图当作v19新测试。
-- [本轮9张实际截图](drafts/pierteia-globe/screenshots/pages-v19/index.html)；`tools/test-map-pages.mjs`生成`tools/verification-map-pages-v19.json`，8项页面检查全部通过、`errors=[]`。原`test-map-integration.mjs`及`test-map-mobile.mjs`转为当前页面套件入口，v18旧套件可从Git历史查看。
+- [本轮9张实际截图](drafts/pierteia-globe/screenshots/pages-v19/index.html)；当时的页面脚本生成`tools/verification-map-pages-v19.json`，8项页面检查全部通过、`errors=[]`。原`test-map-integration.mjs`及`test-map-mobile.mjs`转为当前页面套件入口，v18旧套件可从Git历史查看。
 - 当前只同步开发分支，不合并main。直接打开[平面地图](map.html)或[3D地球](globe.html)。
 
 ### v18历史：手机界面收纳与取景（外层导航已按反馈撤回）
@@ -454,8 +456,8 @@ ynxz/
 
 ### 地图双视图验证
 
-- 浏览器当前页面记录：`tools/verification-map-pages-v19.json`。本轮覆盖独立页面往返、28地点、纯净返回、搜索/图层、旧链接、慢加载选择、贴图/上下文重试及无WebGL回退；`tools/verification-map-v18.json`的25项同页集成检查保留历史，不宣称本轮重跑。
-- UI检查包含1440×900、1024×768、768×1024、430×932、390×844、360×740、320×640、667×375、844×390；另有390×480短屏搜索。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
+- 浏览器当前页面记录：`tools/verification-map-pages-v21.json`（真实Pages）。本轮增加首页入口、平面图片解码、两类人物图片抽检，继续覆盖独立页面往返、28地点、纯净返回、搜索/图层、旧链接、慢加载选择、贴图/上下文重试及无WebGL回退；`tools/verification-map-v18.json`的25项同页集成检查保留历史，不宣称本轮重跑。
+- v21线上截图尺寸为320×640、390×844、844×390、1440×900。历史移动检查另包含1024×768、768×1024、430×932、360×740、667×375及390×480短屏搜索，不冒充本次重测。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
 - `node tools/validate-map.mjs`：核对两个视图的20个正式坐标、28份地点志、入口版本及本轮实际测试源码SHA；另以 `drafts/pierteia-globe/tools/test-craft.mjs` 检查木纹、铺板、排水构件和地被避让。
 - `node drafts/pierteia-globe/tools/validate.mjs`：保留正式地理SHA、场景资产及历史报告检查，不把历史测试冒充本轮执行。
 - 重跑浏览器检查需开发工具 `playwright@1.51.1`、`@sparticuz/chromium@131.0.1` 及对应系统库；网站运行不依赖这些包。启动根目录HTTP服务后执行 `ATLAS_URL=http://127.0.0.1:8135/ node tools/test-map-integration.mjs`。若工具装在外部目录，可用 `NODE_PATH` 指向其 `node_modules`；`CHECK_IMAGES` 是可选内部检查输出目录，不会默认新增截图资产。
