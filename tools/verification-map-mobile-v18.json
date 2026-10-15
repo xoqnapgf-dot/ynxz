@@ -1,0 +1,504 @@
+{
+  "revision": 18,
+  "scope": "UI screenshots / touch emulation; not physical iOS or art approval",
+  "screenshots": [
+    {
+      "name": "390-navigation",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 226,
+      "toolbar": 61,
+      "sceneViewport": null
+    },
+    {
+      "name": "390-flat-tools",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": null
+    },
+    {
+      "name": "390-flat-summary",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": null
+    },
+    {
+      "name": "390-flat-description",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": null
+    },
+    {
+      "name": "390-overview",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 713
+      }
+    },
+    {
+      "name": "390-globe-tools",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 713
+      }
+    },
+    {
+      "name": "390-layers",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 392
+      }
+    },
+    {
+      "name": "390-search",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 443
+      }
+    },
+    {
+      "name": "390-short-search",
+      "width": 390,
+      "height": 480,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 419
+      }
+    },
+    {
+      "name": "390-country-summary",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 587
+      }
+    },
+    {
+      "name": "390-country-description",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 264.53125
+      }
+    },
+    {
+      "name": "390-academy-selected",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 587
+      }
+    },
+    {
+      "name": "360-selected",
+      "width": 360,
+      "height": 740,
+      "scrollWidth": 360,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 344,
+        "height": 483
+      }
+    },
+    {
+      "name": "768-selected",
+      "width": 768,
+      "height": 1024,
+      "scrollWidth": 768,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 752,
+        "height": 767
+      }
+    },
+    {
+      "name": "1440-selected",
+      "width": 1440,
+      "height": 900,
+      "scrollWidth": 1440,
+      "header": 77.71875,
+      "toolbar": 71,
+      "sceneViewport": {
+        "x": 8,
+        "y": 74,
+        "width": 1124,
+        "height": 601
+      }
+    },
+    {
+      "name": "320-academy-scene",
+      "width": 320,
+      "height": 640,
+      "scrollWidth": 320,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 304,
+        "height": 433
+      }
+    },
+    {
+      "name": "390-academy-scene",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 637
+      }
+    },
+    {
+      "name": "430-academy-scene",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 414,
+        "height": 725
+      }
+    },
+    {
+      "name": "667-academy-scene",
+      "width": 667,
+      "height": 375,
+      "scrollWidth": 667,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 86.015625,
+        "y": 8,
+        "width": 572.984375,
+        "height": 224
+      }
+    },
+    {
+      "name": "844-academy-scene",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 86.015625,
+        "y": 8,
+        "width": 749.984375,
+        "height": 239
+      }
+    },
+    {
+      "name": "390-courtyard",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 637
+      }
+    },
+    {
+      "name": "390-scene-description",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 264.53125
+      }
+    },
+    {
+      "name": "390-clean",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 783
+      }
+    },
+    {
+      "name": "844-scene-description",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 86.015625,
+        "y": 8,
+        "width": 437.984375,
+        "height": 313
+      }
+    },
+    {
+      "name": "844-layers",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 66,
+        "y": 8,
+        "width": 518,
+        "height": 313
+      }
+    },
+    {
+      "name": "844-search",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 66,
+        "y": 8,
+        "width": 518,
+        "height": 313
+      }
+    },
+    {
+      "name": "390-islands-scene",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 637
+      }
+    },
+    {
+      "name": "390-islands-harbor",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 637
+      }
+    },
+    {
+      "name": "390-city-scene",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 637
+      }
+    },
+    {
+      "name": "390-scene",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 637
+      }
+    },
+    {
+      "name": "320-scene",
+      "width": 320,
+      "height": 640,
+      "scrollWidth": 320,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 304,
+        "height": 433
+      }
+    },
+    {
+      "name": "844-scene",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 86.015625,
+        "y": 8,
+        "width": 749.984375,
+        "height": 239
+      }
+    },
+    {
+      "name": "390-weather",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 374,
+        "height": 264.53125
+      }
+    },
+    {
+      "name": "320-search",
+      "width": 320,
+      "height": 640,
+      "scrollWidth": 320,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 62,
+        "width": 304,
+        "height": 174.765625
+      }
+    },
+    {
+      "name": "320-flat-summary",
+      "width": 320,
+      "height": 640,
+      "scrollWidth": 320,
+      "header": 0,
+      "toolbar": 61,
+      "sceneViewport": {
+        "x": 8,
+        "y": 8,
+        "width": 304,
+        "height": 563
+      }
+    }
+  ],
+  "checks": {
+    "navigationAndFlatTools": true,
+    "flatTouchPinch": true,
+    "globeToolsAndEscape": true,
+    "all28PlaceCards": true,
+    "responsiveSceneAreaAndReachableControls": true,
+    "sceneDisclosureCameraAndClean": true,
+    "globeTouchPinch": true,
+    "oneRowSceneCardAndWeather": true,
+    "portraitLandscapeSearchLayersAndFlat": true
+  },
+  "errors": [],
+  "sourceHashes": {
+    "map.html": "84ed18a24b0aa3509d587dee456ca1fb6501c99ada21c144657ba5db6b36ca78",
+    "js/map-mobile.js": "b4de09c3e3414fe7c95ccb4a3261c43c685df9715e9d5ecbe95906ac75c40352",
+    "drafts/pierteia-globe/compact-tools.js": "ec5b65049ca967689ecbe92c31c738b75fdf257fae1fb8c63738e19e0c698898",
+    "css/map-view.css": "7ea0cb246aac58b152d1eb6e71822cfb7f2daff6ac3e628e86be852e828f52d3",
+    "js/map-view.js": "caace478b44ff53063b7035e5166d0de0a9105349e557bdee6bb0cb016f435b8",
+    "drafts/pierteia-globe/index.html": "6c8df205c6945ea9a124de385e59ced8cd37625db8a718766d892467febc3fe1",
+    "drafts/pierteia-globe/globe.js": "e42d67c9ca51144c957b6be0724e98d168e28c10f15581f42a95afab6a960128",
+    "drafts/pierteia-globe/globe.css": "11bda945b2fdf63003b8056582a8404783e05e03a973c9ce723d62b6e02557c6",
+    "drafts/pierteia-globe/regional-environment.js": "33121be2371d1f6af1c803fd95bd16b426b7afab0db2ef3698c8c0526b15d33e",
+    "drafts/pierteia-globe/regional-surfaces.js": "80d15dce179a5e06fc8ac19e92d7e5774a5abcfa57a61d52ab8def219571fadc",
+    "drafts/pierteia-globe/regional-profiles.js": "9ac07e34964842d2206d7425dba0e43beef3ee9a8035fdc459fc6190ae66fe62",
+    "drafts/pierteia-globe/map-bridge.js": "0d8d292a6c04dd4fe6e482e6b7bcef15ed55f5ca075246eed1fec0388645bf69",
+    "drafts/pierteia-globe/map-embed.css": "3bb9294e3ada26a421c061db179030f9fdb5bec93f48e102b39cf7cf7ee19dbc",
+    "drafts/pierteia-globe/responsive-ui.js": "cc6a5198c156645a6e532267617a1d9c770de57b6e74e0b16125f1bc1045a204"
+  }
+}

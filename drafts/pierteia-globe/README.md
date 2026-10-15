@@ -1,4 +1,21 @@
-# Pierteia · 地方自然环境 17 / 建筑基底 14
+# Pierteia · 手机界面 18 / 地方环境 17
+
+这轮减少常驻界面占位，不重做场景和材质。
+
+- 手机顶部合成一行，网站导航移入展开面板；地点与平面/球体切换始终可用。
+- 缩放、图层、区域视图、纯净模式收入「工具」。搜索与返回球体仍在画面上，纯净模式退出入口不变。平面地图采用同样的工具收纳。
+- 场景底卡从两行改为一行，保留介绍、原生镜头选择与关闭。宽屏恢复原布局；横屏底卡和展开介绍分别计算避让。
+- 新增的空间不靠放大裁掉建筑填满。手机保持较宽的取景窗口，居中于未被界面占用的区域；既有镜头位置、模型、纹理、天气、阴影和像素比不变。
+
+[实际前后对照及全尺寸截图](screenshots/mobile-v18/index.html) · [查修记录与限制](research/v18-mobile-review.md) · [打开地图](../../map.html?view=globe)
+
+当前版本：globe.js / responsive-ui.js / compact-tools.js / map-bridge.js / map-embed.css v18，map-view.js v8、map-mobile.js v1、map-view.css v4。globe.css和地方环境模块仍为v17，学院建筑基底仍为v14。
+
+本轮检查：仓库根目录`tools/test-map-mobile.mjs`、`tools/test-map-integration.mjs`及对应validator，输出v18新报告。v17八景报告保留历史，环境validator核对未变动的区域模块及v18当前UI源码，不声称本轮重新渲染全部八景。仅推送当前开发分支，不合并main。
+
+---
+
+## v17历史记录：地方自然环境 / 建筑基底14
 
 八个现有场景分别完善地表、天气、植被、水面、照明与材质，不把所有地方套成同一种海港、同一片绿地。
 
@@ -15,7 +32,7 @@
 
 [看八景实图与手机页面](screenshots/environments-v17/index.html) · [设定依据、目视查修、实现边界](research/v17-environment-review.md) · [打开地图](../../map.html?view=globe)
 
-当前缓存：globe.js / globe.css / landmarks.js / academy-hillside.js / archipelago-hq.js / regional-scenes.js 与三个regional环境模块 v17；map-view.js v7。map-bridge.js / map-embed.css / responsive-ui.js 仍为v16，学院建筑与木作基底仍为v14；未改的模块不统一升版。
+当轮缓存：globe.js / globe.css / landmarks.js / academy-hillside.js / archipelago-hq.js / regional-scenes.js 与三个regional环境模块 v17；map-view.js v7。map-bridge.js / map-embed.css / responsive-ui.js 仍为v16，学院建筑与木作基底仍为v14；未改的模块不统一升版。
 
 本轮检查：`../../tools/test-map-environments.mjs`、`../../tools/test-map-integration.mjs`，输出独立v17报告；对应`validate-map-environments.mjs` / `validate-map.mjs`。地被/材质隔离单测在`tools/test-regional-environments.mjs`。v16完整手机图集是历史记录，不冒充本轮重拍；新的天气控件另做手机检查。没有降低模型/纹理/阴影质量，没有新增4K图集，也不合并main。
 

@@ -22,7 +22,7 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=17'));assert(html.includes('globe.css?v=17'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=18'));assert(html.includes('globe.css?v=17'));
 assert(read('globe.js').toString().includes('landmarks.js?v=17'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);
@@ -119,4 +119,4 @@ const v14=JSON.parse(read('tools/verification-v14.json'));assert.equal(v14.revis
 const campus14=v14.scenes.find(s=>s.id===900).geometry;assert.equal(campus14.revision,14);assert.equal(campus14.craftRevision,14);assert.equal(campus14.landscapeRevision,14);assert.equal(campus14.drainageRuns,10);assert(campus14.meadowTufts>2000);
 await import('./test-craft.mjs');
 await import('../../../tools/validate-map-environments.mjs');
-console.log('PASS: unchanged official geography; historical v3–v14 fixtures, retained academy craft, and current v17 environment/source validation. Art approval is not inferred.');
+console.log('PASS: unchanged official geography; historical v3–v14 fixtures, retained academy craft, v17 regional rendering inheritance and current v18 UI validation. Art approval is not inferred.');

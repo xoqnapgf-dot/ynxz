@@ -81,10 +81,10 @@
       .map-scalebar { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 10px; }
     }
   </style>
-  <link rel="stylesheet" href="css/map-view.css?v=3" />
+  <link rel="stylesheet" href="css/map-view.css?v=4" />
 </head>
 <body data-page="map" class="theme-map">
-  <header class="site-header">
+  <header class="site-header" id="mapNavigation">
     <a class="brand" href="index.html"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
     <nav class="site-nav" aria-label="主导航">
       <a href="gallery.html">画廊</a>
@@ -97,6 +97,7 @@
 
   <main class="map-main">
     <div class="map-toolbar">
+      <button id="mapMenu" type="button" aria-label="网站导航" aria-expanded="false" aria-controls="mapNavigation">导航</button>
       <h1 class="map-heading">PIERTEIA<small>主世界 · 地图与地点志</small></h1>
       <div class="map-projection" role="group" aria-label="地图视图">
         <button type="button" id="viewFlat" data-projection="flat" aria-pressed="true" aria-controls="mapStage">平面</button>
@@ -170,7 +171,8 @@
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
   <script src="js/map-flat.js?v=2"></script>
-  <script src="js/map-view.js?v=7"></script>
+  <script src="js/map-mobile.js?v=1"></script>
+  <script src="js/map-view.js?v=8"></script>
 
 </body>
 </html>

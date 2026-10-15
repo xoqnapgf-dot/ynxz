@@ -82,3 +82,42 @@
  .compact-ui .search-active .explorer{top:8px!important;bottom:8px;max-height:none;z-index:12}
  .compact-ui .search-active #embed-tools,.compact-ui .search-active .view-switch,.compact-ui .search-active .zoom-controls{visibility:hidden}
 }
+
+/* v18: only primary actions stay on the canvas. Tools reuse existing controls. */
+#compact-tools,#compact-tools-panel{display:none}
+.compact-ui #compact-tools{display:block;position:fixed;z-index:10;top:8px;right:8px;min-height:44px;min-width:56px;border:1px solid #a9bdb144;border-radius:10px;background:#10232de8;color:#e0e9dd;font:13px sans-serif;padding:10px 12px}
+.compact-ui #compact-tools-panel{display:grid;position:fixed;z-index:11;top:60px;right:8px;left:auto;bottom:auto;width:min(280px,calc(100vw - 16px));max-height:calc(100dvh - 76px);overflow:auto;padding:12px;border-radius:12px;background:#101f2af8;grid-template-columns:1fr 1fr;gap:10px}
+.compact-ui #compact-tools-panel[hidden]{display:none}
+.compact-ui #compact-tools-panel>button{min-height:44px;border:1px solid #8dada44d;border-radius:8px;font-size:13px}
+.compact-ui #compact-tools-panel .zoom-controls,.compact-ui #compact-tools-panel .view-switch{display:flex;position:static;transform:none;width:auto;max-width:none;grid-column:1/-1;margin:0;box-shadow:none;flex-wrap:wrap;border-radius:8px;justify-content:space-between;padding:3px;background:#24383d}
+.compact-ui #compact-tools-panel .view-switch button{flex:1 1 40%;white-space:nowrap}.compact-ui #compact-tools-panel .view-switch>span{display:none}
+.compact-ui #compact-tools-panel .zoom-controls button{flex:1;width:auto;height:44px}.compact-ui #compact-tools-panel #reset{display:block}
+.compact-ui .inspection #compact-tools-panel .view-switch,.compact-ui .inspection #compact-tools-panel #embed-layers,.compact-ui .inspection #compact-tools-panel #reset{display:none}
+.compact-ui #embed-tools{padding:0;background:#10232de8;min-height:44px}
+.compact-ui .explorer.explorer-collapsed{display:none}
+.compact-ui .explorer,.compact-ui .detail,.compact-ui .layers{bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.compact-ui .detail h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:44px;min-width:0;letter-spacing:0;font-size:16px}
+.compact-ui .inspection .detail h2{padding-right:202px}
+.compact-ui .inspection #detail-fold{right:158px}
+.compact-ui .inspection .camera-picker{position:absolute;top:10px;right:52px;width:100px;margin:0;font-size:0;gap:0}
+.compact-ui .inspection .camera-picker select{width:100%;padding:8px 20px 8px 7px;font-size:16px}
+.compact-ui .clean #compact-tools,.compact-ui .clean #compact-tools-panel{display:none}
+@media(min-width:560px) and (max-height:500px){
+ .compact-ui .inspection .detail.detail-collapsed{width:min(360px,calc(100vw - 16px));max-height:64px}
+ .compact-ui .inspection .detail:not(.detail-collapsed){width:300px;max-width:calc(100vw - 90px)}
+ .compact-ui .inspection .detail:not(.detail-collapsed) h2{padding-right:96px}
+ .compact-ui .inspection .detail:not(.detail-collapsed) #detail-fold{right:52px}
+ .compact-ui .inspection .detail:not(.detail-collapsed) .camera-picker{position:static;width:auto;font-size:12px;margin-top:6px}
+}
+@media(max-width:559px) and (max-height:460px){.compact-ui .search-active #compact-tools{visibility:hidden}}
+
+#close-layers{display:none}.compact-ui #close-layers{display:block;position:absolute;top:5px;right:8px;min-height:44px;min-width:44px;font-size:12px}.compact-ui .layers .panel-heading{padding-right:50px}
+
+.compact-ui .inspection #compact-tools-panel>#embed-clean{grid-column:1/-1}
+.compact-ui #compact-tools[aria-expanded=true]{border-color:#c5bb8d;color:#f4e4b4}
+/* A full-height landscape panel must not share its close target with Tools. */
+.compact-ui.layers-open #compact-tools{visibility:hidden}
+@media(min-width:560px) and (max-height:500px){
+ .compact-ui body:has(.detail:not(.detail-collapsed):not([hidden])) #compact-tools{left:82px;right:auto}
+ .compact-ui body:has(.detail:not(.detail-collapsed):not([hidden])) #compact-tools-panel{left:82px;right:auto}
+}

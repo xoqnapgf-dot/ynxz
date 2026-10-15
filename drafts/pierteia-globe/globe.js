@@ -1,6 +1,6 @@
-import { setupResponsiveUI, refreshResponsiveUI, resetSearchPanel, collapseDetail, syncCameraPicker, sceneViewport } from './responsive-ui.js?v=16';
+import { setupResponsiveUI, refreshResponsiveUI, resetSearchPanel, collapseDetail, syncCameraPicker, sceneViewport } from './responsive-ui.js?v=18';
 import { atlasIcon } from './atlas-icons.js?v=13';
-import { embedded, notifyHost, setLayersOpen, layersOpen } from './map-bridge.js?v=16';
+import { embedded, notifyHost, setLayersOpen, layersOpen } from './map-bridge.js?v=18';
 import * as T from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -118,7 +118,10 @@ function applyInspectionOffset(){
  if(area){
   // Render into a virtual viewport fitting the unoccluded scene area, without
   // moving the camera or lowering renderer/model quality. Exports stay full-frame.
-  camera.setViewOffset(area.width,area.height,-area.x,-area.y,innerWidth,innerHeight);
+  // A taller phone canvas must not magnify/crop the district horizontally.
+  // Keep a square-or-wider framing window, centred in the actual free area.
+  const height=inspection&&document.documentElement.classList.contains('compact-ui')?Math.min(area.height,area.width):area.height;
+  camera.setViewOffset(area.width,height,-area.x,-(area.y+(area.height-height)/2),innerWidth,innerHeight);
  }else if(inspection)camera.setViewOffset(innerWidth,innerHeight,innerWidth<700?0:innerWidth*.095,innerWidth<700?innerHeight*.14:0,innerWidth,innerHeight);
  else camera.clearViewOffset();
  camera.updateProjectionMatrix();
@@ -135,7 +138,7 @@ function toggleClean(on=!isClean){
  for(const id of ['clean','embed-clean'])$('#'+id).setAttribute('aria-pressed',String(on));
  applyInspectionOffset();camera.updateProjectionMatrix();notifyHost('ui-state',{clean:on});
  if(on)$('#restore-ui').focus({preventScroll:true});
- else {const target=cleanFocus?.isConnected&&cleanFocus.getClientRects().length&&getComputedStyle(cleanFocus).visibility!=='hidden'?cleanFocus:$(embedded?'#embed-clean':'#clean');target.focus({preventScroll:true});cleanFocus=null;}
+ else {const target=cleanFocus?.isConnected&&cleanFocus.getClientRects().length&&getComputedStyle(cleanFocus).visibility!=='hidden'?cleanFocus:$(document.documentElement.classList.contains('compact-ui')?'#compact-tools':embedded?'#embed-clean':'#clean');target.focus({preventScroll:true});cleanFocus=null;}
 }
 function handleShortcut(key){
  if(key==='Escape'){
@@ -145,19 +148,19 @@ function handleShortcut(key){
   else if(!$('#detail').hidden&&!$('#detail-copy').hidden&&document.documentElement.classList.contains('compact-ui')){collapseDetail();$('#detail-fold').focus({preventScroll:true});}
   else if(!$('#scene-loading').hidden){cancelInspection();$('#inspect').focus({preventScroll:true});}
   else if(document.activeElement?.matches('input,textarea,select,[contenteditable="true"]'))document.activeElement.blur();
-  else {setView('overview');$('#fold').focus({preventScroll:true});}
+  else {setView('overview');$(document.documentElement.classList.contains('compact-ui')?'#embed-search':'#fold').focus({preventScroll:true});}
   return true;
  }
  if(key==='h'){toggleClean();return true;}
  if(key==='/'){
   if(isClean)toggleClean(false);setLayersOpen(false);cancelInspection();
   if(inspection)setView('overview');
-  $('#detail').hidden=true;$('.explorer').style.visibility='';$('#explorer-content').hidden=false;
+  $('#detail').hidden=true;$('.explorer').style.visibility='';$('#explorer-content').hidden=false;$('.explorer').classList.remove('explorer-collapsed');
   $('#fold').textContent='−';$('#fold').setAttribute('aria-expanded','true');$('#search').focus({preventScroll:true});return true;
  }
  return false;
 }
-function bind(){$('#weather-effects').onchange=e=>{weatherEffects=e.target.checked;activeModel?.weather.setEnabled(weatherEffects&&!reduced);};setupResponsiveUI({onLayout:applyInspectionOffset,onSearch:()=>handleShortcut('/'),onOverview:()=>setView('overview'),onClean:()=>toggleClean(true),embedded});$('#scene-cancel').onclick=cancelInspection;for(const [id,obj]of [['clouds',clouds],['borders',borders],['grid',grid]])$('#'+id).onchange=e=>{obj.visible=e.target.checked;if(id==='borders'&&e.target.checked)toast('国界沿用旧底图；未设定地区不新增地名或主权。')};$('#markers').onchange=e=>$('#labels').style.display=e.target.checked?'':'none';$('#rotate').onclick=()=>setRotation(!rotation);$('#lighting').onclick=()=>{night=!night;$('#lighting').setAttribute('aria-pressed',String(night));toast(night?'已固定太阳方向，可旋转观察昼夜分界':'已恢复面向观察方向的展示光照')};$('#search').oninput=renderList;for(const b of document.querySelectorAll('[data-filter]'))b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderList()};for(const b of document.querySelectorAll('[data-view]'))b.onclick=()=>setView(b.dataset.view);$('#reset').onclick=()=>setView('overview');$('#close-detail').onclick=()=>{cancelInspection();$('#detail').hidden=true;$('.explorer').style.visibility='';if(inspection)setView('overview');$('#fold').focus({preventScroll:true})};$('#zoom-in').onclick=()=>zoom(.82);$('#zoom-out').onclick=()=>zoom(1.2);$('#clean').onclick=()=>toggleClean();$('#restore-ui').onclick=()=>toggleClean(false);$('#fold').onclick=()=>{const c=$('#explorer-content');c.hidden=!c.hidden;$('#fold').textContent=c.hidden?'+':'−';$('#fold').setAttribute('aria-expanded',String(!c.hidden))};$('#capture').onclick=()=>captureHQ({download:true}).catch(e=>toast('4K PNG: '+e.message));for(const button of document.querySelectorAll('[data-detail-view]'))button.onclick=()=>frameLandmark(button.dataset.detailView);
+function bind(){$('#weather-effects').onchange=e=>{weatherEffects=e.target.checked;activeModel?.weather.setEnabled(weatherEffects&&!reduced);};setupResponsiveUI({onLayout:applyInspectionOffset,onSearch:()=>handleShortcut('/'),onOverview:()=>setView('overview'),onClean:()=>toggleClean(true),embedded});$('#scene-cancel').onclick=cancelInspection;for(const [id,obj]of [['clouds',clouds],['borders',borders],['grid',grid]])$('#'+id).onchange=e=>{obj.visible=e.target.checked;if(id==='borders'&&e.target.checked)toast('国界沿用旧底图；未设定地区不新增地名或主权。')};$('#markers').onchange=e=>$('#labels').style.display=e.target.checked?'':'none';$('#rotate').onclick=()=>setRotation(!rotation);$('#lighting').onclick=()=>{night=!night;$('#lighting').setAttribute('aria-pressed',String(night));toast(night?'已固定太阳方向，可旋转观察昼夜分界':'已恢复面向观察方向的展示光照')};$('#search').oninput=renderList;for(const b of document.querySelectorAll('[data-filter]'))b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderList()};for(const b of document.querySelectorAll('[data-view]'))b.onclick=()=>setView(b.dataset.view);$('#reset').onclick=()=>setView('overview');$('#close-detail').onclick=()=>{cancelInspection();$('#detail').hidden=true;$('.explorer').style.visibility='';if(inspection)setView('overview');$(document.documentElement.classList.contains('compact-ui')?'#embed-search':'#fold').focus({preventScroll:true})};$('#zoom-in').onclick=()=>zoom(.82);$('#zoom-out').onclick=()=>zoom(1.2);$('#clean').onclick=()=>toggleClean();$('#restore-ui').onclick=()=>toggleClean(false);$('#fold').onclick=()=>{const c=$('#explorer-content');c.hidden=!c.hidden;$('#fold').textContent=c.hidden?'+':'−';$('#fold').setAttribute('aria-expanded',String(!c.hidden))};$('#capture').onclick=()=>captureHQ({download:true}).catch(e=>toast('4K PNG: '+e.message));for(const button of document.querySelectorAll('[data-detail-view]'))button.onclick=()=>frameLandmark(button.dataset.detailView);
 
  addEventListener('keydown',e=>{
   if(e.defaultPrevented||e.repeat||e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;

@@ -37,7 +37,7 @@
       notice('球体需要通过网站打开', '直接双击文件无法读取三维资源。请使用网站或本地 HTTP 服务；平面地图仍可使用。', true); return;
     }
     frame = document.createElement('iframe'); frame.id = 'globeFrame'; frame.title = 'Pierteia 球体地图，可旋转、缩放并探索地点';
-    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '17');
+    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '18');
     // Optional deep links retain the existing scene/camera route; ordinary selection does not load a model.
     const query = new URLSearchParams(location.search);
     if (selected && query.has('inspect')) { url.searchParams.set('site', selected); url.searchParams.set('inspect', ''); if (query.has('frame')) url.searchParams.set('frame', query.get('frame')); lastSent = selected; }
@@ -46,6 +46,7 @@
     timer = setTimeout(() => { if (!ready) notice('资源加载时间较长', '仍在等待球体资源。可以继续等待、重新加载，或先返回平面地图；加载成功后会自动显示。', true); }, 60000);
   }
   function setMode(next, push = true) {
+    window.__mapMobile?.close();
     if (!['flat','globe'].includes(next)) return;
     mode = next; const globe = mode === 'globe';
     $('mapStage').hidden = globe; $('globeHost').hidden = !globe;

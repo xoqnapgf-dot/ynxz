@@ -7,7 +7,7 @@ export function setLayersOpen(open,focus=false){
  const layers=document.querySelector('.layers'),button=document.getElementById('embed-layers');
  layers.hidden=!open;button.setAttribute('aria-expanded',String(open));document.documentElement.classList.toggle('layers-open',open);
  document.dispatchEvent(new Event('atlas:layout'));
- if(focus)button.focus({preventScroll:true});
+ if(focus)(button.getClientRects().length?button:document.getElementById('compact-tools')).focus({preventScroll:true});
 }
 export const layersOpen=()=>(embedded||document.documentElement.classList.contains('compact-ui'))&&!document.querySelector('.layers').hidden;
 if(embedded){

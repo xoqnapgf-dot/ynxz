@@ -294,7 +294,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v3`、`js/map-flat.js v2`、`js/map-view.js v7`；`drafts/pierteia-globe/globe.js v17`、`responsive-ui.js v16`、`globe.css v17`、`map-bridge.js v16`、`map-embed.css v16`。未修改的全站样式和数据版本保持不变。
+- 地图接入版本：`css/map-view.css v4`、`js/map-flat.js v2`、`js/map-view.js v8`、`js/map-mobile.js v1`；`drafts/pierteia-globe/globe.js v18`、`responsive-ui.js v18`、`compact-tools.js v18`、`globe.css v17`、`map-bridge.js v18`、`map-embed.css v18`。未修改的全站样式和数据版本保持不变。
 - 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -393,7 +393,15 @@ ynxz/
 - [在线运行方式、改动边界与验证](drafts/pierteia-globe/README.md)。此轮不是全图写实完工，未完成GI烘焙及其他区域同标准返工；先看互动，不新增4K图集。
 - [此前资料研究与审计](drafts/pierteia-globe/research/README.md)、[美术标准](drafts/pierteia-globe/DESIGN.md)仍保留，不以功能测试或面数代替美术判断。
 - **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
-- 正式20标记、28地点、parent及地理数据不变；球体交互与环境入口为v17，学院模块缓存升为v17（建筑与木作基底仍为v14），树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
+- 正式20标记、28地点、parent及地理数据不变；球体交互入口为v18、环境基底为v17，学院模块缓存升为v17（建筑与木作基底仍为v14），树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
+
+### v18手机界面收纳与取景
+
+- 手机只留一行顶部栏：网站导航按需展开，平面/球体与地点选择保持常驻。此调整只作用于地图页，桌面导航和其他页面不变。
+- 平面、球体的缩放/图层/区域视图等次要操作收入「工具」，仍保留原按钮、键盘与双指缩放；搜索、返回球体不收进去。移除重复的折叠探索面板。
+- 场景底卡改成一行，保留地点、介绍、原生镜头选择及关闭；展开介绍仍在卡内滚动。手机输入/选择框维持16px字，不靠缩小所有文字来省位置。
+- 手机多出的高度不再使建筑横向放大裁切；取景居中于实际空闲区。修正横屏宽底卡被当成左侧卡导致场景压成细线的判断，以及搜索在隐藏父面板里先聚焦失败的问题。纯净模式与图层退出返回可见控件。
+- [本轮35张改后截图与4张v17改前对照](drafts/pierteia-globe/screenshots/mobile-v18/index.html) · [查修说明](drafts/pierteia-globe/research/v18-mobile-review.md)。完整移动/地图脚本输出独立v18报告，不覆盖旧版；不重新生成八景美术图集、不降低场景画质。
 
 ### v17地方环境、天气与材质
 
@@ -422,7 +430,7 @@ ynxz/
 
 ### 地图双视图验证
 
-- 浏览器当前记录：`tools/verification-map-v17.json`（v13至v16保留为历史）。保留纯净模式多路径退出、键盘焦点/快捷键、图层与详情互斥、空选择/重复选择、慢加载选择竞争、学院直达和触屏模拟检查；仍覆盖平面零三维下载、地点双向同步、前进/后退、隐藏暂停与恢复、取消迟到的模型激活、学院近景、WebGL中断/不可用及贴图失败重试。
+- 浏览器当前记录：`tools/verification-map-v18.json`（v13至v17保留为历史）。保留纯净模式多路径退出、键盘焦点/快捷键、图层与详情互斥、空选择/重复选择、慢加载选择竞争、学院直达和触屏模拟检查；仍覆盖平面零三维下载、地点双向同步、前进/后退、隐藏暂停与恢复、取消迟到的模型激活、学院近景、WebGL中断/不可用及贴图失败重试。
 - UI检查包含1440×900、1024×768、768×1024、430×932、390×844、360×740、320×640、667×375、844×390；另有390×480短屏搜索。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
 - `node tools/validate-map.mjs`：核对两个视图的20个正式坐标、28份地点志、入口版本及本轮实际测试源码SHA；另以 `drafts/pierteia-globe/tools/test-craft.mjs` 检查木纹、铺板、排水构件和地被避让。
 - `node drafts/pierteia-globe/tools/validate.mjs`：保留正式地理SHA、场景资产及历史报告检查，不把历史测试冒充本轮执行。
