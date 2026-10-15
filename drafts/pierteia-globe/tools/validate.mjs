@@ -22,7 +22,7 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=15'));assert(html.includes('globe.css?v=15'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=16'));assert(html.includes('globe.css?v=15'));
 assert(read('globe.js').toString().includes('landmarks.js?v=14.1'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);

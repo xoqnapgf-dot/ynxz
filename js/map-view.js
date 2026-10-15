@@ -37,7 +37,7 @@
       notice('球体需要通过网站打开', '直接双击文件无法读取三维资源。请使用网站或本地 HTTP 服务；平面地图仍可使用。', true); return;
     }
     frame = document.createElement('iframe'); frame.id = 'globeFrame'; frame.title = 'Pierteia 球体地图，可旋转、缩放并探索地点';
-    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '15');
+    const url = new URL('drafts/pierteia-globe/index.html', location.href); url.searchParams.set('embed', 'map'); url.searchParams.set('v', '16');
     // Optional deep links retain the existing scene/camera route; ordinary selection does not load a model.
     const query = new URLSearchParams(location.search);
     if (selected && query.has('inspect')) { url.searchParams.set('site', selected); url.searchParams.set('inspect', ''); if (query.has('frame')) url.searchParams.set('frame', query.get('frame')); lastSent = selected; }
@@ -101,6 +101,15 @@
     setMode(route.mode, false);
     if (!selected) window.__flatMap.clear();
   });
+  const compact = matchMedia('(max-width:900px), (max-height:500px)');
+  function foldFlat() { $('ncDesc').hidden = compact.matches; $('ncFold').hidden = !compact.matches; $('ncFold').setAttribute('aria-expanded', String(!compact.matches)); $('ncFold').textContent = compact.matches ? '地点介绍' : '收起介绍'; }
+  $('ncFold').onclick = () => { const open = $('ncDesc').hidden; $('ncDesc').hidden = !open; $('ncFold').setAttribute('aria-expanded', String(open)); $('ncFold').textContent = open ? '收起介绍' : '地点介绍'; };
+  new MutationObserver(foldFlat).observe($('ncName'), {childList:true});compact.addEventListener('change', foldFlat);foldFlat();
+  function fitVisualViewport() {
+    document.documentElement.style.setProperty('--map-vh', `${window.visualViewport?.height || innerHeight}px`);
+    window.__flatMap.resize();
+  }
+  window.visualViewport?.addEventListener('resize', fitVisualViewport);addEventListener('resize', fitVisualViewport);fitVisualViewport();
   const route = fromURL(); selected = route.name; $('mapPlace').value = selected;
   if (selected) window.__flatMap.select(selected);
   setMode(route.mode, false);

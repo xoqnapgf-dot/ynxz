@@ -81,7 +81,7 @@
       .map-scalebar { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 10px; }
     }
   </style>
-  <link rel="stylesheet" href="css/map-view.css?v=2" />
+  <link rel="stylesheet" href="css/map-view.css?v=3" />
 </head>
 <body data-page="map" class="theme-map">
   <header class="site-header">
@@ -159,7 +159,7 @@
         <button class="nc-close" id="ncClose" aria-label="关闭">&times;</button>
         <h3 id="ncName">—</h3>
         <span class="form" id="ncForm"></span>
-        <p id="ncDesc">该区域介绍待补充。</p>
+        <button id="ncFold" type="button" aria-expanded="false" aria-controls="ncDesc">地点介绍</button><p id="ncDesc">该区域介绍待补充。</p>
         <div class="nation-actions"><button class="enter" id="ncEnter">进入 →</button><button class="globe-locate" id="ncGlobe" type="button">在球体中查看 ↗</button></div>
       </div>
     </div>
@@ -170,7 +170,7 @@
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
   <script src="js/map-flat.js?v=2"></script>
-  <script src="js/map-view.js?v=5"></script>
+  <script src="js/map-view.js?v=6"></script>
 
 </body>
 </html>

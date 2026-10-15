@@ -1,4 +1,21 @@
-# Pierteia · 交互修复 15 / 美术 14
+# Pierteia · 手机界面修复 16 / 美术 14
+
+本轮按选地点、进入场景等状态的实际截图处理遮挡，不继续更换美术资源。
+
+- 手机/平板竖屏使用底部紧凑地点卡，介绍默认收起；展开后只有正文滚动，关闭、介绍开关和镜头选择不随正文滚走。
+- 场景镜头改为原生下拉框，不再排列多行小按钮盖住建筑；新增「返回球体」，保留纯净模式的双重返回入口。
+- 横屏改为侧卡与场景分区；相机根据可见面板实际尺寸取景，展开、收起、旋转屏幕后重新计算。没有降低模型、贴图、阴影精度或像素比。
+- 地图页头部压缩，平面卡片也支持收起介绍；短屏搜索展开成完整可滚动面板，外层跟随visualViewport可用高度。
+
+[浏览全部实际截图与前后对照](screenshots/mobile-v16/index.html) · [查修记录与限制](research/v16-mobile-review.md)
+
+当前入口：`../../map.html?view=globe`。模型仍为v14；UI缓存版本globe.js/map-bridge.js/map-embed.css/responsive-ui.js v16，map-view.js v6、map-view.css v3；未修改的globe.css维持v15。
+
+验证脚本：仓库根目录 `tools/test-map-mobile.mjs`、`tools/test-map-integration.mjs`，对应v16报告与validator。旧v15/v14报告保留为历史，不把它们当成本轮新测试。截图为普通视口分辨率，不新增4K图集。仅同步开发分支，不合并main。
+
+---
+
+## 上轮：交互修复 15 / 美术 14
 
 本轮针对纯净模式返回和面板状态修复，不改模型、材质、正式地理或人物。
 

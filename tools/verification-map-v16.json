@@ -1,0 +1,303 @@
+{
+  "revision": 16,
+  "scope": "Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review",
+  "errors": [],
+  "checks": {
+    "flatDoesNotLoad3D": true,
+    "flatStateAndSuspendedRenderer": true,
+    "historyAndSingleFrame": true,
+    "bidirectionalParentLocation": true,
+    "messageOriginSourceAndNameGuards": true,
+    "responsivePanels": true,
+    "cleanExitClickKeyboardParentAndResponsive": true,
+    "layerSelectionAndEscapePriority": true,
+    "samePlaceReopensDetails": true,
+    "emptySelectionClearsBothViews": true,
+    "shortcutEditingModifiersAndRepeat": true,
+    "hiddenLoadCannotActivate": true,
+    "optionalAcademyAndCamera": true,
+    "scenePreservedAcrossSwitch": true,
+    "responsiveModeRestoredAfterHiddenFrame": true,
+    "sceneCleanRestoreAndSearch": true,
+    "contextLossAndRetry": true,
+    "noWebGLFlatFallback": true,
+    "failedTextureRetry": true,
+    "standaloneRetained": true,
+    "standaloneCleanRestore": true,
+    "latestChoiceWinsDuringInitialLoad": true,
+    "academyDeepLinkAndCleanRestore": true,
+    "touchEmulatedCleanExit": true,
+    "shortScreenSearchAndTapReturn": true
+  },
+  "viewports": [
+    {
+      "width": 1024,
+      "height": 768,
+      "layout": {
+        "width": 1024,
+        "scroll": 1024,
+        "button": [
+          234.5,
+          93,
+          298.0625,
+          133
+        ],
+        "stage": [
+          0,
+          149,
+          1024,
+          619
+        ]
+      },
+      "ui": {
+        "width": 1024,
+        "height": 619,
+        "scroll": 1024,
+        "explorer": {
+          "x": 728,
+          "y": 16,
+          "right": 1008,
+          "bottom": 535
+        },
+        "zoom": {
+          "x": 886,
+          "y": 557,
+          "right": 1008,
+          "bottom": 603
+        },
+        "view": {
+          "x": 16,
+          "y": 551,
+          "right": 297.0625,
+          "bottom": 603
+        },
+        "collapsed": false
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "layout": {
+        "width": 390,
+        "scroll": 390,
+        "button": [
+          62,
+          58,
+          110,
+          102
+        ],
+        "stage": [
+          0,
+          112,
+          390,
+          732
+        ]
+      },
+      "ui": {
+        "width": 390,
+        "height": 732,
+        "scroll": 390,
+        "explorer": {
+          "x": 8,
+          "y": 594,
+          "right": 382,
+          "bottom": 660
+        },
+        "zoom": {
+          "x": 286,
+          "y": 8,
+          "right": 382,
+          "bottom": 60
+        },
+        "view": {
+          "x": 8,
+          "y": 672,
+          "right": 382,
+          "bottom": 724
+        },
+        "collapsed": true
+      }
+    },
+    {
+      "width": 320,
+      "height": 640,
+      "layout": {
+        "width": 320,
+        "scroll": 320,
+        "button": [
+          62,
+          58,
+          110,
+          102
+        ],
+        "stage": [
+          0,
+          112,
+          320,
+          528
+        ]
+      },
+      "ui": {
+        "width": 320,
+        "height": 528,
+        "scroll": 320,
+        "explorer": {
+          "x": 8,
+          "y": 390,
+          "right": 312,
+          "bottom": 456
+        },
+        "zoom": {
+          "x": 216,
+          "y": 8,
+          "right": 312,
+          "bottom": 60
+        },
+        "view": {
+          "x": 8,
+          "y": 468,
+          "right": 312,
+          "bottom": 520
+        },
+        "collapsed": true
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "layout": {
+        "width": 844,
+        "scroll": 844,
+        "button": [
+          62,
+          58,
+          110,
+          102
+        ],
+        "stage": [
+          0,
+          112,
+          844,
+          278
+        ]
+      },
+      "ui": {
+        "width": 844,
+        "height": 278,
+        "scroll": 844,
+        "explorer": {
+          "x": 596,
+          "y": 204,
+          "right": 836,
+          "bottom": 270
+        },
+        "zoom": {
+          "x": 8,
+          "y": 218,
+          "right": 104,
+          "bottom": 270
+        },
+        "view": {
+          "x": 112,
+          "y": 218,
+          "right": 580,
+          "bottom": 270
+        },
+        "collapsed": true
+      }
+    }
+  ],
+  "sourceHashes": {
+    "map.html": "804ab7e01df115915095cbb030b3326c718850bcf8224f10fbc562561fb69d76",
+    "css/map-view.css": "1596a409be6e1db44a353fcfc212e48bb487e0b518d71ec607c875a4d98d86eb",
+    "js/map-flat.js": "81f489132b00945656055519d69c17ededb14b61b9fe18049923fb9abdc3bfaf",
+    "js/map-view.js": "dfa8b6cff2e1b02025dc3e9a4602d4cca8fbfadbeb11977f4d2cb2704ba22f5c",
+    "drafts/pierteia-globe/globe.js": "c64132b6dfa55491dfb2c619a27609f16b5cd2a947130d07da5727afcd2eece7",
+    "drafts/pierteia-globe/globe.css": "612142093f3048544b2fdcaaac0534db82551c70b5b26d846d3adefa766b7b55",
+    "drafts/pierteia-globe/responsive-ui.js": "c237376476bf044032c59361fc051b43d3994b9c8e09f4b6cc97000c80aab0c6",
+    "drafts/pierteia-globe/map-bridge.js": "ae8e690c923f9084546bd4091899c3b23088860feeba7fdb584a5cfb7bcd4593",
+    "drafts/pierteia-globe/map-embed.css": "6bfb14e78227c13e649f5c30b3d6b3285987882dcfa185c7159e475ac291a0a8",
+    "drafts/pierteia-globe/atlas-icons.js": "99096421f15990c01d7cf8d05965a6df32ee03ef40bb61b175d178104efe921a",
+    "drafts/pierteia-globe/index.html": "319e0b7a3fd66b8204509b5ee05a64ec2204318267082190cd4c2dd2a25ba905",
+    "drafts/pierteia-globe/academy-hillside.js": "5781f2bc51c133b2dc3188738edc22c4678b33e24dde282572f2f01fb2971eb6",
+    "drafts/pierteia-globe/academy-landscape.js": "d82f6aeffc719ec7f448e1f123549bf621b8709b09715cd8b171f3dd7aa678e0",
+    "drafts/pierteia-globe/academy-craft.js": "ffa59af7a959085fffa7c62a43c26816df3dee6b27e6e2868729fe6189ae3156"
+  },
+  "academy": {
+    "markers": 20,
+    "models": 8,
+    "loadedModels": 1,
+    "activeScene": 900,
+    "quality": "Desktop HQ",
+    "revision": 14,
+    "selected": "安那其学院",
+    "hostSuspended": false,
+    "antialiasSamples": 4,
+    "edgeAntialias": "SMAA",
+    "pendingScene": null,
+    "lastSceneError": null,
+    "localCamera": [
+      0.2899999999999999,
+      0.1999999999999998,
+      0.03500000000000015
+    ],
+    "cameraFov": 39,
+    "environmentIntensity": 0.45,
+    "assetLighting": true,
+    "contactOcclusion": true,
+    "shadowSize": 4096,
+    "surfaceSize": [
+      6144,
+      3072
+    ],
+    "locations": 28,
+    "renderer": {
+      "frame": 264,
+      "calls": 1,
+      "triangles": 1,
+      "points": 0,
+      "lines": 0
+    },
+    "inspection": true,
+    "clean": false,
+    "sceneViewport": {
+      "x": 8,
+      "y": 74,
+      "width": 884,
+      "height": 501
+    },
+    "geometry": [
+      {
+        "id": 900,
+        "anchorId": 900,
+        "triangles": 5899650,
+        "batches": 87,
+        "finishRevision": 9,
+        "grassClumps": 1200,
+        "talusRocks": 60,
+        "sceneType": "open circular hillside campus / separated academic wings",
+        "circledA": true,
+        "trees": 196,
+        "revision": 14,
+        "craftRevision": 14,
+        "drainageRuns": 10,
+        "meadowTufts": 4564,
+        "meadowRevision": 14,
+        "landscapeRevision": 14,
+        "exposedRockLedges": 31,
+        "plantedShrubs": 45,
+        "humanScaleMeters": 1.7,
+        "courtyardEyeHeightMeters": 1.65,
+        "photographicIBL": true,
+        "referenceWood": true,
+        "academyOpenings": 136,
+        "piercedLibrary": true,
+        "blenderAsset": true,
+        "botanicalTrees": 256,
+        "treePrototypes": 8,
+        "vegetationRevision": 12,
+        "foliageMode": "forked crowns / twig-attached elliptic leaves / instanced"
+      }
+    ]
+  }
+}

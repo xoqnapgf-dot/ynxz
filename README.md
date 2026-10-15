@@ -294,7 +294,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v2`、`js/map-flat.js v2`、`js/map-view.js v5`；`drafts/pierteia-globe/globe.js v15`、`globe.css v15`、`map-bridge.js v15`、`map-embed.css v13.1`。未修改的全站样式和数据版本保持不变。
+- 地图接入版本：`css/map-view.css v3`、`js/map-flat.js v2`、`js/map-view.js v6`；`drafts/pierteia-globe/globe.js v16`、`responsive-ui.js v16`、`globe.css v15`、`map-bridge.js v16`、`map-embed.css v16`。未修改的全站样式和数据版本保持不变。
 - 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -393,7 +393,16 @@ ynxz/
 - [在线运行方式、改动边界与验证](drafts/pierteia-globe/README.md)。此轮不是全图写实完工，未完成GI烘焙及其他区域同标准返工；先看互动，不新增4K图集。
 - [此前资料研究与审计](drafts/pierteia-globe/research/README.md)、[美术标准](drafts/pierteia-globe/DESIGN.md)仍保留，不以功能测试或面数代替美术判断。
 - **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
-- 正式20标记、28地点、parent及地理数据不变；球体交互入口为v15，学院模型模块仍为v14.1，树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
+- 正式20标记、28地点、parent及地理数据不变；球体交互入口为v16，学院模型模块仍为v14.1，树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
+
+### v16手机界面查修
+
+- 按真实页面截图改布局：手机/平板竖屏默认底部紧凑地点卡，介绍点击展开、内部滚动；进入场景后镜头改为原生下拉选择，保留44px触控按钮和「返回球体」。横屏使用侧卡，工具和场景分区。
+- 顶部导航与视图/地点选择压缩为两条栏，不再让重复标题占去一整行。900px以内或短屏使用紧凑布局；外层使用visualViewport高度，短屏搜索单独铺开，避免输入框和筛选项挤掉搜索结果。
+- `responsive-ui.js`根据实际面板尺寸计算可用取景区域，更新相机投影；不移动模型、不改正式坐标、不降低网格、纹理、阴影或像素比。纯净视图和PNG导出恢复完整画幅。
+- 另修隐藏iframe恢复后手机版标记残留，以及短屏搜索失焦时按钮移位导致tap落空；以实际视口重新校准，搜索只在明确操作后收起。
+- 检查入口：`tools/test-map-mobile.mjs` / `tools/validate-map-mobile.mjs`，记录 `tools/verification-map-mobile-v16.json`；覆盖28个地点卡、触屏模拟缩放、8种常用尺寸和短屏搜索。另跑原有地图集成回归，不用历史报告冒充本轮执行。
+- [实际截图对照页](drafts/pierteia-globe/screenshots/mobile-v16/index.html)与[目视记录](drafts/pierteia-globe/research/v16-mobile-review.md)保存到开发分支。这是Chromium触屏/视口模拟，不宣称已覆盖实机iOS键盘、Safari及所有显卡。
 
 ### v15交互修复（不重做美术）
 
@@ -404,8 +413,8 @@ ynxz/
 
 ### 地图双视图验证
 
-- 浏览器当前记录：`tools/verification-map-v15.json`（v13/v14保留为历史）。本轮新增纯净模式多路径退出、键盘焦点/快捷键、图层与详情互斥、空选择/重复选择、慢加载选择竞争、学院直达和触屏模拟检查；仍覆盖平面零三维下载、地点双向同步、前进/后退、隐藏暂停与恢复、取消迟到的模型激活、学院近景、WebGL中断/不可用及贴图失败重试。
-- UI检查宽高：1440×900、1024×768、390×844、320×640、844×390。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
+- 浏览器当前记录：`tools/verification-map-v16.json`（v13/v14/v15保留为历史）。保留纯净模式多路径退出、键盘焦点/快捷键、图层与详情互斥、空选择/重复选择、慢加载选择竞争、学院直达和触屏模拟检查；仍覆盖平面零三维下载、地点双向同步、前进/后退、隐藏暂停与恢复、取消迟到的模型激活、学院近景、WebGL中断/不可用及贴图失败重试。
+- UI检查包含1440×900、1024×768、768×1024、430×932、390×844、360×740、320×640、667×375、844×390；另有390×480短屏搜索。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
 - `node tools/validate-map.mjs`：核对两个视图的20个正式坐标、28份地点志、入口版本及本轮实际测试源码SHA；另以 `drafts/pierteia-globe/tools/test-craft.mjs` 检查木纹、铺板、排水构件和地被避让。
 - `node drafts/pierteia-globe/tools/validate.mjs`：保留正式地理SHA、场景资产及历史报告检查，不把历史测试冒充本轮执行。
 - 重跑浏览器检查需开发工具 `playwright@1.51.1`、`@sparticuz/chromium@131.0.1` 及对应系统库；网站运行不依赖这些包。启动根目录HTTP服务后执行 `ATLAS_URL=http://127.0.0.1:8135/ node tools/test-map-integration.mjs`。若工具装在外部目录，可用 `NODE_PATH` 指向其 `node_modules`；`CHECK_IMAGES` 是可选内部检查输出目录，不会默认新增截图资产。

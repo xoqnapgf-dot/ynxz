@@ -1,8 +1,8 @@
 import {createRequire} from 'node:module';import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url),{chromium}=require('playwright'),c=require('@sparticuz/chromium');
 const root=new URL('../',import.meta.url),base=process.env.ATLAS_URL||'http://127.0.0.1:8135/';
-const report={revision:15,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
-for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/globe.css','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html','drafts/pierteia-globe/academy-hillside.js','drafts/pierteia-globe/academy-landscape.js','drafts/pierteia-globe/academy-craft.js'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
+const report={revision:16,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
+for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/globe.css','drafts/pierteia-globe/responsive-ui.js','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html','drafts/pierteia-globe/academy-hillside.js','drafts/pierteia-globe/academy-landscape.js','drafts/pierteia-globe/academy-craft.js'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
 if(process.env.TEST_FONT)await c.font(process.env.TEST_FONT);
 const b=await chromium.launch({executablePath:await c.executablePath(),args:c.args.filter(a=>a!=='--disable-web-security'),headless:true});
 const shot=async(p,name)=>{if(process.env.CHECK_IMAGES)await p.screenshot({path:`${process.env.CHECK_IMAGES}/${name}.png`});};
@@ -34,7 +34,7 @@ try{
   const layout=await p.evaluate(()=>{const button=document.querySelector('#viewGlobe').getBoundingClientRect(),stage=document.querySelector('#globeHost').getBoundingClientRect();return {width:innerWidth,scroll:document.documentElement.scrollWidth,button:[button.x,button.y,button.right,button.bottom],stage:[stage.x,stage.y,stage.width,stage.height]};});
   assert(layout.scroll<=width);assert(layout.button[0]>=0&&layout.button[2]<=width);assert(layout.stage[2]>0&&layout.stage[3]>130);
   const ui=await f.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom};};return {width:innerWidth,height:innerHeight,scroll:document.documentElement.scrollWidth,explorer:rect('.explorer'),zoom:rect('.zoom-controls'),view:rect('.view-switch'),collapsed:document.querySelector('#explorer-content').hidden};});
-  assert(ui.scroll<=width);assert(ui.explorer.x>=0&&ui.explorer.right<=width);assert(ui.explorer.bottom<=ui.height);assert(ui.explorer.bottom<=ui.zoom.y||ui.explorer.x>=ui.zoom.right||ui.explorer.right<=ui.zoom.x,'explorer overlaps zoom');
+  assert(ui.scroll<=width);assert(ui.explorer.x>=0&&ui.explorer.right<=width);assert(ui.explorer.bottom<=ui.height);assert(ui.explorer.y>=ui.zoom.bottom||ui.explorer.bottom<=ui.zoom.y||ui.explorer.x>=ui.zoom.right||ui.explorer.right<=ui.zoom.x,'explorer overlaps zoom');
   if(width<=700){assert(ui.collapsed);await f.locator('#embed-layers').click();assert(await f.locator('.layers').isVisible());await f.locator('label:has(#clouds)').click();assert(!await f.locator('#clouds').isChecked());await f.locator('label:has(#clouds)').click();assert(await f.locator('#clouds').isChecked());await f.locator('#embed-layers').click();}
   // Real clicks + keyboard, in every tested viewport; no synthetic onclick invocation.
   await f.locator('#embed-clean').click();await p.waitForFunction(()=>__mapView.stats().clean);
@@ -72,7 +72,7 @@ try{
  assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);await f.evaluate(()=>__globe.frame('__proto__'));assert.equal(await f.locator('[data-detail-view=wide]').getAttribute('aria-pressed'),'true');assert(await f.locator('[data-detail-view=hillside]').isVisible());
  await f.locator('[data-detail-view=hillside]').click();const image=await f.evaluate(()=>__globe.captureHQ({width:800,height:500,samples:1,download:false}));assert(image.startsWith('data:image/png;base64,'));
  report.checks.optionalAcademyAndCamera=true;report.academy=await f.evaluate(()=>__globe.stats());
- await p.locator('#viewFlat').click();await p.locator('#viewGlobe').click();assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);report.checks.scenePreservedAcrossSwitch=true;
+ await p.locator('#viewFlat').click();await p.locator('#viewGlobe').click();assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);report.checks.scenePreservedAcrossSwitch=true;assert(!await f.locator('html').evaluate(el=>el.classList.contains('compact-ui')));assert(await f.locator('[data-detail-view=hillside]').isVisible());report.checks.responsiveModeRestoredAfterHiddenFrame=true;
  await f.locator('#embed-clean').click();assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);await p.locator('#mapRestoreUI').click();await f.waitForFunction(()=>!__globe.stats().clean);assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);
  await f.locator('#embed-clean').click();await p.locator('#viewFlat').click();await p.locator('#viewGlobe').click();assert(await p.locator('#mapRestoreUI').isVisible());await f.locator('#restore-ui').click();assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);
  await f.locator('#embed-clean').focus();await p.keyboard.press('/');assert(await f.locator('#search').isVisible());assert(!await f.evaluate(()=>__globe.stats().inspection));assert.equal(await f.locator('#search').evaluate(el=>document.activeElement===el),true);assert.equal(await f.locator('#fold').getAttribute('aria-expanded'),'true');report.checks.sceneCleanRestoreAndSearch=true;
@@ -108,6 +108,8 @@ try{
  await tf.locator('#embed-clean').tap();await tf.locator('#restore-ui').tap();await tf.waitForFunction(()=>!__globe.stats().clean);
  await tf.locator('#embed-clean').tap();await touch.locator('#mapRestoreUI').tap();await touch.waitForFunction(()=>!__mapView.stats().clean);
  await tf.locator('#embed-layers').tap();await touch.locator('#mapPlace').selectOption('安那其学院');await tf.locator('#detail').waitFor({state:'visible'});assert(!await tf.locator('.layers').isVisible());
- report.checks.touchEmulatedCleanExit=true;await touchContext.close();
- assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v15.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
+ report.checks.touchEmulatedCleanExit=true;
+ await touch.setViewportSize({width:390,height:480});await tf.locator('#embed-search').tap();await tf.locator('#search').fill('学院');
+ assert(await tf.locator('#place-list .place').first().isVisible());await tf.locator('#fold').tap();await tf.locator('#explorer-content').waitFor({state:'hidden'});assert(await tf.locator('#embed-search').isVisible());report.checks.shortScreenSearchAndTapReturn=true;await touchContext.close();
+ assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v16.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
 }finally{await b.close();}

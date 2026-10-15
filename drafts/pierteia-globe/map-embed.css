@@ -28,3 +28,57 @@
 @media(max-height:460px) and (min-width:701px){
  .embedded .explorer{padding:10px 14px}.embedded .explorer .panel-heading{padding-bottom:0;min-height:30px}.embedded .explorer .search{margin:6px 0}.embedded .explorer .filter-tabs,.embedded .explorer .list-foot{display:none}
 }
+
+/* v16: disclosure cards and an unobstructed scene region. */
+#embed-overview{display:none}.inspection #embed-overview{display:block}
+#detail-fold{position:absolute;right:50px;top:8px;min-width:44px;min-height:44px;padding:8px;font-size:12px;color:#e8d5a7;z-index:1}
+.detail .detail-top{padding-right:84px}.detail #detail-copy{min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
+.detail #detail-copy #detail-description{max-height:none;overflow:visible}
+.camera-picker{align-items:center;gap:12px;font-size:12px;color:#bac8ce}.camera-picker select{flex:1;min-width:0;min-height:44px;border:1px solid #b9ab7d77;border-radius:7px;background:#182a36;color:#f4e6c4;padding:8px 30px 8px 12px;font:16px sans-serif}
+.compact-ui .topbar,.compact-ui .intro,.compact-ui .bottom-bar,.compact-ui .orientation{display:none}
+.compact-ui #embed-tools{position:fixed;display:flex;z-index:8;left:8px;top:8px;gap:0;padding:3px;border-radius:9px}
+.compact-ui #embed-tools button{min-height:44px;min-width:44px;padding:8px;font-size:12px;border-radius:6px}
+.compact-ui #embed-flat,.compact-ui .inspection #embed-search,.compact-ui .inspection #embed-layers,.compact-ui .clean #embed-tools{display:none}
+.compact-ui .explorer,.compact-ui .detail,.compact-ui .inspection .detail{position:fixed;top:auto!important;left:8px;right:8px;bottom:calc(72px + env(safe-area-inset-bottom,0px));width:auto;max-height:56dvh;margin:0;padding:10px 12px;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:#101f2af2}
+.compact-ui .inspection .detail{bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.compact-ui .detail .detail-top{display:none}
+.compact-ui .detail h2{font-size:17px;line-height:1.45;margin:0;padding:0 96px 0 0;min-height:44px;display:flex;align-items:center;flex-shrink:0;letter-spacing:1px}
+.compact-ui .detail-close{top:10px;right:8px;width:44px;height:44px;font-size:24px}
+.compact-ui #detail-fold{top:10px;right:52px;width:44px;height:44px;padding:6px}
+.compact-ui .detail #detail-copy{flex:1 1 auto;margin:4px 0 8px}
+.compact-ui .detail #detail-description{font-size:14px;line-height:1.85;margin:12px 0;max-height:none}
+.compact-ui #detail-coordinates{font-size:10px;line-height:1.7}.compact-ui .detail-note{font-size:11px;line-height:1.8}
+.compact-ui #children button{min-height:44px;padding:8px;font-size:13px}
+.compact-ui .detail .primary-button{flex-shrink:0;min-height:44px;margin:6px 0 0;padding:10px 12px;font-size:13px;border-radius:6px}
+.compact-ui #detail-views{display:none}.compact-ui .camera-picker{display:flex;flex-shrink:0;margin-top:6px;min-height:44px}
+.compact-ui .explorer .panel-heading{flex-shrink:0;padding:0;min-height:44px;font-size:13px}.compact-ui #fold{min-width:44px;min-height:44px}
+.compact-ui #explorer-content{min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
+.compact-ui .search{display:flex;position:sticky;top:0;background:#101f2a;z-index:1;margin:8px 0}.compact-ui .search input{min-height:44px;font-size:16px}
+.compact-ui .filter-tabs{display:flex;margin:8px 0;gap:16px}.compact-ui .filter-tabs button{font-size:12px;min-height:44px;padding:8px 0}
+.compact-ui .place-list{display:block;max-height:none;overflow:visible}.compact-ui .place{min-height:48px;padding:10px 0}.compact-ui .place-text strong{font-size:13px}.compact-ui .place-text small{font-size:11px}.compact-ui .list-foot{display:none}
+.compact-ui .layers{display:block;top:auto;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:8px;right:8px;width:auto;max-height:56dvh;padding:14px 16px;overflow:auto;border-radius:12px;z-index:9}
+.compact-ui .layers label{min-height:44px;margin:4px 0;font-size:13px}.compact-ui .layer-bottom button{min-height:44px;font-size:12px}
+.compact-ui.layers-open .explorer,.compact-ui.layers-open .detail{visibility:hidden!important}
+.compact-ui .view-switch{left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));transform:none;max-width:none;border-radius:9px;padding:3px;justify-content:space-between;overflow-x:auto;white-space:nowrap}
+.compact-ui .view-switch button{min-height:44px;font-size:12px;padding:8px}.compact-ui .view-switch>span{margin:0 2px;flex-shrink:0}
+.compact-ui .inspection .view-switch{display:none}
+.compact-ui .zoom-controls{top:8px;bottom:auto;right:8px;left:auto;flex-direction:row;border-radius:9px;padding:3px;z-index:8}
+.compact-ui .zoom-controls button{width:44px;height:44px}.compact-ui #reset{display:none}
+.compact-ui #scene-loading{bottom:calc(8px + env(safe-area-inset-bottom,0px));width:calc(100vw - 16px);max-width:440px;z-index:25}.compact-ui #scene-loading button{min-height:44px}.compact-ui #toast{bottom:76px}
+@media(min-width:560px) and (max-height:500px){
+ .compact-ui .explorer,.compact-ui .detail,.compact-ui .inspection .detail,.compact-ui .layers{left:auto;right:8px;bottom:8px;width:min(240px,38vw);max-height:calc(100dvh - 80px)}
+ .compact-ui .zoom-controls{top:auto;bottom:8px;left:8px;right:auto}
+ .compact-ui .view-switch{left:112px;right:calc(min(240px,38vw) + 24px);max-width:none}
+ .compact-ui .layers{padding:10px 12px}.compact-ui .layers label{font-size:12px}
+ .compact-ui #scene-loading{left:8px;transform:none;max-width:calc(100vw - min(240px,38vw) - 32px);bottom:66px}
+}
+@media(min-width:560px) and (max-height:500px){
+ .compact-ui .detail:not(.detail-collapsed){top:8px!important;bottom:8px;max-height:none}
+ .compact-ui .layers,.compact-ui .explorer{max-height:calc(100dvh - 16px)}
+}
+/* When the software keyboard leaves little height, search gets a usable sheet,
+   not a tiny list below a large sticky input. Folding it restores the scene. */
+@media(max-width:559px) and (max-height:460px){
+ .compact-ui .search-active .explorer{top:8px!important;bottom:8px;max-height:none;z-index:12}
+ .compact-ui .search-active #embed-tools,.compact-ui .search-active .view-switch,.compact-ui .search-active .zoom-controls{visibility:hidden}
+}
