@@ -81,7 +81,7 @@
       .map-scalebar { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 10px; }
     }
   </style>
-  <link rel="stylesheet" href="css/map-view.css?v=1" />
+  <link rel="stylesheet" href="css/map-view.css?v=2" />
 </head>
 <body data-page="map" class="theme-map">
   <header class="site-header">
@@ -107,6 +107,7 @@
     </div>
     <div class="map-workspace">
     <section id="globeHost" aria-label="球体地图" hidden>
+      <button id="mapRestoreUI" type="button" hidden title="恢复球体界面，不离开当前场景">恢复界面</button>
       <div class="globe-notice" id="globeNotice" data-state="loading" role="status">
         <h2 id="globeNoticeTitle">正在展开球体地图</h2>
         <p id="globeNoticeText">首次打开需要加载高清地形。平面地图随时可用，局部建筑仅在进入场景时加载。</p>
@@ -169,7 +170,7 @@
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
   <script src="js/map-flat.js?v=2"></script>
-  <script src="js/map-view.js?v=4"></script>
+  <script src="js/map-view.js?v=5"></script>
 
 </body>
 </html>

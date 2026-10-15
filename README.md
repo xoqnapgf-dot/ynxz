@@ -294,7 +294,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v1`、`js/map-flat.js v2`、`js/map-view.js v4`；复用 `drafts/pierteia-globe/globe.js v14.1`、`map-bridge.js v13.1`、`map-embed.css v13.1`。未修改的全站样式和数据版本保持不变。
+- 地图接入版本：`css/map-view.css v2`、`js/map-flat.js v2`、`js/map-view.js v5`；`drafts/pierteia-globe/globe.js v15`、`globe.css v15`、`map-bridge.js v15`、`map-embed.css v13.1`。未修改的全站样式和数据版本保持不变。
 - 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -393,11 +393,18 @@ ynxz/
 - [在线运行方式、改动边界与验证](drafts/pierteia-globe/README.md)。此轮不是全图写实完工，未完成GI烘焙及其他区域同标准返工；先看互动，不新增4K图集。
 - [此前资料研究与审计](drafts/pierteia-globe/research/README.md)、[美术标准](drafts/pierteia-globe/DESIGN.md)仍保留，不以功能测试或面数代替美术判断。
 - **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
-- 正式20标记、28地点、parent及地理数据不变；球体入口和学院为v14.1，树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
+- 正式20标记、28地点、parent及地理数据不变；球体交互入口为v15，学院模型模块仍为v14.1，树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
+
+### v15交互修复（不重做美术）
+
+- 纯净模式改为左上角高对比、至少44px高的「退出纯净模式」；支持点击、H和Esc，进入时转移焦点、退出时恢复。地图外层另有「恢复界面」，焦点在外层工具栏时也能退出；退出不离开当前建筑场景。
+- 选择地点/进入场景时关闭图层；Esc只关闭当前最上层状态，不再一边关图层一边丢掉地点。场景内按 `/` 返回球体并真正显示、聚焦搜索，不再藏在inspection样式下。
+- 处理同一地点再次选择、清空选择后的双视图同步，以及初始化慢加载时旧深链覆盖新选择。输入框、Ctrl/Meta/Alt组合键、输入法组合和长按不误触快捷键。
+- 复现、修复范围和验证限制见 `drafts/pierteia-globe/research/v15-interaction-review.md`；v14美术报告是历史记录，本轮没有重新渲染八景或输出4K图集。
 
 ### 地图双视图验证
 
-- 浏览器当前记录：`tools/verification-map-v14.json`（v13保留为历史）。覆盖平面零三维下载、地点双向同步、前进/后退、隐藏暂停与恢复、取消迟到的模型激活、学院近景、WebGL中断/不可用及贴图失败重试。
+- 浏览器当前记录：`tools/verification-map-v15.json`（v13/v14保留为历史）。本轮新增纯净模式多路径退出、键盘焦点/快捷键、图层与详情互斥、空选择/重复选择、慢加载选择竞争、学院直达和触屏模拟检查；仍覆盖平面零三维下载、地点双向同步、前进/后退、隐藏暂停与恢复、取消迟到的模型激活、学院近景、WebGL中断/不可用及贴图失败重试。
 - UI检查宽高：1440×900、1024×768、390×844、320×640、844×390。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
 - `node tools/validate-map.mjs`：核对两个视图的20个正式坐标、28份地点志、入口版本及本轮实际测试源码SHA；另以 `drafts/pierteia-globe/tools/test-craft.mjs` 检查木纹、铺板、排水构件和地被避让。
 - `node drafts/pierteia-globe/tools/validate.mjs`：保留正式地理SHA、场景资产及历史报告检查，不把历史测试冒充本轮执行。

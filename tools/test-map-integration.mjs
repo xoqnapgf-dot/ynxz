@@ -1,8 +1,8 @@
 import {createRequire} from 'node:module';import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url),{chromium}=require('playwright'),c=require('@sparticuz/chromium');
 const root=new URL('../',import.meta.url),base=process.env.ATLAS_URL||'http://127.0.0.1:8135/';
-const report={revision:14,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
-for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html','drafts/pierteia-globe/academy-hillside.js','drafts/pierteia-globe/academy-landscape.js','drafts/pierteia-globe/academy-craft.js'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
+const report={revision:15,scope:'Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review',errors:[],checks:{},viewports:[],sourceHashes:{}};
+for(const f of ['map.html','css/map-view.css','js/map-flat.js','js/map-view.js','drafts/pierteia-globe/globe.js','drafts/pierteia-globe/globe.css','drafts/pierteia-globe/map-bridge.js','drafts/pierteia-globe/map-embed.css','drafts/pierteia-globe/atlas-icons.js','drafts/pierteia-globe/index.html','drafts/pierteia-globe/academy-hillside.js','drafts/pierteia-globe/academy-landscape.js','drafts/pierteia-globe/academy-craft.js'])report.sourceHashes[f]=createHash('sha256').update(fs.readFileSync(new URL(f,root))).digest('hex');
 if(process.env.TEST_FONT)await c.font(process.env.TEST_FONT);
 const b=await chromium.launch({executablePath:await c.executablePath(),args:c.args.filter(a=>a!=='--disable-web-security'),headless:true});
 const shot=async(p,name)=>{if(process.env.CHECK_IMAGES)await p.screenshot({path:`${process.env.CHECK_IMAGES}/${name}.png`});};
@@ -36,9 +36,33 @@ try{
   const ui=await f.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom};};return {width:innerWidth,height:innerHeight,scroll:document.documentElement.scrollWidth,explorer:rect('.explorer'),zoom:rect('.zoom-controls'),view:rect('.view-switch'),collapsed:document.querySelector('#explorer-content').hidden};});
   assert(ui.scroll<=width);assert(ui.explorer.x>=0&&ui.explorer.right<=width);assert(ui.explorer.bottom<=ui.height);assert(ui.explorer.bottom<=ui.zoom.y||ui.explorer.x>=ui.zoom.right||ui.explorer.right<=ui.zoom.x,'explorer overlaps zoom');
   if(width<=700){assert(ui.collapsed);await f.locator('#embed-layers').click();assert(await f.locator('.layers').isVisible());await f.locator('label:has(#clouds)').click();assert(!await f.locator('#clouds').isChecked());await f.locator('label:has(#clouds)').click();assert(await f.locator('#clouds').isChecked());await f.locator('#embed-layers').click();}
+  // Real clicks + keyboard, in every tested viewport; no synthetic onclick invocation.
+  await f.locator('#embed-clean').click();await p.waitForFunction(()=>__mapView.stats().clean);
+  const restore=await f.locator('#restore-ui').evaluate(el=>{const r=el.getBoundingClientRect();return {opacity:Number(getComputedStyle(el).opacity),width:r.width,height:r.height,x:r.x,y:r.y,right:r.right,bottom:r.bottom,hit:el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)),focused:document.activeElement===el};});
+  assert(restore.opacity>=.95&&restore.height>=44&&restore.x>=0&&restore.y>=0&&restore.right<=ui.width&&restore.bottom<=ui.height&&restore.hit&&restore.focused);
+  assert(await p.locator('#mapRestoreUI').isVisible());await shot(p,`clean-${width}x${height}`);
+  await p.keyboard.press('Escape');await f.waitForFunction(()=>!__globe.stats().clean);assert.equal(await f.locator('#embed-clean').evaluate(el=>el===document.activeElement),true);
+  await f.locator('#embed-clean').click();await p.locator('#mapRestoreUI').click();await f.waitForFunction(()=>!__globe.stats().clean);
+  await f.locator('#embed-clean').click();await p.locator('#viewGlobe').focus();await p.keyboard.press('Escape');await f.waitForFunction(()=>!__globe.stats().clean);
+  await f.locator('#embed-clean').click();await f.locator('#restore-ui').click();await p.waitForFunction(()=>!__mapView.stats().clean);
+  assert(!await p.locator('#mapRestoreUI').isVisible());
   await shot(p,`map-${width}x${height}`);report.viewports.push({width,height,layout,ui});
  }
  report.checks.responsivePanels=true;
+ report.checks.cleanExitClickKeyboardParentAndResponsive=true;
+ await f.locator('#embed-layers').click();await p.locator('#mapPlace').selectOption('安那其学院');await f.waitForFunction(()=>__globe.stats().selected==='安那其学院');
+ assert(await f.locator('#detail').isVisible());assert(!await f.locator('.layers').isVisible());
+ await f.locator('#embed-layers').click();await f.locator('#clouds').focus();await p.keyboard.press('Escape');
+ assert(!await f.locator('.layers').isVisible());assert.equal(await f.evaluate(()=>__globe.stats().selected),'安那其学院');assert(await f.locator('#detail').isVisible());
+ assert.equal(await f.locator('#embed-layers').getAttribute('aria-expanded'),'false');report.checks.layerSelectionAndEscapePriority=true;
+ await f.locator('#close-detail').click();assert(await f.locator('.explorer').isVisible());
+ await p.locator('#mapPlace').selectOption('安那其学院');await f.locator('#detail').waitFor({state:'visible'});report.checks.samePlaceReopensDetails=true;
+ await p.locator('#mapPlace').selectOption('');await f.waitForFunction(()=>__globe.stats().selected===null);assert.equal(await p.evaluate(()=>__mapView.stats().selected),'');assert(!await f.locator('#detail').isVisible());
+ await p.locator('#viewFlat').click();await p.locator('#mapPlace').selectOption('万知城');await p.locator('#mapPlace').selectOption('');await p.locator('#viewGlobe').click();assert.equal(await p.locator('#mapPlace').inputValue(),'');await f.waitForFunction(()=>__globe.stats().selected===null);report.checks.emptySelectionClearsBothViews=true;
+ await p.locator('#viewGlobe').focus();await p.keyboard.press('/');await f.locator('#search').waitFor({state:'visible'});assert.equal(await f.locator('#search').evaluate(el=>document.activeElement===el),true);
+ await p.keyboard.type('h/');assert.equal(await f.locator('#search').inputValue(),'h/');assert(!await f.evaluate(()=>__globe.stats().clean));await f.locator('#search').fill('');await p.keyboard.press('Escape');
+ await f.locator('#embed-clean').focus();await p.keyboard.press('Control+h');assert(!await f.evaluate(()=>__globe.stats().clean));await p.keyboard.down('h');await f.waitForFunction(()=>__globe.stats().clean);await p.keyboard.down('h');assert(await f.evaluate(()=>__globe.stats().clean));await p.keyboard.up('h');await p.keyboard.press('h');await f.waitForFunction(()=>!__globe.stats().clean);report.checks.shortcutEditingModifiersAndRepeat=true;
+
  await p.setViewportSize({width:1200,height:800});await p.locator('#mapPlace').selectOption('安那其学院');
  let release,arrived;const held=new Promise(r=>arrived=r),gate=new Promise(r=>release=r);
  await p.route('**/academy-atelier.glb',async route=>{arrived();await gate;await route.continue();});
@@ -49,6 +73,10 @@ try{
  await f.locator('[data-detail-view=hillside]').click();const image=await f.evaluate(()=>__globe.captureHQ({width:800,height:500,samples:1,download:false}));assert(image.startsWith('data:image/png;base64,'));
  report.checks.optionalAcademyAndCamera=true;report.academy=await f.evaluate(()=>__globe.stats());
  await p.locator('#viewFlat').click();await p.locator('#viewGlobe').click();assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);report.checks.scenePreservedAcrossSwitch=true;
+ await f.locator('#embed-clean').click();assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);await p.locator('#mapRestoreUI').click();await f.waitForFunction(()=>!__globe.stats().clean);assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);
+ await f.locator('#embed-clean').click();await p.locator('#viewFlat').click();await p.locator('#viewGlobe').click();assert(await p.locator('#mapRestoreUI').isVisible());await f.locator('#restore-ui').click();assert.equal(await f.evaluate(()=>__globe.stats().activeScene),900);
+ await f.locator('#embed-clean').focus();await p.keyboard.press('/');assert(await f.locator('#search').isVisible());assert(!await f.evaluate(()=>__globe.stats().inspection));assert.equal(await f.locator('#search').evaluate(el=>document.activeElement===el),true);assert.equal(await f.locator('#fold').getAttribute('aria-expanded'),'true');report.checks.sceneCleanRestoreAndSearch=true;
+
  await f.evaluate(()=>__globe.renderer.getContext().getExtension('WEBGL_lose_context').loseContext());await p.locator('#globeNotice[data-state=error]').waitFor();assert(await p.locator('#fallbackFlat').isVisible());
  await p.locator('#fallbackFlat').click();assert.equal(await p.evaluate(()=>__mapView.stats().mode),'flat');await p.locator('#viewGlobe').click();await p.locator('#retryGlobe').click();f=await ready(p);await f.evaluate(()=>__globe.pause(true));assert.equal(await p.locator('iframe').count(),1);report.checks.contextLossAndRetry=true;
  await p.close();
@@ -61,6 +89,25 @@ try{
  await failed.route('**/land-mask.png*',async route=>{if(failOnce){failOnce=false;await route.abort();}else await route.continue();});
  await failed.goto(new URL('map.html?view=globe&place=万知城',base).href);await failed.locator('#globeNotice[data-state=error]').waitFor();await failed.locator('#retryGlobe').click();const recovered=await ready(failed);await recovered.evaluate(()=>__globe.pause(true));assert.equal(await failed.locator('#mapPlace').inputValue(),'万知城');report.checks.failedTextureRetry=true;await failed.close();
  // Direct draft routes still work; integration does not force a parent page.
- console.log('PASS missing texture retry');const standalone=await context.newPage();await standalone.setViewportSize({width:1000,height:650});watch(standalone);await standalone.goto(new URL('drafts/pierteia-globe/?site=900',base).href);await standalone.waitForFunction(()=>window.__globe?.ready);assert(!await standalone.locator('html').evaluate(el=>el.classList.contains('embedded')));assert(await standalone.locator('.topbar').isVisible());await standalone.evaluate(()=>__globe.pause(true));report.checks.standaloneRetained=true;await standalone.close();
- assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v14.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
+ console.log('PASS missing texture retry');const standalone=await context.newPage();await standalone.setViewportSize({width:1000,height:650});watch(standalone);await standalone.goto(new URL('drafts/pierteia-globe/?site=900',base).href);await standalone.waitForFunction(()=>window.__globe?.ready);assert(!await standalone.locator('html').evaluate(el=>el.classList.contains('embedded')));assert(await standalone.locator('.topbar').isVisible());await standalone.evaluate(()=>__globe.pause(true));await standalone.locator('#loading').waitFor({state:'hidden'});await standalone.locator('#clean').click();assert(await standalone.locator('#restore-ui').isVisible());await standalone.keyboard.press('Escape');assert(!await standalone.evaluate(()=>__globe.stats().clean));await standalone.locator('#clean').click();await standalone.locator('#restore-ui').click();assert(!await standalone.evaluate(()=>__globe.stats().clean));report.checks.standaloneRetained=true;report.checks.standaloneCleanRestore=true;await standalone.close();
+ // A slow initial deep link must not override a newer toolbar selection/clear.
+ const race=await context.newPage();watch(race);
+ for(const choice of ['万知城','']){
+  let allow,seen;const waiting=new Promise(r=>seen=r),blocked=new Promise(r=>allow=r);
+  await race.route('**/land-mask.png*',async route=>{seen();await blocked;await route.continue();});
+  await race.goto(new URL('map.html?view=globe&site=900&inspect',base).href,{waitUntil:'domcontentloaded'});await waiting;
+  await race.locator('#mapPlace').selectOption(choice);allow();const rf=await ready(race);await rf.evaluate(()=>__globe.pause(true));
+  await rf.waitForFunction(name=>__globe.stats().selected===(name||null),choice);assert.equal(await race.locator('#mapPlace').inputValue(),choice);assert.equal(await rf.evaluate(()=>__globe.stats().activeScene),null);assert.equal(await rf.evaluate(()=>__globe.stats().pendingScene),null);
+  await race.unroute('**/land-mask.png*');
+ }
+ report.checks.latestChoiceWinsDuringInitialLoad=true;
+ await race.goto(new URL('map.html?view=globe&site=900&inspect&frame=wide',base).href);const direct=await ready(race);await direct.waitForFunction(()=>__globe.stats().activeScene===900);await direct.evaluate(()=>__globe.pause(true));assert.equal(await race.locator('#mapPlace').inputValue(),'安那其学院');
+ await direct.locator('#embed-clean').click();await direct.locator('#restore-ui').click();assert.equal(await direct.evaluate(()=>__globe.stats().activeScene),900);report.checks.academyDeepLinkAndCleanRestore=true;await race.close();
+ const touchContext=await b.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2});const touch=await touchContext.newPage();watch(touch);
+ await touch.goto(new URL('map.html?view=globe',base).href);const tf=await ready(touch);await tf.evaluate(()=>__globe.pause(true));
+ await tf.locator('#embed-clean').tap();await tf.locator('#restore-ui').tap();await tf.waitForFunction(()=>!__globe.stats().clean);
+ await tf.locator('#embed-clean').tap();await touch.locator('#mapRestoreUI').tap();await touch.waitForFunction(()=>!__mapView.stats().clean);
+ await tf.locator('#embed-layers').tap();await touch.locator('#mapPlace').selectOption('安那其学院');await tf.locator('#detail').waitFor({state:'visible'});assert(!await tf.locator('.layers').isVisible());
+ report.checks.touchEmulatedCleanExit=true;await touchContext.close();
+ assert.deepEqual(report.errors,[]);fs.writeFileSync(new URL('verification-map-v15.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report.checks));
 }finally{await b.close();}
