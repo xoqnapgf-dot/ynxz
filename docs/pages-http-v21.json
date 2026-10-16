@@ -1,11 +1,11 @@
 {
   "base": "https://xoqnapgf-dot.github.io/ynxz/",
-  "checkedAt": "2026-10-15T14:26:20.017Z",
-  "commit": "69c3bc460b78cf2f463bee4f6389d9ab9a399a28",
+  "checkedAt": "2026-10-16T22:35:34.855Z",
+  "commit": "67d119df684a7decec96180db3853695e275b4d8",
   "results": [
     {
       "path": "index.html",
-      "url": "https://xoqnapgf-dot.github.io/ynxz/index.html?verify=69c3bc460b78cf2f463bee4f6389d9ab9a399a28",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/index.html?verify=67d119df684a7decec96180db3853695e275b4d8",
       "status": 200,
       "type": "text/html; charset=utf-8",
       "expected": "0eca9450b02a65a07669a274fe72f0ecb6295e34c1d91244fca1d29c84c613ef",
@@ -14,7 +14,7 @@
     },
     {
       "path": "map.html",
-      "url": "https://xoqnapgf-dot.github.io/ynxz/map.html?verify=69c3bc460b78cf2f463bee4f6389d9ab9a399a28",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/map.html?verify=67d119df684a7decec96180db3853695e275b4d8",
       "status": 200,
       "type": "text/html; charset=utf-8",
       "expected": "8deab65e101561336765a4b755770c20badf05f750104adc59802048e13b0da4",
@@ -23,7 +23,7 @@
     },
     {
       "path": "globe.html",
-      "url": "https://xoqnapgf-dot.github.io/ynxz/globe.html?verify=69c3bc460b78cf2f463bee4f6389d9ab9a399a28",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/globe.html?verify=67d119df684a7decec96180db3853695e275b4d8",
       "status": 200,
       "type": "text/html; charset=utf-8",
       "expected": "87497e9604a5bcc27af92edaf61c768c10aed03ab50254be802a195f3e2316e2",
@@ -32,7 +32,7 @@
     },
     {
       "path": "js/map-view.js",
-      "url": "https://xoqnapgf-dot.github.io/ynxz/js/map-view.js?verify=69c3bc460b78cf2f463bee4f6389d9ab9a399a28",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/js/map-view.js?verify=67d119df684a7decec96180db3853695e275b4d8",
       "status": 200,
       "type": "application/javascript; charset=utf-8",
       "expected": "1268874d29725940b26216ffaecef6314b967b90a24f4857ede5583f58b40542",
@@ -41,7 +41,7 @@
     },
     {
       "path": "css/map-view.css",
-      "url": "https://xoqnapgf-dot.github.io/ynxz/css/map-view.css?verify=69c3bc460b78cf2f463bee4f6389d9ab9a399a28",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/css/map-view.css?verify=67d119df684a7decec96180db3853695e275b4d8",
       "status": 200,
       "type": "text/css; charset=utf-8",
       "expected": "e6a3d57a8beeb8ec5d7977c5c8549a91d397d2028b62f0ee02066d8af2f3edc0",

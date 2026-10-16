@@ -58,8 +58,8 @@
     "search.html": "5ab286dba14186f32f0983de43ad1973310626a195d5215a0dae044f414b302d"
   },
   "execution": {
-    "base": "http://127.0.0.1:8135/",
-    "live": false,
-    "commit": null
+    "base": "https://xoqnapgf-dot.github.io/ynxz/",
+    "live": true,
+    "commit": "67d119df684a7decec96180db3853695e275b4d8"
   }
 }
