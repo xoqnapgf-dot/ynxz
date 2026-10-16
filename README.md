@@ -398,6 +398,15 @@ ynxz/
 - **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
 - 正式20标记、28地点、parent及地理数据不变；v22材质轮后环境系统revision为18（材质/环境实现层），学院建筑与木作基底仍为v14，树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
 
+### v22材质与环境轮（2026-10-17，用户反馈「和没做一样」后按实际可见美术推进）
+
+- 目标：材质与环境肉眼可见提升，不改正式海陆、坐标、地点关系；不降画质（Three r170/4096阴影/HDR/AO/PBR/GLB保持）。
+- 球体（`planet-materials.js` v10）：海洋太阳闪络主核+宽软副波、洋面色差（只作用于开阔海面）、大陆轻微分级让陆地更可读、云影三采样柔化、黄昏双层（暖接触带+冷高带）、晨昏线大气加暖。
+- 天空（`regional-environment.js` v18）：每个场景天空加入与场景主光同向的太阳盘与辉光、向日地平线暖带、云层向日银边、垂直渐变加重；草本逐株确定性色差（`instanceColor`）消除塑料感。
+- 表面（`regional-surfaces.js` v18）：湿痕聚成宏观积水斑块并压低粗糙度下限（雨后反光成片）、雪线边缘细噪点软化且加冷调、墙面/石砖加细颗粒。
+- 验证：八景环境回归整套重跑为 **v18基线**（`tools/verification-environments-v18.json`，8场景全过、`errors=[]`、17张实图）；[八景实图](drafts/pierteia-globe/screenshots/environments-v18/index.html)。页面套件本地重跑更新v21报告哈希；真实Pages验收成功：[Actions运行38976582307](https://github.com/xoqnapgf-dot/ynxz/actions/runs/38976582307)（提交`67d119d`），线上截图见[pages-v21](drafts/pierteia-globe/screenshots/pages-v21/index.html)。
+- 边界：v17八景图集保留为历史对照（`environments-v17/`）；学院建筑/群岛裂隙/雪山源区布局未动；天气叠加开关、减少动态偏好行为不变；本轮没有新增4K图集，也不以测试代替最终美术验收。
+
 ### v21入口统一及真实线上验证
 
 - 保留原导航与平面地图布局。首页新增明确的「3D地球」直达入口，原「地图」仍打开平面地图。
