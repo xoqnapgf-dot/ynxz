@@ -8,14 +8,14 @@ const {regionalizeSurfaces}=await load('regional-surfaces.js');
 const {precipitationFloor,createRegionalWeather,configureRegionalWater,addRegionalHabitat,createRegionalSky}=await load('regional-environment.js');
 assert.deepEqual(Object.keys(profiles).sort(),['11','12','9','900','901','902','falota','shiomi'].sort());
 assert.equal(new Set(Object.values(profiles).map(p=>p.label)).size,8);
-for(const p of Object.values(profiles)){assert(Object.isFrozen(p));assert(Object.isFrozen(p.wind));assert(p.interpretation);assert.equal(p.revision,17);}
+for(const p of Object.values(profiles)){assert(Object.isFrozen(p));assert(Object.isFrozen(p.wind));assert(p.interpretation);assert.equal(p.revision,18);}
 assert.throws(()=>regionalProfile('unknown'));assert(profiles['11'].water.wave<profiles.falota.water.wave);assert.equal(profiles.shiomi.precipitation,'rain');assert.equal(profiles['902'].precipitation,'snow');
 const source=new T.MeshStandardMaterial({color:'#ba9877',roughness:.84});source.userData.worldFinish='stone';source.onBeforeCompile=shader=>{shader.preserved=true;};source.customProgramCacheKey=()=> 'upstream-finish';
 const original=source.color.getHex(),a=new T.Group(),b=new T.Group();
 for(const g of [a,b])for(let i=0;i<2;i++)g.add(new T.Mesh(new T.BoxGeometry(),source));
 assert.equal(regionalizeSurfaces(a,profiles.shiomi),1);assert.equal(regionalizeSurfaces(b,profiles['902']),1);
 assert.equal(a.children[0].material,a.children[1].material);assert.notEqual(a.children[0].material,b.children[0].material);assert.notEqual(a.children[0].material,source);assert.equal(source.color.getHex(),original);assert.equal(source.userData.regionalFinish,undefined);
-for(const g of [a,b]){const m=g.children[0].material,s={vertexShader:'#include <common>\n#include <begin_vertex>',fragmentShader:'#include <common>\n#include <color_fragment>\n#include <roughnessmap_fragment>\n#include <metalnessmap_fragment>'};m.onBeforeCompile(s);assert(s.preserved);assert(s.vertexShader.includes('USE_INSTANCING'));assert(s.fragmentShader.includes('regionWet'));assert(m.customProgramCacheKey().startsWith('upstream-finish/regional-finish-17/'));}
+for(const g of [a,b]){const m=g.children[0].material,s={vertexShader:'#include <common>\n#include <begin_vertex>',fragmentShader:'#include <common>\n#include <color_fragment>\n#include <roughnessmap_fragment>\n#include <metalnessmap_fragment>'};m.onBeforeCompile(s);assert(s.preserved);assert(s.vertexShader.includes('USE_INSTANCING'));assert(s.fragmentShader.includes('regionWet'));assert(m.customProgramCacheKey().startsWith('upstream-finish/regional-finish-18/'));}
 assert.notEqual(a.children[0].material.customProgramCacheKey(),b.children[0].material.customProgramCacheKey());
 const shelters=[{x:0,z:0,w:.04,d:.08,angle:Math.PI/2,top:.08}];
 assert.equal(precipitationFloor(.03,0,()=>.01,shelters),.081);assert.equal(precipitationFloor(0,.03,()=>.01,shelters),.011);assert.equal(precipitationFloor(0,0,()=>.12,shelters),.121);

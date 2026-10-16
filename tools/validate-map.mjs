@@ -9,12 +9,13 @@ const html=read('map.html');for(const id of ['viewFlat','viewGlobe','mapPlace','
 assert(!html.includes('map-mobile.js'));assert(!html.includes('id="mapMenu"'));assert(!html.includes('id="globeHost"'));
 const globe=read('globe.html');assert(globe.includes('id="globeHost"'));assert(!globe.includes('map-flat.js'));assert(!globe.includes('id="mapStage"'));for(const page of [html,globe]){assert(page.includes('href="map.html?release=21"'));assert(page.includes('href="globe.html?release=21"'));assert(page.includes('map-view.css?v=5'));assert(page.includes('map-view.js?v=10'));}
 assert(!html.includes('<iframe'),'3D iframe must be lazy');assert(html.includes('map-view.css?v=5'));assert(html.includes('map-flat.js?v=2'));assert(html.includes('map-view.js?v=10'));
-assert(read('drafts/pierteia-globe/index.html').includes('globe.js?v=18'));assert(read('drafts/pierteia-globe/index.html').includes('map-embed.css?v=18'));
+assert(read('drafts/pierteia-globe/index.html').includes('globe.js?v=19'));assert(read('drafts/pierteia-globe/index.html').includes('map-embed.css?v=18'));
 const report=JSON.parse(read('tools/verification-map-pages-v21.json'));assert.equal(report.revision,21);assert.deepEqual(report.errors,[]);
 for(const key of ['homePageNavigation','flatImagesDecoded','portraitImagesDecoded','restoredNavigationAndFlatControls','flatZero3DAndAll28Places','realPageNavigationAndBack','cleanSearchLayersAndMessageGuards','legacyLinksSceneAndReturn','latestChoiceDuringLoad','textureAndContextRetry','noWebGLFlatFallback'])assert.equal(report.checks[key],true,key);
 for(const [file,sha]of Object.entries(report.sourceHashes))assert.equal(hash(file),sha,'stale v21 page report: '+file);
 assert.equal(report.screenshots.length,10);for(const name of report.screenshots){const image=fs.readFileSync(new URL(`drafts/pierteia-globe/screenshots/pages-v21/${name}.jpg`,root));assert(image.length>2000);assert.equal(image[0],255);assert.equal(image[1],216);}
-// The 3D implementation is unchanged from the fully tested v18 renderer.
-const old=JSON.parse(read('tools/verification-map-v18.json')),shell=new Set(['map.html','js/map-view.js','css/map-view.css']);
-for(const [file,sha]of Object.entries(old.sourceHashes))if(!shell.has(file))assert.equal(hash(file),sha,'changed renderer needs a fresh full regression: '+file);
-console.log('PASS: v21 versioned entry points and separate pages, restored navigation, zero flat-page 3D downloads, 28 places, ten images and eleven current checks; unchanged v18 renderer.');
+// Renderer changes require a fresh full regression: every frozen renderer file
+// must match the latest recorded eight-scene environments run (v22 material pass).
+const old=JSON.parse(read('tools/verification-map-v18.json')),fresh=JSON.parse(read('tools/verification-environments-v18.json')),shell=new Set(['map.html','js/map-view.js','css/map-view.css']);
+for(const [file]of Object.entries(old.sourceHashes))if(!shell.has(file)){assert(fresh.sourceHashes[file],'renderer file missing from environments regression: '+file);assert.equal(hash(file),fresh.sourceHashes[file],'renderer changed after the last eight-scene regression: '+file);}
+console.log('PASS: v21 versioned entry points and separate pages, restored navigation, zero flat-page 3D downloads, 28 places, ten images and eleven current checks; renderer matches the fresh v18 eight-scene regression (v22 material pass).');

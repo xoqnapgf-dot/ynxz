@@ -2,6 +2,9 @@ import * as T from 'three';
 
 // Local copies are essential: the builders intentionally share a material kit.
 // Copy shader hooks explicitly; Material.clone() does not preserve those hooks.
+// v22 material pass: wetness pools into broad patches with a lower roughness
+// floor, snow edges soften with a cool shadow tone, and fine grain breaks the
+// plastic look on plaster/stone/brick/wood without touching the shared kit.
 export function regionalizeSurfaces(group,profile){
  const copies=new Map();
  function local(source){
@@ -10,7 +13,7 @@ export function regionalizeSurfaces(group,profile){
   const material=source.clone(),kind=source.userData.worldFinish,role=source.userData.regionalRole;
   const hook=source.onBeforeCompile,key=source.customProgramCacheKey();
   copies.set(source,material);
-  material.userData={...source.userData,regionalFinish:17,region:profile.key};
+  material.userData={...source.userData,regionalFinish:18,region:profile.key};
   if(profile.palette?.[role])material.color.set(profile.palette[role]);
   else if(kind==='stone'&&profile.stone)material.color.lerp(new T.Color(profile.stone),.24);
   else if(kind==='roof'&&profile.roof&&material.color.g>=material.color.r*.9)material.color.lerp(new T.Color(profile.roof),.68);
@@ -38,22 +41,27 @@ export function regionalizeSurfaces(group,profile){
    `).replace('#include <color_fragment>',`#include <color_fragment>
     float regionUp=clamp(normalize(regionNormal).y,0.,1.);
     float regionPatch=regionNoise(regionPosition*135.);
-    float regionWet=${wet.toFixed(3)}*(.38+.62*regionUp)*(.65+.35*regionPatch);
+    float regionMacro=regionNoise(regionPosition*29.);
+    float regionWet=${wet.toFixed(3)}*(.38+.62*regionUp)*(.55+.45*regionPatch);
+    // Broad puddled patches damp more than thin film, instead of one flat wash.
+    regionWet*=.55+.45*smoothstep(.34,.72,regionMacro);
     float regionSalt=${salt.toFixed(3)}*(1.-smoothstep(.012,.060,regionPosition.y))*(1.-regionUp)*smoothstep(.38,.72,regionPatch);
     float regionRust=${rust.toFixed(3)}*smoothstep(.48,.74,regionNoise(regionPosition*vec3(650.,55.,650.)))*(.5+.5*regionUp);
     float regionSnow=${snow?'smoothstep(.12,.25,regionPosition.y)*smoothstep(.50,.88,regionUp)':'0.'};
-    diffuseColor.rgb*=1.-regionWet*.28;
+    regionSnow*=.82+.18*regionNoise(regionPosition*240.);
+    diffuseColor.rgb*=1.-regionWet*.32;
+    diffuseColor.rgb*=.965+.07*regionNoise(regionPosition*920.);
     diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.56,.57,.48),regionSalt*.22);
     diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.19,.070,.027),regionRust*.70);
-    diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.86,.91,.94),regionSnow*.86);
+    diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.865,.915,.965),regionSnow*.88);
     ${profile.key==='902'&&kind==='terrain'?'diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.86,.92,1.08),.5);':''}
    `).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
-    roughnessFactor=mix(roughnessFactor,max(.30,roughnessFactor*.53),regionWet);
+    roughnessFactor=mix(roughnessFactor,max(.24,roughnessFactor*.48),regionWet);
     roughnessFactor=mix(roughnessFactor,.93,regionSnow);
     roughnessFactor=mix(roughnessFactor,.91,regionRust);
    `).replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\nmetalnessFactor*=1.-regionRust*.95;');
   };
-  material.customProgramCacheKey=()=>key+'/regional-finish-17/'+profile.key+'/'+kind+'/'+(role||'');
+  material.customProgramCacheKey=()=>key+'/regional-finish-18/'+profile.key+'/'+kind+'/'+(role||'');
   material.needsUpdate=true;
   return material;
  }

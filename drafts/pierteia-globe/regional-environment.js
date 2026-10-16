@@ -2,23 +2,42 @@ import * as T from 'three';
 const fract=x=>x-Math.floor(x);
 const hash=(i,s)=>fract(Math.sin(i*127.1+s*311.7)*43758.5453);
 
-export function createRegionalSky(env,p){
+// v22 material pass: the sky now carries a real sun disc and glow keyed to the
+// scene key light, warm horizon scatter toward the sun, and sun-side silver on
+// the cloud deck. Profile interpretation data is unchanged.
+export function createRegionalSky(env,p,light){
  const time={value:0};
- const material=new T.ShaderMaterial({side:T.BackSide,depthWrite:false,uniforms:{time,zenith:{value:new T.Color(p.zenith)},horizon:{value:new T.Color(p.horizon)},cloudCover:{value:p.cloud},wind:{value:new T.Vector2(...p.wind).normalize().multiplyScalar(p.windSpeed)}},
+ const sun=new T.Vector3(...(light||p.light||[-2.2,3.3,4.5]));
+ const material=new T.ShaderMaterial({side:T.BackSide,depthWrite:false,uniforms:{time,zenith:{value:new T.Color(p.zenith)},horizon:{value:new T.Color(p.horizon)},cloudCover:{value:p.cloud},wind:{value:new T.Vector2(...p.wind).normalize().multiplyScalar(p.windSpeed)},sunDirection:{value:sun.clone().normalize()},sunColor:{value:new T.Color(p.sunColor||'#fff1dc')}}, 
   vertexShader:'varying vec3 direction;void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
   fragmentShader:`
-   varying vec3 direction;uniform vec3 zenith,horizon;uniform float cloudCover,time;uniform vec2 wind;
+   varying vec3 direction;uniform vec3 zenith,horizon,sunDirection,sunColor;uniform float cloudCover,time;uniform vec2 wind;
    float nh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
    float nn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(nh(i),nh(i+vec2(1,0)),f.x),mix(nh(i+vec2(0,1)),nh(i+vec2(1,1)),f.x),f.y);}
    float fb(vec2 p){return nn(p)*.55+nn(p*2.03+8.)*.28+nn(p*4.07+19.)*.17;}
    void main(){
     vec3 ray=normalize(direction);float h=max(0.,ray.y);
-    vec3 color=mix(horizon,zenith,pow(h,.42));
+    vec3 sunDir=normalize(sunDirection);
+    float sunDot=max(0.,dot(ray,sunDir));
+    // Vertical gradient, slightly richer than a straight horizon-zenith mix.
+    vec3 color=mix(horizon,zenith,pow(h,.40));
+    color=mix(color,zenith*.86,pow(h,1.6)*.35);
+    // Warm horizon scatter around the sun azimuth.
+    vec2 flatRay=normalize(ray.xz+vec2(1e-4)),flatSun=normalize(sunDir.xz+vec2(1e-4));
+    float towardSun=max(0.,dot(flatRay,flatSun));
+    float band=exp(-h*4.2);
+    color=mix(color,mix(horizon,sunColor,.42),band*pow(towardSun,2.4)*.28);
     vec2 c=ray.xz/(.20+max(.03,ray.y))*2.6-wind*time*.009;
     float field=fb(c),shape=smoothstep(.72-cloudCover*.46,.88-cloudCover*.37,field);
     float veil=shape*smoothstep(.005,.11,h)*(.45+cloudCover*.35);
-    vec3 cloud=mix(horizon*.82,vec3(.86,.88,.85),smoothstep(.3,.7,field));
+    vec3 cloud=mix(horizon*.78,vec3(.88,.90,.87),smoothstep(.25,.72,field));
+    cloud+=sunColor*pow(sunDot,6.)*.13*(1.-field*.55);
     color=mix(color,cloud,veil);
+    // Sun glow sits under the cloud veil; the disc stays crisp above thin cover.
+    float glow=pow(sunDot,20.)*.38+pow(sunDot,5.)*.12;
+    color+=sunColor*glow*(1.-veil*.55);
+    float disc=smoothstep(.99915,.99955,sunDot);
+    color=mix(color,sunColor*1.75,disc*(1.-shape*.65));
     gl_FragColor=vec4(color,1.);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
@@ -65,7 +84,7 @@ export function createRegionalWeather(env,p,habitat={},shelters=[],water=null){
  }
  if(count){
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(positions,3));geo.setAttribute('phase',new T.Float32BufferAttribute(seeds,1));geo.setAttribute('floorHeight',new T.Float32BufferAttribute(floors,1));geo.setAttribute('endpoint',new T.Float32BufferAttribute(ends,1));
-  const material=new T.ShaderMaterial({transparent:true,depthWrite:false,fog:true,uniforms:{...T.UniformsUtils.clone(T.UniformsLib.fog),time,wind:{value:new T.Vector2(...p.wind).normalize()}},
+  const material=new T.ShaderMaterial({transparent:true,depthWrite:false,fog:true,uniforms:{...T.UniformsUtils.clone(T.UniformsLib.fog),time,wind:{value:new T.Vector2(...p.wind).normalize()}}, 
    vertexShader:`
     uniform float time;uniform vec2 wind;attribute float phase,floorHeight,endpoint;varying float fade;
     #include <common>
@@ -98,7 +117,7 @@ export function createRegionalWeather(env,p,habitat={},shelters=[],water=null){
  for(let i=0;i<p.mist;i++){
   // Background pockets only: leave the central architecture and paths readable.
   const x=(hash(i,78)-.5)*.95,z=-.26-hash(i,83)*.25,y=Math.max(p.level+.014,height(x,z)+.012);
-  const sprite=new T.Sprite(new T.SpriteMaterial({map:fogMap(),color:p.horizon,transparent:true,opacity:p.key==='901'?.15:.065,depthWrite:false}));
+  const sprite=new T.Sprite(new T.SpriteMaterial({map:fogMap(),color:p.horizon,transparent:true,opacity:p.key==='901'?.15:.065,depthWrite:false})); 
   sprite.position.set(x,y,z);sprite.scale.set(.20+hash(i,8)*.19,.016+hash(i,4)*.009,1);sprite.userData.origin=[x,y,z];group.add(sprite);veils.push(sprite);
  }
  return {group,count,shelters:shelters.length,enabled:true,
@@ -132,15 +151,19 @@ export function addRegionalHabitat(group,p,habitat={}){
   const slope=Math.hypot(height(x+.001,z)-y,height(x,z+.001)-y)/.001;if(slope>1.05)continue;
   const sample={x,y,z,scale:.6+hash(i,45)*.85,angle:hash(i,79)*Math.PI*2};samples.push(sample);if(i%7===0)rocks.push(sample);
  }
- const material=new T.MeshStandardMaterial({color:p.plantColor,vertexColors:true,roughness:.95,side:T.DoubleSide,envMapIntensity:.30});
+ const material=new T.MeshStandardMaterial({color:p.plantColor,vertexColors:true,roughness:.95,side:T.DoubleSide,envMapIntensity:.30}); 
  material.onBeforeCompile=s=>{s.uniforms.regionalPlantTime=time;s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nuniform float regionalPlantTime;').replace('#include <begin_vertex>',`#include <begin_vertex>
   float amount=pow(clamp(position.y/.012,0.,1.),2.)*.0008;
   transformed.x+=sin(regionalPlantTime+instanceMatrix[3].x*37.+instanceMatrix[3].z*29.)*amount;
- `);};material.customProgramCacheKey=()=> 'regional-herbs-17';
- const dummy=new T.Object3D();
+ `);};material.customProgramCacheKey=()=> 'regional-herbs-18';
+ const dummy=new T.Object3D(),tint=new T.Color();
  function batch(geo,m,entries,rock=false){if(!entries.length){geo.dispose();m.dispose();return;}
   const mesh=new T.InstancedMesh(geo,m,entries.length);mesh.name=rock?'regional-shore-stones':'regional-'+p.plant;mesh.userData.noBake=true;mesh.castShadow=rock;mesh.receiveShadow=true;
-  entries.forEach((s,i)=>{dummy.position.set(s.x,s.y+(rock?-.0004:.0001),s.z);dummy.rotation.set(rock?hash(i,3):0,s.angle,rock?.2:0);dummy.scale.set(s.scale*(rock?1.4:1),s.scale*(rock?.55:1),s.scale);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});mesh.instanceMatrix.needsUpdate=true;group.add(mesh);
+  entries.forEach((s,i)=>{dummy.position.set(s.x,s.y+(rock?-.0004:.0001),s.z);dummy.rotation.set(rock?hash(i,3):0,s.angle,rock?.2:0);dummy.scale.set(s.scale*(rock?1.4:1),s.scale*(rock?.55:1),s.scale);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);
+   // Deterministic per-plant tone drift keeps large batches from flattening into plastic.
+   const v=.84+hash(i,17)*.34,hue=(hash(i,29)-.5)*.12;
+   tint.setRGB(v*(1.+hue*.7),v,v*(1.-hue*.7));mesh.setColorAt(i,tint);
+  });mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;group.add(mesh);
  }
  batch(herbGeometry(p.plant),material,samples);batch(new T.IcosahedronGeometry(.0022,1),new T.MeshStandardMaterial({color:p.rockColor,roughness:.94}),rocks,true);
  return {plants:samples.length,stones:rocks.length,kind:p.plant,update:t=>time.value=t*p.windSpeed};

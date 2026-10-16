@@ -297,7 +297,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v5`、`js/map-flat.js v2`、`js/map-view.js v10`（原`map-mobile.js`不再加载）；`drafts/pierteia-globe/globe.js v18`、`responsive-ui.js v18`、`compact-tools.js v18`、`globe.css v17`、`map-bridge.js v18`、`map-embed.css v18`。未修改的全站样式和数据版本保持不变。
+- 地图接入版本：`css/map-view.css v5`、`js/map-flat.js v2`、`js/map-view.js v10`（原`map-mobile.js`不再加载）；`drafts/pierteia-globe/globe.js v19`、`responsive-ui.js v18`、`compact-tools.js v18`、`globe.css v17`、`map-bridge.js v18`、`map-embed.css v18`；v22材质轮升级`landmarks.js v18`、`regional-profiles/surfaces/environment v18`、`planet-materials v10`。未修改的全站样式和数据版本保持不变。
 - 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -396,7 +396,7 @@ ynxz/
 - [在线运行方式、改动边界与验证](drafts/pierteia-globe/README.md)。此轮不是全图写实完工，未完成GI烘焙及其他区域同标准返工；先看互动，不新增4K图集。
 - [此前资料研究与审计](drafts/pierteia-globe/research/README.md)、[美术标准](drafts/pierteia-globe/DESIGN.md)仍保留，不以功能测试或面数代替美术判断。
 - **每轮都提交并推送到 `arena/4c4cfaac-ynxz`，较大任务分批同步，回复附提交号。** 不合main、不自动上线。本轮已按用户新要求修改主站地图入口，其他主站页面不动。
-- 正式20标记、28地点、parent及地理数据不变；球体交互入口为v18、环境基底为v17，学院模块缓存升为v17（建筑与木作基底仍为v14），树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
+- 正式20标记、28地点、parent及地理数据不变；v22材质轮后环境系统revision为18（材质/环境实现层），学院建筑与木作基底仍为v14，树木/屋瓦仍为v12，study和AO维持v11，未修改模块不统一强行升版。
 
 ### v21入口统一及真实线上验证
 

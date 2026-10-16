@@ -12,5 +12,5 @@ const entries={
  shiomi:{name:'汐见町',label:'梅雨细雨 · 退潮港町',evidence:'梅雨、滩涂、渡船候潮；小港镇、商店街与小神社',style:'潮湿深木、灰蓝屋瓦、湿石路与退潮泥纹；神社朱色保留',zenith:'#778a92',horizon:'#bdccc9',cloud:.96,sun:.85,environment:.64,hemi:.78,sunColor:'#dde8ea',skyLight:'#c4dce3',groundLight:'#627068',wind:[.75,.35],windSpeed:.68,precipitation:'rain',plant:'reed',plantColor:'#6d855a',rockColor:'#808c83',plants:145,mist:6,wetness:.78,salt:.3,ground:'#717b6b',level:-.008,fogNear:.9,fogFar:3.7,palette:{brick:'#8b6756',cream:'#c1bd9f',plaster:'#c0bba6',stone:'#85928a',steel:'#657b7b',roof:'#4d666d',wood:'#6f5b48',ground:'#717b6b'},water:{deep:'#344f55',shallow:'#788b78',wave:.45,foam:.25,speed:.55}}
 };
 function freeze(value){if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;}
-export const REGIONAL_PROFILES=freeze(Object.fromEntries(Object.entries(entries).map(([key,p])=>[key,{...base,...p,key,revision:17,interpretation:true}])));
+export const REGIONAL_PROFILES=freeze(Object.fromEntries(Object.entries(entries).map(([key,p])=>[key,{...base,...p,key,revision:18,interpretation:true}])));
 export function regionalProfile(key){if(!Object.hasOwn(REGIONAL_PROFILES,key))throw Error('Unknown regional environment: '+key);return REGIONAL_PROFILES[key];}

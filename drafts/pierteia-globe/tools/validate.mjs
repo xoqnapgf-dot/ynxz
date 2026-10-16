@@ -22,11 +22,11 @@ for(const name of ['01-world-overview','02-anarchist-academy','03-changling-rift
  assert.deepEqual(pngSize(`screenshots/${name}.png`),[2160,1350]);assert(read(`screenshots/previews/${name}.jpg`).length>1000);
 }
 for(const name of ['06-mobile-overview','07-mobile-academy'])assert.deepEqual(pngSize(`screenshots/${name}.png`),[390,844]);
-const html=read('index.html').toString();assert(html.includes('globe.js?v=18'));assert(html.includes('globe.css?v=17'));
-assert(read('globe.js').toString().includes('landmarks.js?v=17'));
+const html=read('index.html').toString();assert(html.includes('globe.js?v=19'));assert(html.includes('globe.css?v=17'));
+assert(read('globe.js').toString().includes('landmarks.js?v=18'));
 for(const name of ['assets/surface.jpg','assets/surface-normal.jpg','assets/roughness.jpg','assets/atlas-font.woff2','vendor/THREE-LICENSE.txt','vendor/FONT-LICENSE.txt','vendor/addons/BufferGeometryUtils.js'])assert(read(name).length>100);
 const docs=read('README.md').toString();for(const match of docs.matchAll(/\]\((screenshots\/[^)]+)\)/g))assert(fs.existsSync(path.join(root,match[1])),match[1]);
-assert(read('globe.js').toString().includes('planet-materials.js?v=9'));
+assert(read('globe.js').toString().includes('planet-materials.js?v=10'));
 const hash=data=>createHash('sha256').update(data).digest('hex');
 const preserved={
  'assets/places.json':'15808ba2d908b64954062182e95f00fea08a580b7268db667b6562a7334a8a67',

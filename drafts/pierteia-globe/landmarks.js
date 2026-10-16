@@ -7,9 +7,9 @@ import { scatterEcology } from './ecology.js?v=9';
 import { createArchipelagoHQ } from './archipelago-hq.js?v=17';
 import { createAcademyHillside } from './academy-hillside.js?v=17';
 import { createRegionalScene } from './regional-scenes.js?v=17';
-import { regionalProfile } from './regional-profiles.js?v=17';
-import { regionalizeSurfaces } from './regional-surfaces.js?v=17';
-import { createRegionalSky, configureRegionalWater, createRegionalWeather, addRegionalHabitat } from './regional-environment.js?v=17';
+import { regionalProfile } from './regional-profiles.js?v=18';
+import { regionalizeSurfaces } from './regional-surfaces.js?v=18';
+import { createRegionalSky, configureRegionalWater, createRegionalWeather, addRegionalHabitat } from './regional-environment.js?v=18';
 import { mergeGeometries } from 'three/addons/BufferGeometryUtils.js';
 // All architectural forms are draft interpretations. Local Y is the surface normal.
 let seed=5471;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
@@ -59,7 +59,7 @@ const fogTex=glowTexture();function mist(g,x,y,z,size=.15,color='#b9d0d3'){const
 function particles(g,n,color,spread,height){const a=new Float32Array(n*3);for(let i=0;i<n;i++){a[i*3]=(rnd()-.5)*spread;a[i*3+1]=rnd()*height+.01;a[i*3+2]=(rnd()-.5)*spread}const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(a,3));const pts=new T.Points(geo,new T.PointsMaterial({map:fogTex,color,size:.003,transparent:true,opacity:.6,depthWrite:false,blending:T.AdditiveBlending}));g.add(pts);return pts;}
 function localEnvironment(g,id,bits){const env=new T.Group();env.userData.noBake=true;env.visible=false;g.add(env);const ocean=id===900||id===901;let water;
  if(bits.environment){water=bits.environment(env);}else if(ocean){water=new T.Mesh(new T.PlaneGeometry(10,10),new T.ShaderMaterial({uniforms:{time:{value:0},deep:{value:new T.Color(id===901?'#143239':'#214951')},sky:{value:new T.Color().setRGB(.38,.49,.52)}},vertexShader:'varying vec3 P; void main(){P=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:`varying vec3 P;uniform float time;uniform vec3 deep;uniform vec3 sky;void main(){vec2 p=P.xy;float w=sin(dot(p,vec2(413.,277.))+sin(dot(p,vec2(-171.,93.)))*2.+time*.4);float w2=sin(dot(p,vec2(-157.,317.))+sin(dot(p,vec2(63.,119.)))*1.7-time*.3);float w3=sin(dot(p,vec2(91.,-127.))+sin(p.x*53.));float h=pow(max(0.,w*.40+w2*.34+w3*.26),12.);float fade=smoothstep(.35,2.8,length(p));vec3 col=mix(deep,sky,fade);col+=(vec3(.20,.25,.24)*h*.22+vec3(.003,.006,.008)*(w+w2))*(1.-fade);gl_FragColor=vec4(col,1.);#include <tonemapping_fragment>\n#include <colorspace_fragment>}`.replace(';#include',';\n#include'),side:T.DoubleSide}));water.rotation.x=-Math.PI/2;water.position.y=-.003;env.add(water)}else{const terrainGeo=new T.PlaneGeometry(10,10);terrainGeo.rotateX(-Math.PI/2);const pos=terrainGeo.attributes.position,uv=terrainGeo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)*35,pos.getZ(i)*35);const terrain=new T.Mesh(terrainGeo,grassMat);terrain.position.y=.002;terrain.receiveShadow=true;env.add(terrain)}
- const sky=createRegionalSky(env,regionalProfile(id));return {env,water,sky};}
+ const sky=createRegionalSky(env,regionalProfile(id),regionalProfile(id).light||bits.light);return {env,water,sky};}
 function meltChannel(z){return .10+.085*Math.sin(z*4+.2);}
 function peakHeight(x,z){
  const r=Math.hypot(x*.89,z*1.12),a=Math.atan2(z,x),warp=fbm(x*17+8,z*17+6);
@@ -111,7 +111,7 @@ export function createLandmark(id){upgradeSharedSurfaces({stone,trim,darkStone,r
  const weather=createRegionalWeather(env,profile,bits.habitat,group.userData.weatherShelters||[],water);
  let triangles=0,batches=0;group.traverse(o=>{if(o.isMesh){triangles+=(o.geometry.index?.count||o.geometry.attributes.position.count)/3*(o.isInstancedMesh?o.count:1);batches++}});
  return {group,detail:env,profile,weather,focus:bits.focus,eye:bits.eye,views:bits.views,light,
-  geometry:{triangles,batches,finishRevision:9,...bits.meta,...botany,environmentRevision:17,regionalMaterials:surfaceCopies,regionalPlants:habitat.plants,regionalStones:habitat.stones,plantKind:habitat.kind,water:water?.userData.regionalWater||null},
+  geometry:{triangles,batches,finishRevision:9,...bits.meta,...botany,environmentRevision:18,regionalMaterials:surfaceCopies,regionalPlants:habitat.plants,regionalStones:habitat.stones,plantKind:habitat.kind,water:water?.userData.regionalWater||null},
   update(t){sky.update(t);weather.update(t);habitat.update(t);if(bits.update)bits.update(t);if(water)water.material.uniforms.time.value=t*profile.water.speed;if(bits.arm)bits.arm.rotation.y=t*.035;}
  };
 }

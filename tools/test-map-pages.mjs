@@ -3,7 +3,7 @@ import {createRequire} from 'node:module';import fs from 'node:fs';import assert
 const require=createRequire(import.meta.url),{chromium}=require('playwright'),c=require('@sparticuz/chromium');
 const root=new URL('../',import.meta.url),base=process.env.ATLAS_URL||'http://127.0.0.1:8135/',folder=new URL('drafts/pierteia-globe/screenshots/pages-v21/',root);
 fs.mkdirSync(folder,{recursive:true});if(process.env.TEST_FONT)await c.font(process.env.TEST_FONT);
-const report={revision:21,scope:'Separate pages and restored site navigation; v18 renderer unchanged. Chromium, not physical Safari.',checks:{},screenshots:[],errors:[],sourceHashes:{}};
+const report={revision:21,scope:'Separate pages and restored site navigation; v22 material/environment pass rendered by the eight-scene regression. Chromium, not physical Safari.',checks:{},screenshots:[],errors:[],sourceHashes:{}};
 const previous=JSON.parse(fs.readFileSync(new URL('tools/verification-map-v18.json',root)));
 for(const file of new Set([...Object.keys(previous.sourceHashes),'globe.html','index.html','gallery.html','cp.html','forum.html','search.html']))report.sourceHashes[file]=createHash('sha256').update(fs.readFileSync(new URL(file,root))).digest('hex');
 const b=await chromium.launch(process.env.PAGES_LIVE?{args:['--use-angle=swiftshader','--enable-unsafe-swiftshader'],headless:true}:{executablePath:await c.executablePath(),args:c.args.filter(a=>a!=='--disable-web-security'),headless:true});

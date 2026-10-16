@@ -1,6 +1,6 @@
 {
   "revision": 21,
-  "scope": "Separate pages and restored site navigation; v18 renderer unchanged. Chromium, not physical Safari.",
+  "scope": "Separate pages and restored site navigation; v22 material/environment pass rendered by the eight-scene regression. Chromium, not physical Safari.",
   "checks": {
     "homePageNavigation": true,
     "flatImagesDecoded": true,
@@ -34,22 +34,22 @@
     "css/map-view.css": "e6a3d57a8beeb8ec5d7977c5c8549a91d397d2028b62f0ee02066d8af2f3edc0",
     "js/map-flat.js": "81f489132b00945656055519d69c17ededb14b61b9fe18049923fb9abdc3bfaf",
     "js/map-view.js": "1268874d29725940b26216ffaecef6314b967b90a24f4857ede5583f58b40542",
-    "drafts/pierteia-globe/globe.js": "e42d67c9ca51144c957b6be0724e98d168e28c10f15581f42a95afab6a960128",
+    "drafts/pierteia-globe/globe.js": "75112aa9a9b593291ce3cdf66c03004ed3a2dcbb2b73fa6721b5be51cb5b9631",
     "drafts/pierteia-globe/globe.css": "11bda945b2fdf63003b8056582a8404783e05e03a973c9ce723d62b6e02557c6",
     "drafts/pierteia-globe/responsive-ui.js": "cc6a5198c156645a6e532267617a1d9c770de57b6e74e0b16125f1bc1045a204",
     "drafts/pierteia-globe/map-bridge.js": "0d8d292a6c04dd4fe6e482e6b7bcef15ed55f5ca075246eed1fec0388645bf69",
     "drafts/pierteia-globe/map-embed.css": "3bb9294e3ada26a421c061db179030f9fdb5bec93f48e102b39cf7cf7ee19dbc",
     "drafts/pierteia-globe/atlas-icons.js": "99096421f15990c01d7cf8d05965a6df32ee03ef40bb61b175d178104efe921a",
-    "drafts/pierteia-globe/index.html": "6c8df205c6945ea9a124de385e59ced8cd37625db8a718766d892467febc3fe1",
+    "drafts/pierteia-globe/index.html": "7a96cc9dc0249f3155f2eace5c23e4f9c937e2b2f91af14823cf05abd09cc1be",
     "drafts/pierteia-globe/academy-hillside.js": "eb2382b8811cb9aa2eb4bb73c5b0c20762a9d039e7b064347f6eaa6aae1c9310",
     "drafts/pierteia-globe/academy-landscape.js": "d82f6aeffc719ec7f448e1f123549bf621b8709b09715cd8b171f3dd7aa678e0",
     "drafts/pierteia-globe/academy-craft.js": "ffa59af7a959085fffa7c62a43c26816df3dee6b27e6e2868729fe6189ae3156",
-    "drafts/pierteia-globe/landmarks.js": "2b76e4fe543fb40a5563a6be92f5482495d6abb4ae628605691e27b69e8fd9b0",
+    "drafts/pierteia-globe/landmarks.js": "a7a9cd01a70207a639b57bb88a53cf7f74c596a7aad015c6d72d23233cd1c6c8",
     "drafts/pierteia-globe/archipelago-hq.js": "ffe518ef3989499f8451156b224a6b1a982471c6d4bdcaa8170f88db8cc12e63",
     "drafts/pierteia-globe/regional-scenes.js": "c810392dab55796d89b814c91d8ab5c5706b9a1305b25a256107b2bffe55a1a1",
-    "drafts/pierteia-globe/regional-profiles.js": "9ac07e34964842d2206d7425dba0e43beef3ee9a8035fdc459fc6190ae66fe62",
-    "drafts/pierteia-globe/regional-surfaces.js": "80d15dce179a5e06fc8ac19e92d7e5774a5abcfa57a61d52ab8def219571fadc",
-    "drafts/pierteia-globe/regional-environment.js": "33121be2371d1f6af1c803fd95bd16b426b7afab0db2ef3698c8c0526b15d33e",
+    "drafts/pierteia-globe/regional-profiles.js": "5a53bd0bddca0a02b4a511299c7f8ce72cabda8a26f88cdb72a17b4ed3bd41ed",
+    "drafts/pierteia-globe/regional-surfaces.js": "e538966652d34ab9cd3a5c8b14245e15a18c802e9bf7670c3a547a247baf0c7a",
+    "drafts/pierteia-globe/regional-environment.js": "4d3dcbf2bf62e6965ecd84125758dbcfa2442522cc74f5cad3bca5ebd4c079d8",
     "globe.html": "87497e9604a5bcc27af92edaf61c768c10aed03ab50254be802a195f3e2316e2",
     "index.html": "0eca9450b02a65a07669a274fe72f0ecb6295e34c1d91244fca1d29c84c613ef",
     "gallery.html": "b5d6971ae2f51398e512e50a6b627ebc99bb73189cf75b8af809f2d911c54d99",
@@ -58,8 +58,8 @@
     "search.html": "5ab286dba14186f32f0983de43ad1973310626a195d5215a0dae044f414b302d"
   },
   "execution": {
-    "base": "https://xoqnapgf-dot.github.io/ynxz/",
-    "live": true,
-    "commit": "69c3bc460b78cf2f463bee4f6389d9ab9a399a28"
+    "base": "http://127.0.0.1:8135/",
+    "live": false,
+    "commit": null
   }
 }
