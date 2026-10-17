@@ -392,7 +392,7 @@ COUNTRIES['璇玑联邦'] = {
     return lake > 0 ? 1 + lake * .08 + bump(x, z, -90, -60, 50, 20) + bump(x, z, 80, -80, 40, 16) : lake * .12;
   },
   pads: [{ x: -36, z: -24, r: 26, soft: 8 }, { x: 52, z: -10, r: 16, soft: 6 }],
-  weather: { mist: [{ y: 1.2, layers: 2, gap: 1.2, op: .55, col: 0xf2f4f4, scale: .025, drift: .8 }], birds: { n: 10, col: 0xf2f2f2, y: 18 } },
+  weather: { mist: [{ y: 1.2, layers: 2, gap: 1.2, op: .3, col: 0xe8ecee, scale: .025, drift: .8 }], birds: { n: 10, col: 0xf2f2f2, y: 18 } },
   wind: .3,
   views: [{ label: '湖岸', az: 200, el: 30, d: 1 }, { label: '研究院', az: 210, el: 24, d: .38, t: [-36, null, -24] }, { label: '穹顶', az: 150, el: 26, d: .32, t: [52, null, -10] }, { label: '高架轻轨', az: 250, el: 18, d: .42, t: [0, 6, 10] }],
   build(c) {
@@ -501,7 +501,7 @@ COUNTRIES['罗歇阿普公国'] = {
   rivers: [{ pts: [[-300, 60], [-60, 50], [0, 34], [60, 50], [300, 30]], w: 30, depth: 2.6, bank: 6 }, { pts: [[40, -200], [30, -60], [20, 0], [10, 34]], w: 9, depth: 1.8, bank: 4 }],
   pads: [{ x: -56, z: -36, r: 16, soft: 6 }, { x: -6, z: 16, w: 30, d: 12, soft: 4 }],
   roads: [{ pts: [[-56, -36], [-30, -10], [-6, 14]], w: 3.6 }],
-  weather: { rain: .55, lightning: { every: 5 }, clouds: { n: 6, kind: 'storm', col: 0x3e4248, y: 36, size: 14, inner: .3, spread: 1, speed: 2.4 } },
+  weather: { rain: .55, lightning: { every: 5 }, clouds: { n: 5, kind: 'storm', col: 0x4a4e56, y: 46, size: 11, inner: 1, spread: .9, speed: 2.4 } },
   wind: 1,
   views: [{ label: '三角洲', az: 160, el: 30, d: 1 }, { label: '庄园', az: 200, el: 24, d: .34, t: [-56, null, -36] }, { label: '河港', az: 150, el: 22, d: .36, t: [-6, null, 18] }, { label: '甘蔗田', az: 120, el: 30, d: .42, t: [40, null, -20] }],
   build(c) {

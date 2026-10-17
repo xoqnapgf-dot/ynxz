@@ -470,7 +470,7 @@ SITES['黑岩路矿区'] = {
   label: '坎普内陆 · 煤谷与铁路', note: '井架、机厂、车站挤在一条山谷里。运煤车一天三趟开往河港，山坡上一排排工房的屋檐都落着一层黑灰。',
   shape: { kind: 'rect', ax: 1, az: 1, rot: 45, wobble: .06 },
   water: { level: 0, shallow: 0x4a4a3c, deep: 0x1e1e18, clarity: .75, wave: .15, foam: .4 },
-  strata: [0x1e1a18, 0x4a4038, 0x2c2622, 0x5e544a, 0x2a2420], plinth: 0x141210,
+  strata: [0x3a3430, 0x5a5048, 0x463e38, 0x6e645a, 0x3e3630], plinth: 0x1e1a18,
   palette: {
     grass: [0x5a6a42, 0x4e5e3c], dry: 0x7a7450, dryK: .35, dirt: 0x3a3430, rock: 0x5a5650, sand: 0x5a5448, bed: 0x2e2a26,
     paint(x, z, h, s, col) { const v = Math.abs((x + z) * S2); col.lerp(lin(0x2e2a28), smooth(16, 6, v) * .7); }
@@ -489,11 +489,11 @@ SITES['黑岩路矿区'] = {
   weather: { motes: { kind: 'dust', n: 380, cols: [0x3a3634, 0x5a5652], size: .22, op: .45, h: 16, rad: 50 }, birds: { n: 6, col: 0x1a1a1a, y: 30 } },
   fog: { y: 2, h: 8, d: .012, col: 0x8a857e },
   wind: .4,
-  views: [{ label: '山谷', az: 28, el: 40, d: 1 }, { label: '井架', az: 15, el: 26, d: .36, t: [UV(-24, 13)[0], null, UV(-24, 13)[1]] }, { label: '车站', az: 55, el: 26, d: .34, t: [UV(6, 3)[0], null, UV(6, 3)[1]] }, { label: '工房坡', az: 235, el: 30, d: .4, t: [UV(-10, 22)[0], null, UV(-10, 22)[1]] }],
+  views: [{ label: '山谷', az: 92, el: 50, d: 1 }, { label: '井架', az: 15, el: 26, d: .36, t: [UV(-24, 13)[0], null, UV(-24, 13)[1]] }, { label: '车站', az: 55, el: 26, d: .34, t: [UV(6, 3)[0], null, UV(6, 3)[1]] }, { label: '工房坡', az: 235, el: 30, d: .4, t: [UV(-10, 22)[0], null, UV(-10, 22)[1]] }],
   build(c) {
     const B = c.B, RY = Math.PI / 4;
     // 铁路与运煤车
-    const railPts = [UV(-90, 4), UV(-40, 4), UV(0, 3.5), UV(40, 4), UV(90, 4)];
+    const railPts = [UV(-58, 4), UV(-40, 4), UV(0, 3.5), UV(40, 4), UV(58, 4)];
     c.rail(railPts);
     K.train(c, railPts, .18, 8, { open: true, cargo: 0x1e1c1a, cars: [0x3a2e26, 0x4a3a30], loco: 0x2a2e2a });
     // 车站：月台 + 站房
