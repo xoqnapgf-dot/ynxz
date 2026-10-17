@@ -275,7 +275,7 @@ SITES['天神峰'] = {
     c.people(5, { at: [4, 44, 12], cols: [0x8a3a2c, 0xd8c8a0, 0x4a4a5a] });
     c.people(3, { at: [2, 20, 8], maxSlope: 1.2, cols: [0x8a3a2c, 0xd8c8a0] });
     c.animals('horse', 3, { at: [6, 52, 6], cols: [0x4a3a30, 0x6a5040] });
-    c.trees(coarse(c, 220), { species: ['pine', 'pine', 'cone'], cols: [0x2c4430, 0x34503a, 0x24382a], maxH: 13, minH: 4, k: 1 });
+    c.trees(coarse(c, 220), { species: ['cone', 'cone', 'bare'], cols: [0x2c4430, 0x34503a, 0x24382a], maxH: 13, minH: 4, k: 1 });
     c.rocks(160, { cols: [0x6a686c, 0x7a787a, 0x5a585c], big: true, s: [.8, 3], maxH: 30 });
     c.grass(coarse(c, 1800), { cols: [0x7a8450, 0x8a8a5a], maxH: 14, flowers: [0xf0e0f0, 0xd8d0f2], flowerK: .05 });
   }
@@ -537,7 +537,7 @@ SITES['河港救济所'] = {
   },
   pads: [{ x: 0, z: -4, w: 30, d: 15, ry: 0, soft: 3 }, { x: 0, z: 9, w: 70, d: 5, ry: 0, y: 1.6, soft: 2 }],
   roads: [{ pts: [[-46, 7], [0, 7], [46, 7]], w: 3.4 }, { pts: [[0, 3], [0, -30], [-6, -46]], w: 2.6 }],
-  weather: { motes: { kind: 'firefly', n: 320, cols: [0xd8ff8a, 0xfff2a0], size: .26, h: 6, speed: .2, y: 1.5, rad: 40 }, mist: [{ y: .8, layers: 2, gap: .8, op: .5, col: 0xd8b8a0, scale: .04, drift: .3 }] },
+  weather: { motes: { kind: 'firefly', n: 320, cols: [0xd8ff8a, 0xfff2a0], size: .26, h: 6, speed: .2, y: 1.5, rad: 40 }, mist: [{ y: .8, layers: 2, gap: .8, op: .24, col: 0xa08878, scale: .04, drift: .3 }] },
   fog: { y: 1, h: 4, d: .012, col: 0xa08a7a },
   wind: .2,
   views: [{ label: '河港', az: 10, el: 34, d: 1 }, { label: '病房', az: 20, el: 48, d: .3, t: [-3, null, -4] }, { label: '码头', az: 330, el: 18, d: .36, t: [0, null, 12] }, { label: '公示板', az: 20, el: 18, d: .2, t: [12, null, 4] }],
@@ -579,7 +579,7 @@ SITES['河港救济所'] = {
     K.bld(c, 'lantern', -12, -20, { ry: .1, fl: 2 }); K.bld(c, 'lantern', 14, -18, { ry: -.1, fl: 2 });
     c.people(30, { at: [0, 8, 26], cols: [0x3a3028, 0x5a4a3a, 0xd8ccb0, 0x2a2a2a, 0x7a5a3a] });
     c.people(10, { at: [0, -14, 10] });
-    c.trees(coarse(c, 220), { species: ['palm', 'broad', 'broad', 'round'], cols: [0x2e5a2a, 0x3a6a30, 0x2a4a26], k: 1.15, minH: 1.8 });
+    c.trees(coarse(c, 130), { species: ['palm', 'palm', 'broad', 'round'], cols: [0x2e5a2a, 0x3a6a30, 0x2a4a26], k: 1.15, minH: 1.8 });
     c.trees(coarse(c, 80), { species: ['reed'], cols: [0x6a8a3a, 0x8a9a4a], maxH: 1.9, above: -.2 });
     c.grass(coarse(c, 1600), { cols: [0x4a7a34, 0x5a8a3a], minH: 1.6 });
   }
@@ -691,7 +691,7 @@ SITES['南境工矿区'] = {
     K.bld(c, 'frost', 38, 4, { ry: -.2, fl: 2, w: 9, d: 6, wall: 0x6a5a4a });
     K.flag(c, 38, c.h(38, 4) + 8, 4, 4, 0x2a2a2a);
     c.people(40, { rect: [-40, -20, 80, 66], cols: [0x2a2826, 0x3a3634, 0x4a4038, 0x2a2e3a] });
-    c.trees(coarse(c, 200), { species: ['pine', 'pine', 'birch', 'bare'], cols: [0x2a3a2e, 0x32402e, 0x3a4436], area: (x, z) => Math.hypot(x, z) > 44 ? 1 : 0, maxSlope: 1.2 });
+    c.trees(coarse(c, 200), { species: ['cone', 'cone', 'cone', 'bare'], cols: [0x2a3a2e, 0x32402e, 0x3a4436], area: (x, z) => Math.hypot(x, z) > 44 ? 1 : 0, maxSlope: 1.2 });
     c.rocks(70, { cols: [0x5a5852, 0x4a4844], big: true, s: [.6, 2] });
   }
 };
