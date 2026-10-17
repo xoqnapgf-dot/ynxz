@@ -6,7 +6,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=23';
+import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=24';
 
 const $ = id => document.getElementById(id);
 const A = window.ATLAS_DATA, NAT = window.MAP_NATIONS || [], LOC = window.LOCATION_DATA || {};
@@ -322,7 +322,9 @@ function updateSun(t) {
 }
 
 /* ---------------- 主循环（空闲时降频） ---------------- */
-let lastInput = performance.now(), raf = 0, lastFrame = 0, slowFrames = 0;
+let lastInput = performance.now(), raf = 0, lastFrame = 0, prevDrawn = false;
+// 帧率保护：手机多半卡在 GPU 上，JS 耗时看不出来，所以按相邻两次实际绘制的间隔算
+let ivSum = 0, ivN = 0, cool = 0;
 function poke() { lastInput = performance.now(); if (!raf && !document.hidden) raf = requestAnimationFrame(loop); }
 function loop(now) {
   raf = 0;
@@ -330,16 +332,27 @@ function loop(now) {
   const idle = now - lastInput > 2500 && !flight && !controls.autoRotate;
   // 沙盘里有雨雪水波，空闲时仍保持约 30 帧；星球空闲时降到约 11 帧
   const gap = dio ? (reduced ? 1e9 : dio.animating() ? 33 : 90) : (reduced ? 1e9 : 90);
-  if (idle && now - lastFrame < gap) { raf = requestAnimationFrame(loop); return; }
-  const dt = Math.min(.1, (now - lastFrame) / 1000 || .016);
+  if (idle && now - lastFrame < gap) { raf = requestAnimationFrame(loop); prevDrawn = false; return; }
+  const iv = now - lastFrame;
+  const dt = Math.min(.1, iv / 1000 || .016);
   lastFrame = now;
   if (dio) { dio.frame(now / 1000, dt); }
   else frame(now);
-  // 帧率保护：连续偏慢就降低分辨率
-  const cost = performance.now() - now;
-  slowFrames = cost > 40 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
-  if (slowFrames > 20 && pixelRatio > 1) { pixelRatio = Math.max(1, pixelRatio - .25); renderer.setPixelRatio(pixelRatio); resize(); slowFrames = 0; }
+  // 只统计连续绘制的帧；切后台回来的长间隔不算
+  if (prevDrawn && !idle && iv < 250 && --cool < 0) {
+    ivSum += iv; ivN++;
+    if (ivN >= 45) {
+      if (ivSum / ivN > 31) degrade();
+      ivSum = ivN = 0;
+    }
+  }
+  prevDrawn = true;
   if (!document.hidden) raf = requestAnimationFrame(loop);
+}
+function degrade() {
+  // 沙盘先逐档降效果，星球直接降分辨率；降完留一段时间让帧率稳下来再判断
+  if (dio && dio.degrade()) { cool = 60; return; }
+  if (pixelRatio > 1) { pixelRatio = Math.max(1, pixelRatio - .25); renderer.setPixelRatio(pixelRatio); resize(); cool = 60; }
 }
 function frame(now) {
   if (flight) {
@@ -383,10 +396,10 @@ async function enterDiorama(name) {
   $('dioVeil').classList.add('on');
   $('dioVeilText').textContent = '正在搭建「' + name + '」沙盘';
   try {
-    const mod = await import('./diorama/engine.js?v=23');
+    const mod = await import('./diorama/engine.js?v=24');
     await new Promise(r => setTimeout(r, 30));
     const next = await mod.createDiorama(renderer, name, { width: stage.clientWidth, height: stage.clientHeight, pixelRatio, reduced, coarse, anchor: it ? { u: it.u, v: it.v } : null });
-    dio = next;
+    dio = next; ivSum = ivN = 0; cool = 90;
     document.body.classList.add('in-dio');
     stage.classList.add('dio');
     $('dioHud').hidden = false;
@@ -411,7 +424,7 @@ async function enterDiorama(name) {
 function exitDiorama() {
   if (!dio) return;
   const name = dio.info.name;
-  dio.dispose(); dio = null;
+  dio.dispose(); dio = null; ivSum = ivN = 0; cool = 90;
   document.body.classList.remove('in-dio');
   stage.classList.remove('dio');
   $('dioHud').hidden = true;
@@ -461,6 +474,7 @@ window.__globe = {
   stats: () => ({ ready: !!planet, hiTex, pixelRatio, selected: selected?.name || null, diorama: dio ? dio.stats() : null, labels: labels.filter(l => !l.el.hidden).length, camera: camera.position.toArray().map(v => +v.toFixed(3)) }),
   view: (u, v, d) => { camera.position.copy(mapDir(u, v)).multiplyScalar(d); controls.update(); poke(); },
   sun: on => setLayer('realSun', !!on),
+  degrade,
   renderer
 };
 boot().catch(err => { console.error(err); fail('3D 地球没能载入', '贴图或图形环境出现问题（' + (err.message || err) + '）。可以刷新重试，或先使用平面地图。'); });

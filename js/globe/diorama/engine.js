@@ -8,10 +8,10 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
-import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js?v=23';
-import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js?v=23';
-import { createFx } from './fx.js?v=23';
-import { RECIPES, STYLES } from './recipes.js?v=23';
+import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js?v=24';
+import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js?v=24';
+import { createFx } from './fx.js?v=24';
+import { RECIPES, STYLES } from './recipes.js?v=24';
 
 const D2R = Math.PI / 180;
 
@@ -219,8 +219,8 @@ const TILT = {
       vec4 acc = texture2D(tDiffuse, vUv);
       if (r < .35) { gl_FragColor = acc; return; }
       float tot = 1.;
-      for (int i = 0; i < 18; i++) {
-        float a = float(i) * 2.39996, rr = sqrt((float(i) + .5) / 18.) * r;
+      for (int i = 0; i < TAPS; i++) {
+        float a = float(i) * 2.39996, rr = sqrt((float(i) + .5) / float(TAPS)) * r;
         acc += texture2D(tDiffuse, vUv + vec2(cos(a), sin(a)) * rr / uRes); tot += 1.;
       }
       gl_FragColor = acc / tot;
@@ -272,6 +272,9 @@ export async function createDiorama(renderer, name, opts = {}) {
   if (!rec) throw Error('这个地点还没有沙盘');
   const tick = () => new Promise(r => setTimeout(r, 0));
   const coarse = !!opts.coarse, reduced = !!opts.reduced;
+  /* 画质档：high 桌面全开；mid 手机默认（不做 AO、阴影隔帧更新、移轴少采样）；low 再关掉泛光与移轴、阴影只画一次。
+     app.js 按实测帧间隔调用 degrade() 逐档下降 */
+  let quality = opts.quality || (coarse ? 'mid' : 'high');
   const R = rec.R ?? 90, open = rec.mode === 'open';
   const seed = strSeed(rec.seed || name), N = makeNoise(seed), r = rng(seed ^ 0x51ed);
   const wl = rec.water === false ? -1e4 : (rec.water?.level ?? 0);
@@ -491,7 +494,7 @@ export async function createDiorama(renderer, name, opts = {}) {
   const sun = new T.DirectionalLight(lin(time.sun), time.si);
   sun.position.copy(sunDir).multiplyScalar(R * 3); sun.target.position.set(0, 0, 0);
   sun.castShadow = true;
-  const SM = coarse ? 1536 : 3072; sun.shadow.mapSize.set(SM, SM);
+  const SM = quality === 'high' ? 3072 : quality === 'mid' ? 1536 : 1024; sun.shadow.mapSize.set(SM, SM);
   const sc = sun.shadow.camera, ext = open ? R * 1.2 : R * 1.25;
   sc.left = -ext; sc.right = ext; sc.top = ext; sc.bottom = -ext; sc.near = R * .5; sc.far = R * 6;
   sun.shadow.bias = -.0004; sun.shadow.normalBias = .035 * R / 60; sun.shadow.radius = time.soft ? 7 : 2.5;
@@ -627,19 +630,22 @@ export async function createDiorama(renderer, name, opts = {}) {
   if (waterMat && rec.glow) { waterMat.uniforms.uGlowP.value.fromArray(rec.glow.p); waterMat.uniforms.uGlowC.value.copy(lin(rec.glow.c)).multiplyScalar(rec.glow.i ?? 1); }
 
   /* ---- 渲染器状态 */
-  const prev = { exp: renderer.toneMappingExposure, shadow: renderer.shadowMap.enabled, type: renderer.shadowMap.type, tm: renderer.toneMapping };
+  const prev = { exp: renderer.toneMappingExposure, shadow: renderer.shadowMap.enabled, type: renderer.shadowMap.type, tm: renderer.toneMapping, auto: renderer.shadowMap.autoUpdate };
   renderer.toneMapping = T.ACESFilmicToneMapping;
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap; renderer.shadowMap.needsUpdate = true;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = quality === 'high' ? T.PCFSoftShadowMap : T.PCFShadowMap; renderer.shadowMap.needsUpdate = true;
+  // 手机上阴影图不必每帧重画：mid 每 4 帧更新一次（云影仍会动），low 只画一次
+  renderer.shadowMap.autoUpdate = quality === 'high';
+  let shadowEvery = quality === 'high' ? 1 : quality === 'mid' ? 4 : 0, shadowN = 0;
   renderer.toneMappingExposure = (time.exp ?? 1) * .92;
 
   /* ---- 后期 */
-  let W0 = opts.width, H0 = opts.height, pr = opts.pixelRatio || 1;
-  const rt = new T.WebGLRenderTarget(1, 1, { type: T.HalfFloatType, samples: coarse ? 2 : 4 });
+  let W0 = opts.width, H0 = opts.height, pr = Math.min(opts.pixelRatio || 1, quality === 'high' ? 2 : quality === 'mid' ? 1.25 : 1);
+  const rt = new T.WebGLRenderTarget(1, 1, { type: T.HalfFloatType, samples: quality === 'high' ? 4 : 2 });
   const composer = new EffectComposer(renderer, rt);
   composer.setPixelRatio(pr); composer.setSize(W0, H0);
   composer.addPass(new RenderPass(scene, camera));
   let ao = null;
-  if (!coarse && rec.ao !== false && dbg.ao !== false) {
+  if (quality === 'high' && rec.ao !== false && dbg.ao !== false) {
     ao = new AOPass(scene, camera, W0, H0);
     ao.blendIntensity = .85;
     ao.updateGtaoMaterial({ radius: R * .045, distanceExponent: 1.4, thickness: R * .02, scale: 1.1, samples: 12, distanceFallOff: 1 });
@@ -648,12 +654,20 @@ export async function createDiorama(renderer, name, opts = {}) {
   }
   const bloom = new UnrealBloomPass(new T.Vector2(W0, H0), time.bloom ?? .2, .55, 1.15);
   composer.addPass(bloom);
-  const tilt = new ShaderPass(TILT); composer.addPass(tilt);
+  const tilt = new ShaderPass({ ...TILT, defines: { TAPS: quality === 'high' ? 18 : 8 } }); composer.addPass(tilt);
   const grade = new ShaderPass(GRADE); composer.addPass(grade);
   grade.uniforms.uSat.value = rec.grade?.sat ?? 1.06;
   if (rec.grade?.tint) grade.uniforms.uTint.value.set(...rec.grade.tint);
   grade.uniforms.uVig.value = open ? .32 : .26;
   composer.addPass(new OutputPass());
+  const applyQuality = () => {
+    if (ao) ao.enabled = quality === 'high';
+    // 夜景靠泛光托灯光，low 档也保留一点
+    bloom.enabled = quality !== 'low' || (time.night ?? 0) > .4;
+    tilt.enabled = quality !== 'low';
+    if (quality === 'low') { shadowEvery = 0; renderer.shadowMap.type = T.PCFShadowMap; }
+  };
+  applyQuality();
   const setRes = () => { fxEnv.px = H0 * pr; skyM.uniforms.uResY.value = H0 * pr; tilt.uniforms.uRes.value.set(W0 * pr, H0 * pr); tilt.uniforms.uAmt.value = (rec.tilt ?? 1) * 5.5 * pr * Math.min(1.4, W0 / 1100); };
   setRes();
 
@@ -712,6 +726,7 @@ export async function createDiorama(renderer, name, opts = {}) {
     const dist = camera.position.distanceTo(controls.target);
     tilt.uniforms.uAmt.value = (rec.tilt ?? 1) * 5.5 * pr * Math.min(1.4, W0 / 1100) * clamp(fitDist() / dist, .5, 1.25);
     if (waterMat) waterMat.uniforms.uRain.value = weatherOn ? (rec.weather?.rain ?? 0) : 0;
+    if (shadowEvery > 1 && ++shadowN % shadowEvery === 0) renderer.shadowMap.needsUpdate = true;
     composer.render();
   }
 
@@ -723,13 +738,23 @@ export async function createDiorama(renderer, name, opts = {}) {
     views: views.map(v => ({ label: v.label })),
     frame,
     animating: () => !reduced,
+    quality: () => quality,
+    // 逐档降画质：high → mid → low → 再降分辨率；返回是否还有可降的
+    degrade() {
+      if (quality === 'high') { quality = 'mid'; shadowEvery = 4; renderer.shadowMap.autoUpdate = false; }
+      else if (quality === 'mid') quality = 'low';
+      else if (pr > .75) { pr = Math.max(.75, pr - .25); }
+      else return false;
+      applyQuality(); composer.setPixelRatio(pr); composer.setSize(W0, H0); bloom.setSize(W0, H0); setRes(); renderer.shadowMap.needsUpdate = true;
+      return true;
+    },
     resize(w, h) { W0 = w; H0 = h; camera.aspect = w / h; camera.fov = coarse && w < 700 ? 34 : 28; camera.updateProjectionMatrix(); composer.setSize(w, h); bloom.setSize(w, h); setRes(); applyLimits(); },
     zoom(f) { tween = null; const off = camera.position.clone().sub(controls.target); off.setLength(clamp(off.length() * f, controls.minDistance, controls.maxDistance)); camera.position.copy(controls.target).add(off); controls.update(); },
     home() { go(0); },
     view(i) { go(i); },
     setWeather(on) { weatherOn = !!on; fx.setOn(weatherOn); },
     setOrbit(on) { controls.autoRotate = !!on && !reduced; },
-    stats() { return { name, mode: open ? 'open' : 'closed', tris: info.render.triangles, calls: info.render.calls, kitVerts: B.count, instances: ninst, lights: lights.length, ao: !!ao }; },
+    stats() { return { name, quality, pr, mode: open ? 'open' : 'closed', tris: info.render.triangles, calls: info.render.calls, kitVerts: B.count, instances: ninst, lights: lights.length, ao: !!ao }; },
     dispose() {
       controls.dispose();
       scene.traverse(o => {
@@ -740,7 +765,7 @@ export async function createDiorama(renderer, name, opts = {}) {
       htex.dispose(); envRT.dispose(); region?.lin.dispose(); region?.near.dispose();
       sun.shadow.map?.dispose();
       composer.dispose?.(); rt.dispose(); bloom.dispose(); ao?.dispose?.();
-      renderer.toneMappingExposure = prev.exp; renderer.shadowMap.enabled = prev.shadow; renderer.shadowMap.type = prev.type; renderer.toneMapping = prev.tm;
+      renderer.toneMappingExposure = prev.exp; renderer.shadowMap.enabled = prev.shadow; renderer.shadowMap.type = prev.type; renderer.toneMapping = prev.tm; renderer.shadowMap.autoUpdate = prev.auto;
     }
   };
 }
