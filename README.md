@@ -94,7 +94,7 @@ ynxz/
 ---
 
 ## 三、已写人设的角色（125）
-> 每位含：人物介绍 `bio`（分段、衬线）＋基础信息（身份 / 出生日期 / 属地，属地可点开地点志）。
+> 每位含：人物介绍 `bio`（分段、衬线）＋基础信息（身份 / 出生日期 / 属地，属地可点开地点志）。出生日期只写到年（如「新历518年」），不写月日。
 
 | 意识形态 | 角色 | 身份 | 出生 | 属地 |
 |---|---|---|---|---|
@@ -299,7 +299,7 @@ ynxz/
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
 - 地图与3D版本：`css/map-view.css v7`、`js/atlas-data.js v1`、`js/atlas.js v3`、`js/map-view.js v12`、`js/place-ui.js v2`；`js/globe/app.js v23`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 23）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
-- 当前版本指针：`style.css v27`、`gallery.css v55`、`gallery.js v80`、`gallery-data.js v121`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v55`、`gallery.js v80`、`gallery-data.js v122`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
