@@ -1,65 +1,68 @@
-/* v22: flat atlas (js/atlas.js) and globe page share selection, URL and view switching. */
+/* v23: 平面地图（js/atlas.js）与 3D 地球（js/globe/app.js）共用的选择、网址与视图切换。
+   网址参数：place=地点名；scene=1 表示 3D 页直接进入该地点的 2.5D 沙盘。 */
 (() => {
- 'use strict';
- const $=id=>document.getElementById(id),locations=window.LOCATION_DATA||{},channel='pierteia-map-v1',origin=location.origin;
- const mode=document.body.dataset.mapView,globe=mode==='globe';
- let selected='',frame=null,ready=false,clean=false,lastSent='',clearPending=false,timer;
- const place=$('mapPlace'),setPlace=v=>{if(place)place.value=v;};
- const valid=name=>typeof name==='string'&&Object.hasOwn(locations,name);
- function route(){const q=new URLSearchParams(location.search),site=q.get('place')||q.get('site');const name=valid(site)?site:(window.MAP_NATIONS||[]).find(n=>String(n.id)===site)?.name;return valid(name)?name:'';}
- function link(page){const u=new URL(page,location.href);u.searchParams.set('release','22');if(selected)u.searchParams.set('place',selected);return u.href;}
- function links(){ $('viewFlat').href=link('map.html');$('viewGlobe').href=link('globe.html');if($('fallbackFlat'))$('fallbackFlat').href=link('map.html'); }
- function writeURL(){const u=new URL(location.href);u.searchParams.delete('view');u.searchParams.delete('site');if(selected)u.searchParams.set('place',selected);else u.searchParams.delete('place');if(u.href!==location.href)history.replaceState({},'',u);links();}
- function clearSceneRoute(){const u=new URL(location.href);u.searchParams.delete('inspect');u.searchParams.delete('frame');history.replaceState({},'',u);}
- if(place)for(const name of Object.keys(locations)){const o=document.createElement('option');o.value=name;o.textContent=(locations[name].parent?'↳ ':'')+name;place.append(o);}
- function send(action,extra={}){frame?.contentWindow?.postMessage({channel,action,...extra},origin);}
- function sync(){if(!ready)return;send('visibility',{visible:!document.hidden});if(clearPending){clearPending=false;send('overview');}if(selected&&lastSent!==selected){lastSent=selected;send('select',{name:selected});}}
- function select(name,source='toolbar'){
-  if(!valid(name))return;const changed=selected!==name;selected=name;clearPending=false;setPlace(name);
-  lastSent=source==='globe'?name:'';
-  if(!globe&&source!=='flat')window.__flatMap.select(name);
-  if(changed||source!=='globe')clearSceneRoute();sync();writeURL();
- }
- function clear(source='toolbar'){selected='';lastSent='';setPlace('');window.__flatMap?.clear();clearSceneRoute();if(globe&&source!=='globe'){clearPending=true;sync();}writeURL();}
- function notice(title,text,failed=false){$('globeNotice').hidden=false;$('globeNotice').dataset.state=failed?'error':'loading';$('globeNoticeTitle').textContent=title;$('globeNoticeText').textContent=text;$('retryGlobe').hidden=!failed;}
- function createFrame(){
-  clearTimeout(timer);ready=false;clean=false;lastSent='';$('mapRestoreUI').hidden=true;frame?.remove();frame=null;
-  notice('正在展开3D地球','首次打开需要加载高清地形。局部建筑按需加载；可随时返回平面地图。');
-  if(location.protocol==='file:'){notice('球体需要通过网站打开','请使用网站或本地HTTP服务；平面地图仍可使用。',true);return;}
-  frame=document.createElement('iframe');frame.id='globeFrame';frame.title='Pierteia 3D地球，可旋转、缩放并探索地点';
-  const u=new URL('drafts/pierteia-globe/index.html',location.href);u.searchParams.set('embed','map');u.searchParams.set('v','21');
-  const q=new URLSearchParams(location.search);
-  if(selected&&q.has('inspect')){u.searchParams.set('site',selected);u.searchParams.set('inspect','');if(q.has('frame'))u.searchParams.set('frame',q.get('frame'));lastSent=selected;}
-  frame.src=u.href;$('globeHost').prepend(frame);
-  frame.addEventListener('error',()=>notice('球体资源未能打开','可以重试，或返回平面地图。',true));
-  timer=setTimeout(()=>{if(!ready)notice('资源加载时间较长','可以继续等待、重新加载，或返回平面地图；加载成功后会自动显示。',true);},60000);
- }
- if(place)place.onchange=e=>e.target.value?select(e.target.value):clear();
- if(globe){
-  addEventListener('message',e=>{
-   if(e.origin!==origin||e.source!==frame?.contentWindow||e.data?.channel!==channel)return;
-   const m=e.data;
-   if(m.type==='ready'){ready=true;clearTimeout(timer);$('globeNotice').hidden=true;sync();}
-   if(ready&&m.type==='selected'&&valid(m.name))select(m.name,'globe');
-   if(ready&&m.type==='cleared')clear('globe');
-   if(m.type==='ui-state'&&typeof m.clean==='boolean'){clean=m.clean;$('mapRestoreUI').hidden=!clean;}
-   if(m.type==='error'){ready=false;clean=false;clearTimeout(timer);$('mapRestoreUI').hidden=true;notice('球体暂时无法显示','图形环境或资源加载遇到问题。可重新加载，或返回平面地图。',true);}
-   if(m.type==='flat')location.assign(link('map.html'));
-  });
-  $('retryGlobe').onclick=createFrame;$('mapRestoreUI').onclick=()=>send('clean',{clean:false});
-  addEventListener('keydown',e=>{
-   if(!ready||e.defaultPrevented||e.repeat||e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;
-   if(!(clean&&e.key==='Escape')&&e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
-   const key=e.key==='Escape'?'Escape':e.key.toLowerCase();if(['Escape','h','/'].includes(key)){e.preventDefault();send('shortcut',{key});}
-  });
-  document.addEventListener('visibilitychange',sync);
- }else{
-  addEventListener('atlas:select',e=>select(e.detail.name,'flat'));
-  addEventListener('atlas:clear',()=>clear('flat'));
- }
- function fit(){document.documentElement.style.setProperty('--hh',document.querySelector('.site-header').offsetHeight+'px');document.documentElement.style.setProperty('--map-vh',(window.visualViewport?.height||innerHeight)+'px');window.__flatMap?.resize();}
- new ResizeObserver(fit).observe(document.querySelector('.site-header'));window.visualViewport?.addEventListener('resize',fit);addEventListener('resize',fit);fit();
- addEventListener('popstate',()=>{const name=route();if(name)select(name,'route');else clear();});
- selected=route();setPlace(selected);if(!globe&&selected)window.__flatMap.select(selected);if(globe)createFrame();writeURL();
- window.__mapView={stats:()=>({mode,selected,ready,clean,frames:document.querySelectorAll('#globeFrame').length}),setMode:next=>{if(['flat','globe'].includes(next)&&next!==mode)location.assign(link(next==='globe'?'globe.html':'map.html'));}};
+  'use strict';
+  const $ = id => document.getElementById(id), locations = window.LOCATION_DATA || {};
+  const mode = document.body.dataset.mapView, globe = mode === 'globe';
+  const RELEASE = '23';
+  const valid = name => typeof name === 'string' && Object.hasOwn(locations, name);
+  let selected = '', scene = false;
+  function route() {
+    const q = new URLSearchParams(location.search), site = q.get('place') || q.get('site');
+    const name = valid(site) ? site : (window.MAP_NATIONS || []).find(n => String(n.id) === site)?.name;
+    return { name: valid(name) ? name : '', scene: q.get('scene') === '1' };
+  }
+  function link(page, opts = {}) {
+    const u = new URL(page, location.href);
+    u.searchParams.set('release', RELEASE);
+    if (selected) u.searchParams.set('place', selected);
+    if (opts.scene && selected) u.searchParams.set('scene', '1');
+    return u.href;
+  }
+  function links() { $('viewFlat').href = link('map.html'); $('viewGlobe').href = link('globe.html'); }
+  function writeURL() {
+    const u = new URL(location.href);
+    ['view', 'site', 'inspect', 'frame'].forEach(k => u.searchParams.delete(k));
+    if (selected) u.searchParams.set('place', selected); else u.searchParams.delete('place');
+    if (globe && scene && selected) u.searchParams.set('scene', '1'); else u.searchParams.delete('scene');
+    if (u.href !== location.href) history.replaceState({}, '', u);
+    links();
+  }
+  function select(name, source) {
+    if (!valid(name)) return;
+    selected = name;
+    if (source === 'route') { if (globe) window.__globe?.select(name); else window.__flatMap?.select(name); }
+    writeURL();
+  }
+  function clear(source) {
+    selected = ''; scene = false;
+    if (source === 'route') { if (globe) window.__globe?.clear(); else window.__flatMap?.clear(); }
+    writeURL();
+  }
+  if (globe) {
+    addEventListener('globe:select', e => { scene = false; select(e.detail.name, 'globe'); });
+    addEventListener('globe:clear', () => clear('globe'));
+    addEventListener('globe:scene', e => { scene = !!e.detail.on; if (e.detail.on) selected = e.detail.name; writeURL(); });
+  } else {
+    addEventListener('atlas:select', e => select(e.detail.name, 'flat'));
+    addEventListener('atlas:clear', () => clear('flat'));
+  }
+  function fit() {
+    document.documentElement.style.setProperty('--hh', document.querySelector('.site-header').offsetHeight + 'px');
+    document.documentElement.style.setProperty('--map-vh', (window.visualViewport?.height || innerHeight) + 'px');
+    window.__flatMap?.resize();
+  }
+  new ResizeObserver(fit).observe(document.querySelector('.site-header'));
+  window.visualViewport?.addEventListener('resize', fit);
+  addEventListener('resize', fit);
+  fit();
+  addEventListener('popstate', () => { const r = route(); if (r.name) select(r.name, 'route'); else clear('route'); });
+  const r = route();
+  selected = r.name; scene = globe && r.scene && !!r.name;
+  if (!globe && selected) window.__flatMap.select(selected);
+  writeURL();
+  window.__mapView = {
+    stats: () => ({ mode, selected, scene }),
+    setMode: (next, opts = {}) => { if (['flat', 'globe'].includes(next) && next !== mode) location.assign(link(next === 'globe' ? 'globe.html' : 'map.html', opts)); }
+  };
 })();
