@@ -1,8 +1,8 @@
 /* 沙盘天气与特效：雨、雪、花瓣/落叶/萤火/孢子/尘、烟、积云、雾片、闪电、彩虹、裂隙、极光、探照灯、飞鸟。
    全部在 GPU 上按时间推算位置，CPU 只在闪电时更新一次几何。 */
 import * as T from 'three';
-import { G, NOISE_GLSL, ATMOS_GLSL, lin } from './kit.js';
-import { rng, makeNoise, spline } from './noise.js';
+import { G, NOISE_GLSL, ATMOS_GLSL, lin } from './kit.js?v=23';
+import { rng, makeNoise, spline } from './noise.js?v=23';
 
 const ATM = () => ({ uFade: G.uFade, uBg: G.uBg, uHaze: G.uHaze, uHazeD: G.uHazeD, uFogC: G.uFogC, uFogY: G.uFogY, uFogH: G.uFogH, uFogD: G.uFogD, uFlash: G.uFlash, uFocus: G.uFocus });
 
@@ -153,7 +153,8 @@ export function createFx(scene, ctx, cfg, env) {
 
   /* ---- 雾片：水平薄层，与地面相交处按高度纹理柔化 */
   function mist(o) {
-    const layers = o.layers ?? 3, col = lin(o.col ?? 0xe6e8ea);
+    const tm = env.time || {}, lum = (1 - (tm.night ?? 0) * .7) * Math.min(1, .45 + (tm.si ?? 3) * .18); // 暗场景里雾不能自己发亮
+    const layers = o.layers ?? 3, col = lin(o.col ?? 0xe6e8ea).multiplyScalar(lum);
     for (let i = 0; i < layers; i++) {
       const y = (o.y ?? top + 2) + i * (o.gap ?? 1.6);
       const ext = open ? ctx.E : R * 1.05;

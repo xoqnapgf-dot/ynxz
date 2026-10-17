@@ -1,6 +1,6 @@
 /* 沙盘道具与建筑组合：每个函数接收引擎上下文 c（含 B 合并构建器、I 实例、fx、h、r 等）。 */
-import { P, lin, house, tower, wall, boat } from './kit.js';
-import { lerp, clamp, spline } from './noise.js';
+import { P, lin, house, tower, wall, boat } from './kit.js?v=23';
+import { lerp, clamp, spline } from './noise.js?v=23';
 
 export const pick = (c, v) => Array.isArray(v) ? c.r.pick(v) : v;
 const rand = (c, a, b) => a + (b - a) * c.r();
@@ -110,7 +110,7 @@ export function crane(c, x, z, ry, o = {}) {
   for (let k = 2; k < h; k += 3) { B.box(0, k, -1.6, 3.4, .2, .2, col, P.metal); B.box(0, k, 1.6, 3.4, .2, .2, col, P.metal); B.box(-1.6, k, 0, .2, .2, 3.4, col, P.metal); B.box(1.6, k, 0, .2, .2, 3.4, col, P.metal); }
   B.box(0, h, 0, 4, 2.4, 4, o.cab ?? 0xd9d2c4, P.metal);
   B.box(0, h + 1.6, (o.reach ?? 14) / 2 - 3, 1, 1, o.reach ?? 14, col, P.metal);
-  B.box(0, h + 1.2, (o.reach ?? 14) - 3, .08, -(h - 2), .08, 0x2a2a2a, P.iron);
+  B.box(0, 3, (o.reach ?? 14) - 3, .08, h - 1.8, .08, 0x2a2a2a, P.iron);
   B.frame();
   c.occupy(x, z, 4, 4, ry);
 }
@@ -424,4 +424,114 @@ export function rows(c, cx, cz, w, d, ry, o = {}) { // 葡萄、咖啡、茶等�
     if (o.where && !o.where(x, z)) continue;
     c.I.tree(o.species ?? 'shrub', x + (c.r() - .5) * .3, c.h(x, z), z + (c.r() - .5) * .3, rand(c, o.s?.[0] ?? .5, o.s?.[1] ?? .7), lin(pick(c, o.cols ?? [0x4e6a2a, 0x5a7a30])).multiplyScalar(rand(c, .85, 1.15)), o.trunk ?? 0x5a4232, c.r() * 6);
   }
+}
+
+/* ---------------- 更多组合件 ---------------- */
+export function windmill(c, x, z, o = {}) {
+  const y = c.ground(x, z, 5, 5), B = c.B, ry = o.ry ?? c.r() * 6;
+  B.frame(x, y, z, ry);
+  B.put('frus12', 0, -1, 0, 5, 9, 5, o.col ?? 0xe6dcc8, P.plaster);
+  B.put('cone12', 0, 8, 0, 3.8, 2.6, 3.8, o.roof ?? 0x5a4a3c, P.thatch);
+  for (let k = 0; k < 4; k++) B.put('box', 0, 8.6, 2, .5, 6.5, .12, 0xd8ccb4, P.wood, [0, 0, k * Math.PI / 2 + .3]);
+  B.frame(); c.occupy(x, z, 5, 5);
+}
+export function turbine(c, x, z, o = {}) {
+  const y = c.ground(x, z), B = c.B, h = o.h ?? 26, ry = o.ry ?? .6;
+  B.frame(x, y, z, ry);
+  B.put('frus12', 0, -1, 0, 1.4, h + 1, 1.4, 0xf2f2f0, P.plain);
+  B.box(0, h, -.4, 1, 1, 2.6, 0xf2f2f0, P.plain);
+  for (let k = 0; k < 3; k++) B.put('box', 0, h + .5, 1, .5, 11, .12, 0xf6f6f4, P.plain, [0, 0, k * 2.094 + (o.rot ?? c.r())]);
+  B.frame();
+}
+export function solar(c, cx, cz, w, d, ry = 0) {
+  const cr = Math.cos(ry), sr = Math.sin(ry);
+  for (let a = -w / 2; a <= w / 2; a += 2.6) for (let b = -d / 2; b <= d / 2; b += 4) {
+    const x = cx + a * cr + b * sr, z = cz - a * sr + b * cr; if (!c.free(x, z, 0)) continue;
+    c.B.frame(x, c.h(x, z), z, ry); c.B.box(0, .4, 0, 2.3, .1, 3, 0x223047, P.glass, 0); c.B.put('box', 0, .9, 0, 2.3, .08, 3, 0x1e2a40, P.glass, [-.5, 0, 0]); c.B.box(0, 0, 0, .12, .9, .12, 0x8a8a8a, P.iron);
+  }
+  c.B.frame(); c.occupy(cx, cz, w, d, ry, 0);
+}
+export function cloister(c, x, z, ry, o = {}) { // 回廊庭院：四边建筑 + 内侧拱廊 + 中央花园
+  const S = o.size ?? 24, B = c.B, y = c.ground(x, z, S, S, ry), wallC = o.wall ?? 0xe0d8c6, roofC = o.roof ?? 0x55606b;
+  B.frame(x, y, z, ry, [3, 3.4, S / 2, 3]);
+  for (let s = 0; s < 4; s++) {
+    const a = s * Math.PI / 2, cx = Math.sin(a) * (S / 2 - 3), cz = Math.cos(a) * (S / 2 - 3);
+    B.frame(x + Math.cos(ry) * cx + Math.sin(ry) * cz, y, z - Math.sin(ry) * cx + Math.cos(ry) * cz, ry + a, [3, 3.4, S / 2, 3]);
+    B.box(0, -2, 0, S, 2.3, 6, 0x8f887c, P.stone);
+    B.box(0, 0, -.6, S, o.h ?? 7, 4.8, wallC, P.stone, 0, true);
+    B.put('gable', 0, o.h ?? 7, -.6, 5.6, 2.6, S + .4, roofC, P.slate, [0, Math.PI / 2, 0]);
+    for (let k = -S / 2 + 3.5; k < S / 2 - 3; k += 2.4) B.put('cyl8', k, 0, 2.3, .4, 3.4, .4, wallC, P.stone);
+    B.box(0, 3.4, 2.3, S - 6, .5, .6, wallC, P.stone);
+    B.put('shed', 0, 3.9, 1.6, S - 6, 1, 1.8, roofC, P.slate, [0, Math.PI / 2, 0]);
+  }
+  B.frame();
+  c.occupy(x, z, S + 1, S + 1, ry, .5);
+  c.I.tree('round', x, y, z, .7, 0x4f6a34);
+  for (let k = 0; k < 4; k++) c.I.tree('shrub', x + (k % 2 ? 4 : -4), y, z + (k < 2 ? 4 : -4), .6, 0x5a7a3a);
+}
+export function stoneCircle(c, x, z, rr = 6, n = 11) { for (let k = 0; k < n; k++) { const a = k / n * Math.PI * 2, px = x + Math.cos(a) * rr, pz = z + Math.sin(a) * rr, y = c.h(px, pz); c.B.frame(px, y - .3, pz, -a); c.B.box(0, 0, 0, 1.1, rand(c, 2.2, 3.4), .7, 0x8f8a80, P.rock); } c.B.frame(); c.occupy(x, z, rr * 2.4, rr * 2.4, 0, 0); }
+export function viaduct(c, pts0, h, o = {}) {
+  const pts = spline(pts0, 4);
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ax, az] = pts[i], [bx, bz] = pts[i + 1], L = Math.hypot(bx - ax, bz - az), ry = Math.atan2(bx - ax, bz - az), mx = (ax + bx) / 2, mz = (az + bz) / 2;
+    const top = Math.max(c.h(mx, mz), c.wl) + h;
+    c.B.frame(mx, top, mz, ry); c.B.box(0, 0, 0, o.w ?? 3, .7, L + .1, o.col ?? 0xe8eaea, P.concrete);
+    if (i % 3 === 0) c.B.put('cyl12', 0, -(top - Math.min(c.h(mx, mz), c.wl)) - 1, 0, 1.1, top - Math.min(c.h(mx, mz), c.wl) + 1, 1.1, o.col ?? 0xe8eaea, P.concrete);
+  }
+  c.B.frame();
+}
+export function waterwheel(c, x, z, ry) { const y = c.wl, B = c.B; B.frame(x, y, z, ry); B.put('cyl16', 0, 2.2, 0, 4.6, .5, 4.6, 0x6a5038, P.wood, [0, 0, Math.PI / 2]); for (let k = 0; k < 8; k++) B.put('box', 0, 2.2, 0, .9, 4.4, .12, 0x5a4230, P.wood, [k * Math.PI / 8, 0, 0]); B.box(1.2, 0, 0, .4, 3, .4, 0x5a4230, P.wood); B.frame(); }
+export function slipway(c, x, z, ry, o = {}) { // 船台：斜坡 + 在建船体肋骨
+  const B = c.B, L = o.len ?? 26, y = c.wl;
+  B.frame(x, y, z, ry);
+  B.put('box', 0, -3, 0, 8, 3.2, L, 0x8a8478, P.concrete, [-.08, 0, 0]);
+  B.put('hull', 0, 1.8, 0, 6, 5, L * .8, 0x7a6450, P.wood, [-.08, 0, 0]);
+  for (let k = 0; k < 9; k++) B.put('box', 0, 1, -L * .3 + k * L * .07, 7.2, 6.5, .3, 0x5a4636, P.wood, [-.08, 0, 0]);
+  for (const s of [-1, 1]) for (let k = 0; k < 5; k++) B.box(s * 4.6, 0, -L * .35 + k * L * .17, .3, 7, .3, 0x6a5a4a, P.wood);
+  B.frame(); c.occupy(x, z, 10, L, ry);
+}
+export function conveyor(c, a, b, o = {}) {
+  const [ax, ay, az] = a, [bx, by, bz] = b, L = Math.hypot(bx - ax, by - ay, bz - az), ry = Math.atan2(bx - ax, bz - az), pitch = -Math.asin((by - ay) / L);
+  c.B.frame((ax + bx) / 2, (ay + by) / 2, (az + bz) / 2, ry);
+  c.B.put('box', 0, 0, 0, 1.6, 1.3, L, o.col ?? 0x5a5650, P.metal, [pitch, 0, 0]);
+  c.B.frame();
+  const n = Math.round(L / 9);
+  for (let k = 1; k < n; k++) { const t = k / n, x = ax + (bx - ax) * t, z = az + (bz - az) * t, top = ay + (by - ay) * t, g = c.h(x, z); c.B.frame(x, g, z, ry); c.B.box(0, 0, 0, .5, top - g, .5, 0x4a4642, P.iron); }
+  c.B.frame();
+}
+export function pavilion(c, x, z, col, o = {}) { const y = c.ground(x, z, 5, 5), B = c.B, r0 = o.r ?? 2.6; B.frame(x, y, z, c.r() * 6); B.put('cyl12', 0, 0, 0, r0 * 2, 2.4, r0 * 2, col, P.cloth); B.put('cone12', 0, 2.4, 0, r0 * 2.3, r0 * 1.3, r0 * 2.3, o.roof ?? col, P.cloth); B.put('cyl8', 0, 2.4 + r0 * 1.3, 0, .08, 1.4, .08, 0x3a3230, P.wood); B.box(.5, 3.1 + r0 * 1.3, 0, 1, .5, .04, o.pennant ?? 0xb03a2a, P.cloth); B.frame(); c.occupy(x, z, r0 * 2.2, r0 * 2.2); }
+export function obelisk(c, x, z, h = 18, col = 0xcfc6b4) { const y = c.ground(x, z, 4, 4), B = c.B; B.frame(x, y, z); B.box(0, 0, 0, 4.4, 1.6, 4.4, col, P.stone); B.put('frus12', 0, 1.6, 0, 2.4, h, 2.4, col, P.stone); B.put('pyr', 0, h + 1.5, 0, 1.4, 1.4, 1.4, 0xb58a4a, P.gold); B.frame(); c.occupy(x, z, 4.6, 4.6); }
+export function triumphalArch(c, x, z, ry, o = {}) {
+  const W = o.w ?? 22, H = o.h ?? 18, D = o.d ?? 8, B = c.B, y = c.ground(x, z, W, D, ry), col = o.col ?? 0xc9c1b1;
+  B.frame(x, y, z, ry);
+  for (const s of [-1, 1]) B.box(s * W * .33, -1, 0, W * .34, H * .72 + 1, D, col, P.stone);
+  B.put('arch', 0, -1, 0, W * .36, H * .82, D, col, P.stone);
+  B.box(0, H * .66, 0, W, H * .34, D, col, P.stone);
+  B.box(0, H, 0, W * .6, 2.4, D * .7, col, P.stone);
+  if (o.banner) for (const s of [-1, 1]) B.box(s * W * .33, H * .2, D / 2 + .1, W * .16, H * .5, .1, o.banner, P.cloth);
+  B.frame(); c.occupy(x, z, W + 1, D + 1, ry);
+}
+export function veranda(c, x, z, ry, o = {}) { // 带廊柱的庄园宅邸
+  const W = o.w ?? 18, D = o.d ?? 11, H = o.h ?? 4, B = c.B, y = c.ground(x, z, W, D, ry) + (o.lift ?? 1.2), wallC = o.wall ?? 0xf3ecdc;
+  B.frame(x, y, z, ry, [2.8, H, W / 2 - 2, D / 2 - 2.4]);
+  B.box(0, -3.2, 0, W + 1, 3.2, D + 1, 0xb8ae9c, P.stone);
+  B.box(0, 0, -1, W - 4, H * (o.fl ?? 2), D - 4.8, wallC, P.plaster, 0, true);
+  for (let k = 0; k <= 8; k++) for (const s of [1, -1]) B.put('cyl8', -W / 2 + .6 + k * (W - 1.2) / 8, 0, s * (D / 2 - .5), .45, H * (o.fl ?? 2), .45, 0xf6f2e8, P.plain);
+  B.box(0, H - .1, 0, W, .25, D, wallC, P.wood);
+  B.put('hip', 0, H * (o.fl ?? 2), 0, D + 1.2, (D + 1.2) * .4, W + 1.2, o.roof ?? 0x8a4a34, P.metal, [0, Math.PI / 2, 0]);
+  B.frame(); c.occupy(x, z, W + 1, D + 1, ry);
+}
+export function stairs(c, a, b, w = 3, col = 0x9a958a) {
+  const [ax, az] = a, [bx, bz] = b, ya = c.h(ax, az), yb = c.h(bx, bz), L = Math.hypot(bx - ax, bz - az), n = Math.max(3, Math.round(Math.abs(yb - ya) / .45)), ry = Math.atan2(bx - ax, bz - az);
+  for (let k = 0; k < n; k++) { const t = (k + .5) / n, x = ax + (bx - ax) * t, z = az + (bz - az) * t; c.B.frame(x, ya + (yb - ya) * t - .6, z, ry); c.B.box(0, 0, 0, w, .7, L / n + .05, col, P.stone); }
+  c.B.frame(); c.occupyLine([a, b], w);
+}
+export function cave(c, x, z, ry, o = {}) { // 崖壁洞口：暗色拱 + 两侧火炬
+  const y = c.h(x, z), B = c.B, s = o.s ?? 1;
+  B.frame(x, y - .5, z, ry);
+  B.put('arch', 0, 0, 0, 9 * s, 9 * s, 4, o.col ?? 0x6a6258, P.rock);
+  B.box(0, 0, -1.4, 8 * s, 5.4 * s, .4, 0x050404, P.plain);
+  B.put('hemi', 0, 4.4 * s, -1.4, 8 * s, 2 * s, .5, 0x050404, P.plain, [Math.PI / 2, 0, 0]);
+  B.frame();
+  for (const sd of [-1, 1]) { const tx = x + Math.cos(ry) * sd * 6 * s, tz = z - Math.sin(ry) * sd * 6 * s; brazier(c, tx, tz, { light: sd > 0 }); }
 }

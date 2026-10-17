@@ -2,7 +2,7 @@
    约定：1 单位 ≈ 1 米；颜色一律写 sRGB 十六进制，内部转线性。 */
 import * as T from 'three';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
-import { rng, makeNoise, clamp } from './noise.js';
+import { rng, makeNoise, clamp } from './noise.js?v=23';
 
 /* ---------------- 全局 uniform（每次进入沙盘由 engine 重置） ---------------- */
 export const G = {
@@ -302,7 +302,6 @@ export class Builder {
   /* 在当前框架内放一个基元：位置为底面中心，s 为尺寸，r 为 [rx,ry,rz] */
   put(name, x, y, z, sx, sy, sz, color, pat = 0, r = null, useWin = false) {
     const g = prim(name), P0 = g.attributes.position.array, N0 = g.attributes.normal.array;
-    if (window.__dioDebug && ![x, y, z, sx, sy, sz, this.f.x, this.f.y, this.f.z, this.f.ry].every(Number.isFinite)) console.warn('NANPUT ' + name + ' ' + JSON.stringify([x, y, z, sx, sy, sz, this.f]) + new Error().stack.split('\n').slice(2, 5).join('<-'));
     const c = color instanceof T.Color ? color : lin(color);
     this._e.set(r ? r[0] : 0, r ? r[1] : 0, r ? r[2] : 0);
     this._q.setFromEuler(this._e);

@@ -6,7 +6,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { createPlanet, uvToDir, ribbon, DISP } from './planet.js';
+import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=23';
 
 const $ = id => document.getElementById(id);
 const A = window.ATLAS_DATA, NAT = window.MAP_NATIONS || [], LOC = window.LOCATION_DATA || {};
@@ -383,7 +383,7 @@ async function enterDiorama(name) {
   $('dioVeil').classList.add('on');
   $('dioVeilText').textContent = '正在搭建「' + name + '」沙盘';
   try {
-    const mod = await import('./diorama/engine.js?v=1');
+    const mod = await import('./diorama/engine.js?v=23');
     await new Promise(r => setTimeout(r, 30));
     const next = await mod.createDiorama(renderer, name, { width: stage.clientWidth, height: stage.clientHeight, pixelRatio, reduced, coarse, anchor: it ? { u: it.u, v: it.v } : null });
     dio = next;

@@ -8,10 +8,10 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
-import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js';
-import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js';
-import { createFx } from './fx.js?v=1';
-import { RECIPES, STYLES } from './recipes.js?v=1';
+import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js?v=23';
+import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js?v=23';
+import { createFx } from './fx.js?v=23';
+import { RECIPES, STYLES } from './recipes.js?v=23';
 
 const D2R = Math.PI / 180;
 
@@ -410,7 +410,7 @@ export async function createDiorama(renderer, name, opts = {}) {
   let base = 0;
   if (!open) {
     let minH = Infinity; for (let k = 0; k < V; k++) if (keep[k]) minH = Math.min(minH, hv[k]);
-    base = Math.min(minH, wl) - (rec.depth ?? R * .09);
+    base = (wl > -1e3 ? Math.min(minH, wl) : minH) - (rec.depth ?? R * .09);
     // 边界边 → 侧壁
     const cnt = new Map();
     for (let t = 0; t < idx.length; t += 3) for (let e = 0; e < 3; e++) { const a = idx[t + e], b = idx[t + (e + 1) % 3]; const key = a < b ? a * V + b : b * V + a; cnt.set(key, (cnt.get(key) || 0) + 1); }
@@ -762,8 +762,9 @@ export function defaultGround(pal) {
     if (h < wl) { c.copy(sand).lerp(bed, smooth(0, 3, wl - h)).lerp(mud, smooth(2, 8, wl - h) * .6); rough = .7; }
     const rs = smooth(rockSlope, rockSlope + .35, s + (n2 - .5) * .2);
     if (rs > 0) { c.lerp(rock, rs); rk = rs; rough = lerp(rough, .85, rs); }
+    out.roughF = null;
     if (pal.paint) pal.paint(x, z, h, s, c, ctx, out);
-    out.rough = rough; out.rock = rk;
+    out.rough = out.roughF ?? rough; out.rock = rk;
     return out;
   };
 }

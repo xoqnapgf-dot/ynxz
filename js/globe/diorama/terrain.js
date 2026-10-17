@@ -1,5 +1,5 @@
 /* 地形配方用的小工具：都是 (x,z) → 高度 的纯函数组合。 */
-import { smooth, clamp, lerp, segDist } from './noise.js';
+import { smooth, clamp, lerp, segDist } from './noise.js?v=23';
 
 export const bump = (x, z, cx, cz, r, h, p = 2) => h * Math.exp(-Math.pow(Math.hypot(x - cx, z - cz) / r, p));
 export const ridgeLine = (x, z, pts, w, h, p = 1.6) => { const [d] = segDist(x, z, pts); return h * Math.exp(-Math.pow(d / w, p)); };

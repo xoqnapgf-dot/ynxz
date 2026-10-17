@@ -248,8 +248,8 @@ const CLOUD_FS = /* glsl */`
     vec2 uv = dirUv(N), gx, gy; seamGrad(uv, gx, gy);
     uv.x += uCloudShift;
     vec2 c = textureGrad(tClouds, uv, gx, gy).rg;
-    float dens = max(c.r, c.g * .45);
-    if (dens < .04) discard;
+    float dens = clamp((max(c.r, c.g * .45) - .1) / .9, 0., 1.);
+    if (dens < .02) discard;
     vec3 L = uSun, V = normalize(cameraPosition - vPos);
     vec3 east = normalize(cross(vec3(0., 1., 0.), N) + vec3(1e-5, 0., 0.)), north = cross(N, east);
     // 云顶起伏：密度梯度当作法线
@@ -266,10 +266,10 @@ const CLOUD_FS = /* glsl */`
     float NdL = mix(.5, 1., max(dot(Nc, L), 0.)) * smoothstep(-.08, .12, mu);
     float fwd = pow(max(dot(-V, L), 0.), 6.) * (1. - dens) * .6;   // 薄云边缘的前向散射
     vec3 sky = mix(vec3(.02, .03, .06), vec3(.28, .36, .48), smoothstep(-.05, .5, mu)) * smoothstep(-.2, .1, mu);
-    vec3 col = vec3(.74) * (sunT * (NdL * mix(1., self, .7) + fwd) + sky * .9);
+    vec3 col = vec3(.68) * (sunT * (NdL * mix(1., self, .7) + fwd) + sky * .9);
     vec3 inS, tv; aerial(vPos, inS, tv);
     col = col * tv + inS * .72;
-    float a = smoothstep(.03, .95, dens) * uOpacity;
+    float a = smoothstep(.02, 1., dens) * .88 * uOpacity;
     gl_FragColor = vec4(col * a, a);
   }
 `;
