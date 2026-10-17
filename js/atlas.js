@@ -500,7 +500,8 @@ void main(){
     C.save(); C.strokeStyle = 'rgba(110,88,58,.16)'; C.lineWidth = .7 / s;
     C.beginPath();
     for (let lon = -180; lon <= 180; lon += 30) { const x = (lon + 180) / 360 * W; C.moveTo(x, 0); C.lineTo(x, H); }
-    for (let lat = -75; lat <= 75; lat += 15) { const y = (90 - lat) / 180 * H; C.moveTo(0, y); C.lineTo(W, y); }
+    const latM = 180 * H / W;
+    for (let lat = -45; lat <= 45; lat += 15) { const y = (latM - lat) / (2 * latM) * H; C.moveTo(0, y); C.lineTo(W, y); }
     C.stroke();
     C.setLineDash([6 / s, 4 / s]); C.strokeStyle = 'rgba(150,86,58,.24)'; C.lineWidth = .9 / s; C.beginPath(); C.moveTo(0, H / 2); C.lineTo(W, H / 2); C.stroke();
     C.restore();

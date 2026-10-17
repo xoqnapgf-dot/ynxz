@@ -47,17 +47,22 @@ function chaikin(pts, closed, it) {
   }
   return pts;
 }
-const toUv = pts => pts.map(([x, y]) => [x / W, y / H]);
+/* 平面地图按真实宽高比铺在球面上：经度 360°，纬度 ±180·H/W（约 ±56°），两极为海与冰盖 */
+const KV = 2 * H / W;
+const m2t = v => .5 + KV * (v - .5), t2m = v => (v - .5) / KV + .5;
+const mapDir = (u, v) => uvToDir(u, m2t(v));
+const toUv = pts => pts.map(([x, y]) => [x / W, m2t(y / H)]);
 const bytes = s => { const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; };
 const HGT = bytes(A.height), STA = bytes(A.state);
-const gridAt = (arr, u, v) => { const i = clamp(Math.floor(v * A.gh), 0, A.gh - 1), j = ((Math.floor(u * A.gw) % A.gw) + A.gw) % A.gw; return arr[i * A.gw + j]; };
+const gridAt = (arr, u, v) => { if (v < 0 || v > 1) return 0; const i = clamp(Math.floor(v * A.gh), 0, A.gh - 1), j = ((Math.floor(u * A.gw) % A.gw) + A.gw) % A.gw; return arr[i * A.gw + j]; };
 const liftAt = (u, v) => Math.max(0, (gridAt(HGT, u, v) / 2.55 - 20) / 80) * .62 * DISP;
+const liftTex = (u, v) => liftAt(u, t2m(v));
 
 /* ---------------- 地点条目 ---------------- */
 const SPECIAL = { '天神峰': 'peak', '万知城': 'city', '安那其学院': 'academy', '常灵群岛': 'isles' };
 const items = NAT.map(n => {
   const art = SPECIAL[n.name] || null, canon = has(LOC, n.name);
-  return { name: n.name, id: n.id, u: n.x, v: n.y, art, canon, ghost: !canon && !art, dir: uvToDir(n.x, n.y) };
+  return { name: n.name, id: n.id, u: n.x, v: n.y, art, canon, ghost: !canon && !art, dir: mapDir(n.x, n.y) };
 });
 const itemByName = new Map(items.map(i => [i.name, i]));
 const itemById = new Map(items.map(i => [i.id, i]));
@@ -79,7 +84,7 @@ renderer.setPixelRatio(pixelRatio);
 
 const scene = new T.Scene();
 const camera = new T.PerspectiveCamera(30, 1, .01, 200);
-camera.position.copy(uvToDir(.49, .45)).multiplyScalar(innerWidth < 700 ? 4.9 : 3.7);
+camera.position.copy(mapDir(.49, .45)).multiplyScalar(innerWidth < 700 ? 4.9 : 3.7);
 const controls = new OrbitControls(camera, canvas);
 Object.assign(controls, { enablePan: false, enableDamping: true, dampingFactor: .07, minDistance: 1.24, maxDistance: 7, zoomSpeed: .7, rotateSpeed: .5, autoRotateSpeed: .35 });
 controls.addEventListener('start', () => { flight = null; poke(); });
@@ -127,7 +132,7 @@ async function loadTextures() {
 /* ---------------- 国界与经纬网 ---------------- */
 function buildBorders() {
   const lines = A.borders.map(b => toUv(chaikin(roughen(unflat(b.slice(2)), false, .2, 2), false, 2)));
-  borders = ribbon(lines, .0016, '#f3dfb0', .5, .0012, liftAt);
+  borders = ribbon(lines, .0016, '#f3dfb0', .5, .0012, liftTex);
   borders.visible = layers.borders;
   scene.add(borders);
   const g = [];
@@ -142,7 +147,7 @@ function highlight(it) {
   planet.setSelection(it ? it.dir : null, it?.art ? .045 : .07);
   const rings = it && A.regions[String(it.id)];
   if (rings && !it.art) {
-    selRibbon = ribbon(rings.map(r => { const p = toUv(chaikin(roughen(unflat(r), true, .2, 2), true, 2)); p.push(p[0]); return p; }), .0032, '#ffd27a', .9, .0016, liftAt);
+    selRibbon = ribbon(rings.map(r => { const p = toUv(chaikin(roughen(unflat(r), true, .2, 2), true, 2)); p.push(p[0]); return p; }), .0032, '#ffd27a', .9, .0016, liftTex);
     selRibbon.material.blending = T.AdditiveBlending;
     scene.add(selRibbon);
   }
@@ -261,7 +266,7 @@ layerPop.querySelectorAll('[data-layer]').forEach(inp => { inp.checked = !!layer
 function zoomBy(f) { flight = null; const d = clamp(camera.position.length() * f, controls.minDistance, controls.maxDistance); camera.position.setLength(d); controls.update(); poke(); }
 $('zin').onclick = () => dio ? dio.zoom(.8) : zoomBy(.8);
 $('zout').onclick = () => dio ? dio.zoom(1.25) : zoomBy(1.25);
-$('zfit').onclick = () => { if (dio) dio.home(); else flyTo(uvToDir(.49, .45), innerWidth < 700 ? 4.9 : 3.7); };
+$('zfit').onclick = () => { if (dio) dio.home(); else flyTo(mapDir(.49, .45), innerWidth < 700 ? 4.9 : 3.7); };
 
 /* ---------------- 指针：点选国家 ---------------- */
 const ray = new T.Raycaster();
@@ -287,7 +292,7 @@ function pickUv(e) {
   const o = ray.ray.origin, d = ray.ray.direction, b = o.dot(d), c = o.lengthSq() - 1, h = b * b - c;
   if (h < 0) return null;
   const p = o.clone().addScaledVector(d, -b - Math.sqrt(h)).normalize();
-  return [Math.atan2(p.x, p.z) / (Math.PI * 2) + .5, .5 - Math.asin(p.y) / Math.PI];
+  return [Math.atan2(p.x, p.z) / (Math.PI * 2) + .5, t2m(.5 - Math.asin(p.y) / Math.PI)];
 }
 document.addEventListener('keydown', e => {
   if (e.target.closest('input,textarea,select,[contenteditable="true"]') || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -454,7 +459,7 @@ window.__globe = {
   enter: name => enterDiorama(name),
   exit: exitDiorama,
   stats: () => ({ ready: !!planet, hiTex, pixelRatio, selected: selected?.name || null, diorama: dio ? dio.stats() : null, labels: labels.filter(l => !l.el.hidden).length, camera: camera.position.toArray().map(v => +v.toFixed(3)) }),
-  view: (u, v, d) => { camera.position.copy(uvToDir(u, v)).multiplyScalar(d); controls.update(); poke(); },
+  view: (u, v, d) => { camera.position.copy(mapDir(u, v)).multiplyScalar(d); controls.update(); poke(); },
   sun: on => setLayer('realSun', !!on),
   renderer
 };

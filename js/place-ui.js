@@ -10,7 +10,7 @@
 
   function chainOf(name) { const out = [], seen = new Set(); let n = LOC[name]?.parent; while (n && !seen.has(n)) { seen.add(n); out.unshift(n); n = LOC[n]?.parent; } return out; }
   const kidsOf = name => Object.keys(LOC).filter(n => LOC[n].parent === name);
-  function coordText(u, v) { const lon = u * 360 - 180, lat = 90 - v * 180; return `${Math.abs(lat).toFixed(1)}°${lat >= 0 ? 'N' : 'S'} · ${Math.abs(lon).toFixed(1)}°${lon >= 0 ? 'E' : 'W'}`; }
+  function coordText(u, v) { const A = window.ATLAS_DATA, latM = A ? 180 * A.H / A.W : 90, lon = u * 360 - 180, lat = latM * (1 - 2 * v); return `${Math.abs(lat).toFixed(1)}°${lat >= 0 ? 'N' : 'S'} · ${Math.abs(lon).toFixed(1)}°${lon >= 0 ? 'E' : 'W'}`; }
 
   /* 相关角色：按人设「属地」匹配地点名或别名（gallery-data.js 按需加载） */
   let peopleIndex = null, peopleLoading = null;

@@ -183,20 +183,36 @@ def scratch():
 def load():
     d = json.loads(SRC.read_text())
     A = json.loads(ATLAS.read_text().split('window.ATLAS_DATA=', 1)[1].rstrip().rstrip(';'))
+    global KV
+    KV = 2 * A['H'] / A['W']
     return d, A
+
+
+KV = 1.0  # 纬向压缩：地图纵向只占 ±180·H/W 度（load() 里按地图尺寸设定）
+
+
+def tex_y(y, H):
+    """地图 y → 贴图 v（0..1）。"""
+    return .5 + KV * (y / H - .5)
+
+
+def map_y(v, H):
+    """贴图 v → 地图 y（可能落在 0..H 之外 = 地图以外的高纬海域）。"""
+    return ((v - .5) / KV + .5) * H
 
 
 def raster_mask(A, coast, lakes, w, h, rivers=True):
     """陆地 = 1。2× 超采样抗锯齿。河流宽度按真实比例收窄（8k 上 0.4–2.4 像素）。"""
     W, H = A['W'], A['H']
     SS = 2
-    sx, sy = w * SS / W, h * SS / H
+    sx = w * SS / W
+    ty = lambda y: tex_y(y, H) * h * SS
     im = Image.new('L', (w * SS, h * SS), 0)
     dr = ImageDraw.Draw(im)
     for r in coast:
-        dr.polygon([(x * sx, y * sy) for x, y in r], fill=255)
+        dr.polygon([(x * sx, ty(y)) for x, y in r], fill=255)
     for r in lakes:
-        dr.polygon([(x * sx, y * sy) for x, y in r], fill=0)
+        dr.polygon([(x * sx, ty(y)) for x, y in r], fill=0)
     if rivers:
         k = w / 8192
         for rv in A['rivers']:
@@ -208,7 +224,7 @@ def raster_mask(A, coast, lakes, w, h, rivers=True):
                 t = i / max(1, n - 2)
                 wpx = max(.32 * k, wmax * (.3 + .7 * t ** .7)) * SS
                 a, b = pts[i], pts[i + 1]
-                dr.line([(a[0] * sx, a[1] * sy), (b[0] * sx, b[1] * sy)], fill=0, width=max(1, int(round(wpx))))
+                dr.line([(a[0] * sx, ty(a[1])), (b[0] * sx, ty(b[1]))], fill=0, width=max(1, int(round(wpx))))
     im = im.resize((w, h), Image.BOX)
     return np.asarray(im, np.float32) / 255
 
@@ -284,10 +300,12 @@ def terrain_mid(d, A, land2):
     ghs = np.array([g['h'] for g in d['grid']['cells']], float)
     allp = np.vstack([pts, gpts]); allh = np.concatenate([hs, ghs])
     su, sv = grid_uv(MW, MH)
-    mx, my = su * W, sv * H
+    mx, my = su * W, map_y(sv, H)
+    outside = (my < 0) | (my > H)
     hm = LinearNDInterpolator(allp, allh)(mx, my)
     bad = np.isnan(hm)
     hm[bad] = NearestNDInterpolator(allp, allh)(mx[bad], my[bad])
+    hm[outside] = np.minimum(hm[outside], 4)
     hm = gaussian_filter(hm, (1.6, 2.6), mode=('nearest', 'wrap'))
     e = np.clip((hm - LAND) / (100 - LAND), 0, 1).astype(np.float32)
     P = sphere(su, sv)
@@ -402,12 +420,12 @@ def main(mode):
     ni = NearestNDInterpolator(pts[land_idx], np.arange(len(land_idx)))
     su, sv = grid_uv(MW, MH)
     P = sphere(su, sv)
-    wx = fbm(P, 7, 4, off=3.1) * 10 + fbm(P, 26, 3, off=9.4) * 2.5
-    wy = fbm(P, 7, 4, off=-5.7) * 7 + fbm(P, 26, 3, off=1.9) * 2
-    biome = bio_cells[ni(np.clip(su * W + wx, 0, W), np.clip(sv * H + wy, 0, H)).astype(int)]
+    wx = fbm(P, 7, 4, off=3.1) * 16 + fbm(P, 26, 3, off=9.4) * 4
+    wy = fbm(P, 7, 4, off=-5.7) * 14 + fbm(P, 26, 3, off=1.9) * 4
+    biome = bio_cells[ni(np.clip(su * W + wx, 0, W), np.clip(map_y(sv, H) + wy, 0, H)).astype(int)]
     gpts = np.array(d['grid']['points'])
     gtemp = np.array([g.get('temp', 0) for g in d['grid']['cells']], float)
-    tm = gaussian_filter(NearestNDInterpolator(gpts, gtemp)(su * W, sv * H), (3, 5), mode=('nearest', 'wrap')).astype(np.float32)
+    tm = gaussian_filter(NearestNDInterpolator(gpts, gtemp)(su * W, np.clip(map_y(sv, H), 0, H)), (3, 5), mode=('nearest', 'wrap')).astype(np.float32)
     PAL = {
         1: ((204, 172, 122), (186, 140, 96)),    # 炎热荒漠
         2: ((166, 154, 128), (140, 130, 110)),   # 寒冷荒漠
@@ -429,7 +447,7 @@ def main(mode):
         ca[m] = c1; cb[m] = c2
     for arr in (ca, cb):
         for ch in range(3):
-            arr[..., ch] = gaussian_filter(arr[..., ch], (2.6, 3.6), mode=('nearest', 'wrap'))
+            arr[..., ch] = gaussian_filter(arr[..., ch], (4.2, 5.2), mode=('nearest', 'wrap'))
     # 沟谷更绿、更暗（水分沿汇流线），山脊偏干
     wet = np.clip(np.log1p(acc2) / 7 - .25, 0, 1)
     wet = gaussian_filter(wet, 1.0)
@@ -521,6 +539,28 @@ def main(mode):
         alb[r0:r1] = np.clip(col, 0, 255).astype(np.uint8)
     log('albedo')
 
+    # ---- 极地冰盖（地图范围以外的高纬海面）：边缘破碎成浮冰
+    ice = np.zeros((TH, TW), np.float32)
+    rows = np.flatnonzero(np.abs(np.degrees(lat_all)) > 60)
+    for r0 in range(0, len(rows), BLOCK):
+        rr = rows[r0:r0 + BLOCK]
+        uu, vv = np.meshgrid((np.arange(TW) + .5) / TW, (rr + .5) / TH)
+        p = sphere(uu, vv)
+        la = np.abs(np.degrees(lat_all[rr]))[:, None]
+        edge = fbm(p, 9, 5, off=12.1) * 7 + fbm(p, 60, 3, off=3.7) * 2.5
+        floe = np.clip((1 - np.abs(fbm(p, 140, 3, off=7.7))) * 3 - 1.9, 0, 1)
+        base = np.clip((la - 70 + edge) / 1.2, 0, 1)
+        fringe = np.clip((la - 66 + edge) / 3, 0, 1) * floe
+        ice[rr] = np.maximum(base, fringe) * (1 - landsolid[rr])
+        n2 = fbm(p, 95, 4, off=-6.1)
+        crack = np.clip(1 - np.abs(fbm(p, 70, 3, off=1.1)) * 9, 0, 1)
+        icecol = np.array([226, 233, 240], np.float32) * (1 + n2[..., None] * .06) - crack[..., None] * np.array([40, 30, 18], np.float32)
+        k = ice[rr][..., None]
+        alb[rr] = np.clip(alb[rr] * (1 - k) + icecol * k, 0, 255).astype(np.uint8)
+    land8 = np.maximum(land8, ice)
+    height = np.maximum(height, ice * .012)
+    log('sea ice', float(ice.mean()))
+
     # ---- 数据贴图（4k）
     DW, DH = 4096, 2048
     ds4 = zoom(dist_sea, .5, order=1)
@@ -532,12 +572,13 @@ def main(mode):
     for b in pack['burgs'][1:]:
         if not b or b.get('removed'):
             continue
-        ix, iy = int(b['x'] / W * DW), int(b['y'] / H * DH)
+        ix, iy = int(b['x'] / W * DW), int(tex_y(b['y'], H) * DH)
         if 0 <= ix < DW and 0 <= iy < DH:
             lights[iy, ix] += min(6, .4 + b.get('population', 1) ** .55 * .5)
     lights = np.clip(gaussian_filter(lights, 1.1) * 2.2 + gaussian_filter(lights, 4) * 3, 0, 1)
     land4 = zoom(landsolid, .5, order=1)
-    g = np.where(land4 > .5, lights, depth)
+    ice4 = zoom(ice, .5, order=1)
+    g = np.where(ice4 > .5, 0, np.where(land4 > .5, lights, depth))
     data = np.stack([np.clip(zoom(height, .5, order=1) * 255, 0, 255), np.clip(g * 255, 0, 255),
                      np.clip((zoom(cav, .5, order=1) - .45) / .7 * 255, 0, 255)], -1).astype(np.uint8)
     Image.fromarray(data).save(OUT / 'data-4k.jpg', quality=93, subsampling=0)
