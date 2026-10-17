@@ -1427,6 +1427,14 @@
 }
 
 /* 画框衬边的扫光在日间改为暖白 */
+/* 思潮卡：日间换成纸面版封面（js 里 designIdeologyCover 的 light 版），晕影与角标也跟着变浅 */
+.gal-thumb .cv-l { display: none; }
+:root[data-theme="light"] .gal-thumb.has-light .cv-d { display: none; }
+:root[data-theme="light"] .gal-thumb.has-light .cv-l { display: block; }
+:root[data-theme="light"] .gal-thumb.has-light { border-color: color-mix(in srgb, var(--ca, var(--gold)) 22%, rgba(90, 70, 48, .18)); box-shadow: 0 10px 26px -18px rgba(90, 70, 48, .55); }
+:root[data-theme="light"] .gal-thumb.has-light::before { background: radial-gradient(ellipse 120% 100% at 50% 42%, transparent 62%, rgba(90, 70, 48, .12) 100%); }
+:root[data-theme="light"] .gal-item:hover .gal-thumb.has-light { box-shadow: 0 18px 36px -18px rgba(90, 70, 48, .6), 0 0 26px -10px color-mix(in srgb, var(--ca, var(--gold)) 45%, transparent); }
+:root[data-theme="light"] .gal-thumb.has-light .gal-thumb-badge { background: rgba(251, 247, 238, .9); }
 :root[data-theme="light"] .ch-figure { box-shadow: 0 24px 50px -28px rgba(var(--shadow-rgb), 0.55); }
 :root[data-theme="light"] .ch-figure { animation: figIn 0.8s var(--ease) both, matSweep 9s ease-in-out 1.2s infinite; }
 @media (prefers-reduced-motion: reduce) { :root[data-theme="light"] .ch-figure { animation: none; } }

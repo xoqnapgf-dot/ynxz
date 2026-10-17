@@ -53,6 +53,8 @@
     if (ideo.cover) return ideo.cover;
     return designIdeologyCover(ideo, withName);   /* 意识形态专属：按主题自动设计封面 */
   }
+  /* 日间模式用的纸面版封面；手工指定了 cover 的不另做 */
+  function ideoCoverLight(ideo) { return ideo.cover ? '' : designIdeologyCover(ideo, false, true); }
   function chCover(pair) { return pair.ch.images && pair.ch.images.length ? imgThumb(pair.ch.images[0]) : ''; }
 
   /* ============================================================
@@ -1248,7 +1250,7 @@
       '</g>';
   }
 
-  function designIdeologyCover(ideo, withName) {
+  function designIdeologyCover(ideo, withName, light) {
     var th = ideo.theme || {};
     var a1 = th.accent || '#d8b25a';
     var a2 = th.accent2 || '#5a4a2f';
@@ -1256,6 +1258,14 @@
     var bgTop = mixHex(a2, '#08070b', 0.42);
     var bgBot = mixHex(a2, '#08070b', 0.8);
     var line = mixHex(a1, '#08070b', 0.4);
+    var vigCol = '#000', vigOp = 0.62, auraK = 1;
+    /* 日间：同一套构图印在浅纸上，主色压暗成墨线，四角只留很淡的褐色晕影 */
+    if (light) {
+      bgTop = mixHex(a1, '#f8f3e7', 0.9);
+      bgBot = mixHex(a2, '#efe6d3', 0.9);
+      a1 = readableOnLight(a1);
+      line = a1; vigCol = '#5a4630'; vigOp = 0.16; auraK = 0.55;
+    }
     var spaced = ideo.name ? ideo.name.split('').join(' ') : '';
     var nameSize = spaced.length > 8 ? 27 : (spaced.length > 6 ? 32 : 38);
     var glow = mixHex(a1, '#000000', 0.1);
@@ -1265,12 +1275,12 @@
           '<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">' +
             '<stop offset="0" stop-color="' + bgTop + '"/><stop offset="1" stop-color="' + bgBot + '"/></linearGradient>' +
           '<radialGradient id="aura" cx="0.5" cy="0.4" r="0.7">' +
-            '<stop offset="0" stop-color="' + a1 + '" stop-opacity="0.26"/>' +
-            '<stop offset="0.55" stop-color="' + a1 + '" stop-opacity="0.07"/>' +
+            '<stop offset="0" stop-color="' + a1 + '" stop-opacity="' + (0.26 * auraK) + '"/>' +
+            '<stop offset="0.55" stop-color="' + a1 + '" stop-opacity="' + (0.07 * auraK) + '"/>' +
             '<stop offset="1" stop-color="' + a1 + '" stop-opacity="0"/></radialGradient>' +
           '<radialGradient id="vig" cx="0.5" cy="0.42" r="0.88">' +
             '<stop offset="0.55" stop-color="#000" stop-opacity="0"/>' +
-            '<stop offset="1" stop-color="#000" stop-opacity="0.62"/></radialGradient>' +
+            '<stop offset="1" stop-color="' + vigCol + '" stop-opacity="' + vigOp + '"/></radialGradient>' +
           '<filter id="soft" x="-60%" y="-60%" width="220%" height="220%">' +
             '<feGaussianBlur stdDeviation="30"/></filter>' +
         '</defs>' +
@@ -1278,7 +1288,7 @@
         /* 横向细线：像纸张/铜版纹理 */
         (function () { var s = ''; for (var y = 26; y < H; y += 7) s += '<rect y="' + y + '" width="' + W + '" height="1" fill="' + line + '" opacity="0.06"/>'; return s; })() +
         '<rect width="' + W + '" height="' + H + '" fill="url(#aura)"/>' +
-        '<circle cx="200" cy="256" r="118" fill="' + a1 + '" opacity="0.14" filter="url(#soft)"/>' +
+        '<circle cx="200" cy="256" r="118" fill="' + a1 + '" opacity="' + (light ? 0.07 : 0.14) + '" filter="url(#soft)"/>' +
         /* 徽章环：细双环 + 刻度，托住中央纹样，让封面像一枚徽章 */
         (function () {
           var g = '<g fill="none" stroke="' + a1 + '" transform="translate(200 256)">' +
@@ -1399,10 +1409,11 @@
     fig.tabIndex = 0;
     fig.setAttribute('role', 'button');
     fig.setAttribute('aria-label', ideo.name);
-    var cCount = (ideo.characters || []).length;
+    var cCount = (ideo.characters || []).length, coverL = ideoCoverLight(ideo);
     fig.innerHTML =
-      '<div class="gal-thumb">' + (ideoCover(ideo, false)
-        ? '<img src="' + esc(ideoCover(ideo, false)) + '" alt="' + esc(ideo.name) + '" loading="lazy">'
+      '<div class="gal-thumb' + (coverL ? ' has-light' : '') + '">' + (ideoCover(ideo, false)
+        ? '<img class="cv-d" src="' + esc(ideoCover(ideo, false)) + '" alt="' + esc(ideo.name) + '" loading="lazy">' +
+          (coverL ? '<img class="cv-l" src="' + esc(coverL) + '" alt="" aria-hidden="true" loading="lazy">' : '')
         : '<span class="gal-thumb-empty">暂无图</span>') +
         (cCount ? '<span class="gal-thumb-badge">' + cCount + ' 角色</span>' : '') +
       '</div>' +
