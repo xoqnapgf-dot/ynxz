@@ -560,7 +560,7 @@ COUNTRIES['卡斯奎尼亚王国'] = {
   water: { level: 0, shallow: 0x4a7a8a, deep: 0x1e4a5a, clarity: .5, wave: .3, foam: .4 },
   palette: { grass: [0x8a9a4a, 0x7a8f44], dry: 0xc0a860, dryK: .75, dirt: 0x8a7050, rock: 0x8a8476,
     paint(x, z, h, s, col) { if (Math.hypot(x + 40, z + 40) < 34) fields(col, x, z, .2, 14, 30, [0xc8a85a, 0xa89048, 0x8a8a40], .7); } },
-  height(x, z, c) { return 2 + c.N.fbm(x * .006, z * .006, 4) * 10 + bump(x, z, -40, -40, 22, 8) + c.N.fbm(x * .03, z * .03, 2) * .6; },
+  height(x, z, c) { return Math.max(1.2, 4.5 + c.N.fbm(x * .006, z * .006, 4) * 9 + bump(x, z, -40, -40, 22, 8) + c.N.fbm(x * .03, z * .03, 2) * .6); }, // 干草原：除河道外不积水
   rivers: [{ pts: [[-300, 120], [-40, 70], [40, 76], [300, 40]], w: 8, depth: 1.4, bank: 3 }],
   pads: [{ x: 20, z: 6, r: 24, soft: 8 }],
   weather: { clouds: { n: 9, y: 54, size: 9, inner: .1, spread: 1.2, speed: 4 }, motes: { kind: 'dust', n: 500, cols: [0xe8dcb8], size: .22, op: .4, h: 8, rad: 100 }, birds: { n: 6, col: 0x1a1a1a, y: 50 } },
@@ -632,10 +632,10 @@ COUNTRIES['艾迪州'] = {
   },
   pads: [{ x: 6, z: 44, r: 10, soft: 6 }],
   roads: [{ pts: [[6, 44], [20, 30], [30, 10], [40, -10], [10, -24], [-10, -30]], w: 3.4 }],
-  weather: { mist: [{ y: 4, layers: 3, gap: 2.5, op: .6, col: 0xe8ecea, scale: .022, drift: 1.2 }], birds: { n: 10, col: 0xeeeeee, y: 16 } },
-  fog: { y: 0, h: 9, d: .04, col: 0xd8dcda },
+  weather: { mist: [{ y: 3, layers: 2, gap: 2.5, op: .32, col: 0xe8ecea, scale: .022, drift: 1.2 }], birds: { n: 10, col: 0xeeeeee, y: 16 } },
+  fog: { y: 0, h: 7, d: .018, col: 0xd8dcda },
   wind: .4,
-  views: [{ label: '矿山海岸', az: 160, el: 32, d: 1 }, { label: '露天矿', az: 190, el: 34, d: .4, t: [-30, null, -34] }, { label: '矿砂码头', az: 150, el: 22, d: .34, t: [6, null, 48] }, { label: '农庄', az: 220, el: 26, d: .38, t: [40, null, -10] }],
+  views: [{ label: '矿山海岸', az: 12, el: 30, d: 1 }, { label: '露天矿', az: 20, el: 40, d: .4, t: [-30, null, -34] }, { label: '矿砂码头', az: 340, el: 24, d: .34, t: [6, null, 48] }, { label: '农庄', az: 35, el: 30, d: .38, t: [40, null, -10] }],
   build(c) {
     K.headframe(c, -10, -46, .8, { h: 13 });
     K.conveyor(c, [-14, c.h(-14, -20) + 8, -20], [4, c.wl + 9, 52], {});

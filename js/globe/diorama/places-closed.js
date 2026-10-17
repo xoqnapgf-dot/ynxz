@@ -367,7 +367,7 @@ SITES['汐见町'] = {
   rivers: [{ pts: [[10, 4], [6, 16], [12, 28], [8, 44], [12, 60]], w: 3.4, depth: .8, bank: 1.5 }, { pts: [[-30, 6], [-26, 20], [-32, 34], [-28, 60]], w: 2.4, depth: .6, bank: 1.2 }],
   pads: [{ x: -30, z: -30, r: 4, soft: 3 }],
   roads: [{ pts: [[-56, -10], [-20, -11], [0, -9], [22, -11], [56, -10]], w: 3 }, { pts: [[18, -10], [18, 1]], w: 2.4 }],
-  weather: { rain: .22, mist: [{ y: 1.6, layers: 2, gap: 1.4, op: .2, col: 0x9a929a, scale: .03, drift: .6 }], birds: { n: 6, col: 0xe8e8e8, y: 10 } },
+  weather: { rain: .15, mist: [{ y: 1.6, layers: 2, gap: 1.4, op: .2, col: 0x9a929a, scale: .03, drift: .6 }], birds: { n: 6, col: 0xe8e8e8, y: 10 } },
   wind: .4,
   views: [{ label: '港町', az: 350, el: 30, d: 1 }, { label: '商店街', az: 5, el: 22, d: .36, t: [0, null, -10] }, { label: '渡船码头', az: 60, el: 20, d: .4, t: [18, null, 16] }, { label: '小神社', az: 340, el: 24, d: .3, t: [-30, null, -28] }],
   build(c) {
