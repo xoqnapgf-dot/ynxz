@@ -1,7 +1,7 @@
 /* 国家与大地区：半开放沙盘。中心一块代表性区域，往外降级为色块并淡入背景。
    坐标：+x 东，+z 南（相机方位角 az=0 时从南向北看）。 */
 import * as K from './props.js?v=23';
-import { P, lin } from './kit.js?v=23';
+import { P, lin, tower } from './kit.js?v=23';
 import { bump, terrace, ridgeLine, coastDist, island, smooth, clamp, lerp, segDist } from './terrain.js?v=23';
 
 export const COUNTRIES = {};
@@ -130,7 +130,7 @@ COUNTRIES['坎普共和国'] = {
   rivers: [{ pts: [[20, -300], [16, -80], [26, -20], [14, 30], [24, 90], [10, 300]], w: 22, depth: 3, bank: 7 }],
   roads: [{ pts: [[-30, -10], [-8, 6], [6, 26]], w: 3.6 }, { pts: [[42, 30], [70, 10], [120, -20]], w: 3.4 }],
   pads: [{ x: -30, z: -10, w: 22, d: 16, ry: .3, soft: 6 }, { x: 0, z: 30, w: 18, d: 22, soft: 5 }],
-  weather: { clouds: [{ n: 4, kind: 'storm', col: 0x5c6068, y: 30, size: 16, inner: 1.15, spread: .5, speed: .8 }, { n: 4, y: 44, size: 7, inner: .4, spread: .8 }], lightning: { every: 9 }, birds: { n: 8, col: 0x1a1a1a, y: 20 } },
+  weather: { clouds: [{ n: 4, kind: 'storm', col: 0x5c6068, y: 34, size: 24, inner: 2, spread: .5, speed: .8 }, { n: 4, y: 44, size: 7, inner: .4, spread: .8 }], lightning: { every: 9 }, birds: { n: 8, col: 0x1a1a1a, y: 20 } },
   wind: .65,
   views: [{ label: '河谷', az: 165, el: 33, d: 1 }, { label: '咖啡梯田', az: 120, el: 30, d: .42, t: [-36, null, 10] }, { label: '河港', az: 200, el: 22, d: .38, t: [6, null, 30] }, { label: '牧场', az: 250, el: 26, d: .42, t: [60, null, -14] }],
   build(c) {
@@ -332,7 +332,7 @@ COUNTRIES['帕尔哈南神权政治'] = {
     K.church(c, -16, -26, .25, { w: 14, len: 40, h: 16, transept: true, apse: true, twin: true, tower: 7, th: 26, spire: 16, wall: 0xe6e0d2, roof: 0x4b5664 });
     K.cloister(c, 14, -36, .25, { size: 26, wall: 0xe0d8c6, roof: 0x4b5664 });
     K.bld(c, 'cloister', -40, -8, { ry: .25, w: 18, d: 9, fl: 3 }); K.bld(c, 'cloister', 22, -6, { ry: .25, w: 14, d: 8, fl: 2 });
-    K.tower(c.B, -36, c.h(-36, -40), -40, { r: 2.4, h: 22, wall: 0xe6e0d2, rcol: 0x4b5664 });
+    tower(c.B, -36, c.h(-36, -40), -40, { r: 2.4, h: 22, wall: 0xe6e0d2, rcol: 0x4b5664 });
     K.fence(c, [[-50, -60], [36, -64], [42, -2], [-48, 4], [-50, -60]], { stone: true, col: 0xc8c0b0, h: 1.4 });
     K.cluster(c, 'cottage', 24, 40, 16, 16, { angle: .4, house: { rcol: 0x4b5664, rpat: P.slate } });
     K.bridge(c, [12, 22], [14, 46], { w: 4, span: 8 });

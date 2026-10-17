@@ -187,12 +187,12 @@ SITES['常灵群岛'] = {
   pads: [{ x: 12, z: 14, r: 7, soft: 4 }, { x: -26, z: -20, r: 5, soft: 4 }],
   roads: [{ pts: [[12, 14], [0, 4], [-12, -6], [-26, -20]], w: 2 }],
   weather: {
-    mist: [{ y: 2.2, layers: 2, gap: 1.8, op: .26, col: 0x9fb2d2, scale: .035, drift: .5 }],
+    mist: [{ y: 2.2, layers: 2, gap: 1.8, op: .16, col: 0x9fb2d2, scale: .035, drift: .5 }],
     motes: { kind: 'firefly', n: 520, cols: [0x8ff0e0, 0xb8a0ff, 0xd8fff2], size: .32, h: 16, speed: .14, y: 3, rad: 52 },
-    rift: { pts: [[22, 15, -36], [36, 19, -14], [48, 16, 4], [54, 21, 24]], h: 13, a: 0x9ad8ff, b: 0x7a3cff, i: 1.05 }
+    rift: { pts: [[22, 15, -36], [36, 19, -14], [48, 16, 4], [54, 21, 24]], h: 13, a: 0x9ad8ff, b: 0x7a3cff, i: .8 }
   },
   glow: { p: [42, 16, -4], c: 0x9a7aff, i: 1.6 },
-  fog: { y: 1, h: 5, d: .012, col: 0x3c4a66 },
+  fog: { y: 1, h: 5, d: .006, col: 0x2c3a58 },
   wind: .3,
   views: [{ label: '群岛', az: 20, el: 34, d: 1 }, { label: '渔村', az: 10, el: 22, d: .36, t: [12, null, 16] }, { label: '观测站', az: 285, el: 26, d: .34, t: [-26, null, -20] }, { label: '裂缝', az: 75, el: 14, d: .55, t: [36, 12, -4] }],
   build(c) {
@@ -343,7 +343,7 @@ SITES['法洛塔'] = {
 /* ================= 汐见町：退潮的滩涂与窄商店街 ================= */
 SITES['汐见町'] = {
   mode: 'closed', R: 56, seed: 'shiomi-town', time: 'dusk',
-  light: { el: 5, top: 0x354260, hor: 0xc89a88, haze: 0x8a8890, sun: 0xffa880, si: 1.2, wet: .9, night: .45, exp: 1.16, hd: .004 },
+  light: { el: 5, top: 0x354260, hor: 0xc89a88, haze: 0x8a8890, sun: 0xffa880, si: 1.2, wet: .9, night: .45, exp: 1.32, hd: .004 },
   label: '示安港町 · 退潮时分', note: '潮水退到渡船码头的尽头，滩涂上有人弯腰挖贝。商店街的灯一盏盏亮起来，细雨没停过。',
   shape: { kind: 'rect', ax: 1, az: .92, wobble: .05 },
   water: { level: 0, shallow: 0x4a7a78, deep: 0x1a3440, clarity: .55, wave: .18, foam: .6 },
@@ -367,7 +367,7 @@ SITES['汐见町'] = {
   rivers: [{ pts: [[10, 4], [6, 16], [12, 28], [8, 44], [12, 60]], w: 3.4, depth: .8, bank: 1.5 }, { pts: [[-30, 6], [-26, 20], [-32, 34], [-28, 60]], w: 2.4, depth: .6, bank: 1.2 }],
   pads: [{ x: -30, z: -30, r: 4, soft: 3 }],
   roads: [{ pts: [[-56, -10], [-20, -11], [0, -9], [22, -11], [56, -10]], w: 3 }, { pts: [[18, -10], [18, 1]], w: 2.4 }],
-  weather: { rain: .22, mist: [{ y: 1.6, layers: 2, gap: 1.4, op: .28, col: 0xc8c0bc, scale: .03, drift: .6 }], birds: { n: 6, col: 0xe8e8e8, y: 10 } },
+  weather: { rain: .22, mist: [{ y: 1.6, layers: 2, gap: 1.4, op: .2, col: 0x9a929a, scale: .03, drift: .6 }], birds: { n: 6, col: 0xe8e8e8, y: 10 } },
   wind: .4,
   views: [{ label: '港町', az: 350, el: 30, d: 1 }, { label: '商店街', az: 5, el: 22, d: .36, t: [0, null, -10] }, { label: '渡船码头', az: 60, el: 20, d: .4, t: [18, null, 16] }, { label: '小神社', az: 340, el: 24, d: .3, t: [-30, null, -28] }],
   build(c) {
@@ -489,7 +489,7 @@ SITES['黑岩路矿区'] = {
   weather: { motes: { kind: 'dust', n: 380, cols: [0x3a3634, 0x5a5652], size: .22, op: .45, h: 16, rad: 50 }, birds: { n: 6, col: 0x1a1a1a, y: 30 } },
   fog: { y: 2, h: 8, d: .012, col: 0x8a857e },
   wind: .4,
-  views: [{ label: '山谷', az: 135, el: 34, d: 1 }, { label: '井架', az: 160, el: 24, d: .36, t: [UV(-24, 13)[0], null, UV(-24, 13)[1]] }, { label: '车站', az: 120, el: 22, d: .34, t: [UV(6, 3)[0], null, UV(6, 3)[1]] }, { label: '工房坡', az: 90, el: 30, d: .4, t: [UV(-10, 22)[0], null, UV(-10, 22)[1]] }],
+  views: [{ label: '山谷', az: 28, el: 40, d: 1 }, { label: '井架', az: 15, el: 26, d: .36, t: [UV(-24, 13)[0], null, UV(-24, 13)[1]] }, { label: '车站', az: 55, el: 26, d: .34, t: [UV(6, 3)[0], null, UV(6, 3)[1]] }, { label: '工房坡', az: 235, el: 30, d: .4, t: [UV(-10, 22)[0], null, UV(-10, 22)[1]] }],
   build(c) {
     const B = c.B, RY = Math.PI / 4;
     // 铁路与运煤车

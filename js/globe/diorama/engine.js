@@ -57,8 +57,8 @@ void main() {
   }
   if (uStars > 0. && y > 0.) {
     vec2 g = d.xz / (y + .3) * 140.; vec2 i = floor(g), f = fract(g) - .5;
-    float h = h12(i); float st = step(.985, h) * smoothstep(.12, 0., length(f - (vec2(h12(i + 3.), h12(i + 7.)) - .5) * .6));
-    c += vec3(.9, .92, 1.) * st * uStars * (.5 + 1.5 * h12(i + 1.)) * smoothstep(.0, .3, y);
+    float h = h12(i); float st = step(.985, h) * smoothstep(.07, 0., length(f - (vec2(h12(i + 3.), h12(i + 7.)) - .5) * .6));
+    c += vec3(.9, .92, 1.) * st * uStars * (.2 + .55 * h12(i + 1.)) * smoothstep(.0, .3, y);
   }
   c *= 1. + uFlash * 1.5;
   gl_FragColor = vec4(c, 1.);
@@ -96,7 +96,7 @@ function terrainMaterial(region) {
         c = mix(c, vec3(.84, .87, .92) * (.95 + .08 * fine), sn);
         float under = clamp((uWL - vWP.y) * .5, 0., 1.);
         float caus = pow(abs(sin(vn(vWP.xz * .9 + uTime * .3) * 9.)), 6.);
-        c = mix(c, c * vec3(.42, .62, .66) * (.8 + .5 * caus * exp(-(uWL - vWP.y) * .4)), under);
+        c = mix(c, c * vec3(.42, .62, .66) * (.8 + .5 * caus * exp(-max(uWL - vWP.y, 0.) * .4)), under);
         c *= 1. - uWet * .28 * (1. - sn);
         if (uGhost > 0.5) {
           vec2 ruv = (vWP.xz - uRB.xy) / uRB.zw;

@@ -62,7 +62,7 @@ export function createFx(scene, ctx, cfg, env) {
   const { R, open, coarse, sunDir } = env;
   const r = rng((ctx.seed ^ 0xfeed) >>> 0), N = makeNoise(ctx.seed + 7);
   const grp = new T.Group(); grp.userData.noAO = true; scene.add(grp);
-  const updaters = [], wx = cfg.windDir ?? [1, .3];
+  const updaters = [], storms = [], wx = cfg.windDir ?? [1, .3];
   const windV = new T.Vector3(wx[0], 0, wx[1]).normalize();
   const k = coarse ? .5 : 1;
   const top = Math.max(ctx.h(0, 0), ctx.wl > -1e3 ? ctx.wl : 0);
@@ -121,10 +121,11 @@ export function createFx(scene, ctx, cfg, env) {
   /* ---- 积云：成团的块状云，会投下移动的影子 */
   function cumulus(o) {
     const n = Math.round((o.n ?? 6) * (coarse ? .7 : 1)), col = lin(o.col ?? 0xffffff), storm = o.kind === 'storm';
-    const mat = new T.MeshStandardMaterial({ color: col, roughness: 1, metalness: 0, emissive: col, emissiveIntensity: storm ? .02 : .12, flatShading: false });
+    const mat0 = new T.MeshStandardMaterial({ color: col, roughness: 1, metalness: 0, emissive: col, emissiveIntensity: storm ? .02 : .12, flatShading: false, transparent: true });
     const geo = new T.IcosahedronGeometry(1, 2);
     const clouds = [];
     for (let i = 0; i < n; i++) {
+      const mat = mat0.clone(); // 每朵云单独淡出
       const cg = new T.Group(), s = (o.size ?? R * .09) * (.7 + r() * .7);
       const lumps = storm ? 14 : 8;
       for (let j = 0; j < lumps; j++) {
@@ -139,12 +140,17 @@ export function createFx(scene, ctx, cfg, env) {
       cg.position.set(Math.cos(a) * d, top + (o.y ?? R * .42) + r() * R * .08, Math.sin(a) * d);
       cg.rotation.y = r() * 6.28;
       cg.userData.weather = o.weather ?? false;
-      grp.add(cg); clouds.push({ g: cg, sp: .4 + r() * .6 });
+      grp.add(cg); clouds.push({ g: cg, sp: .4 + r() * .6, mat, s, a: 1 }); if (storm) storms.push({ g: cg, s });
     }
-    const lim = R * 1.25;
-    updaters.push((t, dt) => {
+    const lim = R * 1.25, dir = new T.Vector3(), v = new T.Vector3();
+    updaters.push((t, dt, cam) => {
+      if (cam) cam.getWorldDirection(dir);
       for (const c of clouds) {
         c.g.position.addScaledVector(windV, dt * (o.speed ?? 1.4) * c.sp);
+        // 云挡在镜头和主体之间时淡出，只在画面边缘当陪衬
+        let want = 1;
+        if (cam) { v.copy(c.g.position).sub(cam.position); const k = v.dot(dir); if (k > 0) { const edge = (v.addScaledVector(dir, -k).length() - c.s * 1.8) / k; want = Math.min(1, Math.max(.15, (edge - .08) / .14)); } }
+        c.a += (want - c.a) * Math.min(1, dt * 3); c.mat.opacity = c.a; c.mat.depthWrite = c.a > .98; c.g.children.forEach(m => { m.castShadow = c.a > .5; });
         const d = Math.hypot(c.g.position.x, c.g.position.z);
         if (d > lim && c.g.position.x * windV.x + c.g.position.z * windV.z > 0) { c.g.position.x -= windV.x * lim * 1.9; c.g.position.z -= windV.z * lim * 1.9; }
       }
@@ -181,7 +187,7 @@ export function createFx(scene, ctx, cfg, env) {
   }
 
   /* ---- 闪电 */
-  function lightning(o) {
+  function lightning(o) { // 有雷雨云时从云底劈下，否则落在场地四周
     const mat = new T.MeshBasicMaterial({ color: lin(0xdfe8ff).multiplyScalar(9), transparent: true, opacity: 0, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
     const bolt = new T.Mesh(new T.BufferGeometry(), mat); bolt.frustumCulled = false; bolt.userData.weather = true; grp.add(bolt);
     let next = 3 + r() * 4, until = -1, hemi0 = env.hemi.intensity;
@@ -190,7 +196,8 @@ export function createFx(scene, ctx, cfg, env) {
       if (t > next) {
         next = t + (o.every ?? 6) * (.5 + r());
         until = t + .32;
-        const a = r() * Math.PI * 2, d = R * (.3 + r() * .7), x0 = Math.cos(a) * d, z0 = Math.sin(a) * d, y0 = top + R * .6;
+        const sc = storms.length ? storms[Math.floor(r() * storms.length)] : null, a = r() * Math.PI * 2, d = sc ? r() * sc.s : R * (.3 + r() * .7);
+        const x0 = (sc ? sc.g.position.x : 0) + Math.cos(a) * d, z0 = (sc ? sc.g.position.z : 0) + Math.sin(a) * d, y0 = sc ? sc.g.position.y : top + R * .6;
         const pts = []; let x = x0, z = z0, y = y0; const yg = ctx.h(x0, z0);
         while (y > yg) { pts.push(new T.Vector3(x, y, z)); y -= R * (.03 + r() * .04); x += (r() - .5) * R * .05; z += (r() - .5) * R * .05; }
         pts.push(new T.Vector3(x, yg, z));
