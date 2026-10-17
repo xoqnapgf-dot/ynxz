@@ -1,8 +1,8 @@
 /* 国家与大地区：半开放沙盘。中心一块代表性区域，往外降级为色块并淡入背景。
    坐标：+x 东，+z 南（相机方位角 az=0 时从南向北看）。 */
-import * as K from './props.js?v=23';
-import { P, lin, tower } from './kit.js?v=23';
-import { bump, terrace, ridgeLine, coastDist, island, smooth, clamp, lerp, segDist } from './terrain.js?v=23';
+import * as K from './props.js?v=24';
+import { P, lin, tower } from './kit.js?v=24';
+import { bump, terrace, ridgeLine, coastDist, island, smooth, clamp, lerp, segDist } from './terrain.js?v=24';
 
 export const COUNTRIES = {};
 const many = (c, n) => c.coarse ? Math.round(n * .4) : n;
@@ -359,7 +359,7 @@ COUNTRIES['翁吉亚共和国'] = {
   roads: [{ pts: [[0, 6], [-4, 30], [-8, 56], [-12, 80]], w: 4 }, { pts: [[0, 6], [10, -14], [14, -30]], w: 3.4 }],
   weather: { motes: [{ kind: 'ember', n: 260, cols: [0xffb060, 0xff8040], size: .3, h: 16, speed: .3, rad: 30, y: 8 }], birds: { n: 6, col: 0x1a1a1a, y: 40 } },
   wind: .35,
-  views: [{ label: '河谷', az: 180, el: 32, d: 1 }, { label: '广场', az: 200, el: 26, d: .34, t: [0, null, 6] }, { label: '冥府洞口', az: 170, el: 18, d: .3, t: [14, null, -26] }, { label: '旧神山', az: 180, el: 12, d: .6, t: [0, 40, -40] }],
+  views: [{ label: '河谷', az: 14, el: 30, d: 1 }, { label: '广场', az: 200, el: 26, d: .34, t: [0, null, 6] }, { label: '冥府洞口', az: 170, el: 18, d: .3, t: [14, null, -26] }, { label: '旧神山', az: 180, el: 12, d: .6, t: [0, 40, -40] }],
   build(c) {
     K.temple(c, 0, -10, 0, { w: 16, len: 20, h: 7, roof: 0x9a5a3a, paint: 0x2f5a7a, col: 0xeee2cc });
     for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2; K.brazier(c, Math.cos(a) * 17, 6 + Math.sin(a) * 15, { light: k % 3 === 0 }); }
@@ -454,6 +454,7 @@ COUNTRIES['霁川公国'] = {
 /* ================= 契莱西亚保护国：雨林山地与外派要塞 ================= */
 COUNTRIES['契莱西亚保护国'] = {
   mode: 'open', R: 100, seed: 'chileisia-jungle', time: 'rain',
+  light: { hd: .0036 }, // 雨天默认的远景雾太浓，山和要塞都糊成一片
   light: { top: 0x5a6a6a, hor: 0x8a9690, haze: 0x7a8a84, sun: 0xd8e0d0, si: .9 },
   label: '雨林山地 · 海关与要塞', note: '河口的海关和炮台挂着别国的旗，窄轨铁路钻进山里通到矿上；上游的王宫是高脚木楼，比要塞矮得多。',
   water: { level: 0, shallow: 0x5a6a48, deep: 0x23383a, clarity: 1, wave: .3, foam: .6 },
@@ -466,8 +467,8 @@ COUNTRIES['契莱西亚保护国'] = {
   rivers: [{ pts: [[-20, -300], [-30, -80], [-10, -20], [10, 30], [16, 80]], w: 14, depth: 2.4, bank: 5 }],
   pads: [{ x: 30, z: 36, r: 14, soft: 6 }, { x: -30, z: -16, r: 12, soft: 5 }],
   roads: [{ pts: [[30, 36], [20, 20], [-2, 6], [-20, -24]], w: 3 }],
-  weather: { rain: .8, mist: [{ y: 22, layers: 3, gap: 6, op: .5, col: 0xc8d0cc, scale: .02 }] },
-  fog: { y: 4, h: 14, d: .02, col: 0x9aa49e },
+  weather: { rain: .8, mist: [{ y: 22, layers: 2, gap: 7, op: .3, col: 0xc8d0cc, scale: .02 }] },
+  fog: { y: 4, h: 14, d: .012, col: 0x9aa49e },
   wind: .5,
   views: [{ label: '河口', az: 170, el: 30, d: 1 }, { label: '要塞', az: 200, el: 22, d: .34, t: [30, null, 36] }, { label: '王宫', az: 150, el: 26, d: .34, t: [-30, null, -16] }, { label: '矿区铁路', az: 230, el: 30, d: .45, t: [-20, null, -50] }],
   build(c) {
@@ -501,7 +502,7 @@ COUNTRIES['罗歇阿普公国'] = {
   rivers: [{ pts: [[-300, 60], [-60, 50], [0, 34], [60, 50], [300, 30]], w: 30, depth: 2.6, bank: 6 }, { pts: [[40, -200], [30, -60], [20, 0], [10, 34]], w: 9, depth: 1.8, bank: 4 }],
   pads: [{ x: -56, z: -36, r: 16, soft: 6 }, { x: -6, z: 16, w: 30, d: 12, soft: 4 }],
   roads: [{ pts: [[-56, -36], [-30, -10], [-6, 14]], w: 3.6 }],
-  weather: { rain: .55, lightning: { every: 5 }, clouds: { n: 5, kind: 'storm', col: 0x4a4e56, y: 46, size: 11, inner: 1, spread: .9, speed: 2.4 } },
+  weather: { rain: .55, lightning: { every: 5 }, clouds: { n: 5, kind: 'storm', col: 0x6c727a, y: 46, size: 11, inner: 1, spread: .9, speed: 2.4 } },
   wind: 1,
   views: [{ label: '三角洲', az: 160, el: 30, d: 1 }, { label: '庄园', az: 200, el: 24, d: .34, t: [-56, null, -36] }, { label: '河港', az: 150, el: 22, d: .36, t: [-6, null, 18] }, { label: '甘蔗田', az: 120, el: 30, d: .42, t: [40, null, -20] }],
   build(c) {

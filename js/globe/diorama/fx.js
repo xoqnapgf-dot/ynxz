@@ -1,8 +1,8 @@
 /* 沙盘天气与特效：雨、雪、花瓣/落叶/萤火/孢子/尘、烟、积云、雾片、闪电、彩虹、裂隙、极光、探照灯、飞鸟。
    全部在 GPU 上按时间推算位置，CPU 只在闪电时更新一次几何。 */
 import * as T from 'three';
-import { G, NOISE_GLSL, ATMOS_GLSL, lin } from './kit.js?v=23';
-import { rng, makeNoise, spline } from './noise.js?v=23';
+import { G, NOISE_GLSL, ATMOS_GLSL, lin } from './kit.js?v=24';
+import { rng, makeNoise, spline } from './noise.js?v=24';
 
 const ATM = () => ({ uFade: G.uFade, uBg: G.uBg, uHaze: G.uHaze, uHazeD: G.uHazeD, uFogC: G.uFogC, uFogY: G.uFogY, uFogH: G.uFogH, uFogD: G.uFogD, uFlash: G.uFlash, uFocus: G.uFocus });
 
@@ -121,7 +121,7 @@ export function createFx(scene, ctx, cfg, env) {
   /* ---- 积云：成团的块状云，会投下移动的影子 */
   function cumulus(o) {
     const n = Math.round((o.n ?? 6) * (coarse ? .7 : 1)), col = lin(o.col ?? 0xffffff), storm = o.kind === 'storm';
-    const mat0 = new T.MeshStandardMaterial({ color: col, roughness: 1, metalness: 0, emissive: col, emissiveIntensity: storm ? .02 : .12, flatShading: false, transparent: true });
+    const mat0 = new T.MeshStandardMaterial({ color: col, roughness: 1, metalness: 0, emissive: col, emissiveIntensity: storm ? .22 : .12, flatShading: false, transparent: true });
     const geo = new T.IcosahedronGeometry(1, 2);
     const clouds = [];
     for (let i = 0; i < n; i++) {
@@ -153,6 +153,9 @@ export function createFx(scene, ctx, cfg, env) {
           v.copy(c.g.position).sub(cam.position);
           const k = (top - cam.position.y) / v.y;
           if (v.y < 0 && k > 1) { const gx = cam.position.x + v.x * k, gz = cam.position.z + v.z * k, far = Math.hypot(gx, gz) - core - c.s * 2 * k; want = Math.min(1, Math.max(0, far / (R * .25))); }
+          // 比主体离镜头近得多的云会贴在画面边上成一团暗影，也淡出
+          const near = v.length() / Math.max(1, cam.position.length());
+          want = Math.min(want, Math.max(0, Math.min(1, (near - .5) / .25)));
         }
         c.a += (want - c.a) * Math.min(1, dt * 3); c.mat.opacity = c.a; c.mat.depthWrite = c.a > .98; c.g.visible = c.a > .02; c.g.children.forEach(m => { m.castShadow = c.a > .5; });
         const d = Math.hypot(c.g.position.x, c.g.position.z);

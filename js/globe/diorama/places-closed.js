@@ -1,8 +1,9 @@
 /* 小地点：完整底座的沙盘。
    坐标：+x 东，+z 南（相机方位角 az=0 时从南向北看）。 */
-import * as K from './props.js?v=23';
-import { P, lin, wall, tower, boat } from './kit.js?v=23';
-import { bump, terrace, ridgeLine, island, smooth, clamp, lerp, segDist } from './terrain.js?v=23';
+import { Vector3 as T3, Euler as E3 } from 'three';
+import * as K from './props.js?v=24';
+import { P, lin, wall, tower, boat } from './kit.js?v=24';
+import { bump, terrace, ridgeLine, island, smooth, clamp, lerp, segDist } from './terrain.js?v=24';
 
 export const SITES = {};
 const coarse = (c, n) => c.coarse ? Math.round(n * .35) : n;
@@ -19,62 +20,188 @@ function fields(col, x, z, ang, sx, sz, cols, k = .85, furrow = .1) {
 /* 极坐标 → 平面 */
 const pol = (cx, cz, r, a) => [cx + Math.cos(a) * r, cz + Math.sin(a) * r];
 
-/* ================= 安那其学院：海峡小岛上的自由学园 ================= */
+/* ================= 安那其学院：依山而建的自由学园 ================= */
+const AC = [0, -16]; // 山顶城堡的中心
+// 南坡台地：[这一级外缘到山顶中心的距离, 比下一级高多少]
+const AC_STEPS = [[13, 5], [21, 5], [35, 5.5], [42.5, 3]];
+const acD = (x, z) => Math.hypot(x - AC[0], z - AC[1]);
+const acSouth = (x, z) => { const d = acD(x, z); return Math.max(smooth(-.05, .4, (z - AC[1]) / Math.max(d, .1)), smooth(14.5, 12.5, d)); };
+const acPol = (r, a) => pol(AC[0], AC[1], r, a);
+const acFace = a => Math.atan2(Math.cos(a), Math.sin(a)); // 让框架的 +z 朝外
+/* Ⓐ：圆环加一个尖头出圈的 A。floor 为真时平铺在地上（A 尖朝北），否则立在当前框架的 xy 面上 */
+function anarchyA(B, s, col, pat, floor, y0 = 0, z0 = 0) {
+  const seg = (ax, ay, bx, by, t) => {
+    const L = Math.hypot(bx - ax, by - ay) + t * .4, mx = (ax + bx) / 2, my = (ay + by) / 2, a = Math.atan2(by - ay, bx - ax);
+    if (floor) B.put('box', mx, y0, -my, L, .14, t, col, pat, [0, a, 0]);
+    else B.put('box', mx + Math.sin(a) * t / 2, y0 + my - Math.cos(a) * t / 2, z0, L, t, .1, col, pat, [0, 0, a]);
+  };
+  const n = 28, t = s * .2;
+  for (let k = 0; k < n; k++) { const a0 = k / n * Math.PI * 2, a1 = (k + 1) / n * Math.PI * 2; seg(Math.cos(a0) * s, Math.sin(a0) * s, Math.cos(a1) * s, Math.sin(a1) * s, t); }
+  const top = 1.34 * s, foot = -1.08 * s, fx = .8 * s, w = s * .23, by = -.12 * s, bx = fx * (top - by) / (top - foot);
+  seg(0, top, -fx, foot, w); seg(0, top, fx, foot, w); seg(-bx - w * .3, by, bx + w * .3, by, w * .85);
+}
 SITES['安那其学院'] = {
-  mode: 'closed', R: 58, seed: 'anarchy-isle', time: 'afternoon',
-  label: '海峡小岛 · 自由学园', note: '学院占着岛的东半边：讲堂是旧仓库改的，旁边是工坊和菜地，码头每天有渡船往返两岸。',
+  mode: 'closed', R: 58, seed: 'anarchy-hill', time: 'afternoon',
+  light: { el: 40, az: 300 },
+  label: '海峡小岛 · 自由学园', note: '学院顺着岛上的山坡一层层往上修：山顶的旧城堡改作大讲堂和书库，半山一道弧形长楼是教室和宿舍，再往下是广场、工坊和菜园。广场地面用黑石拼着一个Ⓐ，码头每天有渡船往返两岸。',
   shape: { kind: 'circle', wobble: .07 },
   water: { level: 0, shallow: 0x3fa39a, deep: 0x0d4560, clarity: .38, wave: .35, foam: 1.1 },
   strata: [0x4b3a2a, 0xb59a74, 0x9c8264, 0xc9b28c, 0x7d6a55], plinth: 0x30241c,
-  palette: { grass: [0x6f9446, 0x5e8a40], dry: 0xa59c62, dryK: .35, sand: 0xdccaa0, rock: 0x8a8173, bed: 0x9a9070 },
-  height(x, z, c) {
-    const L = island(x, z, -2, 2, 40, c.N, .3, .04) + bump(x, z, 30, -16, 12, .35);
-    const land = L > 0 ? 1.2 + L * 9 + c.N.fbm(x * .05, z * .05, 4) * 3 * L + bump(x, z, 30, -16, 9, 7) : L * 18;
-    return Math.max(land, -8);
+  palette: {
+    grass: [0x6f9446, 0x5e8a40], dry: 0xa59c62, dryK: .35, sand: 0xdccaa0, rock: 0x8a8173, bed: 0x9a9070,
+    paint(x, z, h, s, col) {
+      const d = acD(x, z), f = acSouth(x, z);
+      if (d < 12.4) col.lerp(lin(0xab9f86), .7); // 城堡内院
+      else if (f < .8 || s > .4) return;
+      else if (d > 14 && d < 20) col.lerp(lin(0xc4b89a), .55); // 长楼前的走廊
+      else if (d > 22 && d < 34 && Math.abs(x) < 15) col.lerp(lin(0xd6cbb0), .8); // 广场铺石
+      else if (d > 36 && d < 41.5) fields(col, x, z, .2, 4, 2.6, [0x6a8a3a, 0x8a9a44, 0x7a6044, 0x5f7f36], .75, .18);
+    }
   },
-  pads: [{ x: -6, z: 2, r: 11, soft: 6 }, { x: 4, z: 24, r: 6, soft: 4 }],
-  roads: [{ pts: [[4, 30], [2, 18], [-4, 8], [-8, -6], [-14, -18]], w: 3 }, { pts: [[-4, 6], [10, 0], [22, -10], [28, -15]], w: 2.4 }],
-  weather: { birds: { n: 10, col: 0xeeeeee, y: 14 } },
+  height(x, z, c) {
+    const d = acD(x, z);
+    let ter = 1.5; for (const [r, rise] of AC_STEPS) ter += rise * (1 - smooth(r - .8, r + .8, d));
+    const nat = 1.5 + 19.5 * (1 - smooth(10, 46, d)) + c.N.fbm(x * .06, z * .06, 4) * 3.2 * smooth(46, 28, d) + bump(x, z, -22, -34, 8, 4) + bump(x, z, 24, -32, 7, 3);
+    const hl = lerp(nat, ter, acSouth(x, z)), L = island(x, z, 0, -2, 46, c.N, .22, .04);
+    return L > 0 ? Math.min(hl, .9 + L * 55) : Math.max(L * 20, -8);
+  },
+  weather: { birds: { n: 12, col: 0xeeeeee, y: 34 } },
   wind: .6,
-  views: [{ label: '全岛', az: 28, el: 36, d: 1 }, { label: '学院广场', az: 55, el: 30, d: .42, t: [-6, null, 2] }, { label: '码头', az: 10, el: 22, d: .38, t: [4, null, 26] }, { label: '灯塔岬', az: 110, el: 26, d: .34, t: [30, null, -16] }],
+  views: [
+    { label: '全岛', az: 16, el: 30, d: 1, t: [0, 10, 2] },
+    { label: '山顶城堡', az: 24, el: 20, d: .42, t: [0, null, -14] },
+    { label: '台地广场', az: 340, el: 36, d: .36, t: [0, null, 12] },
+    { label: '码头', az: 22, el: 26, d: .4, t: [3, null, 36] }
+  ],
   build(c) {
-    const B = c.B;
-    // 讲堂：旧仓库改建（长砖房 + 锯齿天窗）
-    K.factory(c, -14, -4, .35, { w: 12, len: 20, h: 6, wall: 0x9a5a44, roof: 0x5d6168 });
-    // 宿舍、食堂、图书室：彼此不太统一
-    K.bld(c, 'academy', 4, -8, { ry: .3, fl: 2, w: 10, d: 6 });
-    K.bld(c, 'academy', -2, -18, { ry: .4, fl: 2 });
-    K.bld(c, 'academy', 10, 8, { ry: -.25, fl: 1, w: 8 });
-    K.bld(c, 'academy', -20, 10, { ry: .9, fl: 2 });
-    K.bld(c, 'academy', -24, -12, { ry: .5, fl: 1, w: 7 });
-    K.bld(c, 'harbour', 14, 18, { ry: -.6, fl: 2 });
-    K.bld(c, 'harbour', -6, 22, { ry: .2, fl: 1 });
-    // 玻璃温室
-    B.frame(-12, c.ground(-12, 20, 8, 5, .3), 20, .3); B.box(0, 0, 0, 8, 2.6, 5, 0xbfd8d8, P.glass); B.put('gable', 0, 2.6, 0, 5, 1.6, 8, 0xcfe4e4, P.glass, [0, Math.PI / 2, 0]); B.frame(); c.occupy(-12, 20, 9, 6, .3);
-    // 工坊烟囱与风力水泵
-    K.chimney(c, -5, -24, 9, { r: .7, size: 1.4, sh: 14, n: 22, smokeCol: 0xbab4ac });
-    const wy = c.ground(18, -4); B.frame(18, wy, -4); for (const [a, b] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) B.put('box', a * .9, 0, b * .9, .16, 8, .16, 0x6a5a4c, P.wood, [-b * .08, 0, a * .08]);
-    for (let k = 0; k < 8; k++) B.put('box', 0, 8.2, 0, .5, 3, .08, 0xd8d0c0, P.metal, [0, 0, k * Math.PI / 4]); B.frame(); c.occupy(18, -4, 3, 3);
-    // 菜地与果树
-    for (const [x, z, ry] of [[-28, 0, .4], [-20, 26, .2], [-32, 14, .5]]) K.rows(c, x, z, 9, 7, ry, { species: 'shrub', row: 1.5, step: 1, cols: [0x5a8a36, 0x7a9a3a, 0x8aa040], s: [.35, .5] });
-    K.rows(c, 22, 2, 10, 10, .3, { species: 'round', row: 4, step: 4, cols: [0x5f8a3a, 0x6e9440], s: [.45, .6] });
-    // 码头、船
-    K.pier(c, 4, 28, 12, 0, { w: 2.6 });
-    K.pier(c, 16, 24, 8, .6, { w: 2 });
-    K.boatAt(c, 8, 36, .1, { len: 7, kind: 'sail', hull: 0x2f4f6a, sail: 0xf2ece0 });
-    K.boatAt(c, 0, 37, -.2, { len: 5, hull: 0xa04a32 });
-    K.boatAt(c, 22, 31, .7, { len: 9, kind: 'steam', hull: 0x3a3a3a, stripe: 0xb04030, cabin: 0xe9e2d4 });
-    K.boatAt(c, -30, 30, 2.2, { len: 4.5, hull: 0x6a8a5a });
-    // 灯塔岬
-    K.lighthouse(c, 31, -17, { h: 12, stripe: 0xb04030 });
-    // 广场：长桌、布告栏、人
-    for (let k = 0; k < 3; k++) { B.frame(-8 + k * 3, c.h(-8 + k * 3, 4), 4, .35); B.box(0, 0, 0, 1, .8, 5, 0x7a5a3c, P.wood); B.frame(); }
-    K.lanternString(c, [-16, c.h(-16, 6) + 4, 6], [2, c.h(2, -2) + 4, -2], [0xffd08a, 0xf2a060, 0xe8e0c0], 1);
-    c.people(55, { at: [-6, 2, 13] });
-    c.people(18, { at: [0, 0, c.R * .7] });
-    c.trees(140, { species: ['round', 'round', 'pine', 'birch'], cols: [0x4f7a34, 0x5d8a3a, 0x3f6a30, 0x6a8f3e], minH: 2.5 });
-    c.rocks(40, { above: -1, maxH: 3, cols: [0x8a8173, 0x9a9282] });
-    c.grass(coarse(c, 5000), { cols: [0x6f9446, 0x7fa04c, 0x5e8a40], flowers: [0xf2e0a0, 0xe8a0b0, 0xffffff], minH: 2 });
+    const B = c.B, stone = 0xb7ab94, dark = 0x1c1a1a, roofG = 0x5c766e;
+    const lvl = d => c.h(AC[0], AC[1] + d); // 正南方向距山顶 d 处的地面高度
+    /* 挡土墙：每级台地外缘一道，正中与两侧留出台阶口 */
+    const gaps = [[Math.PI / 2, 2.4], [Math.PI * .33, 2], [Math.PI * .67, 2]];
+    AC_STEPS.forEach(([r, rise], k) => {
+      const rw = r + 1.05, a0 = Math.PI * (k ? .17 : .2), a1 = Math.PI - a0, side = k === 1 || k === 2;
+      let run = [];
+      const flush = () => { if (run.length > 1) wall(B, run, rise + .7, 1.3, k === 3 ? 0x9a8f78 : stone, P.stone, false, (x, z) => c.h(x, z)); run = []; };
+      for (let a = a0; a <= a1 + 1e-6; a += 2.6 / rw) {
+        const shut = gaps.some(([g, w], i) => (i === 0 || side) && Math.abs(a - g) * rw < w + .6);
+        if (shut) { flush(); continue; }
+        run.push(acPol(rw, a));
+      }
+      flush();
+      c.occupyLine([acPol(rw, a0), acPol(rw, Math.PI / 2), acPol(rw, a1)], 1.2);
+    });
+    /* 台阶：实心踏步，从下一级台地走上来 */
+    const flight = (a, r0, r1, w = 3) => {
+      const [ax, az] = acPol(r0, a), [bx, bz] = acPol(r1, a), ya = c.h(ax, az), yb = c.h(bx, bz), L = Math.hypot(bx - ax, bz - az), n = Math.max(4, Math.round(Math.abs(yb - ya) / .42)), ry = Math.atan2(bx - ax, bz - az);
+      for (let k = 0; k < n; k++) { const t = (k + .5) / n; B.frame(ax + (bx - ax) * t, ya - .6, az + (bz - az) * t, ry); B.box(0, 0, 0, w, (yb - ya) * (k + 1) / n + .6, L / n + .06, 0xa49a86, P.stone); }
+      B.frame(); c.occupyLine([[ax, az], [bx, bz]], w + 1);
+    };
+    AC_STEPS.forEach(([r]) => flight(Math.PI / 2, r + 4.2, r - 1.6, 3.2));
+    for (const a of [Math.PI * .33, Math.PI * .67]) { flight(a, 21 + 3.6, 21 - 1.6, 2.4); flight(a, 35 + 3.6, 35 - 1.6, 2.4); }
+
+    /* 山顶城堡：八角幕墙 + 圆塔，南面城门，中间是主楼与方形高塔 */
+    const cy = c.h(AC[0], AC[1]), RC = 11.4, cpts = [];
+    for (let i = 0; i <= 8; i++) cpts.push(acPol(RC, Math.PI / 2 + Math.PI / 8 + i * Math.PI / 4));
+    wall(B, cpts.slice(0, 8), 6, 1.6, stone, P.stone, true, () => cy - .3); // 南面一段留给城门
+    cpts.slice(0, 8).forEach(([x, z], i) => {
+      const gate = i === 0 || i === 7;
+      tower(B, x, cy - .5, z, gate ? { r: 2.7, h: 11, wall: stone, roof: 'flat' } : { r: 2.1, h: 9.5, wall: stone, rcol: 0x3f4a52, win: 2.4 });
+      if (gate) K.flag(c, x, cy + 11.6, z, 4.5, dark);
+    });
+    { const gz = AC[1] + RC * Math.cos(Math.PI / 8); B.frame(0, cy, gz, 0, [2.4, 3.4, 3.5, 2]);
+      B.box(0, -2, 0, 8.6, 10, 4, 0xbcb09a, P.stone, 0, true);
+      for (let k = 0; k < 7; k++) B.box(-3.6 + k * 1.2, 8, 0, .7, .8, 4.1, 0xbcb09a, P.stone);
+      B.box(0, 0, 2.02, 3, 4, .12, 0x231e1a, P.plain); B.put('cyl16', 0, 4 - .02, 2.08, 3, .12, 3, 0x231e1a, P.plain, [Math.PI / 2, 0, 0]);
+      anarchyA(B, 1.15, 0xa8322a, P.paint, false, 6.3, 2.08);
+      B.frame(); c.occupy(0, gz, 10, 6); }
+    // 主楼：两层大厅，四角小圆塔
+    { const kz = AC[1] - 2.5; B.frame(0, cy, kz, 0, [2.6, 3.8, 7, 5]);
+      B.box(0, -1, 0, 14, 18, 10, 0xc4b8a0, P.stone, 0, true);
+      B.box(0, 17, 0, 14.6, .5, 10.6, 0xb0a48c, P.stone);
+      B.put('hip', 0, 17.4, 0, 11, 4.4, 15.4, 0x47525a, P.slate, [0, Math.PI / 2, 0]);
+      for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { B.put('cyl12', sx * 7.2, -1, sz * 5.2, 2.2, 21, 2.2, 0xc4b8a0, P.stone); B.put('cone12', sx * 7.2, 20, sz * 5.2, 2.7, 3.4, 2.7, 0x3f4a52, P.slate); }
+      // 正面挂黑底Ⓐ大旗，挂得比城门塔高，从山下也看得见
+      B.box(0, 17.1, 5.12, 6.6, .22, .22, 0x2a2622, P.iron);
+      B.box(0, 8.6, 5.08, 6, 8.5, .08, dark, P.cloth);
+      anarchyA(B, 2, 0xece4d0, P.cloth, false, 12.9, 5.16);
+      B.box(0, 0, 5.05, 2.6, 3.6, .12, 0x2e2620, P.wood);
+      B.frame(); c.occupy(0, kz, 16, 12); }
+    // 方形高塔（书库），塔顶红黑旗
+    { const tx = -5.2, tz = AC[1] - 7, th = 27; tower(B, tx, cy - .5, tz, { r: 3, h: th, wall: 0xc8bca4, roof: 'flat', sq: true, win: 2.6 });
+      B.frame(tx, cy + th + .6, tz); B.put('cyl8', 0, 0, 0, .18, 7, .18, 0x4a4440, P.iron);
+      B.put('shed', 1.3, 4.6, 0, 2.6, 1.7, .06, 0x1c1a1a, P.cloth); B.put('shed', 1.3, 6.3, 0, 2.6, 1.7, .06, 0xa8322a, P.cloth, [0, 0, Math.PI]);
+      B.frame(); c.occupy(tx, tz, 7, 7); }
+    tower(B, 6.4, cy - .5, AC[1] - 8, { r: 2.4, h: 21, wall: 0xc4b8a0, rcol: 0x3f4a52, win: 2.6 });
+    K.flag(c, 6.4, cy + 21 + 2.4 * 2.6 - .4, AC[1] - 8, 3.5, dark);
+    // 内院：井、两棵树
+    B.frame(0, cy, AC[1] + 6); B.put('cyl12', 0, 0, 0, 2.2, .9, 2.2, 0x9a8f7a, P.stone); B.put('cyl12', 0, .5, 0, 1.6, .5, 1.6, 0x2a4a50, P.glass); B.frame(); c.occupy(0, AC[1] + 6, 2.5, 2.5);
+    for (const x of [-5.5, 5.5]) c.I.tree('round', x, cy, AC[1] + 6.5, 1, lin(0x5d8a3a), 0x55402e, x);
+
+    /* 半山弧形长楼：两层，正面一层是拱廊、二层有挑廊，中间断开让台阶穿过 */
+    { const r = 17.2, D = 4.6, H = 6.2, step = 3.1 / r;
+      for (const [a0, a1] of [[Math.PI * .2, Math.PI * .455], [Math.PI * .545, Math.PI * .8]]) {
+        const n = Math.round((a1 - a0) / step), da = (a1 - a0) / n;
+        for (let i = 0; i < n; i++) {
+          const a = a0 + (i + .5) * da, [x, z] = acPol(r, a), ry = acFace(a), L = r * da, y = c.ground(x, z, L, D, ry);
+          B.frame(x, y, z, ry, [2.3, 3.1, L / 2, D / 2]);
+          B.box(0, -2.4, 0, L + .1, 2.8, D + .5, 0x9a8f7a, P.stone);
+          B.box(0, .4, 0, L + .06, H - .4, D, 0xdccfb2, P.plaster, 0, true);
+          B.box(0, 3.05, D / 2 + .7, L * (r + D / 2 + 1.4) / r + .05, .26, 1.5, 0xcfc2a6, P.stone);
+          B.box(0, 3.3, D / 2 + 1.4, L * (r + D / 2 + 1.4) / r, .9, .08, 0x4a3a2c, P.wood);
+          for (const s of [-.5, 0]) B.put('cyl8', s * L, .4, D / 2 + 1.3, .38, 2.7, .38, 0xe6dcc6, P.stone);
+          B.put('gable', 0, H, 0, D + 1.3, 2.1, L * (r + D / 2 + .7) / r + .12, roofG, P.metal, [0, Math.PI / 2, 0]);
+          if (i % 3 === 1) B.box(L * .2, H + .6, -.6, .6, 2.4, .6, 0x7a5446, P.brick);
+          B.frame(); c.occupy(x, z, L + .6, D + 3, ry);
+        }
+        // 两端山墙封头
+        for (const a of [a0, a1]) { const [x, z] = acPol(r, a), y = c.ground(x, z, 1, D, acFace(a)); B.frame(x, y, z, acFace(a)); B.box(0, .4, 0, .3, H - .4, D + .1, 0xd2c4a6, P.plaster); B.frame(); }
+      }
+    }
+    // 长楼前的灯柱与人
+    for (const a of [.3, .4, .6, .7]) { const [x, z] = acPol(21.2 - 2.4, a * Math.PI); K.lamp(c, x, z, 0xffe0a8, 3.2); }
+
+    /* 中层台地：Ⓐ广场、长桌、图书室与工坊 */
+    const pz = AC[1] + 28, py = c.h(0, pz);
+    B.frame(0, py + .02, pz); anarchyA(B, 4.4, 0x24201e, P.stone, true); B.put('cyl16', 0, -.05, 0, 12.4, .1, 12.4, 0xe8dfca, P.stone); B.frame(); c.occupy(0, pz, 12, 14);
+    for (const s of [-1, 1]) for (let k = 0; k < 2; k++) { B.frame(s * 9.5, c.h(s * 9.5, pz - 3 + k * 5), pz - 3 + k * 5, .1 * s); B.box(0, 0, 0, 1.1, .8, 4.6, 0x7a5a3c, P.wood); B.frame(); }
+    K.lanternString(c, [-12, py + 4.2, pz - 4], [12, py + 4.2, pz - 4], [0xffd08a, 0xf2a060, 0xe8e0c0], 1.1);
+    K.lanternString(c, [-12, py + 4.2, pz + 4], [12, py + 4.2, pz + 4], [0xffd08a, 0xa8322a, 0xe8e0c0], 1.1);
+    for (const x of [-12.5, 12.5]) for (const dz of [-4, 4]) K.lamp(c, x, pz + dz, 0xffe0a8, 4.4);
+    for (const [a, o] of [[.18, { w: 9, d: 7, fl: 2 }], [.27, { w: 8, d: 7, fl: 1 }], [.73, { w: 11, d: 8, fl: 2 }], [.82, { w: 8, d: 6, fl: 2 }]]) {
+      const [x, z] = acPol(28.2, a * Math.PI); K.bld(c, 'academy', x, z, { ...o, ry: acFace(a * Math.PI) });
+    }
+    { const [x, z] = acPol(29, Math.PI * .23); K.chimney(c, x + 2, z - 3, 8, { r: .7, size: 1.4, sh: 14, n: 22, smokeCol: 0xbab4ac }); }
+    // 黑旗沿广场两侧
+    for (const s of [-1, 1]) for (const dz of [-4.5, 4.5]) K.banner(c, s * 14.5, pz + dz, 6, dark, s > 0 ? -Math.PI / 2 : Math.PI / 2);
+
+    /* 下层台地：菜园、温室、果树 */
+    for (const a of [.24, .36, .64, .76]) { const [x, z] = acPol(38.7, a * Math.PI); K.rows(c, x, z, 8, 3.6, acFace(a * Math.PI), { species: 'shrub', row: 1.4, step: 1, cols: [0x5a8a36, 0x7a9a3a, 0x8aa040], s: [.35, .5] }); }
+    { const a = Math.PI * .44, [x, z] = acPol(38.6, a), ry = acFace(a), y = c.ground(x, z, 7, 4, ry);
+      B.frame(x, y, z, ry); B.box(0, 0, 0, 7, 2.4, 4, 0xbfd8d8, P.glass); B.put('gable', 0, 2.4, 0, 4, 1.5, 7, 0xcfe4e4, P.glass, [0, Math.PI / 2, 0]); B.frame(); c.occupy(x, z, 8, 5, ry); }
+    for (const a of [.56, .6]) { const [x, z] = acPol(38.6, a * Math.PI); c.I.tree('round', x, c.h(x, z), z, .8, lin(0x6e9440), 0x55402e, a * 9); }
+
+    /* 岸边：码头、渡船、船屋、灯塔、风力水泵 */
+    K.pier(c, 5, 40.5, 12, 0, { w: 2.6 });
+    K.pier(c, -14, 38, 8, -.35, { w: 2 });
+    K.boatAt(c, 9, 48, .1, { len: 7, kind: 'sail', hull: 0x2f4f6a, sail: 0xf2ece0 });
+    K.boatAt(c, 1.5, 49, -.2, { len: 5, hull: 0xa04a32 });
+    K.boatAt(c, 18, 45, .7, { len: 9, kind: 'steam', hull: 0x3a3a3a, stripe: 0xb04030, cabin: 0xe9e2d4 });
+    K.boatAt(c, -19, 45, 2.6, { len: 4.5, hull: 0x6a8a5a });
+    K.bld(c, 'harbour', -8, 33.5, { ry: .15, fl: 2, w: 7, d: 5 });
+    K.bld(c, 'harbour', 14, 33, { ry: -.3, fl: 1, w: 8, d: 5 });
+    K.factory(c, -27, 22, .9, { w: 10, len: 16, h: 6, wall: 0x9a5a44, roof: 0x5d6168 });
+    K.lighthouse(c, 39, 9, { h: 12, stripe: 0xb04030 });
+    { const [x, z] = [26, 25], wy = c.ground(x, z); B.frame(x, wy, z); for (const [a, b] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) B.put('box', a * .9, 0, b * .9, .16, 8, .16, 0x6a5a4c, P.wood, [-b * .08, 0, a * .08]);
+      for (let k = 0; k < 8; k++) B.put('box', 0, 8.2, 0, .5, 3, .08, 0xd8d0c0, P.metal, [0, 0, k * Math.PI / 4]); B.frame(); c.occupy(x, z, 3, 3); }
+
+    c.people(46, { at: [0, pz, 12], free: true, r: .3 });
+    c.people(14, { at: [0, AC[1] + 17.2, 6] });
+    c.people(10, { at: [0, AC[1] + 6, 5] });
+    c.people(20, { at: [2, 36, 12] });
+    const wild = (x, z) => acSouth(x, z) < .5 ? 1 : acD(x, z) > 43.5 ? .3 : 0;
+    c.trees(coarse(c, 230), { species: ['round', 'round', 'pine', 'birch'], cols: [0x4f7a34, 0x5d8a3a, 0x3f6a30, 0x6a8f3e], minH: 2, maxSlope: 1.1, area: wild });
+    c.rocks(46, { above: -1, cols: [0x8a8173, 0x9a9282], area: (x, z) => acSouth(x, z) < .5 ? 1 : 0 });
+    c.grass(coarse(c, 4200), { cols: [0x6f9446, 0x7fa04c, 0x5e8a40], flowers: [0xf2e0a0, 0xe8a0b0, 0xffffff], minH: 1.4, area: (x, z) => acSouth(x, z) < .6 || acD(x, z) > 43.5 ? 1 : .15 });
   }
 };
 
@@ -82,7 +209,7 @@ SITES['安那其学院'] = {
 SITES['万知城'] = {
   mode: 'closed', R: 66, seed: 'wanzhi-city', time: 'morning',
   light: { el: 24, az: 120, haze: 0xdfe4ea, hd: .0016 },
-  label: '中立城邦 · 书城与讲坛', note: '环城墙里，四条大街从广场伸向四座城门。圆顶下是图书馆，旁边几座高塔存着档案；半圆的讲坛从早到晚都有人上台。',
+  label: '中立城邦 · 书城与讲坛', note: '环城墙里，四条大街从广场伸向四座城门，广场正中立着一架铜浑仪。圆顶下是图书馆，旁边几座高塔存着档案；半圆的讲坛从早到晚都有人上台。',
   shape: { kind: 'circle', wobble: .04 },
   water: { level: 0, shallow: 0x4f9a90, deep: 0x1d5560, clarity: .45, wave: .25, foam: .7 },
   strata: [0x5a4a3a, 0xc8b490, 0xae9a78, 0xd6c6a2, 0x8a7a62], plinth: 0x3a2e24,
@@ -105,7 +232,7 @@ SITES['万知城'] = {
   ],
   weather: { birds: { n: 26, col: 0xf4f2ee, y: 26 }, motes: { kind: 'dust', n: 160, cols: [0xfff2d8], size: .2, op: .3, h: 14, rad: 40 } },
   wind: .4,
-  views: [{ label: '全城', az: 18, el: 42, d: 1 }, { label: '图书馆', az: 30, el: 26, d: .4, t: [-17, null, -17] }, { label: '讲坛', az: 300, el: 30, d: .36, t: [17, null, -17] }, { label: '南门与桥', az: 350, el: 20, d: .42, t: [2, null, 46] }],
+  views: [{ label: '全城', az: 18, el: 42, d: 1 }, { label: '图书馆', az: 15, el: 30, d: .38, t: [-15, null, -15] }, { label: '讲坛', az: 300, el: 30, d: .36, t: [17, null, -17] }, { label: '南门与桥', az: 350, el: 20, d: .42, t: [2, null, 46] }],
   build(c) {
     const B = c.B, RW = 40;
     // 城墙：四门处断开，门两侧各一座方塔
@@ -117,20 +244,50 @@ SITES['万知城'] = {
       tower(B, x, c.h(x, z) - .5, z, atGate ? { r: 2.6, h: 10, wall: 0xd2c29c, roof: 'flat', sq: true } : { r: 1.9, h: 8, wall: 0xc2b28c, rcol: 0x5a7f86, roof: 'cone' });
     }
     c.occupyLine(ring, 5);
-    // 中央广场：喷泉 + 柱廊
-    const fy = c.h(0, 0); B.frame(0, fy, 0); B.put('cyl16', 0, 0, 0, 7, .7, 7, 0xd8ccb4, P.stone); B.put('cyl16', 0, .3, 0, 6, .45, 6, 0x4f8a8c, P.glass); B.put('cyl12', 0, 0, 0, 1, 3.2, 1, 0xd8ccb4, P.stone); B.put('cyl12', 0, 3, 0, 2.4, .4, 2.4, 0xd8ccb4, P.stone);
+    // 中央广场：柱廊环 + 铜浑仪
+    const fy = c.h(0, 0); B.frame(0, fy, 0);
+    B.put('cyl16', 0, 0, 0, 8.4, .5, 8.4, 0xd8ccb4, P.stone); B.put('cyl16', 0, .5, 0, 6.2, .5, 6.2, 0xcfc2a8, P.stone); B.put('cyl12', 0, 1, 0, 1.4, 1.6, 1.4, 0xd8ccb4, P.stone);
     for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2 + Math.PI / 16; B.put('cyl8', Math.cos(a) * 9.4, 0, Math.sin(a) * 9.4, .6, 4.2, .6, 0xeee4d0, P.stone); }
-    B.frame(); c.occupy(0, 0, 8, 8);
-    // 图书馆：鼓座 + 铜绿圆顶 + 采光亭
-    { const x = -17, z = -17, y = c.ground(x, z, 18, 18); B.frame(x, y, z, Math.PI / 4, [2.6, 4, 8, 8]);
-      B.box(0, -2, 0, 20, 2.6, 20, 0xb8aa8e, P.stone);
-      B.box(0, .6, 0, 18, 7, 18, 0xe6d6b4, P.stone, 0, true);
-      B.put('cyl16', 0, 7.6, 0, 13, 3.4, 13, 0xe9dcc0, P.stone);
-      for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2; B.put('cyl8', Math.cos(a) * 6.9, 7.6, Math.sin(a) * 6.9, .5, 3.4, .5, 0xf4ecd8, P.stone); }
-      B.put('hemi', 0, 11, 0, 13.4, 8, 13.4, 0x6aa596, P.metal);
-      B.put('cyl12', 0, 18.6, 0, 2.2, 2, 2.2, 0xf0e6d0, P.stone); B.put('cone12', 0, 20.6, 0, 2.6, 1.6, 2.6, 0x6aa596, P.metal); B.put('sph', 0, 22.2, 0, .6, .6, .6, 0xc9a24a, P.gold);
-      for (const s of [-1, 1]) B.put('cyl8', s * 3, .6, 9.6, 1, 6.4, 1, 0xf4ecd8, P.stone); B.put('gable', 0, 7, 9.6, 9, 2.4, 2.6, 0xe6d6b4, P.stone);
-      B.frame(); c.occupy(x, z, 21, 21, Math.PI / 4); }
+    for (let k = 0; k < 16; k++) { const a0 = k / 16 * Math.PI * 2 + Math.PI / 16, a1 = a0 + Math.PI / 8, mx = (Math.cos(a0) + Math.cos(a1)) * 4.7, mz = (Math.sin(a0) + Math.sin(a1)) * 4.7; B.put('box', mx, 4.2, mz, 3.8, .6, .9, 0xe6dcc6, P.stone, [0, -Math.atan2(mz, mx) + Math.PI / 2, 0]); }
+    { // 浑仪：赤道环、子午环、黄道环和极轴
+      const cy0 = 5.6, rr = 2.6, lat = .7, ring = (rot, rad, t, col) => {
+        const n = 24, v = (a) => new T3(Math.cos(a) * rad, Math.sin(a) * rad, 0).applyEuler(rot);
+        for (let k = 0; k < n; k++) { const p = v(k / n * Math.PI * 2), q = v((k + 1) / n * Math.PI * 2), dx = q.x - p.x, dy = q.y - p.y, dz = q.z - p.z, L = Math.hypot(dx, dy, dz);
+          B.put('box', (p.x + q.x) / 2, cy0 + (p.y + q.y) / 2 - t / 2, (p.z + q.z) / 2, L + t * .3, t, t, col, P.gold, [0, Math.atan2(-dz, dx), Math.asin(dy / L)]); }
+      };
+      ring(new E3(Math.PI / 2, 0, 0), rr * 1.1, .26, 0xb8913e); // 地平环
+      ring(new E3(0, Math.PI / 2, 0), rr * 1.16, .24, 0xa8843a); // 子午环，立在台座上
+      ring(new E3(-lat, 0, 0), rr, .2, 0xc9a24a); // 赤道环
+      ring(new E3(-lat + .41, 0, 0), rr * .94, .16, 0xd8b45a); // 黄道环
+      const th = Math.PI / 2 - lat, AL = rr * 2.7; // 极轴
+      B.put('cyl8', 0, cy0 - Math.cos(th) * AL / 2, -Math.sin(th) * AL / 2, .16, AL, .16, 0x8a6a2a, P.gold, [th, 0, 0]);
+      B.put('sph', 0, cy0 - .45, 0, .9, .9, .9, 0x5f7f86, P.metal);
+      for (let k = 0; k < 4; k++) { const a = Math.PI / 4 + k * Math.PI / 2; B.put('box', Math.cos(a) * rr * 1.1, 1, Math.sin(a) * rr * 1.1, .26, cy0 - 1, .26, 0x8a6a2a, P.iron); }
+    }
+    B.frame(); c.occupy(0, 0, 9, 9);
+    // 图书馆：三级台基 + 六柱门廊 + 列柱鼓座 + 带肋铜绿圆顶
+    { const x = -18, z = -18, y = c.ground(x, z, 22, 22); B.frame(x, y, z, Math.PI / 4, [2.6, 4, 9, 9]);
+      for (let k = 0; k < 3; k++) B.box(0, -2.4 + k * .8, 1.2 - k * .4, 25 - k * 1.6, 1.2, 28 - k * 1.2, k % 2 ? 0xc4b69a : 0xb8aa8e, P.stone);
+      B.box(0, 0, 0, 20, 8, 20, 0xe6d6b4, P.stone, 0, true);
+      B.box(0, 7.6, 0, 21, .7, 21, 0xd8c8a6, P.stone);
+      B.box(0, 8.3, 0, 19, .9, 19, 0xe6d6b4, P.stone);
+      B.put('cyl16', 0, 9.2, 0, 14.4, 4.2, 14.4, 0xe9dcc0, P.stone);
+      for (let k = 0; k < 20; k++) { const a = k / 20 * Math.PI * 2; B.put('cyl8', Math.cos(a) * 7.6, 9.2, Math.sin(a) * 7.6, .55, 4.2, .55, 0xf4ecd8, P.stone); }
+      B.put('cyl16', 0, 13.4, 0, 16, .6, 16, 0xd8c8a6, P.stone);
+      B.put('hemi', 0, 13.8, 0, 14.6, 19, 14.6, 0x6aa596, P.metal); // hemi 基元高 0.5，sy=19 → 圆顶高 9.5
+      for (let k = 0; k < 16; k++) { const az = k / 16 * Math.PI * 2; for (let j = 0; j < 6; j++) { const e0 = j / 6 * Math.PI / 2, e1 = (j + 1) / 6 * Math.PI / 2, rx = 7.42, ry0 = 4.8;
+        const px = Math.cos(e0) * rx, py = Math.sin(e0) * ry0 * 2, qx = Math.cos(e1) * rx, qy = Math.sin(e1) * ry0 * 2, L = Math.hypot(qx - px, qy - py);
+        B.put('box', Math.cos(az) * (px + qx) / 2, 13.8 + (py + qy) / 2 - .15, Math.sin(az) * (px + qx) / 2, L + .1, .3, .32, 0x4f8a7c, P.metal, [0, -az, Math.atan2(qy - py, qx - px)]); } }
+      B.put('cyl12', 0, 22.9, 0, 2.4, 2.4, 2.4, 0xf0e6d0, P.stone); for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; B.put('cyl8', Math.cos(a) * 1.25, 22.9, Math.sin(a) * 1.25, .3, 2.4, .3, 0xf6f0e0, P.stone); }
+      B.put('cone12', 0, 25.3, 0, 2.8, 1.8, 2.8, 0x6aa596, P.metal); B.put('sph', 0, 27, 0, .7, .7, .7, 0xc9a24a, P.gold);
+      // 门廊：六根柱、檐口、山花，台阶直下广场
+      for (let k = 0; k < 6; k++) B.put('cyl12', -6.25 + k * 2.5, 0, 12.2, 1.05, 7.4, 1.05, 0xf4ecd8, P.stone);
+      B.box(0, 7.4, 11.4, 16.4, 1.1, 4.4, 0xe6d6b4, P.stone);
+      B.put('gable', 0, 8.5, 11.4, 16.6, 3, 4.6, 0xeadcc0, P.stone);
+      B.box(0, 0, 9.9, 3, 4.2, .2, 0x3a2e24, P.wood);
+      for (let k = 0; k < 4; k++) B.box(0, -.8 - k * .5 + 1, 14.6 + k * .9, 14, .5, .9, 0xd2c4a6, P.stone);
+      B.frame(); c.occupy(x, z, 25, 25, Math.PI / 4);
+      for (const s of [-1, 1]) { const [lx, lz] = [x + 9.5 + s * 5.2, z + 9.5 - s * 5.2]; K.lamp(c, lx, lz, 0xffe0a8, 4); } }
     // 讲坛：半圆阶梯座位朝向广场
     { const x = 18, z = -18, ry = Math.atan2(-x, -z) + Math.PI, y = c.ground(x, z, 20, 20); B.frame(x, y, z, ry);
       B.box(0, -2, 0, 22, 2.3, 22, 0xb8aa8e, P.stone);
