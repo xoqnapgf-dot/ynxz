@@ -1859,20 +1859,85 @@
       return esc(part);
     }).join(' · ');
   }
+  /* 地点志卡片：与地图页的地点卡同一套样式（纸张底、层级、下辖地点、相关角色、去地图）。
+     预留：LOCATION_DATA[name].image（地点配图）、.scene（小场景 / 2.5D 沙盘页面链接）有值时自动显示。 */
+  function locPeople(name) {
+    var out = [];
+    if (typeof GALLERY_DATA === 'undefined') return out;
+    GALLERY_DATA.forEach(function (ideo) {
+      (ideo.characters || []).forEach(function (c) {
+        var home = (c.info || []).filter(function (i) { return i.k === '属地'; })[0];
+        if (!home) return;
+        var hit = String(home.v).split('·').some(function (t) {
+          t = t.trim();
+          var key = (typeof LOCATION_DATA !== 'undefined' && LOCATION_DATA[t]) ? t : (typeof LOCATION_ALIAS !== 'undefined' ? LOCATION_ALIAS[t] : '');
+          return key === name;
+        });
+        if (hit) out.push({ c: c, ideo: ideo });
+      });
+    });
+    return out;
+  }
+  function closeLocView() {
+    var el = document.getElementById('locView');
+    if (!el) return;
+    el.classList.remove('show');
+    document.removeEventListener('keydown', locKey, true);
+  }
+  function locKey(e) { if (e.key === 'Escape') { e.stopPropagation(); closeLocView(); } }
   function openLocView(name) {
-    var d = (typeof LOCATION_DATA !== 'undefined' && LOCATION_DATA[name]) ? LOCATION_DATA[name] : null;
+    var L = (typeof LOCATION_DATA !== 'undefined') ? LOCATION_DATA : {};
+    var d = L[name];
     if (!d) return;
     var el = document.getElementById('locView');
-    if (!el) { el = document.createElement('div'); el.id = 'locView'; el.className = 'loc-view'; document.body.appendChild(el); }
-    var parentLine = d.parent ? '<p class="loc-view-parent">隶属 · <a class="loc-link" data-loc="' + esc(d.parent) + '">' + esc(d.parent) + '</a></p>' : '';
-    el.innerHTML = '<div class="loc-view-card"><div class="loc-view-head"><span class="loc-view-kind">' + esc(d.kind || '地点') + '</span><button class="loc-view-x" aria-label="关闭">×</button></div><h3 class="loc-view-name">' + esc(name) + '</h3><p class="loc-view-desc">' + esc(d.desc || '') + '</p>' + parentLine + '</div>';
+    if (!el) {
+      el = document.createElement('div'); el.id = 'locView'; el.className = 'loc-view';
+      el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'locViewName');
+      document.body.appendChild(el);
+      el.addEventListener('click', function (ev) {
+        if (ev.target === el || ev.target.closest('.loc-view-x')) { closeLocView(); return; }
+        var go = ev.target.closest('[data-loc]');
+        if (go) { ev.preventDefault(); openLocView(go.getAttribute('data-loc')); return; }
+        var ch = ev.target.closest('[data-open-ch]');
+        if (ch) {
+          ev.preventDefault();
+          var pair = findCharacter(ch.getAttribute('data-open-ch'));
+          closeLocView();
+          if (pair) openCharacter(pair);
+        }
+      });
+    }
+    var chain = [], seen = {}, p = d.parent;
+    while (p && !seen[p]) { seen[p] = 1; chain.unshift(p); p = L[p] && L[p].parent; }
+    var kids = Object.keys(L).filter(function (n) { return L[n].parent === name; });
+    var people = locPeople(name);
+    var q = 'release=22&place=' + encodeURIComponent(name);
+    var paras = String(d.desc || '').split(/\n\n+/).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('');
+    el.innerHTML =
+      '<article class="loc-view-card">' +
+        '<button class="loc-view-x" type="button" aria-label="关闭">×</button>' +
+        '<header class="loc-view-head">' +
+          '<p class="loc-view-kicker"><span class="loc-view-kind">' + esc(d.kind || '地点') + '</span><span class="loc-view-tag">地点志</span></p>' +
+          '<h3 class="loc-view-name" id="locViewName">' + esc(name) + '</h3>' +
+          (chain.length ? '<nav class="loc-view-trail" aria-label="所属层级">' + chain.map(function (n) { return '<a href="#" data-loc="' + esc(n) + '">' + esc(n) + '</a>'; }).join('<i>›</i>') + '<i>›</i><span>' + esc(name) + '</span></nav>' : '') +
+        '</header>' +
+        (d.image ? '<figure class="loc-view-media"><img src="' + esc(d.image) + '" alt="' + esc(name) + '" loading="lazy"></figure>' : '') +
+        '<div class="loc-view-desc">' + paras + '</div>' +
+        (kids.length ? '<section class="loc-view-sec"><h4>下辖地点</h4><div class="loc-view-chips">' + kids.map(function (n) { return '<a href="#" data-loc="' + esc(n) + '"><b>' + esc(n) + '</b><small>' + esc(L[n].kind || '') + '</small></a>'; }).join('') + '</div></section>' : '') +
+        (people.length ? '<section class="loc-view-sec"><h4>相关角色 <small>' + people.length + '</small></h4><div class="loc-view-people">' + people.map(function (x) {
+          var im = x.c.images && x.c.images[0], th = im ? (typeof im === 'string' ? im : im.thumb) : '';
+          var role = ((x.c.info || []).filter(function (i) { return i.k === '身份'; })[0] || {}).v || '';
+          return '<a href="gallery.html?cat=character&open=' + encodeURIComponent(x.c.id) + '" data-open-ch="' + esc(x.c.id) + '" style="--pa:' + esc((x.ideo.theme && x.ideo.theme.accent) || '#b08a4a') + '"><span class="av">' + (th ? '<img src="' + esc(th) + '" alt="" loading="lazy">' : esc(x.c.name.slice(0, 1))) + '</span><span class="nm"><b>' + esc(x.c.name) + '</b><small>' + esc(x.ideo.name) + (role ? ' · ' + esc(String(role).replace(/^[^·]*·\s*/, '')) : '') + '</small></span></a>';
+        }).join('') + '</div></section>' : '') +
+        (d.scene ? '<section class="loc-view-sec"><h4>场景</h4><a class="loc-view-scene" href="' + esc(d.scene) + '">进入地点场景 →</a></section>' : '') +
+        '<footer class="loc-view-actions"><a class="primary" href="map.html?' + q + '">在地图上查看</a><a href="globe.html?' + q + '">3D地球</a></footer>' +
+      '</article>';
     var src = document.getElementById('galDetailPage');
-    if (src) { var cs = getComputedStyle(src); el.style.setProperty('--ca-d', cs.getPropertyValue('--ca-d')); el.style.setProperty('--ca-l', cs.getPropertyValue('--ca-l')); el.style.setProperty('--ca2', cs.getPropertyValue('--ca2')); }
+    if (src) { var cs = getComputedStyle(src), ca = cs.getPropertyValue('--ca').trim(); if (ca) { el.style.setProperty('--ca', ca); el.style.setProperty('--ca-d', ca); } }
     el.classList.add('show');
-    el.querySelector('.loc-view-x').onclick = function () { el.classList.remove('show'); };
-    el.onclick = function (ev) { if (ev.target === el) el.classList.remove('show'); };
-    var pl = el.querySelector('.loc-view-parent .loc-link');
-    if (pl) pl.addEventListener('click', function () { openLocView(pl.getAttribute('data-loc')); });
+    el.scrollTop = 0;
+    document.addEventListener('keydown', locKey, true);
+    var x = el.querySelector('.loc-view-x'); if (x) x.focus({ preventScroll: true });
   }
 
   /* ===== 角色页右栏文本自适应 =====

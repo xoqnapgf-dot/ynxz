@@ -1,25 +1,26 @@
-/* v21: separate flat/globe pages, with the original visible site navigation. */
+/* v22: flat atlas (js/atlas.js) and globe page share selection, URL and view switching. */
 (() => {
  'use strict';
  const $=id=>document.getElementById(id),locations=window.LOCATION_DATA||{},channel='pierteia-map-v1',origin=location.origin;
  const mode=document.body.dataset.mapView,globe=mode==='globe';
  let selected='',frame=null,ready=false,clean=false,lastSent='',clearPending=false,timer;
+ const place=$('mapPlace'),setPlace=v=>{if(place)place.value=v;};
  const valid=name=>typeof name==='string'&&Object.hasOwn(locations,name);
  function route(){const q=new URLSearchParams(location.search),site=q.get('place')||q.get('site');const name=valid(site)?site:(window.MAP_NATIONS||[]).find(n=>String(n.id)===site)?.name;return valid(name)?name:'';}
- function link(page){const u=new URL(page,location.href);u.searchParams.set('release','21');if(selected)u.searchParams.set('place',selected);return u.href;}
+ function link(page){const u=new URL(page,location.href);u.searchParams.set('release','22');if(selected)u.searchParams.set('place',selected);return u.href;}
  function links(){ $('viewFlat').href=link('map.html');$('viewGlobe').href=link('globe.html');if($('fallbackFlat'))$('fallbackFlat').href=link('map.html'); }
  function writeURL(){const u=new URL(location.href);u.searchParams.delete('view');u.searchParams.delete('site');if(selected)u.searchParams.set('place',selected);else u.searchParams.delete('place');if(u.href!==location.href)history.replaceState({},'',u);links();}
  function clearSceneRoute(){const u=new URL(location.href);u.searchParams.delete('inspect');u.searchParams.delete('frame');history.replaceState({},'',u);}
- for(const name of Object.keys(locations)){const o=document.createElement('option');o.value=name;o.textContent=(locations[name].parent?'↳ ':'')+name;$('mapPlace').append(o);}
+ if(place)for(const name of Object.keys(locations)){const o=document.createElement('option');o.value=name;o.textContent=(locations[name].parent?'↳ ':'')+name;place.append(o);}
  function send(action,extra={}){frame?.contentWindow?.postMessage({channel,action,...extra},origin);}
  function sync(){if(!ready)return;send('visibility',{visible:!document.hidden});if(clearPending){clearPending=false;send('overview');}if(selected&&lastSent!==selected){lastSent=selected;send('select',{name:selected});}}
  function select(name,source='toolbar'){
-  if(!valid(name))return;const changed=selected!==name;selected=name;clearPending=false;$('mapPlace').value=name;
+  if(!valid(name))return;const changed=selected!==name;selected=name;clearPending=false;setPlace(name);
   lastSent=source==='globe'?name:'';
   if(!globe&&source!=='flat')window.__flatMap.select(name);
   if(changed||source!=='globe')clearSceneRoute();sync();writeURL();
  }
- function clear(source='toolbar'){selected='';lastSent='';$('mapPlace').value='';window.__flatMap?.clear();clearSceneRoute();if(globe&&source!=='globe'){clearPending=true;sync();}writeURL();}
+ function clear(source='toolbar'){selected='';lastSent='';setPlace('');window.__flatMap?.clear();clearSceneRoute();if(globe&&source!=='globe'){clearPending=true;sync();}writeURL();}
  function notice(title,text,failed=false){$('globeNotice').hidden=false;$('globeNotice').dataset.state=failed?'error':'loading';$('globeNoticeTitle').textContent=title;$('globeNoticeText').textContent=text;$('retryGlobe').hidden=!failed;}
  function createFrame(){
   clearTimeout(timer);ready=false;clean=false;lastSent='';$('mapRestoreUI').hidden=true;frame?.remove();frame=null;
@@ -33,7 +34,7 @@
   frame.addEventListener('error',()=>notice('球体资源未能打开','可以重试，或返回平面地图。',true));
   timer=setTimeout(()=>{if(!ready)notice('资源加载时间较长','可以继续等待、重新加载，或返回平面地图；加载成功后会自动显示。',true);},60000);
  }
- $('mapPlace').onchange=e=>e.target.value?select(e.target.value):clear();
+ if(place)place.onchange=e=>e.target.value?select(e.target.value):clear();
  if(globe){
   addEventListener('message',e=>{
    if(e.origin!==origin||e.source!==frame?.contentWindow||e.data?.channel!==channel)return;
@@ -54,15 +55,11 @@
   document.addEventListener('visibilitychange',sync);
  }else{
   addEventListener('atlas:select',e=>select(e.detail.name,'flat'));
-  $('ncGlobe').onclick=()=>{const name=window.__flatMap.stats().selected;selected=valid(name)?name:'';location.assign(link('globe.html'));};
-  const compact=matchMedia('(max-width:900px), (max-height:500px)');
-  function fold(){ $('ncDesc').hidden=compact.matches;$('ncFold').hidden=!compact.matches;$('ncFold').setAttribute('aria-expanded',String(!compact.matches));$('ncFold').textContent=compact.matches?'地点介绍':'收起介绍'; }
-  $('ncFold').onclick=()=>{const open=$('ncDesc').hidden;$('ncDesc').hidden=!open;$('ncFold').setAttribute('aria-expanded',String(open));$('ncFold').textContent=open?'收起介绍':'地点介绍';};
-  new MutationObserver(fold).observe($('ncName'),{childList:true});compact.addEventListener('change',fold);fold();
+  addEventListener('atlas:clear',()=>clear('flat'));
  }
  function fit(){document.documentElement.style.setProperty('--hh',document.querySelector('.site-header').offsetHeight+'px');document.documentElement.style.setProperty('--map-vh',(window.visualViewport?.height||innerHeight)+'px');window.__flatMap?.resize();}
  new ResizeObserver(fit).observe(document.querySelector('.site-header'));window.visualViewport?.addEventListener('resize',fit);addEventListener('resize',fit);fit();
  addEventListener('popstate',()=>{const name=route();if(name)select(name,'route');else clear();});
- selected=route();$('mapPlace').value=selected;if(!globe&&selected)window.__flatMap.select(selected);if(globe)createFrame();writeURL();
+ selected=route();setPlace(selected);if(!globe&&selected)window.__flatMap.select(selected);if(globe)createFrame();writeURL();
  window.__mapView={stats:()=>({mode,selected,ready,clean,frames:document.querySelectorAll('#globeFrame').length}),setMode:next=>{if(['flat','globe'].includes(next)&&next!==mode)location.assign(link(next==='globe'?'globe.html':'map.html'));}};
 })();
