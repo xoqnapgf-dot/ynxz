@@ -257,7 +257,7 @@ SITES['天神峰'] = {
     birds: { n: 3, col: 0x2a2626, y: 44 }
   },
   wind: .9,
-  views: [{ label: '孤峰', az: 10, el: 22, d: 1 }, { label: '峰顶', az: 340, el: 18, d: .42, t: [2, 52, -4] }, { label: '石屋', az: 25, el: 24, d: .3, t: [6, null, 34] }, { label: '朝圣路', az: 0, el: 34, d: .45, t: [2, null, 40] }],
+  views: [{ label: '孤峰', az: 10, el: 20, d: 1.15, t: [0, 30, 0] }, { label: '峰顶', az: 340, el: 18, d: .42, t: [2, 52, -4] }, { label: '石屋', az: 25, el: 24, d: .3, t: [6, null, 34] }, { label: '朝圣路', az: 0, el: 34, d: .45, t: [2, null, 40] }],
   build(c) {
     const B = c.B;
     // 半山石屋：厚石墙、低矮、一缕炊烟
