@@ -1,0 +1,25 @@
+{
+ "source": "Pierteia Full 2026-09-19-01-11.json",
+ "outline": "js/atlas-data.js（与平面地图同一套 roughen(.2,2)+chaikin(2)）",
+ "size": {
+  "albedo": [
+   8192,
+   4096
+  ],
+  "normal": [
+   4096,
+   2048
+  ],
+  "data": [
+   4096,
+   2048
+  ],
+  "clouds": [
+   4096,
+   2048
+  ]
+ },
+ "data": "R=land height, G=ocean depth (sea) / night lights (land), B=cavity",
+ "terrain": "Azgaar heights + ridged noise + D8 stream-power erosion with uplift (artistic, not measured)",
+ "clouds": "procedural: zonal bands, 14 cyclone swirls, ocean cells, jet-stream cirrus; not a weather record"
+}

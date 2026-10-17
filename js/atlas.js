@@ -3,7 +3,7 @@
    → 动效层（时空裂缝、常灵群岛的光点）→ DOM 地名（可点击）。对外接口 window.__flatMap 与 map-view.js 对接。 */
 (() => {
   'use strict';
-  const A = window.ATLAS_DATA, NAT = window.MAP_NATIONS || [], LOC = window.LOCATION_DATA || {}, ALIAS = window.LOCATION_ALIAS || {};
+  const A = window.ATLAS_DATA, NAT = window.MAP_NATIONS || [], LOC = window.LOCATION_DATA || {};
   if (!A) return;
   const W = A.W, H = A.H, KM = A.kmPerUnit, GW = A.gw, GH = A.gh, STEP = A.step;
   const $ = id => document.getElementById(id);
@@ -500,7 +500,8 @@ void main(){
     C.save(); C.strokeStyle = 'rgba(110,88,58,.16)'; C.lineWidth = .7 / s;
     C.beginPath();
     for (let lon = -180; lon <= 180; lon += 30) { const x = (lon + 180) / 360 * W; C.moveTo(x, 0); C.lineTo(x, H); }
-    for (let lat = -75; lat <= 75; lat += 15) { const y = (90 - lat) / 180 * H; C.moveTo(0, y); C.lineTo(W, y); }
+    const latM = 180 * H / W;
+    for (let lat = -45; lat <= 45; lat += 15) { const y = (latM - lat) / (2 * latM) * H; C.moveTo(0, y); C.lineTo(W, y); }
     C.stroke();
     C.setLineDash([6 / s, 4 / s]); C.strokeStyle = 'rgba(150,86,58,.24)'; C.lineWidth = .9 / s; C.beginPath(); C.moveTo(0, H / 2); C.lineTo(W, H / 2); C.stroke();
     C.restore();
@@ -768,76 +769,26 @@ void main(){
 
   /* ---------------- 卡片 ---------------- */
   const card = $('atlasCard');
-  let peopleIndex = null, peopleLoading = null;
-  function loadPeople() {
-    if (peopleIndex) return Promise.resolve(peopleIndex);
-    if (peopleLoading) return peopleLoading;
-    peopleLoading = new Promise(res => {
-      const done = () => {
-        const idx = {}, G = window.GALLERY_DATA || [];
-        for (const ideo of G) for (const c of (ideo.characters || [])) {
-          const home = (c.info || []).find(i => i.k === '属地'); if (!home) continue;
-          String(home.v).split('·').map(t => t.trim()).forEach(t => { const key = has(LOC, t) ? t : ALIAS[t]; if (key) (idx[key] = idx[key] || []).push({ c, ideo }); });
-        }
-        peopleIndex = idx; res(idx);
-      };
-      if (window.GALLERY_DATA) return done();
-      const sc = document.createElement('script'); sc.src = card.dataset.galleryData; sc.onload = done; sc.onerror = () => { peopleIndex = {}; res(peopleIndex); }; document.head.appendChild(sc);
-    });
-    return peopleLoading;
-  }
-  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  function coordText(x, y) { const lon = x / W * 360 - 180, lat = 90 - y / H * 180; return `${Math.abs(lat).toFixed(1)}°${lat >= 0 ? 'N' : 'S'} · ${Math.abs(lon).toFixed(1)}°${lon >= 0 ? 'E' : 'W'}`; }
+  function coordText(x, y) { return PlaceUI.coordText(x / W, y / H); }
   function anchorOf(name) { const seen = new Set(); let n = name; while (n && !seen.has(n)) { seen.add(n); if (itemByName.has(n)) return itemByName.get(n); n = LOC[n]?.parent; } return null; }
-  function chainOf(name) { const out = [], seen = new Set(); let n = LOC[name]?.parent; while (n && !seen.has(n)) { seen.add(n); out.unshift(n); n = LOC[n]?.parent; } return out; }
   function openCard(name, it) {
-    const d = LOC[name], exact = it && it.name === name;
+    const exact = it && it.name === name;
     const color = it && it.state != null ? stateColor.get(it.state) : null;
-    card.style.setProperty('--place', color || (it?.art === 'isles' ? '#b39ae6' : it?.art === 'peak' ? '#e0b860' : it?.art === 'city' ? '#9fbedf' : it?.art === 'academy' ? '#e7a99a' : '#cdb991'));
-    $('acKind').textContent = d ? d.kind : '未设定地区';
-    $('acCoord').textContent = exact ? coordText(it.x, it.y) : it ? '坐标未定 · 沿「' + it.name + '」定位' : '';
-    $('acName').textContent = name;
-    const chain = chainOf(name);
-    $('acTrail').innerHTML = chain.length ? chain.map(n => `<button type="button" data-go="${esc(n)}">${esc(n)}</button>`).join('<i>›</i>') + `<i>›</i><span>${esc(name)}</span>` : '';
-    $('acTrail').hidden = !chain.length;
-    const media = $('acMedia');
-    media.hidden = !(d && d.image);
-    if (d && d.image) media.innerHTML = `<img src="${esc(d.image)}" alt="${esc(name)}" loading="lazy">`;
-    const desc = d ? d.desc : '地图生成器划出的区域，还没有设定，也没有角色归属于此。';
-    $('acDesc').innerHTML = String(desc).split(/\n\n+/).map(p => `<p>${esc(p)}</p>`).join('');
-    $('acDesc').classList.toggle('muted', !d);
-    const kids = Object.keys(LOC).filter(n => LOC[n].parent === name);
-    $('acChildren').hidden = !kids.length;
-    $('acChildren').innerHTML = kids.length ? `<h3>下辖地点</h3><div class="atl-chips">${kids.map(n => `<button type="button" data-go="${esc(n)}"><b>${esc(n)}</b><small>${esc(LOC[n].kind)}</small></button>`).join('')}</div>` : '';
-    const scene = $('acScene');
-    scene.hidden = !(d && d.scene);
-    if (d && d.scene) scene.innerHTML = `<h3>场景</h3><a class="atl-scene" href="${esc(d.scene)}">进入地点场景 →</a>`;
-    $('acGlobe').hidden = !d;
-    const ppl = $('acPeople'); ppl.hidden = !d; ppl.innerHTML = d ? '<h3>相关角色</h3><p class="atl-wait">正在查找…</p>' : '';
-    if (d) loadPeople().then(idx => {
-      if ($('acName').textContent !== name) return;
-      const groups = [[name, idx[name] || []]];
-      kids.forEach(k => { if (idx[k]?.length) groups.push([k, idx[k]]); });
-      const total = groups.reduce((a, g) => a + g[1].length, 0);
-      if (!total) { ppl.innerHTML = '<h3>相关角色</h3><p class="atl-wait">暂时没有角色以此地为属地。</p>'; return; }
-      ppl.innerHTML = `<h3>相关角色 <small>${total}</small></h3>` + groups.filter(g => g[1].length).map(([g, list]) => (g !== name ? `<p class="atl-sub">${esc(g)}</p>` : '') + '<div class="atl-people">' + list.map(({ c, ideo }) => {
-        const im = c.images && c.images[0], th = im ? (typeof im === 'string' ? im : im.thumb) : '';
-        const role = ((c.info || []).find(i => i.k === '身份') || {}).v || ideo.name;
-        return `<a href="gallery.html?cat=character&open=${encodeURIComponent(c.id)}" style="--ca:${esc(ideo.theme?.accent || '#b08a4a')}"><span class="av">${th ? `<img src="${esc(th)}" alt="" loading="lazy">` : esc(c.name.slice(0, 1))}</span><span class="nm"><b>${esc(c.name)}</b><small>${esc(ideo.name)} · ${esc(String(role).replace(/^[^·]*·\s*/, ''))}</small></span></a>`;
-      }).join('') + '</div>').join('');
+    PlaceUI.fillCard(name, {
+      color: color || (it?.art === 'isles' ? '#b39ae6' : it?.art === 'peak' ? '#e0b860' : it?.art === 'city' ? '#9fbedf' : it?.art === 'academy' ? '#e7a99a' : '#cdb991'),
+      coord: exact ? coordText(it.x, it.y) : it ? '坐标未定 · 沿「' + it.name + '」定位' : ''
     });
+    $('acGlobe').hidden = !has(LOC, name);
     card.hidden = false;
     requestAnimationFrame(() => card.classList.add('open'));
     stage.classList.add('card-open');
-    card.scrollTop = 0;
   }
   function closeCard() { card.classList.remove('open'); stage.classList.remove('card-open'); setTimeout(() => { if (!card.classList.contains('open')) card.hidden = true; }, 260); }
   card.addEventListener('click', e => { const go = e.target.closest('[data-go]'); if (go) select(go.dataset.go, true, true); });
   $('acClose').onclick = () => clear(true);
-  $('acGlobe').onclick = () => window.__mapView?.setMode('globe');
-  $('acCopy').onclick = () => { const u = location.href; (navigator.clipboard?.writeText(u) || Promise.reject()).then(() => toast('已复制链接'), () => toast(u)); };
+  $('acGlobe').onclick = () => window.__mapView?.setMode('globe', { scene: true });
+  $('acCopy').onclick = PlaceUI.copyLink;
   $('acGrip').onclick = () => card.classList.toggle('full');
-  function toast(t) { const el = $('atlasToast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 1800); }
 
   /* ---------------- 选择与飞行 ---------------- */
   function selectItem(it, emit, fly) { select(it.name, emit, fly, it); }
@@ -951,30 +902,10 @@ void main(){
   function home() { s = clamp(vw < 700 ? vh / H * .72 : Math.min(vw / 2700, vh / H), minS, maxS); cx = 1466; cy = H / 2; clampView(); invalidate(); }
 
   /* ---------------- 搜索 ---------------- */
-  const search = $('atlasSearch'), sug = $('atlasSuggest');
-  const entries = [
-    ...Object.keys(LOC).map(n => ({ name: n, label: n, kind: LOC[n].kind, canon: true })),
-    ...Object.keys(ALIAS).filter(a => !has(LOC, a)).map(a => ({ name: ALIAS[a], label: a, kind: '即「' + ALIAS[a] + '」', canon: true })),
+  const { hide: hideSuggest } = PlaceUI.search($('atlasSearch'), $('atlasSuggest'), [
+    ...PlaceUI.baseEntries(),
     ...items.filter(i => i.ghost).map(i => ({ name: i.name, label: i.name, kind: '未设定地区', canon: false }))
-  ];
-  let sugIdx = -1, sugList = [];
-  function showSuggest() {
-    const q = search.value.trim();
-    sugList = (q ? entries.filter(e => e.label.includes(q) || (e.kind || '').includes(q)) : entries.filter(e => e.canon && !LOC[e.name]?.parent && e.label === e.name)).slice(0, 9);
-    sugIdx = -1;
-    sug.innerHTML = sugList.map((e, i) => `<li role="option" id="sg${i}" data-i="${i}"><b>${esc(e.label)}</b><small>${esc(e.kind || '')}</small></li>`).join('') || '<li class="none">没有找到这个地名</li>';
-    sug.hidden = false; search.setAttribute('aria-expanded', 'true');
-  }
-  function hideSuggest() { sug.hidden = true; search.setAttribute('aria-expanded', 'false'); }
-  function pick(e) { if (!e) return; hideSuggest(); search.value = ''; search.blur(); const it = itemByName.get(e.name); if (!e.canon && it) { if (!layers.ghosts) setLayer('ghosts', true); selectItem(it, true, true); } else select(e.name, true, true); }
-  search.addEventListener('focus', showSuggest);
-  search.addEventListener('input', showSuggest);
-  search.addEventListener('blur', () => setTimeout(hideSuggest, 150));
-  search.addEventListener('keydown', e => {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sugIdx = clamp(sugIdx + (e.key === 'ArrowDown' ? 1 : -1), 0, sugList.length - 1); [...sug.children].forEach((li, i) => li.classList.toggle('on', i === sugIdx)); search.setAttribute('aria-activedescendant', 'sg' + sugIdx); }
-    else if (e.key === 'Enter') { e.preventDefault(); pick(sugList[Math.max(0, sugIdx)]); }
-  });
-  sug.addEventListener('pointerdown', e => { const li = e.target.closest('[data-i]'); if (li) { e.preventDefault(); pick(sugList[+li.dataset.i]); } });
+  ], e => { const it = itemByName.get(e.name); if (!e.canon && it) { if (!layers.ghosts) setLayer('ghosts', true); selectItem(it, true, true); } else select(e.name, true, true); });
 
   /* ---------------- 图层 ---------------- */
   const layerBtn = $('atlasLayersBtn'), layerPop = $('atlasLayers');

@@ -1911,7 +1911,7 @@
     while (p && !seen[p]) { seen[p] = 1; chain.unshift(p); p = L[p] && L[p].parent; }
     var kids = Object.keys(L).filter(function (n) { return L[n].parent === name; });
     var people = locPeople(name);
-    var q = 'release=22&place=' + encodeURIComponent(name);
+    var q = 'release=23&place=' + encodeURIComponent(name);
     var paras = String(d.desc || '').split(/\n\n+/).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('');
     el.innerHTML =
       '<article class="loc-view-card">' +

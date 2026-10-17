@@ -1,4 +1,4 @@
-/* v22 地图界面：平面地图（atlas）与 3D 地球共用的浮动界面。纸张浅色系，与站点深色页头分开。 */
+/* v23 地图界面：平面地图（atlas）与 3D 地球共用的浮动界面。纸张浅色系，与站点深色页头分开。 */
 :root{
   --atl-paper:#f4ecd9;--atl-paper2:#e8dbbb;--atl-ink:#33281c;--atl-ink2:#6a5842;--atl-ink3:#9a8768;
   --atl-line:rgba(62,49,34,.2);--atl-accent:#a8742a;--atl-panel:rgba(250,246,236,.93);
@@ -39,7 +39,7 @@ html,body{overflow:hidden}
 /* ---------- 浮动界面通用 ---------- */
 .atl-ui{position:absolute;z-index:6}
 .atl-ui button,.atl-ui a,.atl-ui input,.atl-card button{font-family:inherit}
-.atl-ui svg,.atl-card svg,.globe-bar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.atl-ui svg,.atl-card svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .atl-panel,.atl-brand,.atl-search,.atl-seg,.atl-tools>*,.atl-layers{background:var(--atl-panel);border:1px solid var(--atl-line);border-radius:12px;box-shadow:var(--atl-shadow);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 
 .atl-top{top:14px;left:16px;right:16px;display:flex;align-items:center;gap:10px;pointer-events:none}
@@ -67,7 +67,7 @@ html,body{overflow:hidden}
 
 .atl-tools{top:72px;right:16px;display:flex;flex-direction:column;gap:8px;transition:right .26s ease}
 .atl-tools>button,.atl-zoom button{display:grid;place-items:center;width:42px;height:42px;padding:0;border:0;color:var(--atl-ink);cursor:pointer;background:transparent}
-.atl-tools>button{border:1px solid var(--atl-line)}
+.atl-tools>button{border:1px solid var(--atl-line);background:var(--atl-panel)}
 .atl-tools>button[aria-expanded=true]{background:#3a2d20;color:#f6eedb}
 .atl-zoom{display:flex;flex-direction:column;overflow:hidden}
 .atl-zoom button+button{border-top:1px solid var(--atl-line)}
@@ -143,20 +143,63 @@ html,body{overflow:hidden}
 .atl-ui :focus-visible,.atl-card :focus-visible{outline:2px solid var(--atl-accent);outline-offset:2px}
 
 /* ---------- 3D 地球页 ---------- */
-.globe-stage{background:#0b1622;cursor:auto}
-#globeHost{position:absolute;inset:0;background:#0b1622}
-#globeFrame{display:block;width:100%;height:100%;border:0;background:#0b1622}
-.globe-stage .atl-top{z-index:6}
-.globe-notice{position:absolute;inset:0;z-index:4;display:grid;place-content:center;text-align:center;padding:24px;background:radial-gradient(ellipse at center,#1b3142,#0b1622 70%);color:#ece4cf}
-.globe-notice[hidden]{display:none}
-.globe-notice h2{font:500 24px/1.5 var(--atl-serif);letter-spacing:.14em;margin:0 0 10px}
-.globe-notice p{font:13.5px/1.9 var(--atl-serif);color:#b9c4c9;max-width:420px;margin:0 auto 20px}
-.globe-notice .notice-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.globe-notice button,.globe-notice a{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid rgba(236,228,207,.4);background:rgba(236,228,207,.08);color:#f2e9d2;border-radius:10px;cursor:pointer;text-decoration:none;font:600 13px var(--atl-serif);letter-spacing:.08em}
-.globe-notice[data-state=loading] h2::before{content:"";display:block;width:38px;height:38px;margin:0 auto 16px;border-radius:50%;border:2px solid rgba(236,228,207,.2);border-top-color:#e8cf95;animation:atl-spin 1s linear infinite}
+.glb-main{background:#03060b}
+.glb-stage{background:radial-gradient(ellipse at 50% 45%,#0a1420 0%,#03060b 75%);cursor:grab}
+.glb-stage.grabbing,.glb-stage:active{cursor:grabbing}
+.glb-stage canvas{touch-action:none}
+.atl-label.glb{color:#f3ead6;letter-spacing:.26em;font-size:14px;
+  text-shadow:0 0 2px rgba(3,8,14,.95),0 0 4px rgba(3,8,14,.85),0 1px 8px rgba(3,8,14,.7);transition:color .15s,opacity .2s}
+.atl-label.glb.nation:hover,.atl-label.glb.nation.active{color:#ffd88f}
+.atl-label.glb.nation.active .t{text-decoration-color:rgba(255,216,143,.8)}
+.atl-label.glb.ghost{color:rgba(225,214,190,.62);font-size:11px!important}
+.atl-label.glb.special .k{color:rgba(236,226,204,.78)}
+.atl-label.glb.art-peak .t{color:#ffd98a}.atl-label.glb.art-city .t{color:#bcd8ff}.atl-label.glb.art-academy .t{color:#ffc0ae}.atl-label.glb.art-isles .t{color:#d9c6ff}
+.glb-stage .atl-coord{color:rgba(230,222,204,.7);text-shadow:0 1px 4px #000}
+.atl-actions button.icon{flex:none;width:42px;padding:0}
+.glb-loading{position:absolute;inset:0;z-index:12;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%,#0d1b29,#03060b 72%);color:#ece4cf;transition:opacity .6s ease}
+.glb-loading.gone{opacity:0;pointer-events:none}
+.glb-loading[hidden]{display:none}
+.glb-load-in{display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px;max-width:420px}
+.glb-orb{width:84px;height:84px;border-radius:50%;margin-bottom:22px;background:radial-gradient(circle at 34% 30%,#9fc2c9 0,#3d6f7f 28%,#13293a 62%,#060d16 100%);box-shadow:0 0 0 1px rgba(160,200,230,.18),0 0 40px rgba(110,160,210,.25),inset -14px -10px 24px rgba(0,0,0,.65);animation:glb-orb 6s linear infinite}
+@keyframes glb-orb{from{background-position:0 0}to{background-position:84px 0}}
+.glb-load-in h2{margin:0 0 6px;font:500 20px/1.5 var(--atl-serif);letter-spacing:.3em}
+.glb-load-in p{margin:0 0 16px;font:13px/1.8 var(--atl-serif);color:#a9b6bf;letter-spacing:.1em}
+.glb-bar{width:220px;height:3px;border-radius:3px;background:rgba(236,228,207,.14);overflow:hidden}
+.glb-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c9a45c,#f1dba4);transition:width .35s ease}
+.glb-flat{margin-top:22px;color:#d7c79f;font:13px var(--atl-serif);letter-spacing:.12em;text-decoration:none;border-bottom:1px solid rgba(215,199,159,.4)}
+.glb-loading[data-state=error] .glb-orb{animation:none;filter:grayscale(1) brightness(.7)}
+.glb-loading[data-state=error] .glb-bar{display:none}
+.glb-noscript{position:fixed;inset:auto 0 0;padding:16px;text-align:center;background:#f4ecd9;color:#33281c}
+
+/* 2.5D 沙盘 */
+.dio .atl-labels,.dio .atl-foot,.in-dio #atlasLayersBtn,.in-dio #atlasLayers{display:none}
+.dio-hud{inset:0;pointer-events:none;z-index:6}
+.dio-hud[hidden]{display:none}
+.dio-hud>*{pointer-events:auto}
+.dio-head{position:absolute;top:72px;left:16px;display:flex;align-items:stretch;gap:8px;max-width:calc(100% - 100px)}
+.dio-head>*{background:var(--atl-panel);border:1px solid var(--atl-line);border-radius:12px;box-shadow:var(--atl-shadow);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.dio-head button{display:flex;align-items:center;gap:6px;min-height:46px;padding:0 14px;color:var(--atl-ink);font:600 13.5px var(--atl-serif);letter-spacing:.1em;cursor:pointer}
+.dio-head button:hover{color:#8a5413}
+.dio-title{display:flex;flex-direction:column;justify-content:center;padding:6px 16px;min-width:0}
+.dio-title b{font:700 16px/1.3 var(--atl-serif);letter-spacing:.16em;color:var(--atl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dio-title small{font:12px/1.4 var(--atl-serif);letter-spacing:.12em;color:var(--atl-ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dio-bottom{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;max-width:calc(100% - 32px);transition:transform .26s ease}
+.card-open .dio-bottom{transform:translateX(calc(-50% - 204px))}
+.dio-views{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:4px;background:var(--atl-panel);border:1px solid var(--atl-line);border-radius:12px;box-shadow:var(--atl-shadow);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.dio-views button{min-height:36px;padding:0 14px;border:0;border-radius:9px;background:transparent;color:var(--atl-ink2);font:600 13px var(--atl-serif);letter-spacing:.1em;cursor:pointer;white-space:nowrap}
+.dio-views button:hover{background:rgba(62,49,34,.07);color:var(--atl-ink)}
+.dio-views button[aria-pressed=true]{background:#3a2d20;color:#f6eedb}
+.dio-toggles{display:flex;gap:6px}
+.dio-toggles label{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(250,246,236,.86);border:1px solid var(--atl-line);font:12.5px var(--atl-serif);color:var(--atl-ink);cursor:pointer;box-shadow:var(--atl-shadow)}
+.dio-toggles input{accent-color:#7a5420;margin:0}
+.dio-note{margin:0;max-width:520px;padding:4px 12px;border-radius:999px;background:rgba(20,16,10,.38);font:11.5px/1.6 var(--atl-serif);letter-spacing:.06em;color:rgba(255,248,232,.92);text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.dio-veil{position:absolute;inset:0;z-index:11;display:grid;place-items:center;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at center,rgba(244,236,217,.97),rgba(226,212,182,.98));transition:opacity .45s ease}
+.dio-veil.on{opacity:1;pointer-events:auto}
+.dio-veil span{font:500 15px var(--atl-serif);letter-spacing:.24em;color:var(--atl-ink2)}
+.dio-veil span::before{content:"";display:block;width:34px;height:34px;margin:0 auto 14px;border-radius:50%;border:2px solid rgba(62,49,34,.15);border-top-color:#a8742a;animation:atl-spin 1s linear infinite}
 @keyframes atl-spin{to{transform:rotate(360deg)}}
-#mapRestoreUI{position:absolute;top:72px;right:16px;z-index:7;min-height:42px;padding:0 14px;border:1px solid var(--atl-line);border-radius:12px;background:var(--atl-panel);color:var(--atl-ink);font:600 13px var(--atl-serif);cursor:pointer;box-shadow:var(--atl-shadow)}
-#mapRestoreUI[hidden]{display:none!important}
+.dio .glb-stage,.glb-stage.dio{cursor:grab;background:#cfc6b4}
 
 /* ---------- 窄屏 ---------- */
 @media (max-width:900px),(max-height:500px){
@@ -191,15 +234,14 @@ html,body{overflow:hidden}
   .card-open .atl-tools,.card-open .atl-layers{right:10px}
   .card-open .atl-layers{right:62px}
   .card-open .atl-foot{opacity:0}
+  .dio-head{top:66px;left:10px;right:10px;max-width:none}
+  .dio-head .dio-title{flex:1}
+  .dio-head button{padding:0 11px}
+  .dio-bottom{bottom:calc(10px + env(safe-area-inset-bottom,0px));width:calc(100% - 20px)}
+  .card-open .dio-bottom{transform:translateX(-50%)}
+  .dio-views{flex-wrap:nowrap;overflow-x:auto;max-width:100%;justify-content:flex-start}
+  .dio-note{display:none}
 }
 @media (prefers-reduced-motion:reduce){.atl-card,.atl-tools,.atl-layers,.atl-compass{transition:none}}
 
-/* 3D 地球页顶栏：不覆盖球体内部界面 */
-.globe-main{display:flex;flex-direction:column;background:#0b1622}
-.globe-bar{position:relative;z-index:6;display:flex;align-items:center;gap:10px;padding:10px 16px;background:linear-gradient(180deg,#efe3c6,#e6d6b2);border-bottom:1px solid rgba(62,49,34,.3);box-shadow:0 6px 18px -10px rgba(0,0,0,.6)}
-.globe-bar .atl-search{width:min(300px,36vw);cursor:pointer}
-.globe-bar .atl-search select{cursor:pointer;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236a5842' stroke-width='1.6'/%3E%3C/svg%3E") right 4px center/11px no-repeat;padding-right:22px}
-.globe-help{font:12px var(--atl-serif);color:var(--atl-ink2);letter-spacing:.08em;white-space:nowrap}
-.globe-stage{flex:1;min-height:0}
-@media (max-width:900px),(max-height:500px){.globe-bar{padding:8px 10px;gap:8px}.globe-bar .atl-brand,.globe-help{display:none}.globe-bar .atl-search{flex:1;width:auto}}
 .atl-search input:focus-visible,.atl-search select:focus-visible{outline:none}
