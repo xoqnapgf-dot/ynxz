@@ -142,15 +142,19 @@ export function createFx(scene, ctx, cfg, env) {
       cg.userData.weather = o.weather ?? false;
       grp.add(cg); clouds.push({ g: cg, sp: .4 + r() * .6, mat, s, a: 1 }); if (storm) storms.push({ g: cg, s });
     }
-    const lim = R * 1.25, dir = new T.Vector3(), v = new T.Vector3();
+    const lim = R * 1.25, core = open ? R * .9 : R, v = new T.Vector3();
     updaters.push((t, dt, cam) => {
-      if (cam) cam.getWorldDirection(dir);
       for (const c of clouds) {
         c.g.position.addScaledVector(windV, dt * (o.speed ?? 1.4) * c.sp);
         // 云挡在镜头和主体之间时淡出，只在画面边缘当陪衬
         let want = 1;
-        if (cam) { v.copy(c.g.position).sub(cam.position); const k = v.dot(dir); if (k > 0) { const edge = (v.addScaledVector(dir, -k).length() - c.s * 1.8) / k; want = Math.min(1, Math.max(.15, (edge - .08) / .14)); } }
-        c.a += (want - c.a) * Math.min(1, dt * 3); c.mat.opacity = c.a; c.mat.depthWrite = c.a > .98; c.g.children.forEach(m => { m.castShadow = c.a > .5; });
+        if (cam) {
+          // 从镜头穿过云心的视线落到地面，落点在主体范围内就说明云挡住了主体
+          v.copy(c.g.position).sub(cam.position);
+          const k = (top - cam.position.y) / v.y;
+          if (v.y < 0 && k > 1) { const gx = cam.position.x + v.x * k, gz = cam.position.z + v.z * k, far = Math.hypot(gx, gz) - core - c.s * 2 * k; want = Math.min(1, Math.max(0, far / (R * .25))); }
+        }
+        c.a += (want - c.a) * Math.min(1, dt * 3); c.mat.opacity = c.a; c.mat.depthWrite = c.a > .98; c.g.visible = c.a > .02; c.g.children.forEach(m => { m.castShadow = c.a > .5; });
         const d = Math.hypot(c.g.position.x, c.g.position.z);
         if (d > lim && c.g.position.x * windV.x + c.g.position.z * windV.z > 0) { c.g.position.x -= windV.x * lim * 1.9; c.g.position.z -= windV.z * lim * 1.9; }
       }
@@ -196,7 +200,7 @@ export function createFx(scene, ctx, cfg, env) {
       if (t > next) {
         next = t + (o.every ?? 6) * (.5 + r());
         until = t + .32;
-        const sc = storms.length ? storms[Math.floor(r() * storms.length)] : null, a = r() * Math.PI * 2, d = sc ? r() * sc.s : R * (.3 + r() * .7);
+        const vis = storms.filter(q => q.g.visible), sc = vis.length ? vis[Math.floor(r() * vis.length)] : null, a = r() * Math.PI * 2, d = sc ? r() * sc.s : R * (.3 + r() * .7);
         const x0 = (sc ? sc.g.position.x : 0) + Math.cos(a) * d, z0 = (sc ? sc.g.position.z : 0) + Math.sin(a) * d, y0 = sc ? sc.g.position.y : top + R * .6;
         const pts = []; let x = x0, z = z0, y = y0; const yg = ctx.h(x0, z0);
         while (y > yg) { pts.push(new T.Vector3(x, y, z)); y -= R * (.03 + r() * .04); x += (r() - .5) * R * .05; z += (r() - .5) * R * .05; }

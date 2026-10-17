@@ -130,7 +130,7 @@ COUNTRIES['坎普共和国'] = {
   rivers: [{ pts: [[20, -300], [16, -80], [26, -20], [14, 30], [24, 90], [10, 300]], w: 22, depth: 3, bank: 7 }],
   roads: [{ pts: [[-30, -10], [-8, 6], [6, 26]], w: 3.6 }, { pts: [[42, 30], [70, 10], [120, -20]], w: 3.4 }],
   pads: [{ x: -30, z: -10, w: 22, d: 16, ry: .3, soft: 6 }, { x: 0, z: 30, w: 18, d: 22, soft: 5 }],
-  weather: { clouds: [{ n: 4, kind: 'storm', col: 0x5c6068, y: 34, size: 24, inner: 2, spread: .5, speed: .8 }, { n: 4, y: 44, size: 7, inner: .4, spread: .8 }], lightning: { every: 9 }, birds: { n: 8, col: 0x1a1a1a, y: 20 } },
+  weather: { clouds: [{ n: 4, kind: 'storm', col: 0x5c6068, y: 34, size: 18, inner: 2, spread: .5, speed: .8 }, { n: 4, y: 44, size: 7, inner: .4, spread: .8 }], lightning: { every: 9 }, birds: { n: 8, col: 0x1a1a1a, y: 20 } },
   wind: .65,
   views: [{ label: '河谷', az: 165, el: 33, d: 1 }, { label: '咖啡梯田', az: 120, el: 30, d: .42, t: [-36, null, 10] }, { label: '河港', az: 200, el: 22, d: .38, t: [6, null, 30] }, { label: '牧场', az: 250, el: 26, d: .42, t: [60, null, -14] }],
   build(c) {
