@@ -1,0 +1,82 @@
+{
+  "revision": 11,
+  "date": "2026-10-15",
+  "note": "Reference material textures, not claimed to be scans. Photographic HDRI used only for lighting/reflections, never a replacement for the interactive scene.",
+  "assets": [
+    {
+      "file": "wood_color.jpg",
+      "source": "https://github.com/AcademySoftwareFoundation/MaterialX/blob/5ed154ef9ab5f45c6cf17d158830f8a637593857/resources/Images/wood_color.jpg",
+      "license": "Apache-2.0",
+      "upstreamSHA256": "7413bbcd8ea3cc33f520283d9c6bc7b8a13f1f9bb94d265bd0a1910e22e2ce27",
+      "sha256": "9175e1ec55d65e62c4b4ca872898e9e083eb26029c5a0ab45b953e448273f3f3",
+      "bytes": 347543,
+      "originalDimensions": [
+        2048,
+        2048
+      ],
+      "modification": "Resized to fit 1024 pixels, JPEG quality 94"
+    },
+    {
+      "file": "wood_roughness.jpg",
+      "source": "https://github.com/AcademySoftwareFoundation/MaterialX/blob/5ed154ef9ab5f45c6cf17d158830f8a637593857/resources/Images/wood_roughness.jpg",
+      "license": "Apache-2.0",
+      "upstreamSHA256": "e9e2e9797ad619b8e24c589d9379a16538a0ba34d5944e436bd6f0c33992f0f3",
+      "sha256": "fdfbf34119ed8737cf976b410a3fb6bbcbd0f35381a78f98fef20b20a93618a1",
+      "bytes": 288971,
+      "originalDimensions": [
+        2048,
+        2048
+      ],
+      "modification": "Resized to fit 1024 pixels, JPEG quality 94"
+    },
+    {
+      "file": "brick_base_gray.jpg",
+      "source": "https://github.com/AcademySoftwareFoundation/MaterialX/blob/5ed154ef9ab5f45c6cf17d158830f8a637593857/resources/Images/brick_base_gray.jpg",
+      "license": "Apache-2.0",
+      "upstreamSHA256": "4a228efc9f4a42a4c23d71ab3b880a3beb26f9f403208122b855de05e9022dee",
+      "sha256": "bf5d6ee1166440c18fb977dfb5f87aa970d38ac6d4d854e0f18eb301bf57b7d8",
+      "bytes": 449728,
+      "originalDimensions": [
+        2048,
+        2048
+      ],
+      "modification": "Resized to fit 1024 pixels, JPEG quality 94"
+    },
+    {
+      "file": "brick_normal.jpg",
+      "source": "https://github.com/AcademySoftwareFoundation/MaterialX/blob/5ed154ef9ab5f45c6cf17d158830f8a637593857/resources/Images/brick_normal.jpg",
+      "license": "Apache-2.0",
+      "upstreamSHA256": "9f9be6b8eb54c50c0c875762e9493c8672f3a62b89bef4635ac3868debf7f55d",
+      "sha256": "e2829e727ddb5e570c36d8f909e4a1ddc25630532d67764c960ee484f6a9c95d",
+      "bytes": 1013671,
+      "originalDimensions": [
+        2048,
+        2048
+      ],
+      "modification": "Resized to fit 1024 pixels, JPEG quality 94"
+    },
+    {
+      "file": "brick_roughness.jpg",
+      "source": "https://github.com/AcademySoftwareFoundation/MaterialX/blob/5ed154ef9ab5f45c6cf17d158830f8a637593857/resources/Images/brick_roughness.jpg",
+      "license": "Apache-2.0",
+      "upstreamSHA256": "00cd23d5d58729039dc00e73169fafaf9bae32472d3ea415abc2c4dbe5246f81",
+      "sha256": "47bf2854058fe53306e2b655d00846748ebb0c287c402f7e43ad900e92dde742",
+      "bytes": 435509,
+      "originalDimensions": [
+        2048,
+        2048
+      ],
+      "modification": "Resized to fit 1024 pixels, JPEG quality 94"
+    },
+    {
+      "file": "forest_slope_512.hdr",
+      "source": "https://github.com/pmndrs/drei-assets/blob/456060a26bbeb8fdf79326f224b6d99b8bcce736/hdri/forest_slope_1k.hdr",
+      "license": "CC0-1.0",
+      "upstreamSHA256": "926a6bb81897919b2924f42407162b8d54be91eab2da3fe7fe19daf308cfa09a",
+      "sha256": "32e2b741b932905bae29bf9e44747e3a8a3ea87bdfbc732b1e528f7330fe75ea",
+      "bytes": 530481,
+      "originalDimensions": null,
+      "modification": "2x2 box-filter downsample in linear radiance to 512x256, RGBE encoded; original remains in pinned upstream"
+    }
+  ]
+}

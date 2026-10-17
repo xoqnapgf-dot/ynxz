@@ -1,0 +1,275 @@
+{
+  "revision": 13,
+  "scope": "Map-page integration; ordinary-resolution UI and one optional academy scene, not a new eight-scene art review",
+  "errors": [],
+  "checks": {
+    "flatDoesNotLoad3D": true,
+    "flatStateAndSuspendedRenderer": true,
+    "historyAndSingleFrame": true,
+    "bidirectionalParentLocation": true,
+    "messageOriginSourceAndNameGuards": true,
+    "responsivePanels": true,
+    "hiddenLoadCannotActivate": true,
+    "optionalAcademyAndCamera": true,
+    "scenePreservedAcrossSwitch": true,
+    "contextLossAndRetry": true,
+    "noWebGLFlatFallback": true,
+    "failedTextureRetry": true,
+    "standaloneRetained": true
+  },
+  "viewports": [
+    {
+      "width": 1024,
+      "height": 768,
+      "layout": {
+        "width": 1024,
+        "scroll": 1024,
+        "button": [
+          234.5,
+          93,
+          298.0625,
+          133
+        ],
+        "stage": [
+          0,
+          149,
+          1024,
+          619
+        ]
+      },
+      "ui": {
+        "width": 1024,
+        "height": 619,
+        "scroll": 1024,
+        "explorer": {
+          "x": 728,
+          "y": 16,
+          "right": 1008,
+          "bottom": 535
+        },
+        "zoom": {
+          "x": 886,
+          "y": 557,
+          "right": 1008,
+          "bottom": 603
+        },
+        "view": {
+          "x": 16,
+          "y": 551,
+          "right": 297.0625,
+          "bottom": 603
+        },
+        "collapsed": false
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "layout": {
+        "width": 390,
+        "scroll": 390,
+        "button": [
+          319.4375,
+          110,
+          373,
+          146
+        ],
+        "stage": [
+          0,
+          208,
+          390,
+          636
+        ]
+      },
+      "ui": {
+        "width": 390,
+        "height": 636,
+        "scroll": 390,
+        "explorer": {
+          "x": 10,
+          "y": 478,
+          "right": 380,
+          "bottom": 536
+        },
+        "zoom": {
+          "x": 340,
+          "y": 548,
+          "right": 380,
+          "bottom": 626
+        },
+        "view": {
+          "x": 10,
+          "y": 578,
+          "right": 227,
+          "bottom": 626
+        },
+        "collapsed": true
+      }
+    },
+    {
+      "width": 320,
+      "height": 640,
+      "layout": {
+        "width": 320,
+        "scroll": 320,
+        "button": [
+          249.4375,
+          110,
+          303,
+          146
+        ],
+        "stage": [
+          0,
+          208,
+          320,
+          432
+        ]
+      },
+      "ui": {
+        "width": 320,
+        "height": 432,
+        "scroll": 320,
+        "explorer": {
+          "x": 10,
+          "y": 274,
+          "right": 310,
+          "bottom": 332
+        },
+        "zoom": {
+          "x": 270,
+          "y": 344,
+          "right": 310,
+          "bottom": 422
+        },
+        "view": {
+          "x": 10,
+          "y": 374,
+          "right": 227,
+          "bottom": 422
+        },
+        "collapsed": true
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "layout": {
+        "width": 844,
+        "scroll": 844,
+        "button": [
+          207.78125,
+          88,
+          271.34375,
+          128
+        ],
+        "stage": [
+          0,
+          139,
+          844,
+          251
+        ]
+      },
+      "ui": {
+        "width": 844,
+        "height": 251,
+        "scroll": 844,
+        "explorer": {
+          "x": 568,
+          "y": 16,
+          "right": 828,
+          "bottom": 74
+        },
+        "zoom": {
+          "x": 706,
+          "y": 189,
+          "right": 828,
+          "bottom": 235
+        },
+        "view": {
+          "x": 16,
+          "y": 186,
+          "right": 297.0625,
+          "bottom": 235
+        },
+        "collapsed": true
+      }
+    }
+  ],
+  "sourceHashes": {
+    "map.html": "3fd51303e584bac04891859312264ea65921ddc41ca34beac835f898168c60d2",
+    "css/map-view.css": "bb15cee78a36d293a61ad29c233d41112d7d2e2cd3abb261f51b6d67069d147f",
+    "js/map-flat.js": "81f489132b00945656055519d69c17ededb14b61b9fe18049923fb9abdc3bfaf",
+    "js/map-view.js": "659b81b291dd86860fe123575bbff9b3488fbd3c696a449cae406cd83d1a3b12",
+    "drafts/pierteia-globe/globe.js": "71f4ef4d67e1aef51021601fb7b72292b84fffa19a84172816d047c239b242bd",
+    "drafts/pierteia-globe/map-bridge.js": "6b92003aa30a4068956ca7f8934dff66c34e0f083543e38d8c5ced25e67b1193",
+    "drafts/pierteia-globe/map-embed.css": "1bc683767958105f95b2fea9b718ce0c093db7457fb2772c9836322003c0be00",
+    "drafts/pierteia-globe/atlas-icons.js": "99096421f15990c01d7cf8d05965a6df32ee03ef40bb61b175d178104efe921a",
+    "drafts/pierteia-globe/index.html": "eac640a6caa62a69991f8edca6eba45a6df8fd03e723bc82626dfde7cb4c582b"
+  },
+  "academy": {
+    "markers": 20,
+    "models": 8,
+    "loadedModels": 1,
+    "activeScene": 900,
+    "quality": "Desktop HQ",
+    "revision": 13,
+    "selected": "安那其学院",
+    "hostSuspended": false,
+    "antialiasSamples": 4,
+    "edgeAntialias": "SMAA",
+    "pendingScene": null,
+    "lastSceneError": null,
+    "localCamera": [
+      0.2899999999999999,
+      0.1999999999999998,
+      0.03500000000000015
+    ],
+    "cameraFov": 39,
+    "environmentIntensity": 0.32,
+    "assetLighting": true,
+    "contactOcclusion": true,
+    "shadowSize": 4096,
+    "surfaceSize": [
+      6144,
+      3072
+    ],
+    "locations": 28,
+    "renderer": {
+      "frame": 300,
+      "calls": 1,
+      "triangles": 1,
+      "points": 0,
+      "lines": 0
+    },
+    "inspection": true,
+    "geometry": [
+      {
+        "id": 900,
+        "anchorId": 900,
+        "triangles": 5351964,
+        "batches": 81,
+        "finishRevision": 9,
+        "grassClumps": 1200,
+        "talusRocks": 60,
+        "sceneType": "open circular hillside campus / separated academic wings",
+        "circledA": true,
+        "trees": 189,
+        "revision": 12,
+        "landscapeRevision": 12,
+        "exposedRockLedges": 34,
+        "plantedShrubs": 45,
+        "humanScaleMeters": 1.7,
+        "courtyardEyeHeightMeters": 1.65,
+        "photographicIBL": true,
+        "referenceWood": true,
+        "academyOpenings": 136,
+        "piercedLibrary": true,
+        "blenderAsset": true,
+        "botanicalTrees": 249,
+        "treePrototypes": 8,
+        "vegetationRevision": 12,
+        "foliageMode": "forked crowns / twig-attached elliptic leaves / instanced"
+      }
+    ]
+  }
+}

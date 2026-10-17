@@ -1,0 +1,322 @@
+{
+  "reviewDate": "2026-10-15",
+  "method": "Pinned GitHub metadata/contents via gh; web-page text and four architecture-reference thumbnails reviewed. No downloaded skills executed. No new third-party runtime dependencies.",
+  "repositories": [
+    {
+      "repo": "duoduoler-ops/Table-VideoSOP",
+      "sha": "a51fea1c8a1e6b9b0a5d1d42491fd58978816dd0",
+      "commitDate": "2026-09-27T12:57:38Z",
+      "defaultBranch": "main",
+      "license": "CC-BY-4.0",
+      "description": "AI video production SOPs, rules, templates and prompts / AI 视频制作 SOP、规则、模板与提示词",
+      "readScope": "read selected method documents; not adopted as agent instructions",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/duoduoler-ops/Table-VideoSOP/blob/a51fea1c8a1e6b9b0a5d1d42491fd58978816dd0/README.md"
+        },
+        {
+          "path": "experience/镜头推进与转场.md",
+          "url": "https://github.com/duoduoler-ops/Table-VideoSOP/blob/a51fea1c8a1e6b9b0a5d1d42491fd58978816dd0/experience/镜头推进与转场.md"
+        },
+        {
+          "path": "experience/视觉叙事与连续MG.md",
+          "url": "https://github.com/duoduoler-ops/Table-VideoSOP/blob/a51fea1c8a1e6b9b0a5d1d42491fd58978816dd0/experience/视觉叙事与连续MG.md"
+        },
+        {
+          "path": "docs/09_DESIGN建立与校验.md",
+          "url": "https://github.com/duoduoler-ops/Table-VideoSOP/blob/a51fea1c8a1e6b9b0a5d1d42491fd58978816dd0/docs/09_DESIGN建立与校验.md"
+        }
+      ]
+    },
+    {
+      "repo": "yihui-dev/awesome-opus5-5-videos",
+      "sha": "92aee2f586ac0715cb3cbcb6384834f98a33383d",
+      "commitDate": "2026-10-13T14:46:40Z",
+      "defaultBranch": "main",
+      "license": "MIT",
+      "description": "A growing collection of viral videos made with Claude Opus 5.5 and the prompts behind them. Watch each original next to a live remake on Skillry. Updated regularly.",
+      "readScope": "indexed and filtered prompts; selected pages read; videos not watched end-to-end",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/92aee2f586ac0715cb3cbcb6384834f98a33383d/README.md"
+        },
+        {
+          "path": "data/videos.json",
+          "url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/92aee2f586ac0715cb3cbcb6384834f98a33383d/data/videos.json"
+        }
+      ]
+    },
+    {
+      "repo": "shitagaki-lab/see-through",
+      "sha": "df019de5129d6c4b406587a14c3501669441a783",
+      "commitDate": "2026-10-05T18:30:22Z",
+      "defaultBranch": "main",
+      "license": "Apache-2.0",
+      "description": "\"Single-image Layer Decomposition for Anime Characters\" (SIGGRAPH 2026 Conference Paper)",
+      "readScope": "read overview and limitations; no model installed",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/shitagaki-lab/see-through/blob/df019de5129d6c4b406587a14c3501669441a783/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "remotion-dev/remotion",
+      "sha": "b537eb6d75041008196044c894724859045195da",
+      "commitDate": "2026-10-14T18:42:54Z",
+      "defaultBranch": "main",
+      "license": "NOASSERTION",
+      "description": "🎥      Make videos programmatically with React",
+      "readScope": "read product scope and license; not installed",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/remotion-dev/remotion/blob/b537eb6d75041008196044c894724859045195da/README.md"
+        },
+        {
+          "path": "LICENSE.md",
+          "url": "https://github.com/remotion-dev/remotion/blob/b537eb6d75041008196044c894724859045195da/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "repo": "sparklecatta-lang/XSXB-Band",
+      "sha": "4450128bb48888c3247d77ff9ba5ebb13cef186e",
+      "commitDate": "2026-10-08T14:11:37Z",
+      "defaultBranch": "main",
+      "license": "MIT",
+      "description": "让 Agent 写谱，用真实录音的乐器演奏 · Let your agent write the score, real CC0 recordings play it. Local studio + agent skill, MIT.",
+      "readScope": "read scope, audio-source and license sections; not installed",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/sparklecatta-lang/XSXB-Band/blob/4450128bb48888c3247d77ff9ba5ebb13cef186e/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "mrdoob/three.js",
+      "sha": "313f1f582b61af64f76ffaa4f23b3abb3ff298a1",
+      "commitDate": "2026-10-14T17:06:41Z",
+      "defaultBranch": "dev",
+      "license": "MIT",
+      "description": "JavaScript 3D Library.",
+      "latestRelease": {
+        "tag": "r186",
+        "published": "2026-09-24T14:35:44Z",
+        "url": "https://github.com/mrdoob/three.js/releases/tag/r186"
+      },
+      "readScope": "read relevant source sections; examples not all executed",
+      "sourceFiles": [
+        {
+          "path": "package.json",
+          "url": "https://github.com/mrdoob/three.js/blob/313f1f582b61af64f76ffaa4f23b3abb3ff298a1/package.json"
+        },
+        {
+          "path": "examples/webgl_loader_gltf.html",
+          "url": "https://github.com/mrdoob/three.js/blob/313f1f582b61af64f76ffaa4f23b3abb3ff298a1/examples/webgl_loader_gltf.html"
+        },
+        {
+          "path": "examples/webgl_materials_physical_clearcoat.html",
+          "url": "https://github.com/mrdoob/three.js/blob/313f1f582b61af64f76ffaa4f23b3abb3ff298a1/examples/webgl_materials_physical_clearcoat.html"
+        },
+        {
+          "path": "examples/webgl_materials_physical_transmission.html",
+          "url": "https://github.com/mrdoob/three.js/blob/313f1f582b61af64f76ffaa4f23b3abb3ff298a1/examples/webgl_materials_physical_transmission.html"
+        },
+        {
+          "path": "examples/webgpu_postprocessing_ssgi.html",
+          "url": "https://github.com/mrdoob/three.js/blob/313f1f582b61af64f76ffaa4f23b3abb3ff298a1/examples/webgpu_postprocessing_ssgi.html"
+        }
+      ]
+    },
+    {
+      "repo": "acamposuribe/p5.brush",
+      "sha": "43ac6d5a2b96db8125c81e4ac1ebd5aa00f6de96",
+      "commitDate": "2026-10-10T21:56:18Z",
+      "defaultBranch": "main",
+      "license": "MIT",
+      "description": "Unlock custom brushes, natural fill effects and intuitive hatching in p5.js",
+      "latestRelease": {
+        "tag": "v2.2.2",
+        "published": "2026-08-25T22:17:38Z",
+        "url": "https://github.com/acamposuribe/p5.brush/releases/tag/v2.2.2"
+      },
+      "readScope": "read two-builds, core concepts and license sections; not all API documentation",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/acamposuribe/p5.brush/blob/43ac6d5a2b96db8125c81e4ac1ebd5aa00f6de96/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "patriciogonzalezvivo/lygia",
+      "sha": "ce08fe351478b6c14297d103a8ce98d8e787d4d2",
+      "commitDate": "2026-09-14T15:48:37Z",
+      "defaultBranch": "main",
+      "license": "NOASSERTION",
+      "description": "LYGIA, it's a granular and multi-language (GLSL, HLSL, Metal,  WGSL,  WEGL and CUDA) shader library designed for performance and flexibility",
+      "readScope": "read integration and dual-license sections; no shader code copied",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/patriciogonzalezvivo/lygia/blob/ce08fe351478b6c14297d103a8ce98d8e787d4d2/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "FarazzShaikh/THREE-CustomShaderMaterial",
+      "sha": "cf86e956715bd6cd97e7ae61ffdf459e4a4c822e",
+      "commitDate": "2025-10-12T08:25:19Z",
+      "defaultBranch": "main",
+      "license": "MIT",
+      "description": "🧩 Extend Three.js standard materials with your own shaders!",
+      "latestRelease": {
+        "tag": "5.3.0",
+        "published": "2023-02-28T15:52:46Z",
+        "url": "https://github.com/FarazzShaikh/THREE-CustomShaderMaterial/releases/tag/5.3.0"
+      },
+      "readScope": "read output API, gotchas, caching and peer dependencies; no compatibility test yet",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/FarazzShaikh/THREE-CustomShaderMaterial/blob/cf86e956715bd6cd97e7ae61ffdf459e4a4c822e/README.md"
+        },
+        {
+          "path": "package/package.json",
+          "url": "https://github.com/FarazzShaikh/THREE-CustomShaderMaterial/blob/cf86e956715bd6cd97e7ae61ffdf459e4a4c822e/package/package.json"
+        }
+      ]
+    },
+    {
+      "repo": "patriciogonzalezvivo/thebookofshaders",
+      "sha": "5a537e76d7367dbbcda537723394b5dc03114449",
+      "commitDate": "2026-02-28T03:07:50Z",
+      "defaultBranch": "master",
+      "license": "NOASSERTION",
+      "description": "Step-by-step guide through the abstract and complex universe of Fragment Shaders.",
+      "readScope": "read fBm chapter plus website contents; no source copied",
+      "sourceFiles": [
+        {
+          "path": "13/README.md",
+          "url": "https://github.com/patriciogonzalezvivo/thebookofshaders/blob/5a537e76d7367dbbcda537723394b5dc03114449/13/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "google/filament",
+      "sha": "cfb8e32833013d8531e64f2bfccfe8ce815797ff",
+      "commitDate": "2026-10-14T06:43:35Z",
+      "defaultBranch": "main",
+      "license": "Apache-2.0",
+      "description": "Filament is a real-time physically based rendering engine for Android, iOS, Windows, Linux, macOS, and WebGL2",
+      "readScope": "read base color, metallic, roughness, reflectance, AO, exposure sections; not entire documents",
+      "sourceFiles": [
+        {
+          "path": "docs/Materials.md.html",
+          "url": "https://github.com/google/filament/blob/cfb8e32833013d8531e64f2bfccfe8ce815797ff/docs/Materials.md.html"
+        },
+        {
+          "path": "docs/Filament.md.html",
+          "url": "https://github.com/google/filament/blob/cfb8e32833013d8531e64f2bfccfe8ce815797ff/docs/Filament.md.html"
+        }
+      ]
+    },
+    {
+      "repo": "KhronosGroup/glTF-Sample-Viewer",
+      "sha": "b6f9275f7a95a8a12804e0ff33af3df3c7e9ccc5",
+      "commitDate": "2026-10-06T19:30:54Z",
+      "defaultBranch": "main",
+      "license": "Apache-2.0",
+      "description": "Physically-Based Rendering in glTF 2.0 using WebGL",
+      "readScope": "read features and validation/debug workflow; no cross-viewer render test yet",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/KhronosGroup/glTF-Sample-Viewer/blob/b6f9275f7a95a8a12804e0ff33af3df3c7e9ccc5/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "pmndrs/drei",
+      "sha": "bf6f4addf47467d3885de272d94ca5127f6ef68f",
+      "commitDate": "2026-09-30T16:14:27Z",
+      "defaultBranch": "master",
+      "license": "MIT",
+      "description": "🥉 useful helpers for react-three-fiber",
+      "readScope": "repository metadata/README collected only; not adopted",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/pmndrs/drei/blob/bf6f4addf47467d3885de272d94ca5127f6ef68f/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "gkjohnson/three-gpu-pathtracer",
+      "sha": "1e206d8340e4c01165fe3d157627333a3d508114",
+      "commitDate": "2026-10-12T13:23:04Z",
+      "defaultBranch": "main",
+      "license": "MIT",
+      "description": "Path tracing renderer and utilities for three.js built on top of three-mesh-bvh.",
+      "latestRelease": {
+        "tag": "v0.0.27",
+        "published": "2026-10-08T13:23:41Z",
+        "url": "https://github.com/gkjohnson/three-gpu-pathtracer/releases/tag/v0.0.27"
+      },
+      "readScope": "read current WebGPU API, examples and limitations; not installed or benchmarked",
+      "sourceFiles": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/gkjohnson/three-gpu-pathtracer/blob/1e206d8340e4c01165fe3d157627333a3d508114/README.md"
+        },
+        {
+          "path": "package.json",
+          "url": "https://github.com/gkjohnson/three-gpu-pathtracer/blob/1e206d8340e4c01165fe3d157627333a3d508114/package.json"
+        }
+      ]
+    }
+  ],
+  "webReferences": [
+    {
+      "url": "https://skillry.dev/ai-videos/opus-5-5",
+      "scope": "listing text only"
+    },
+    {
+      "url": "https://skillry.dev/ai-videos/opus-5-5/lexnlin-241739",
+      "scope": "prompt and attribution; not end-to-end video playback"
+    },
+    {
+      "url": "https://skillry.dev/ai-videos/opus-5-5/mondemsuraj-691517",
+      "scope": "prompt and attribution; not end-to-end video playback"
+    },
+    {
+      "url": "https://prompt-motion.com/ror-fly-9950f1",
+      "scope": "prompt and attribution; not end-to-end video playback"
+    },
+    {
+      "url": "https://www.maxon.net/en/article/architectural-rendering-techniques",
+      "scope": "all four text chunks"
+    },
+    {
+      "url": "https://80.lv/articles/building-moody-coastal-fisherman-cabin-scene-in-ue5",
+      "scope": "both interview text chunks; embedded video not watched"
+    },
+    {
+      "url": "https://80.lv/articles/creating-immersive-forest-cabin-environment-inspired-by-alan-wake-2",
+      "scope": "first text chunk: reference, blockout, modularity, hero props, vegetation"
+    },
+    {
+      "url": "https://www.archdaily.com/783392/ad-classics-saynatsalo-town-hall-alvar-aalto",
+      "scope": "two reference photographs viewed; not copied into repository"
+    },
+    {
+      "url": "https://www.archdaily.com/209340/vennesla-library-and-culture-house-helen-hard",
+      "scope": "two reference photographs viewed; not copied into repository"
+    }
+  ]
+}

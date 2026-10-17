@@ -1,0 +1,40 @@
+{
+  "revision": 11,
+  "scope": "Academy study only; no claim that other region scale or whole-scene aesthetics are approved",
+  "personHeightMeters": 1.7,
+  "feetAtSurface": true,
+  "pavingClearOfTerrain": true,
+  "courtyard": {
+    "eye": [
+      -0.03730108067878085,
+      0.05875,
+      0.2614138536068217
+    ],
+    "target": [
+      -0.10583611847023874,
+      0.07100000000000001,
+      0.18196608085689847
+    ],
+    "fov": 47,
+    "walkableY": 0.04225,
+    "eyeHeightMeters": 1.65,
+    "detail": {
+      "eye": [
+        -0.06327855743505612,
+        0.07,
+        0.19793022814814787
+      ],
+      "target": [
+        -0.08364375884045377,
+        0.07200000000000001,
+        0.1704118965904827
+      ]
+    }
+  },
+  "assets": 6,
+  "hdrSize": [
+    512,
+    256
+  ],
+  "provenanceHashesVerified": true
+}

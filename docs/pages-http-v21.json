@@ -1,0 +1,90 @@
+{
+  "base": "https://xoqnapgf-dot.github.io/ynxz/",
+  "checkedAt": "2026-10-16T22:35:34.855Z",
+  "commit": "67d119df684a7decec96180db3853695e275b4d8",
+  "results": [
+    {
+      "path": "index.html",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/index.html?verify=67d119df684a7decec96180db3853695e275b4d8",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "expected": "0eca9450b02a65a07669a274fe72f0ecb6295e34c1d91244fca1d29c84c613ef",
+      "actual": "0eca9450b02a65a07669a274fe72f0ecb6295e34c1d91244fca1d29c84c613ef",
+      "match": true
+    },
+    {
+      "path": "map.html",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/map.html?verify=67d119df684a7decec96180db3853695e275b4d8",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "expected": "8deab65e101561336765a4b755770c20badf05f750104adc59802048e13b0da4",
+      "actual": "8deab65e101561336765a4b755770c20badf05f750104adc59802048e13b0da4",
+      "match": true
+    },
+    {
+      "path": "globe.html",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/globe.html?verify=67d119df684a7decec96180db3853695e275b4d8",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "expected": "87497e9604a5bcc27af92edaf61c768c10aed03ab50254be802a195f3e2316e2",
+      "actual": "87497e9604a5bcc27af92edaf61c768c10aed03ab50254be802a195f3e2316e2",
+      "match": true
+    },
+    {
+      "path": "js/map-view.js",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/js/map-view.js?verify=67d119df684a7decec96180db3853695e275b4d8",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8",
+      "expected": "1268874d29725940b26216ffaecef6314b967b90a24f4857ede5583f58b40542",
+      "actual": "1268874d29725940b26216ffaecef6314b967b90a24f4857ede5583f58b40542",
+      "match": true
+    },
+    {
+      "path": "css/map-view.css",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/css/map-view.css?verify=67d119df684a7decec96180db3853695e275b4d8",
+      "status": 200,
+      "type": "text/css; charset=utf-8",
+      "expected": "e6a3d57a8beeb8ec5d7977c5c8549a91d397d2028b62f0ee02066d8af2f3edc0",
+      "actual": "e6a3d57a8beeb8ec5d7977c5c8549a91d397d2028b62f0ee02066d8af2f3edc0",
+      "match": true
+    }
+  ],
+  "assets": [
+    {
+      "path": "素材/地图/terrain.png",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/%E7%B4%A0%E6%9D%90/%E5%9C%B0%E5%9B%BE/terrain.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 5158691,
+      "sha256": "b449bfb38486492aa0e57b579ea4340aa05cf4c4452fb512ed86c51f1dd0914d",
+      "expected": "b449bfb38486492aa0e57b579ea4340aa05cf4c4452fb512ed86c51f1dd0914d"
+    },
+    {
+      "path": "drafts/pierteia-globe/assets/land-mask.png",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/drafts/pierteia-globe/assets/land-mask.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 73203,
+      "sha256": "9bafc1af7f096559c29dd8a25df9704d82e92f5e00dc2d034d7601663678a758",
+      "expected": "9bafc1af7f096559c29dd8a25df9704d82e92f5e00dc2d034d7601663678a758"
+    },
+    {
+      "path": "drafts/pierteia-globe/assets/surface.jpg",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/drafts/pierteia-globe/assets/surface.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 3223074,
+      "sha256": "b81a13d99ddd543c234f92f45032a0807ae0ab0c6de5765a92d9db38facbb90f",
+      "expected": "b81a13d99ddd543c234f92f45032a0807ae0ab0c6de5765a92d9db38facbb90f"
+    },
+    {
+      "path": "drafts/pierteia-globe/assets/atelier/academy-atelier.glb",
+      "url": "https://xoqnapgf-dot.github.io/ynxz/drafts/pierteia-globe/assets/atelier/academy-atelier.glb",
+      "status": 200,
+      "type": "model/gltf-binary",
+      "bytes": 14115916,
+      "sha256": "47ab9525abd2e59eeb0b1015ae6a7e1dadb11e9f432913babdd0d12e64fa59bb",
+      "expected": "47ab9525abd2e59eeb0b1015ae6a7e1dadb11e9f432913babdd0d12e64fa59bb"
+    }
+  ]
+}

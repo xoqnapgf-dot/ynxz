@@ -1,0 +1,16 @@
+{
+  "revision": 3,
+  "size": [
+    4096,
+    2048
+  ],
+  "seed": 347890,
+  "model": "spherical 3D noise + connected fronts and spiral systems; artistic weather, not simulated climate",
+  "seamContinuous": true,
+  "coverageAbove10Percent": 0.1543,
+  "meanOpacity": 0.062,
+  "layers": [
+    "clouds.png",
+    "cirrus.png"
+  ]
+}

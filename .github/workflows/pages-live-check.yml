@@ -1,0 +1,63 @@
+name: Verify actual Pages website
+on:
+  push:
+    branches: [arena/4c4cfaac-ynxz]
+    paths:
+      - '*.html'
+      - 'js/**'
+      - 'css/**'
+      - '.nojekyll'
+      - '素材/**'
+      - 'drafts/pierteia-globe/*.js'
+      - 'drafts/pierteia-globe/*.css'
+      - 'drafts/pierteia-globe/index.html'
+      - 'drafts/pierteia-globe/assets/**'
+      - 'tools/test-map-pages.mjs'
+      - 'tools/wait-pages-live.mjs'
+      - '.github/workflows/pages-live-check.yml'
+permissions:
+  contents: write
+concurrency:
+  group: live-pages-proof
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ATLAS_URL: https://xoqnapgf-dot.github.io/ynxz/
+      PAGES_LIVE: '1'
+      NODE_PATH: /tmp/ynxz-check/node_modules
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Install test browser
+        run: |
+          npm install --prefix /tmp/ynxz-check playwright@1.51.1 @sparticuz/chromium@131.0.1
+          /tmp/ynxz-check/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Check deployed bytes and browse real Pages
+        id: verify
+        run: |
+          node tools/wait-pages-live.mjs
+          node tools/test-map-pages.mjs
+          node tools/validate-map.mjs
+          node tools/validate-map-mobile.mjs
+          node tools/validate-map-environments.mjs
+      - name: Save actual results to the development branch
+        if: always()
+        env:
+          CHECK_OUTCOME: ${{ steps.verify.outcome }}
+        run: |
+          node -e "require('fs').writeFileSync('docs/pages-live-v21.json',JSON.stringify({commit:process.env.GITHUB_SHA,base:process.env.ATLAS_URL,workflow:process.env.GITHUB_RUN_ID,outcome:process.env.CHECK_OUTCOME,checkedAt:new Date().toISOString()},null,2)+'\n')"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/pages-live-v21.json
+          for path in docs/pages-http-v21.json tools/verification-map-pages-v21.json drafts/pierteia-globe/screenshots/pages-v21; do
+            if [ -e "$path" ]; then git add "$path"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record real Pages browser checks and screenshots'
+          git push origin HEAD:refs/heads/arena/4c4cfaac-ynxz

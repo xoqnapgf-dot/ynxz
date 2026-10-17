@@ -1,0 +1,68 @@
+{
+  "revision": 3,
+  "desktop": {
+    "errors": [],
+    "stats": {
+      "markers": 20,
+      "models": 4,
+      "locations": 28,
+      "renderer": {
+        "frame": 1575,
+        "calls": 1,
+        "triangles": 1,
+        "points": 0,
+        "lines": 0
+      },
+      "inspection": false,
+      "geometry": [
+        {
+          "id": 9,
+          "triangles": 128442,
+          "batches": 41
+        },
+        {
+          "id": 900,
+          "triangles": 86032,
+          "batches": 40
+        },
+        {
+          "id": 901,
+          "triangles": 174372,
+          "batches": 35
+        },
+        {
+          "id": 902,
+          "triangles": 263194,
+          "batches": 11
+        }
+      ]
+    },
+    "viewport": [
+      2160,
+      1350
+    ],
+    "checks": [
+      "four planet views",
+      "same camera as v2",
+      "clouds off/on",
+      "daylight toggle",
+      "all four preserved landmarks",
+      "return from landmark during fixed sun",
+      "grid",
+      "borders",
+      "search",
+      "inspect",
+      "Escape"
+    ]
+  },
+  "mobile": {
+    "errors": [],
+    "result": {
+      "width": 390,
+      "documentWidth": 390,
+      "inspection": false,
+      "canvasWidth": 390
+    }
+  },
+  "scope": "Chromium desktop + emulated mobile viewport, not a real-phone performance benchmark; landmark meshes and source geography retained from v2."
+}

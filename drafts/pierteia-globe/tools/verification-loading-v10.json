@@ -1,0 +1,18 @@
+{
+  "revision": 10,
+  "scope": "Failure injection, retry, cancellation, rapid scene switch, UI navigation",
+  "errors": [],
+  "expectedNetworkFailures": [
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: net::ERR_FAILED"
+  ],
+  "textureFailureContained": true,
+  "textureRetryPassed": true,
+  "glbFailureContained": true,
+  "cancelPassed": true,
+  "lateLoadDidNotStealScene": true,
+  "glbRetryAndCachePassed": true,
+  "escapePassed": true,
+  "searchAndReentryPassed": true,
+  "detailControlsPassed": true
+}

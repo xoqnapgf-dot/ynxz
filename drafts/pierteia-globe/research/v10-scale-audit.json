@@ -1,0 +1,100 @@
+{
+  "reviewDate": "2026-10-15",
+  "baseline": "v10 / 0f7f1ae",
+  "status": "needs-art-direction-rework",
+  "interpretation": "Relative scale inferred from the metre-authored Blender GLB attachment. Not an official world measurement. Terrain excludes elevated decks/floors.",
+  "sceneUnitsPerAssetMeter": 0.01,
+  "person": {
+    "meshHeightMeters": 0.4,
+    "topAbovePlacementMeters": 0.46,
+    "bottomAbovePlacementMeters": 0.06,
+    "proposedReferenceHeightMeters": 1.7
+  },
+  "cameras": [
+    {
+      "name": "library",
+      "eyeSceneUnits": [
+        0.1,
+        0.205,
+        -0.075
+      ],
+      "terrainAtEyeSceneUnits": 0.0842,
+      "eyeAboveTerrainMeters": 12.0794,
+      "targetSceneUnits": [
+        -0.01,
+        0.14,
+        -0.196
+      ]
+    },
+    {
+      "name": "teaching",
+      "eyeSceneUnits": [
+        -0.075,
+        0.136,
+        0.115
+      ],
+      "terrainAtEyeSceneUnits": 0.047,
+      "eyeAboveTerrainMeters": 8.8982,
+      "targetSceneUnits": [
+        -0.21,
+        0.093,
+        0.035
+      ]
+    },
+    {
+      "name": "workshop",
+      "eyeSceneUnits": [
+        0.09,
+        0.133,
+        0.14
+      ],
+      "terrainAtEyeSceneUnits": 0.0441,
+      "eyeAboveTerrainMeters": 8.8878,
+      "targetSceneUnits": [
+        0.208,
+        0.095,
+        0.015
+      ]
+    },
+    {
+      "name": "street",
+      "eyeSceneUnits": [
+        -0.007,
+        0.105,
+        0.237
+      ],
+      "terrainAtEyeSceneUnits": 0.041,
+      "eyeAboveTerrainMeters": 6.4,
+      "targetSceneUnits": [
+        -0.119,
+        0.077,
+        0.17
+      ]
+    },
+    {
+      "name": "materials",
+      "eyeSceneUnits": [
+        -0.054,
+        0.08,
+        0.202
+      ],
+      "terrainAtEyeSceneUnits": 0.041,
+      "eyeAboveTerrainMeters": 3.9,
+      "targetSceneUnits": [
+        -0.081,
+        0.076,
+        0.17
+      ]
+    }
+  ],
+  "checks": {
+    "finiteMeasurements": true,
+    "adultScaleCue": false,
+    "hasGroundLevelInspection": false
+  },
+  "sourceHashes": {
+    "landmarks.js": "340ea9648cd031b66ee03a9aee311da7d2c63421f4d63ac9dbdb45380a6930c0",
+    "academy-hillside.js": "01f6895e42957d976d4d7f90be2102b123b3cc94702eb3525e3cffec535cf012",
+    "academy-asset.js": "a5f0f2b930aaae8f074fa956a53bef6f805104bc2a50277f910d55b55643f1c6"
+  }
+}
