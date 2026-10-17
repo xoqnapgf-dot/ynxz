@@ -66,7 +66,7 @@
         return `<a href="gallery.html?cat=character&open=${encodeURIComponent(c.id)}" style="--ca:${esc(ideo.theme?.accent || '#b08a4a')}"><span class="av">${th ? `<img src="${esc(th)}" alt="" loading="lazy">` : esc(c.name.slice(0, 1))}</span><span class="nm"><b>${esc(c.name)}</b><small>${esc(ideo.name)} · ${esc(String(role).replace(/^[^·]*·\s*/, ''))}</small></span></a>`;
       }).join('') + '</div>').join('');
     });
-    card.scrollTop = 0;
+    (card.querySelector('.atl-body') || card).scrollTop = 0;
     return { kids, known: !!d };
   }
 

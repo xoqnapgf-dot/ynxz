@@ -91,7 +91,7 @@ html,body{overflow:hidden}
 
 /* ---------- 地点卡片 ---------- */
 .atl-card{--place:#cdb991;position:absolute;z-index:8;top:72px;right:16px;bottom:16px;width:min(392px,calc(100% - 32px));display:flex;flex-direction:column;
-  overflow:auto;overscroll-behavior:contain;touch-action:pan-y;cursor:auto;user-select:text;-webkit-user-select:text;
+  overflow:hidden;cursor:auto;user-select:text;-webkit-user-select:text;
   background:linear-gradient(180deg,color-mix(in srgb,var(--place) 16%,#fbf6ea) 0,#fbf6ea 150px),#fbf6ea;color:var(--atl-ink);
   border:1px solid var(--atl-line);border-radius:16px;box-shadow:0 24px 60px -24px rgba(54,38,18,.55),0 3px 10px -4px rgba(54,38,18,.25);
   opacity:0;transform:translateX(18px);transition:opacity .22s ease,transform .26s cubic-bezier(.2,.8,.2,1)}
@@ -133,7 +133,9 @@ html,body{overflow:hidden}
 .atl-people b{font:600 15px var(--atl-serif);letter-spacing:.06em;color:var(--atl-ink)}
 .atl-people small{font-size:12px;color:var(--atl-ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .atl-scene{display:inline-flex;padding:10px 14px;border-radius:10px;border:1px solid var(--atl-line);color:#7a5420;text-decoration:none;font:600 13px var(--atl-serif)}
-.atl-actions{position:sticky;bottom:0;margin-top:auto;display:flex;gap:8px;padding:12px 24px 16px;background:linear-gradient(180deg,rgba(251,246,234,0),#fbf6ea 30%)}
+/* 正文单独滚动，操作栏固定在卡片底部、不压在正文上（iOS 上 sticky 底栏会停在卡片中间、把字截断） */
+.atl-body{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+.atl-actions{flex:none;display:flex;gap:8px;padding:12px 24px 16px;background:#fbf6ea;border-top:1px solid rgba(62,49,34,.12);box-shadow:0 -10px 18px -14px rgba(62,49,34,.35)}
 .atl-actions button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 16px;border-radius:10px;border:1px solid #3a2d20;background:#3a2d20;color:#f6eedb;font:600 13.5px var(--atl-serif);letter-spacing:.08em;cursor:pointer}
 .atl-actions button:hover{background:#2b2016}
 .atl-actions button.ghost{background:transparent;color:var(--atl-ink)}
@@ -221,10 +223,10 @@ html,body{overflow:hidden}
 }
 @media (max-width:700px){
   .atl-seg a svg{display:none}
-  .atl-card{top:auto;left:0;right:0;bottom:0;width:auto;max-height:58%;border-radius:18px 18px 0 0;border-bottom:0;transform:translateY(24px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .atl-card{top:auto;left:0;right:0;bottom:0;width:auto;max-height:58%;border-radius:18px 18px 0 0;border-bottom:0;transform:translateY(24px)}
   .atl-card.full{max-height:calc(100% - 8px)}
   .atl-card.open{transform:none}
-  .atl-grip{display:block;position:sticky;top:0;z-index:3;flex:none;width:100%;height:22px;margin-bottom:-22px;border:0;background:transparent;cursor:pointer}
+  .atl-grip{display:block;position:absolute;top:0;left:0;right:0;z-index:3;height:22px;border:0;background:linear-gradient(180deg,#fbf6ea 45%,rgba(251,246,234,0));border-radius:18px 18px 0 0;cursor:pointer}
   .atl-grip::before{content:"";display:block;width:40px;height:4px;margin:8px auto 0;border-radius:4px;background:rgba(62,49,34,.28)}
   .atl-card-head{padding:22px 18px 12px}
   .atl-desc,.atl-sec{padding-left:18px;padding-right:18px}
