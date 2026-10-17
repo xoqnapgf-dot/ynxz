@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="site-release" content="21" />
+  <meta name="site-release" content="22" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>3D地球 · 意拟小站</title>
   <link rel="stylesheet" href="css/style.css?v=27" />
@@ -15,38 +15,42 @@
   <meta name="apple-mobile-web-app-title" content="意拟小站" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script src="js/theme.js?v=2"></script>
-  <style>html,body{overflow:hidden}.map-main{position:fixed;left:0;right:0;top:var(--hh,64px);max-width:none;padding:0}</style>
-  <link rel="stylesheet" href="css/map-view.css?v=5" />
+    <link rel="stylesheet" href="css/map-view.css?v=6" />
 </head>
 <body data-page="map" class="theme-map" data-map-view="globe">
   <header class="site-header">
-    <a class="brand" href="index.html?release=21"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
+    <a class="brand" href="index.html?release=22"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
     <nav class="site-nav" aria-label="主导航">
-      <a href="gallery.html?release=21">画廊</a>
-      <a href="map.html?release=21" aria-current="page">地图</a>
-      <a href="cp.html?release=21">CP乱炖</a>
-      <a href="forum.html?release=21">讨论区</a>
-      <a href="search.html?release=21">搜索</a>
+      <a href="gallery.html?release=22">画廊</a>
+      <a href="map.html?release=22" aria-current="page">地图</a>
+      <a href="cp.html?release=22">CP乱炖</a>
+      <a href="forum.html?release=22">讨论区</a>
+      <a href="search.html?release=22">搜索</a>
     </nav>
   </header>
 
-  <main class="map-main">
-    <div class="map-toolbar">
-      <h1 class="map-heading">PIERTEIA<small>主世界 · 3D地球</small></h1>
-      <nav class="map-projection" aria-label="地图页面">
-        <a id="viewFlat" href="map.html?release=21">平面</a>
-        <a id="viewGlobe" href="globe.html?release=21" aria-current="page">3D地球</a>
+  <main class="map-main atl-main globe-main">
+    <h1 class="map-sr-only">Pierteia 3D地球</h1>
+    <div class="globe-bar">
+      <div class="atl-brand" aria-hidden="true"><b>PIERTEIA</b><small>主世界 · 3D地球</small></div>
+      <label class="atl-search" for="mapPlace">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="3"/><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/></svg>
+        <span class="map-sr-only">定位地点</span>
+        <select id="mapPlace"><option value="">定位国家或地点…</option></select>
+      </label>
+      <span class="globe-help" id="mapHelp">拖动旋转 · 点击地标探索</span>
+      <nav class="atl-seg" aria-label="地图视图">
+        <a id="viewFlat" href="map.html?release=22"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>平面</a>
+        <a id="viewGlobe" href="globe.html?release=22" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/></svg>3D地球</a>
       </nav>
-      <label class="map-locate" for="mapPlace">定位地点<select id="mapPlace"><option value="">选择国家或地点…</option></select></label>
-      <span class="map-help" id="mapHelp">拖动旋转 · 点击地标探索</span>
     </div>
-    <div class="map-workspace">
+    <div class="atl-stage globe-stage">
     <section id="globeHost" aria-label="球体地图">
       <button id="mapRestoreUI" type="button" hidden title="恢复球体界面，不离开当前场景">恢复界面</button>
       <div class="globe-notice" id="globeNotice" data-state="loading" role="status">
         <h2 id="globeNoticeTitle">正在展开球体地图</h2>
         <p id="globeNoticeText">首次打开需要加载高清地形。平面地图随时可用，局部建筑仅在进入场景时加载。</p>
-        <div class="notice-actions"><button id="retryGlobe" type="button" hidden>重新加载球体</button><a id="fallbackFlat" href="map.html?release=21">返回平面地图</a></div>
+        <div class="notice-actions"><button id="retryGlobe" type="button" hidden>重新加载球体</button><a id="fallbackFlat" href="map.html?release=22">返回平面地图</a></div>
       </div>
     </section>
     </div>
@@ -55,7 +59,7 @@
 
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
-  <script src="js/map-view.js?v=10"></script>
+  <script src="js/map-view.js?v=11"></script>
 
 </body>
 </html>

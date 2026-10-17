@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="site-release" content="21" />
+  <meta name="site-release" content="22" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>地图 · 意拟小站</title>
   <link rel="stylesheet" href="css/style.css?v=27" />
@@ -15,156 +15,106 @@
   <meta name="apple-mobile-web-app-title" content="意拟小站" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script src="js/theme.js?v=2"></script>
-  <script>if(new URLSearchParams(location.search).get('view')==='globe'){const u=new URL('globe.html',location.href);u.search=location.search;u.searchParams.delete('view');u.searchParams.set('release','21');u.hash=location.hash;location.replace(u.href);}</script>
-  <style>
-    html, body { overflow: hidden; }
-    .map-main { position: fixed; left: 0; right: 0; bottom: 0; top: var(--hh, 64px); max-width: none; padding: 0; height: auto; }
-    .map-stage2 { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0b1220; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
-    .map-stage2.grabbing { cursor: grabbing; }
-    .map-canvas { position: absolute; top: 0; left: 0; }
-    .map-base { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; image-rendering: auto; }
-    .map-base.hide { display: none; }
-    .hot-layer { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
-    .hot { position: absolute; transform: translate(-50%, -50%); background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: auto; }
-    .hot-dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid #fff; background: rgba(200, 60, 40, .95); box-shadow: 0 0 0 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.6); }
-    .hot-name { font: 600 11px/1.1 var(--serif, serif); color: #fff; text-shadow: 0 1px 3px #000, 0 0 4px #000; white-space: nowrap; letter-spacing: .04em; }
-    .hot:hover .hot-dot, .hot.active .hot-dot { background: #ffcf5a; }
-    /* 特殊地点标记：紫色菱形，区别于国家红点 */
-    .hot.special .hot-dot { width:12px; height:12px; transform: rotate(45deg); border-radius:2px; background:#c9a6ff; border:2px solid #fff; box-shadow:0 0 0 2px rgba(50,18,80,.55), 0 0 12px rgba(180,120,255,.95); }
-    .hot.special:hover .hot-dot, .hot.special.active .hot-dot { background:#e6d5ff; }
-    .hot.special .hot-name { color:#e6d5ff; }
-    /* 时空裂缝：细长、曲折的主裂隙在常灵岛周边分叉；随地图缩放 */
-    .rift-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
-    .rift-aura { fill: none; stroke: #8650ff; stroke-width: 36; opacity: .18; filter: url(#riftBlur); }
-    .rift-glow { fill: none; stroke: #925cff; stroke-width: 16; opacity: .58; filter: url(#riftBlur); }
-    .rift-edge { fill: none; stroke: #c4a0ff; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; opacity: .92; }
-    .rift-core { fill: none; stroke: #08060e; stroke-width: 5.2; stroke-linecap: round; stroke-linejoin: round; }
-    .rift-thread { fill: none; stroke: #f1e7ff; stroke-width: .85; stroke-linecap: round; opacity: .72; }
-    .rift-branch-glow { fill: none; stroke: #8852f5; stroke-width: 10; stroke-linecap: round; opacity: .42; filter: url(#riftBlur); }
-    .rift-branch-edge { fill: none; stroke: #c6a4ff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; opacity: .86; }
-    .rift-branch-core { fill: none; stroke: #090711; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-    .map-ui { position: absolute; z-index: 6; }
-    .map-title { top: 14px; left: 50%; transform: translateX(-50%); font-family: var(--serif, serif); font-weight: 900; letter-spacing: .3em; color: #f3f0e8; text-shadow: 0 2px 8px rgba(0,0,0,.8); font-size: 1.05rem; }
-    .map-modes { top: 12px; left: 12px; display: flex; gap: 4px; background: rgba(12,14,22,.72); padding: 4px; border-radius: 10px; border: 1px solid rgba(216,178,90,.25); }
-    .map-modes button { border: 0; background: transparent; color: #cfc8b4; font: 600 .82rem/1 var(--serif, serif); letter-spacing: .12em; padding: .5rem .8rem; border-radius: 7px; cursor: pointer; }
-    .map-modes button[aria-pressed="true"] { background: rgba(216,178,90,.9); color: #1a140a; }
-    .map-zoomctl { top: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; }
-    .map-zoomctl button { width: 38px; height: 38px; border-radius: 9px; border: 1px solid rgba(216,178,90,.4); background: rgba(12,14,22,.82); color: #e9e2cf; font-size: 1.15rem; cursor: pointer; }
-    .map-zoomctl button:hover { border-color: #d8b25a; color: #fff; }
-    .map-zoomlvl { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: 16px; font: 600 .78rem/1 var(--serif, serif); letter-spacing: .1em; color: #d8b25a; background: rgba(12,14,22,.7); padding: .4rem .55rem; border-radius: 8px; border: 1px solid rgba(216,178,90,.28); }
-    .map-scalebar { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); left: 16px; color: #e9e2cf; font-size: .74rem; letter-spacing: .06em; text-shadow: 0 1px 3px #000; }
-    .map-coord { bottom: 46px; left: 50%; transform: translateX(-50%); font: 700 .82rem/1 var(--serif, serif); letter-spacing: .04em; color: #1a140a; background: #d8b25a; padding: .45rem .8rem; border-radius: 999px; box-shadow: 0 6px 18px rgba(0,0,0,.5); }
-    .map-coord[hidden] { display: none; }
-    .map-scalebar .bar { height: 6px; border: 1px solid #e9e2cf; border-top: none; margin-bottom: 3px; }
-    .nation-card { position: absolute; z-index: 8; right: 16px; top: 60px; width: min(320px, 78vw); background: rgba(16,18,26,.95); border: 1px solid rgba(216,178,90,.35); border-radius: 14px; padding: 1rem 1.1rem; color: #efe9d8; box-shadow: 0 20px 50px -20px #000; display: none; }
-    .nation-card.show { display: block; }
-    .nation-card h3 { margin: 0; font-family: var(--serif, serif); font-size: 1.25rem; letter-spacing: .06em; color: #f3f0e8; }
-    .nation-card .form { display: inline-block; margin: .35rem 0 .6rem; font-size: .72rem; letter-spacing: .12em; color: #d8b25a; border: 1px solid rgba(216,178,90,.4); border-radius: 999px; padding: .12rem .55rem; }
-    .nation-card p { margin: 0 0 .8rem; font-size: .86rem; line-height: 1.7; color: #bdb6a4; }
-    .nation-card .enter { display: inline-block; border: 0; background: rgba(216,178,90,.9); color: #1a140a; font-weight: 700; letter-spacing: .1em; padding: .5rem .9rem; border-radius: 8px; cursor: pointer; }
-    .nation-card .nc-close { position: absolute; top: 6px; right: 10px; border: 0; background: none; color: #8a8474; font-size: 1.2rem; cursor: pointer; }
-    /* 已设定 vs 自动生成：只有有角色/归属、写进地点志的才算「存在」；其余是地图生成器的占位，默认隐藏 */
-    .map-ghost { top: 58px; left: 12px; border: 1px solid rgba(216,178,90,.35); background: rgba(12,14,22,.72); color: #cfc8b4; font: 600 .74rem/1 var(--serif, serif); letter-spacing: .1em; padding: .5rem .75rem; border-radius: 10px; cursor: pointer; backdrop-filter: blur(6px); }
-    .map-ghost[aria-pressed="true"] { color: #1a140a; background: rgba(216,178,90,.9); }
-    .hot.ghost { display: none; }
-    .show-ghosts .hot.ghost { display: flex; opacity: .75; }
-    .hot.ghost .hot-dot { width: 8px; height: 8px; border-width: 1px; background: rgba(214,218,230,.55); box-shadow: none; }
-    .hot.ghost .hot-name { font-weight: 400; font-size: 10px; opacity: .8; text-shadow: 0 1px 3px #000; }
-    .nation-card .ghost-note { margin-top: .5rem; font-size: .78rem; color: #8a8474; letter-spacing: .06em; }
-    @media (max-width: 600px) {
-      .map-title { font-size: .82rem; letter-spacing: .2em; top: 10px; }
-      .map-modes { top: 8px; left: 8px; }
-      .map-modes button { padding: .4rem .55rem; font-size: .72rem; }
-      .map-zoomctl { top: 8px; right: 8px; gap: 5px; }
-      .map-zoomctl button { width: 34px; height: 34px; font-size: 1.05rem; }
-      .hot-name { font-size: 9px; }
-      .nation-card { right: 8px; left: 8px; top: auto; bottom: 64px; width: auto; }
-      .map-zoomlvl { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); right: 10px; }
-      .map-scalebar { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 10px; }
-    }
-  </style>
-  <link rel="stylesheet" href="css/map-view.css?v=5" />
+  <script>if(new URLSearchParams(location.search).get('view')==='globe'){const u=new URL('globe.html',location.href);u.search=location.search;u.searchParams.delete('view');u.searchParams.set('release','22');u.hash=location.hash;location.replace(u.href);}</script>
+  <link rel="stylesheet" href="css/map-view.css?v=6" />
 </head>
 <body data-page="map" class="theme-map" data-map-view="flat">
   <header class="site-header">
-    <a class="brand" href="index.html?release=21"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
+    <a class="brand" href="index.html?release=22"><span class="brand-zh">意拟小站</span><span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span></a>
     <nav class="site-nav" aria-label="主导航">
-      <a href="gallery.html?release=21">画廊</a>
-      <a href="map.html?release=21" aria-current="page">地图</a>
-      <a href="cp.html?release=21">CP乱炖</a>
-      <a href="forum.html?release=21">讨论区</a>
-      <a href="search.html?release=21">搜索</a>
+      <a href="gallery.html?release=22">画廊</a>
+      <a href="map.html?release=22" aria-current="page">地图</a>
+      <a href="cp.html?release=22">CP乱炖</a>
+      <a href="forum.html?release=22">讨论区</a>
+      <a href="search.html?release=22">搜索</a>
     </nav>
   </header>
 
-  <main class="map-main">
-    <div class="map-toolbar">
-      <h1 class="map-heading">PIERTEIA<small>主世界 · 地图与地点志</small></h1>
-      <nav class="map-projection" aria-label="地图页面">
-        <a id="viewFlat" href="map.html?release=21" aria-current="page">平面</a>
-        <a id="viewGlobe" href="globe.html?release=21">3D地球</a>
-      </nav>
-      <label class="map-locate" for="mapPlace">定位地点<select id="mapPlace"><option value="">选择国家或地点…</option></select></label>
-      <span class="map-help" id="mapHelp">拖动平移 · 滚轮缩放</span>
-    </div>
-    <div class="map-workspace">
-    <div id="mapStage" class="map-stage2">
-      <div id="mapCanvas" class="map-canvas">
-        <img id="baseTerrain" class="map-base" src="素材/地图/terrain.png?v=4" alt="地形图">
-        <img id="baseNations" class="map-base hide" src="素材/地图/nations.png?v=4" alt="国家划分图">
-        <svg id="riftSvg" class="rift-svg" viewBox="0 0 3000 935" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <filter id="riftBlur" x="-100%" y="-30%" width="300%" height="160%">
-              <feGaussianBlur stdDeviation="5"/>
-            </filter>
-          </defs>
-          <g>
-            <!-- 主裂隙：从海峡北侧蜿蜒向南，细长而不规则；中心落在常灵岛附近 -->
-            <path class="rift-aura" d="M1470 405 C1466 420 1460 428 1465 438 L1473 446 C1481 456 1467 465 1462 476 L1457 487 C1452 499 1468 506 1466 518 C1464 529 1457 532 1461 542 L1471 552 C1478 562 1463 570 1465 579 C1466 588 1477 591 1481 600 C1487 612 1467 617 1468 628 L1475 638 C1481 649 1460 656 1463 667 L1472 679 C1479 689 1466 697 1468 706 L1475 718 C1479 727 1465 734 1464 742"/>
-            <path class="rift-glow" d="M1470 405 C1466 420 1460 428 1465 438 L1473 446 C1481 456 1467 465 1462 476 L1457 487 C1452 499 1468 506 1466 518 C1464 529 1457 532 1461 542 L1471 552 C1478 562 1463 570 1465 579 C1466 588 1477 591 1481 600 C1487 612 1467 617 1468 628 L1475 638 C1481 649 1460 656 1463 667 L1472 679 C1479 689 1466 697 1468 706 L1475 718 C1479 727 1465 734 1464 742"/>
-            <path class="rift-edge" d="M1470 405 C1466 420 1460 428 1465 438 L1473 446 C1481 456 1467 465 1462 476 L1457 487 C1452 499 1468 506 1466 518 C1464 529 1457 532 1461 542 L1471 552 C1478 562 1463 570 1465 579 C1466 588 1477 591 1481 600 C1487 612 1467 617 1468 628 L1475 638 C1481 649 1460 656 1463 667 L1472 679 C1479 689 1466 697 1468 706 L1475 718 C1479 727 1465 734 1464 742"/>
-            <path class="rift-core" d="M1470 405 C1466 420 1460 428 1465 438 L1473 446 C1481 456 1467 465 1462 476 L1457 487 C1452 499 1468 506 1466 518 C1464 529 1457 532 1461 542 L1471 552 C1478 562 1463 570 1465 579 C1466 588 1477 591 1481 600 C1487 612 1467 617 1468 628 L1475 638 C1481 649 1460 656 1463 667 L1472 679 C1479 689 1466 697 1468 706 L1475 718 C1479 727 1465 734 1464 742"/>
-            <path class="rift-thread" d="M1464 554 L1470 562 M1469 582 L1475 590 M1469 610 L1473 617"/>
-            <!-- 裂隙在常灵岛近旁分出几道短枝，像从岛周海面撕开的细裂纹 -->
-            <path class="rift-branch-glow" d="M1461 554 C1454 549 1449 542 1440 541 L1432 533 M1477 594 C1486 599 1492 607 1496 617 L1507 625 M1468 610 C1459 615 1453 623 1444 630"/>
-            <path class="rift-branch-edge" d="M1461 554 C1454 549 1449 542 1440 541 L1432 533 M1477 594 C1486 599 1492 607 1496 617 L1507 625 M1468 610 C1459 615 1453 623 1444 630"/>
-            <path class="rift-branch-core" d="M1461 554 C1454 549 1449 542 1440 541 L1432 533 M1477 594 C1486 599 1492 607 1496 617 L1507 625 M1468 610 C1459 615 1453 623 1444 630"/>
-          </g>
-        </svg>
-      </div>
-      <div id="hotLayer" class="hot-layer"></div>
+  <main class="map-main atl-main">
+    <h1 class="map-sr-only">Pierteia 主世界地图与地点志</h1>
+    <div id="mapStage" class="atl-stage" role="application" aria-label="Pierteia 平面地图：拖动平移，滚轮或双指缩放，点击地名查看地点志">
+      <canvas id="atlasCanvas" aria-hidden="true"></canvas>
+      <canvas id="atlasFx" aria-hidden="true"></canvas>
+      <div class="atl-paper" aria-hidden="true"></div>
+      <div id="atlasLabels" class="atl-labels"></div>
 
-      <div class="map-ui map-title">PIERTEIA · 主世界</div>
-      <div class="map-ui map-modes" role="group" aria-label="图层">
-        <button type="button" data-mode="terrain" aria-pressed="true">地形</button>
-        <button type="button" data-mode="nations" aria-pressed="false">国家/地区</button>
+      <div class="atl-ui atl-top">
+        <div class="atl-brand" aria-hidden="true"><b>PIERTEIA</b><small>主世界 · 地点志</small></div>
+        <div class="atl-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+          <input id="atlasSearch" type="search" placeholder="搜索国家或地点" autocomplete="off" spellcheck="false" role="combobox" aria-label="搜索国家或地点" aria-autocomplete="list" aria-controls="atlasSuggest" aria-expanded="false" />
+          <kbd aria-hidden="true">/</kbd>
+          <ul id="atlasSuggest" class="atl-suggest" role="listbox" aria-label="搜索建议" hidden></ul>
+        </div>
+        <nav class="atl-seg" aria-label="地图视图">
+          <a id="viewFlat" href="map.html?release=22" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>平面</a>
+          <a id="viewGlobe" href="globe.html?release=22"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/></svg>3D地球</a>
+        </nav>
       </div>
-      <button id="ghostToggle" type="button" class="map-ui map-ghost" aria-pressed="false" title="地图生成器自动划定、尚无设定的地区">显示未设定地区</button>
-      <div class="map-ui map-zoomctl">
-        <button id="zin" type="button" aria-label="放大">+</button>
-        <button id="zout" type="button" aria-label="缩小">&minus;</button>
-        <button id="zfit" type="button" aria-label="复位">&#x2922;</button>
-      </div>
-      <div class="map-ui map-scalebar"><div class="bar" id="scaleBar"></div><span id="scaleLabel">—</span></div>
-      <div class="map-ui map-zoomlvl" id="zoomLvl">100%</div>
-      <div class="map-ui map-coord" id="coordReadout" hidden></div>
 
-      <div class="nation-card" id="nationCard" role="region" aria-label="地点详情">
-        <button class="nc-close" id="ncClose" aria-label="关闭">&times;</button>
-        <h3 id="ncName">—</h3>
-        <span class="form" id="ncForm"></span>
-        <button id="ncFold" type="button" aria-expanded="false" aria-controls="ncDesc">地点介绍</button><p id="ncDesc">该区域介绍待补充。</p>
-        <div class="nation-actions"><button class="enter" id="ncEnter">进入 →</button><button class="globe-locate" id="ncGlobe" type="button">在球体中查看 ↗</button></div>
+      <div class="atl-ui atl-tools">
+        <button id="atlasLayersBtn" type="button" aria-expanded="false" aria-controls="atlasLayers" title="图层"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 8 12 13l9.5-5z"/><path d="m2.5 12.5 9.5 5 9.5-5"/><path d="m2.5 16.5 9.5 5 9.5-5" opacity=".55"/></svg><span class="map-sr-only">图层</span></button>
+        <div class="atl-zoom">
+          <button id="zin" type="button" aria-label="放大"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button id="zout" type="button" aria-label="缩小"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+        </div>
+        <button id="zfit" type="button" aria-label="回到全图" title="回到全图"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       </div>
-    </div>
+
+      <div id="atlasLayers" class="atl-ui atl-layers" role="group" aria-label="图层" hidden>
+        <p class="atl-layers-h">图层</p>
+        <label><input type="checkbox" data-layer="politics" /><span>政区着色</span></label>
+        <label><input type="checkbox" data-layer="borders" /><span>国界</span></label>
+        <label><input type="checkbox" data-layer="rivers" /><span>河流</span></label>
+        <label><input type="checkbox" data-layer="routes" /><span>道路与航线</span></label>
+        <label><input type="checkbox" data-layer="relief" /><span>山林符号</span></label>
+        <label><input type="checkbox" data-layer="grid" /><span>经纬网</span></label>
+        <label><input type="checkbox" data-layer="labels" /><span>地名</span></label>
+        <label class="sep"><input type="checkbox" data-layer="ghosts" /><span>未设定地区<small>地图生成器划出、尚无设定</small></span></label>
+      </div>
+
+      <div class="atl-ui atl-foot" aria-hidden="true">
+        <div class="atl-scale"><i id="scaleBar"></i><span id="scaleLabel">—</span></div>
+        <span id="atlasCoord" class="atl-coord"></span>
+      </div>
+      <svg class="atl-compass" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="30" fill="none" stroke="#3e3122" stroke-width=".8"/>
+        <circle cx="50" cy="50" r="26" fill="none" stroke="#3e3122" stroke-width=".4" stroke-dasharray="1.2 2.2"/>
+        <path d="M50 8 56 44 50 50 44 44Z" fill="#3e3122"/><path d="M50 8 50 50 44 44Z" fill="#f4ead6" stroke="#3e3122" stroke-width=".6"/>
+        <path d="M50 92 44 56 50 50 56 56Z" fill="#3e3122"/><path d="M50 92 50 50 56 56Z" fill="#f4ead6" stroke="#3e3122" stroke-width=".6"/>
+        <path d="M8 50 44 44 50 50 44 56Z" fill="#f4ead6" stroke="#3e3122" stroke-width=".6"/><path d="M92 50 56 56 50 50 56 44Z" fill="#f4ead6" stroke="#3e3122" stroke-width=".6"/>
+        <path d="M22 22 47 47M78 22 53 47M22 78 47 53M78 78 53 53" stroke="#3e3122" stroke-width=".6"/>
+        <circle cx="50" cy="50" r="2.6" fill="#b7853a" stroke="#3e3122" stroke-width=".6"/>
+        <text x="50" y="6" text-anchor="middle" font-size="7" fill="#3e3122" font-family="serif">N</text>
+      </svg>
+
+      <aside id="atlasCard" class="atl-card" aria-labelledby="acName" data-gallery-data="js/gallery-data.js?v=119" hidden>
+        <button id="acGrip" class="atl-grip" type="button" aria-label="展开或收起"></button>
+        <button id="acClose" class="atl-x" type="button" aria-label="关闭"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <header class="atl-card-head">
+          <p class="atl-kicker"><span id="acKind"></span><span id="acCoord"></span></p>
+          <h2 id="acName">—</h2>
+          <nav id="acTrail" class="atl-trail" aria-label="所属层级" hidden></nav>
+        </header>
+        <figure id="acMedia" class="atl-media" hidden></figure>
+        <div id="acDesc" class="atl-desc"></div>
+        <section id="acChildren" class="atl-sec" hidden></section>
+        <section id="acPeople" class="atl-sec" hidden></section>
+        <section id="acScene" class="atl-sec" hidden></section>
+        <div class="atl-actions">
+          <button id="acGlobe" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/></svg>在3D地球中查看</button>
+          <button id="acCopy" type="button" class="ghost">复制链接</button>
+        </div>
+      </aside>
+      <div id="atlasToast" class="atl-toast" role="status" hidden></div>
     </div>
     <p id="mapAnnouncement" class="map-sr-only" role="status" aria-live="polite"></p>
   </main>
 
   <script src="js/map-data.js?v=25"></script>
   <script src="js/locations-data.js?v=27"></script>
-  <script src="js/map-flat.js?v=2"></script>
-  <script src="js/map-view.js?v=10"></script>
-
+  <script src="js/atlas-data.js?v=1"></script>
+  <script src="js/atlas.js?v=1"></script>
+  <script src="js/map-view.js?v=11"></script>
 </body>
 </html>

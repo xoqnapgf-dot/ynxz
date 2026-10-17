@@ -18,7 +18,7 @@
 - **特殊地点**：天神峰（高原孤峰·通天之柱，超自然力量浓、易出超能力者）、常灵群岛（"常有灵"之群岛、紧邻裂缝，超常之事多；原称常灵岛）、万知城（中立理性、英杰汇聚的城邦）。
 - **世界观基准（2026-10 定，写作与检查都按这套读）**：
   - **发展不同步**：近代工业（铁路、蒸汽船、电报、钢铁）是多数社会的基础参考；璇玑的研究与精密器件高于一般水平，边区与山地可以仍停留在骡马、前膛枪的阶段。同一国之内，大城、专业部门与乡野也不必在同一水平。
-  - **主权与底图**：地图的国家底图由生成器一次划定，属草图与旧勘界；现行疆界、海岸、地名与主权一律以地点志和地图标记为准，个别描述按勘察修订（如璇玑为湖群内陆、无出海口）。安那其学院、常灵群岛、天神峰不隶属任何一国，底图色块不改变这一点。
+  - **主权与底图**：地图的国家底图由生成器一次划定，属草图与旧勘界；现行疆界、海岸、地名与主权一律以地点志和地图标记为准，个别描述按勘察修订（如璇玑为湖群内陆、无出海口）。安那其学院、常灵群岛、天神峰不隶属任何一国，地图上的政区浅彩不改变这一点。
   - **个人异能与魔法**：各有对象、范围与代价，是极少数人的天赋或修行，不能当成可量产的工业技术，也不用来解释国家的常规武力；特殊地点（天神峰、常灵群岛）天然多些，别处也可能出现，持有者仍属极少数，与所在国的国力、科技无关。
   - **立绘的时代混搭**：属表现风格（见「七」第 0 条），不用于推断科技水平、官制或人物的实际职权。
 
@@ -58,7 +58,7 @@
 |---|---|
 | `index.html` | 首页 · 项目简介 |
 | `gallery.html` | 画廊：意识形态与角色，首字母索引（可返回页首），主题配色封面 |
-| `map.html` | 平面世界地图：地形 / 国家图层、28地点定位，可带地点跳转3D页 |
+| `map.html` | 平面世界地图（v22 起由代码绘制，不加载底图图片）：浅彩羊皮纸风格，地名与特殊地点可点击，地点卡含层级、下辖地点与相关角色，可带地点跳转3D页 |
 | `globe.html` | 独立3D地球：球体地标与局部场景，可返回平面地图 |
 | `cp.html` | CP 乱炖：浏览与发布（发布内容存浏览器 localStorage） |
 | `cp-view.html` | CP 帖子详情页 |
@@ -242,8 +242,8 @@ ynxz/
 - **主题配色封面**：每个意识形态一套 `accent + accent2 + 唯一 SVG 纹样(motif)`，封面为**内联 data-URI SVG**（`designIdeologyCover` 生成，113 个 motif 各不相同，不依赖素材图）。
 - **人物介绍 + 基础信息**：角色名下方、简介上方；衬线正文 + 分隔线，无板块标题。
 - **历史版本 + 「站主说」**：版本查看器右侧显示该图批注（仅填了才显示）。
-- **地点志**：角色"属地/身份"里的地名可点击 → 弹卡片，沿 `parent` 逐级上溯。
-- **世界地图**：默认只显示「已设定」的国家与特殊地点（写进地点志、有角色归属的才算存在），其余是地图生成器自动划定的占位，可用左上「显示未设定地区」临时显示，点开会标明「尚未登场」。单指拖 + 双指捏合缩放、地形/国家底图切换、国家(红点)/特殊地点(紫菱形)标记、常灵岛附近细长不规则的发光**时空裂缝**、"点一下读坐标"放置工具。下级行政区、城市与小地点暂不全量标注，避免默认标注层过密；后续如有需要，优先做独立开关或随缩放分级显示。
+- **地点志**：角色"属地/身份"里的地名可点击 → 弹出纸张风格的地点卡（与地图页同一套视觉）：种类、所属层级、正文、下辖地点、以此为属地的相关角色，并可直接「在地图上查看 / 3D地球」。
+- **世界地图**：见下方「平面地图（v22）」。默认只显示已设定的国家与特殊地点的地名；地图生成器划出、尚无设定的地区可在「图层」里打开「未设定地区」。下级地点（法洛塔、艾迪州等）没有独立坐标，只在所属国家的地点卡里列为「下辖地点」，不编造地图点。
 - **响应式**：移动端适配（网格、工具栏、弹窗、地图手势等）。
 
 ---
@@ -255,7 +255,8 @@ ynxz/
 | `versions-data.js` | `VERSION_DATA` | 历史版本与「站主说」：`{chars:{id:[{url,label,note}]}, ideologies:{id:[...]}}`（**手改，勿脚本重生成**） |
 | `map-data.js` | `MAP_NATIONS` | 地图标记：`{id,name,form,x,y,type?,desc?,color?,parent?}`；`type` 缺省=国家，`special`=特殊地点（下级地名是否上图待定） |
 | `locations-data.js` | `LOCATION_DATA` | 地点志：`{名称:{desc,kind,parent?}}`（含各国 + 下级地名 + 隶属链） |
-| `main.js` / `gallery.js` / `map.html` 内联 | — | 交互逻辑 |
+| `atlas-data.js` | `ATLAS_DATA` | 平面地图数据：海岸 / 湖泊 / 常灵礁群环、政区环、国界线、河流、道路航线（矢量）与高程 / 群系 / 政区 / 温度栅格（base64）。由 `tools/build_atlas.py` 从 Azgaar 导出生成，**勿手改** |
+| `main.js` / `gallery.js` / `atlas.js` / `map-view.js` | — | 交互逻辑（`atlas.js` 为平面地图渲染器，`map-view.js` 负责平面 / 3D 之间的选择与网址同步） |
 
 **规模**：意识形态 113、角色 125（125 位均有正文）、地图标记 41、地点志 28。
 
@@ -297,8 +298,8 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图接入版本：`css/map-view.css v5`、`js/map-flat.js v2`、`js/map-view.js v10`（原`map-mobile.js`不再加载）；`drafts/pierteia-globe/globe.js v19`、`responsive-ui.js v18`、`compact-tools.js v18`、`globe.css v17`、`map-bridge.js v18`、`map-embed.css v18`；v22材质轮升级`landmarks.js v18`、`regional-profiles/surfaces/environment v18`、`planet-materials v10`。未修改的全站样式和数据版本保持不变。
-- 当前版本指针：`style.css v27`、`gallery.css v52`、`gallery.js v76`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 地图接入版本：`css/map-view.css v6`、`js/atlas-data.js v1`、`js/atlas.js v1`、`js/map-view.js v11`（v22 删除 `map-flat.js`、`map-mobile.js` 与底图图片引用）；`drafts/pierteia-globe/globe.js v19`、`responsive-ui.js v18`、`compact-tools.js v18`、`globe.css v17`、`map-bridge.js v18`、`map-embed.css v18`；v22材质轮升级`landmarks.js v18`、`regional-profiles/surfaces/environment v18`、`planet-materials v10`。未修改的全站样式和数据版本保持不变。
+- 当前版本指针：`style.css v27`、`gallery.css v53`、`gallery.js v77`、`gallery-data.js v119`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
@@ -407,10 +408,21 @@ ynxz/
 - 验证：八景环境回归整套重跑为 **v18基线**（`tools/verification-environments-v18.json`，8场景全过、`errors=[]`、17张实图）；[八景实图](drafts/pierteia-globe/screenshots/environments-v18/index.html)。页面套件本地重跑更新v21报告哈希；真实Pages验收成功：[Actions运行38976582307](https://github.com/xoqnapgf-dot/ynxz/actions/runs/38976582307)（提交`67d119d`），线上截图见[pages-v21](drafts/pierteia-globe/screenshots/pages-v21/index.html)。
 - 边界：v17八景图集保留为历史对照（`environments-v17/`）；学院建筑/群岛裂隙/雪山源区布局未动；天气叠加开关、减少动态偏好行为不变；本轮没有新增4K图集，也不以测试代替最终美术验收。
 
+### v22 平面地图重做（代码绘制）与地点卡
+
+- **不再显示底图图片**：`terrain.png` / `nations.png`（各约 5 MB）不再加载。平面地图全部由 `js/atlas.js` 根据 `js/atlas-data.js`（约 820 KB，传输压缩后约 200 KB）在浏览器里画出。原图片与 Azgaar 导出 JSON 仍留在 `素材/地图/` 作源资料。
+- **渲染层次**：WebGL 着色器画地形（高程双三次插值 + 程序化山脊细节 + 西北光照晕渲，群系浅彩、高地赭色、雪线；海面按水深分色并带等深线）；海岸用预计算的「有符号距离场」决定，海岸水纹线、岸边晕色一并在着色器里画。Canvas 画矢量：政区浅彩与沿国界的内侧色带（预渲染一次）、河流（按流量分级随缩放出现）、道路 / 航线、国界（已设定 / 未设定两种线型）、海岸墨线、经纬网、上下图廓与经度注记、图名与图例。山、丘、阔叶林、针叶林、沼泽、沙丘符号按高程和群系确定性撒点，随缩放分级显示。动效层只画时空裂缝的流光和常灵群岛的萤火（系统「减少动态效果」时静止）。
+- **特殊地点图形**：天神峰（雪顶主峰与两侧峰、峰顶淡金光柱与星芒）、万知城（星形棱堡城墙、护城水环、中央穹顶图书馆与钟楼）、安那其学院（岛上屋舍、圆塔灯火与小旗）、常灵群岛（地点志所说「主岛与周围数十座岛礁」：在主岛周围按固定种子生成 26 座小礁，避开裂缝主线；雾霭、萤火），时空裂缝沿用原地图的主裂隙与分枝走向。
+- **交互**：拖动平移（东西向无缝环绕）、滚轮 / 双指缩放、方向键与 + / − 、`/` 聚焦搜索、Esc 关闭。地名、特殊地点图形和国家区域本身都可点击；悬停高亮区域。搜索支持正式名、别名与未设定地区。图层（政区着色、国界、河流、道路航线、山林符号、经纬网、地名、未设定地区）记在本机浏览器。拖动时地形以低分辨率实时绘制，停下约 0.2 秒补一帧高清；悬停等不改变视野的重绘直接复用地形。
+- **地点卡**（地图页右侧抽屉 / 手机底部抽屉；画廊的地点志弹层同一视觉）：种类、经纬度（无独立坐标的下级地点注明「坐标未定 · 沿所属地区定位」）、所属层级、正文分段、下辖地点、相关角色（按角色 `info` 的「属地」与 `LOCATION_ALIAS` 匹配，含下辖地点的角色）、「在3D地球中查看 / 复制链接」。
+- **预留扩展**：`LOCATION_DATA` 某地点加 `image`（地点配图路径）会在卡片顶部显示配图；加 `scene`（地点小场景 / 2.5D 沙盘页面链接）会出现「进入地点场景」。两个字段都是可选的，没有就不占位。站主计划中的「人物关系网」可在卡片的「相关角色」区扩展（数据来源同上）。
+- **重新生成地图数据**：替换 Azgaar 导出后运行 `python3 tools/build_atlas.py`（需要 `numpy`、`scipy`），再把 `atlas-data.js` 的 `?v=` 升一号。国家标签坐标仍取 `MAP_NATIONS`；`MAP_NATIONS.id` 即 Azgaar 的 state 编号。
+- 全站入口版号升为 `release=22`。3D 地球页顶栏改为与平面页同一套控件样式；**3D 球体的渲染、材质与地理本轮未改**，球面配色与新平面地图仍不一致，留待下一轮单独处理。
+
 ### v21入口统一及真实线上验证
 
 - 保留原导航与平面地图布局。首页新增明确的「3D地球」直达入口，原「地图」仍打开平面地图。
-- 首页、画廊、地图、3D、CP、讨论和搜索七个入口页的静态HTML导航携带`release=21`，地图页内跳转也保留该版号；iframe文档使用新版本参数，避免从新入口继续访问旧缓存地址。首页页脚显示「开发预览 · 版本21」。这些是缓存防护和入口修正，不等于已证明用户故障只由缓存引起。
+- 首页、画廊、地图、3D、CP、讨论和搜索七个入口页的静态HTML导航携带`release=21`，地图页内跳转也保留该版号；iframe文档使用新版本参数，避免从新入口继续访问旧缓存地址。首页页脚当时显示「开发预览 · 版本21」（v22 起为版本22）。这些是缓存防护和入口修正，不等于已证明用户故障只由缓存引起。
 - Pages源已由用户改为开发分支，不能再把当前问题归因于未改分支。新增GitHub Actions真实线上检查：先比对Pages返回的HTML/JS/CSS及关键图片/GLB字节，再用浏览器从首页点入地图和3D；不允许用本地服务或拦截模拟来替代正向线上加载。故障回退测试单独注入预期故障。
 - 已在真实Pages上完成首次检查：[Actions运行38750572261](https://github.com/xoqnapgf-dot/ynxz/actions/runs/38750572261)，应用提交`49fd288`。5项页面/脚本/样式及4项关键二进制与仓库SHA一致；11项浏览器检查通过，`errors=[]`。人物图片为预览图和角色大图各抽一张，不是全部图片遍历；WebGL为Chromium/SwiftShader，不是用户实机Safari。
 - [10张真实线上截图](drafts/pierteia-globe/screenshots/pages-v21/index.html)已保存。可复核[HTTP资源记录](docs/pages-http-v21.json)、[浏览器报告](tools/verification-map-pages-v21.json)和[最近运行](docs/pages-live-v21.json)。详见[本轮交付说明](docs/preview-delivery-v21.md)；不以部署绿色代替实际绘制，不声称已确定用户此前故障的全部根因。
@@ -467,6 +479,6 @@ ynxz/
 
 - 浏览器当前页面记录：`tools/verification-map-pages-v21.json`（真实Pages）。本轮增加首页入口、平面图片解码、两类人物图片抽检，继续覆盖独立页面往返、28地点、纯净返回、搜索/图层、旧链接、慢加载选择、贴图/上下文重试及无WebGL回退；`tools/verification-map-v18.json`的25项同页集成检查保留历史，不宣称本轮重跑。
 - v21线上截图尺寸为320×640、390×844、844×390、1440×900。历史移动检查另包含1024×768、768×1024、430×932、360×740、667×375及390×480短屏搜索，不冒充本次重测。属于浏览器视口适配检查，不宣称在全部手机/显卡上测过，也没有降低桌面画质来换取移动性能。
-- `node tools/validate-map.mjs`：核对两个视图的20个正式坐标、28份地点志、入口版本及本轮实际测试源码SHA；另以 `drafts/pierteia-globe/tools/test-craft.mjs` 检查木纹、铺板、排水构件和地被避让。
+- `node tools/validate-map.mjs`（v22 重写）：核对两个视图的20个正式坐标、28份地点志与上级 / 别名、`atlas-data.js` 的栅格尺寸与各国政区环、平面页不加载底图图片、两页 `map-view` 版本一致、全站已无 `release=21`。`tools/test-map-pages.mjs`、`validate-map-mobile.mjs` 仍按 v21 旧版平面页结构编写（`#nationCard`、`#mapPlace`、底图图片等），需要按新界面重写后才能再用于线上检查；另以 `drafts/pierteia-globe/tools/test-craft.mjs` 检查木纹、铺板、排水构件和地被避让。
 - `node drafts/pierteia-globe/tools/validate.mjs`：保留正式地理SHA、场景资产及历史报告检查，不把历史测试冒充本轮执行。
 - 重跑浏览器检查需开发工具 `playwright@1.51.1`、`@sparticuz/chromium@131.0.1` 及对应系统库；网站运行不依赖这些包。启动根目录HTTP服务后执行 `ATLAS_URL=http://127.0.0.1:8135/ node tools/test-map-integration.mjs`。若工具装在外部目录，可用 `NODE_PATH` 指向其 `node_modules`；`CHECK_IMAGES` 是可选内部检查输出目录，不会默认新增截图资产。
