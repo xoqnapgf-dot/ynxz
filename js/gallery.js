@@ -1878,10 +1878,28 @@
     });
     return out;
   }
+  /* 地点志打开时锁住背后的页面：iOS 上只设 overflow:hidden 挡不住，手指碰到遮罩会滑动背景，之后滑动也一直跟着背景走 */
+  var locLockY = null;
+  function lockPage() {
+    if (locLockY !== null) return;
+    locLockY = window.scrollY || 0;
+    var b = document.body.style;
+    b.position = 'fixed'; b.top = -locLockY + 'px'; b.left = '0'; b.right = '0'; b.width = '100%'; b.overflow = 'hidden';
+  }
+  function unlockPage() {
+    if (locLockY === null) return;
+    var y = locLockY, b = document.body.style;
+    locLockY = null;
+    b.position = ''; b.top = ''; b.left = ''; b.right = ''; b.width = ''; b.overflow = '';
+    var h = document.documentElement.style; h.scrollBehavior = 'auto'; // 页面设了平滑滚动，这里要瞬间回到原位
+    window.scrollTo(0, y);
+    h.scrollBehavior = '';
+  }
   function closeLocView() {
     var el = document.getElementById('locView');
     if (!el) return;
     el.classList.remove('show');
+    unlockPage();
     document.removeEventListener('keydown', locKey, true);
   }
   function locKey(e) { if (e.key === 'Escape') { e.stopPropagation(); closeLocView(); } }
@@ -1894,6 +1912,8 @@
       el = document.createElement('div'); el.id = 'locView'; el.className = 'loc-view';
       el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'locViewName');
       document.body.appendChild(el);
+      // 手指落在卡片外的遮罩上不滚动任何东西
+      el.addEventListener('touchmove', function (ev) { if (!ev.target.closest('.loc-view-card')) ev.preventDefault(); }, { passive: false });
       el.addEventListener('click', function (ev) {
         if (ev.target === el || ev.target.closest('.loc-view-x')) { closeLocView(); return; }
         var go = ev.target.closest('[data-loc]');
@@ -1934,8 +1954,10 @@
       '</article>';
     var src = document.getElementById('galDetailPage');
     if (src) { var cs = getComputedStyle(src), ca = cs.getPropertyValue('--ca').trim(); if (ca) { el.style.setProperty('--ca', ca); el.style.setProperty('--ca-d', ca); } }
+    lockPage();
     el.classList.add('show');
     el.scrollTop = 0;
+    var card = el.querySelector('.loc-view-card'); if (card) card.scrollTop = 0;
     document.addEventListener('keydown', locKey, true);
     var x = el.querySelector('.loc-view-x'); if (x) x.focus({ preventScroll: true });
   }
