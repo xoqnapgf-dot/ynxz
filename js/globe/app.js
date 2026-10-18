@@ -459,7 +459,8 @@ function exitDiorama() {
 $('dioBack').onclick = exitDiorama;
 $('dioInfo').onclick = () => {
   if (!dio) return;
-  if (card.hidden || !card.classList.contains('open')) select(selected?.name || dio.info.name, { fly: false });
+  // 以同步设置的 card-open 判断开合，不依赖下一帧才加上的 open 动画类
+  if (card.hidden || !stage.classList.contains('card-open')) select(selected?.name || dio.info.name, { fly: false });
   else hideCard();
 };
 $('dioViews').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (!b || !dio) return; dio.view(+b.dataset.view); $('dioViews').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); poke(); });
