@@ -2,7 +2,7 @@
    约定：1 单位 ≈ 1 米；颜色一律写 sRGB 十六进制，内部转线性。 */
 import * as T from 'three';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
-import { rng, makeNoise, clamp } from './noise.js?v=24';
+import { rng, makeNoise, clamp } from './noise.js?v=25';
 
 /* ---------------- 全局 uniform（每次进入沙盘由 engine 重置） ---------------- */
 export const G = {

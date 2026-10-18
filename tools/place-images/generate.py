@@ -32,6 +32,21 @@ def fetch(url):
         return r.read()
 
 
+def wait_task(base, tid, key, limit=900):
+    t0 = time.time()
+    while time.time() - t0 < limit:
+        time.sleep(8)
+        req = urllib.request.Request(base + '/tasks/' + tid, headers={'Authorization': 'Bearer ' + key})
+        ctx = ssl.create_default_context(cafile=os.environ.get('SSL_CERT_FILE') or None)
+        with urllib.request.urlopen(req, timeout=60, context=ctx) as r:
+            d = json.loads(r.read()).get('data') or {}
+        if d.get('status') in ('completed', 'succeeded', 'success'):
+            return d
+        if d.get('status') in ('failed', 'error', 'cancelled'):
+            print('任务失败', tid, json.dumps(d, ensure_ascii=False)[:400]); return {}
+    print('任务超时', tid); return {}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('names', nargs='*')
@@ -55,7 +70,7 @@ def main():
         dst = OUT / (n + '.webp')
         if dst.exists() and not a.force:
             print('跳过（已存在）', n); continue
-        body = {'model': model, 'prompt': CFG['style'] + '\n\nScene: ' + CFG['places'][n], 'size': CFG['size'], 'quality': CFG['quality'], 'n': 1}
+        body = {'model': model, 'prompt': CFG['style'] + '\n\nScene: ' + CFG['places'][n] + '\n\n' + CFG.get('clean', ''), 'size': CFG['size'], 'quality': CFG['quality'], 'n': 1}
         if a.dry_run:
             print(json.dumps(body, ensure_ascii=False)[:300], '…'); continue
         t0 = time.time()
@@ -64,6 +79,10 @@ def main():
         except urllib.error.HTTPError as e:
             print('失败', n, e.code, e.read()[:500].decode('utf-8', 'replace')); continue
         d = (res.get('data') or [{}])[0]
+        if d.get('task_id'):  # 部分中转是异步任务：先拿 task_id，再查 /tasks/{id}
+            res = wait_task(base, d['task_id'], key)
+            urls = [u for im in ((res.get('result') or {}).get('images') or []) for u in (im.get('url') if isinstance(im.get('url'), list) else [im.get('url')]) if u]
+            d = {'url': urls[0]} if urls else {}
         raw = base64.b64decode(d['b64_json']) if d.get('b64_json') else fetch(d['url']) if d.get('url') else None
         if not raw:
             print('返回里没有图片', n, json.dumps(res)[:400]); continue
@@ -72,7 +91,7 @@ def main():
         if im.width > a.width:
             im = im.resize((a.width, round(im.height * a.width / im.width)), Image.LANCZOS)
         im.save(dst, 'WEBP', quality=80, method=6)
-        print('完成', n, f'{time.time() - t0:.0f}s', im.size, f'{dst.stat().st_size // 1024}KB', 'usage', json.dumps(res.get('usage', {}))[:200])
+        print('完成', n, f'{time.time() - t0:.0f}s', im.size, f'{dst.stat().st_size // 1024}KB', '花费', res.get('credits_cost', res.get('usage', '')))
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=24';
+import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=25';
 
 const $ = id => document.getElementById(id);
 const A = window.ATLAS_DATA, NAT = window.MAP_NATIONS || [], LOC = window.LOCATION_DATA || {};
@@ -393,10 +393,12 @@ async function enterDiorama(name) {
   const it = anchorOf(name);
   stage.classList.add('dio-enter');
   if (it && !reduced) { flyTo(it.dir, 1.32, 900); await new Promise(r => setTimeout(r, 820)); }
+  { const img = LOC[name]?.image, veil = $('dioVeil');
+    veil.classList.toggle('has-img', !!img); veil.style.setProperty('--veil-img', img ? 'url("' + new URL(img, location.href).href + '")' : 'none'); }
   $('dioVeil').classList.add('on');
   $('dioVeilText').textContent = '正在搭建「' + name + '」沙盘';
   try {
-    const mod = await import('./diorama/engine.js?v=24');
+    const mod = await import('./diorama/engine.js?v=25');
     await new Promise(r => setTimeout(r, 30));
     const next = await mod.createDiorama(renderer, name, { width: stage.clientWidth, height: stage.clientHeight, pixelRatio, reduced, coarse, anchor: it ? { u: it.u, v: it.v } : null });
     dio = next; ivSum = ivN = 0; cool = 90;

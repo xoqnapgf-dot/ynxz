@@ -109,7 +109,7 @@ html,body{overflow:hidden}
 .atl-trail{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-top:8px;font:12.5px var(--atl-serif);color:var(--atl-ink3)}
 .atl-trail button{border:0;background:none;padding:2px 0;color:#7a5420;cursor:pointer;font:inherit;border-bottom:1px dotted rgba(122,84,32,.6)}
 .atl-trail i{font-style:normal;opacity:.6}.atl-trail span{color:var(--atl-ink2)}
-.atl-media{margin:12px 24px 0;border-radius:10px;overflow:hidden;border:1px solid var(--atl-line);aspect-ratio:16/9;background:var(--atl-paper2)}
+.atl-media{flex:none;margin:12px 24px 0;border-radius:10px;overflow:hidden;border:1px solid var(--atl-line);aspect-ratio:16/9;background:var(--atl-paper2)}
 .atl-media img{width:100%;height:100%;object-fit:cover;display:block}
 .atl-desc{padding:12px 24px 4px}
 .atl-desc p{margin:0 0 .9em;font:15px/1.95 var(--atl-serif);text-indent:2em;color:#3b2f22;text-align:justify}
@@ -198,6 +198,11 @@ html,body{overflow:hidden}
 .dio-veil{position:absolute;inset:0;z-index:11;display:grid;place-items:center;pointer-events:none;opacity:0;
   background:radial-gradient(ellipse at center,rgba(244,236,217,.97),rgba(226,212,182,.98));transition:opacity .45s ease}
 .dio-veil.on{opacity:1;pointer-events:auto}
+/* 进沙盘时用该地点的场景图虚化做底，等待时不是一片纯色 */
+.dio-veil.has-img{overflow:hidden}
+.dio-veil.has-img::before{content:"";position:absolute;inset:-40px;background:var(--veil-img) center/cover no-repeat;filter:blur(16px) saturate(1.05)}
+.dio-veil.has-img::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(244,236,217,.7),rgba(226,212,182,.45))}
+.dio-veil.has-img span{position:relative;z-index:1}
 .dio-veil span{font:500 15px var(--atl-serif);letter-spacing:.24em;color:var(--atl-ink2)}
 .dio-veil span::before{content:"";display:block;width:34px;height:34px;margin:0 auto 14px;border-radius:50%;border:2px solid rgba(62,49,34,.15);border-top-color:#a8742a;animation:atl-spin 1s linear infinite}
 @keyframes atl-spin{to{transform:rotate(360deg)}}
