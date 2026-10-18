@@ -298,8 +298,8 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图与3D版本：`css/map-view.css v9`、`js/atlas-data.js v1`、`js/atlas.js v3`、`js/map-view.js v12`、`js/place-ui.js v3`；`js/globe/app.js v25`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 25）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
-- 当前版本指针：`style.css v27`、`gallery.css v56`、`gallery.js v81`、`gallery-data.js v123`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 地图与3D版本：`css/map-view.css v9`、`js/atlas-data.js v1`、`js/atlas.js v4`、`js/map-view.js v12`、`js/place-ui.js v4`；`js/globe/app.js v26`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 26）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
+- 当前版本指针：`style.css v27`、`gallery.css v57`、`gallery.js v82`、`gallery-data.js v124`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
@@ -342,7 +342,7 @@ ynxz/
 - 断链已补：沈青禾属地的「南境工矿区」与萨丽特属地的「河湾乡社」已进地点志（2026-10 设定补桥）。「裂缝彼端 · 另一世界」不是固定地点，而是不同的时间线，属地只写文字、不做链接，这是有意设计。
 - 占位国名中「清」「华清国保护国」已改为「璇玑联邦」「霁川公国」；「平」等译名仍易联想现实地名，下一轮改名优先处理；其余单字/怪译名一并复核。
 - 地图尚未决定是否展示州、市与其他小地点；目前只保留已登场国家和少量特殊地点标记，之后若增加点位，应优先做可切换/按缩放分级的独立覆盖层，避免一屏堆满。
-- 「人物设定整理中」占位（`gallery.js` 的 `pendingHtml`）：角色一旦写了 `bio` / `info` / `desc` / `text` 任一项会自动隐藏，无需手动删；全部角色写完后可连同对应 `.ch-pending` 样式一并移除。
+- 「人物设定整理中」占位（`gallery.js` 的 `pendingHtml`）：角色一旦写了 `bio` / `info` / `desc` / `text` 任一项会自动隐藏。现有 125 位都已写完，但新角色常常先上图后补正文，所以保留这段兜底，不要当冗余删除。
 
 ---
 
@@ -386,6 +386,18 @@ ynxz/
 - iOS：Safari 打开站点 → 分享 → 「添加到主屏幕」。以全屏方式打开时状态栏透明，样式已用 `env(safe-area-inset-*)` 给刘海与底部横条留了安全区。
 - 路径全部用相对路径（项目站点部署在 `/ynxz/` 子路径下）；没有 Service Worker，不做离线缓存，因此不影响现有的 `?v=` 版本号缓存策略。
 - 独立窗口（主屏幕启动）下，`js/theme.js` 会固定视口比例（`maximum-scale=1`、`touch-action: manipulation`、拦截 iOS `gesture*` 事件），禁用双击与捏合缩放；普通浏览器访问仍可正常缩放。地图页自己的捏合缩放不受影响。
+
+## 暂无人设 · 待完善的地区（2026-10-18）
+- 地图上 41 个标记里，有 21 个只有国名、没有地点志，也没有任何角色归属：阿格神权政治、劳克兰公国、希尼亚尼亚、多尼亚公国、巴加利亚、鲁维希公国、纳森迪亚神权政治、卢瓦哈、自由多菲亚、多贝里亚公国、斯图希神权政治、维阿雷西亚王国、费雷里亚王国、姆潘迪亚王国、兰德联合省、鲁夫里亚、阿兰维帝国、平、玛尔蒙蒂亚、卡多西亚王国、特奥特兰科王国。
+- 页面上统一标成「暂无人设 · 待完善」：地点卡的类别、说明和搜索结果都这样写，图层开关叫「待完善地区」，默认隐藏。28 处有地点志的地方现在都有归属角色；如果某处以后没人了，地点卡和地点志弹层的「相关角色」会自动显示同样的字样。
+- 这 21 处是**可选的落位池**：以后新增角色可以从中挑，但不必为了平衡人数硬塞，也不必把每一处都用上。要启用其中一处，先补地点志（`LOCATION_DATA`），并经站主确认（等同于把它定成正式国家），再把角色归属过去；没有地点志就写进属地，链接不会生效。
+- 本轮顺带修了两处属地：萨丽特的身份写在河湾乡社、奈莉的身份写在法洛塔，属地却只写到上一级，导致这两个地点显示「没有角色」。现在分别改成 `霁川公国 · 河湾乡社`、`铁枢人民共和国 · 艾迪州 · 法洛塔`，正文与身份不变。
+
+## 冗余代码清理（2026-10-18）
+- `gallery.js`：删掉没被引用的旧纹样表 `MOTIFS`（封面和水印都走 `motifDeco`）和未使用的 `hasFull`；`themeColors` 只读 `theme` 对象，`mergedTheme` 不再重复输出顶层 `accent/accent2/motif`；去掉几处多余实参。注释里的画框 / 粒子取值按数据实际写为 iron/ink/glass/regal/organic 与 ember/snow/petal/leaf/paper。
+- `gallery.css`：删掉早期弹窗式详情和画廊氛围层的 19 段样式（`gal-atmo`、`gal-stats`、`gal-overlay`、`gal-modal`、`gal-detail-img`、`gal-detail-desc`、`gal-letter-count` 等），页面已不生成这些类名。
+- 地点志弹层和地图卡里的人物头像，角色自带主色时优先用角色自己的（12 位有单独配色），其余继承思潮主色。
+- 纹样 `star` 目前没有思潮使用，作为纹样库储备保留。
 
 ## 地点场景图（2026-10-18）
 - 28 处地点各有一张场景图：`素材/地点/<地点志正式名称>.webp`（1280×853，WebP 质量 80，每张约 100–250KB），在 `LOCATION_DATA[名称].image` 里登记。

@@ -6,7 +6,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=25';
+import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=26';
 
 const $ = id => document.getElementById(id);
 const A = window.ATLAS_DATA, NAT = window.MAP_NATIONS || [], LOC = window.LOCATION_DATA || {};
@@ -244,7 +244,7 @@ $('acDio').onclick = () => selected && enterDiorama(selected.name);
 /* ---------------- 搜索 / 图层 / 缩放 ---------------- */
 window.PlaceUI.search($('atlasSearch'), $('atlasSuggest'), [
   ...window.PlaceUI.baseEntries(),
-  ...items.filter(i => i.ghost).map(i => ({ name: i.name, label: i.name, kind: '未设定地区', canon: false }))
+  ...items.filter(i => i.ghost).map(i => ({ name: i.name, label: i.name, kind: '暂无人设 · 待完善', canon: false }))
 ], e => { const it = itemByName.get(e.name); if (dio) exitDiorama(); if (!e.canon && it) { if (!layers.ghosts) setLayer('ghosts', true); select(it.name, { emit: true, forced: it }); } else select(e.name, { emit: true }); });
 const layerBtn = $('atlasLayersBtn'), layerPop = $('atlasLayers');
 layerBtn.onclick = e => { e.stopPropagation(); const open = layerPop.hidden; layerPop.hidden = !open; layerBtn.setAttribute('aria-expanded', String(open)); };
@@ -398,7 +398,7 @@ async function enterDiorama(name) {
   $('dioVeil').classList.add('on');
   $('dioVeilText').textContent = '正在搭建「' + name + '」沙盘';
   try {
-    const mod = await import('./diorama/engine.js?v=25');
+    const mod = await import('./diorama/engine.js?v=26');
     await new Promise(r => setTimeout(r, 30));
     const next = await mod.createDiorama(renderer, name, { width: stage.clientWidth, height: stage.clientHeight, pixelRatio, reduced, coarse, anchor: it ? { u: it.u, v: it.v } : null });
     dio = next; ivSum = ivN = 0; cool = 90;

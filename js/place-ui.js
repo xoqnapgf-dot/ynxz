@@ -36,7 +36,7 @@
   function fillCard(name, opts = {}) {
     const card = $('atlasCard'), d = LOC[name];
     if (opts.color) card.style.setProperty('--place', opts.color);
-    $('acKind').textContent = d ? d.kind : (opts.kind || '未设定地区');
+    $('acKind').textContent = d ? d.kind : (opts.kind || '暂无人设 · 待完善');
     $('acCoord').textContent = opts.coord || '';
     $('acName').textContent = name;
     const chain = chainOf(name);
@@ -45,7 +45,7 @@
     const media = $('acMedia');
     media.hidden = !(d && d.image);
     if (d && d.image) media.innerHTML = `<img src="${esc(d.image)}" alt="${esc(name)}" loading="lazy">`;
-    const desc = d ? d.desc : (opts.ghostText || '地图生成器划出的区域，还没有设定，也没有角色归属于此。');
+    const desc = d ? d.desc : (opts.ghostText || '这片地区只定了国名，设定和人物都还空着，待完善。');
     $('acDesc').innerHTML = String(desc).split(/\n\n+/).map(p => `<p>${esc(p)}</p>`).join('');
     $('acDesc').classList.toggle('muted', !d);
     const kids = kidsOf(name);
@@ -59,11 +59,11 @@
       const groups = [[name, idx[name] || []]];
       kids.forEach(k => { if (idx[k]?.length) groups.push([k, idx[k]]); });
       const total = groups.reduce((a, g) => a + g[1].length, 0);
-      if (!total) { ppl.innerHTML = '<h3>相关角色</h3><p class="atl-wait">暂时没有角色以此地为属地。</p>'; return; }
+      if (!total) { ppl.innerHTML = '<h3>相关角色</h3><p class="atl-wait">暂无人设 · 待完善</p>'; return; }
       ppl.innerHTML = `<h3>相关角色 <small>${total}</small></h3>` + groups.filter(g => g[1].length).map(([g, list]) => (g !== name ? `<p class="atl-sub">${esc(g)}</p>` : '') + '<div class="atl-people">' + list.map(({ c, ideo }) => {
         const im = c.images && c.images[0], th = im ? (typeof im === 'string' ? im : im.thumb) : '';
         const role = ((c.info || []).find(i => i.k === '身份') || {}).v || ideo.name;
-        return `<a href="gallery.html?cat=character&open=${encodeURIComponent(c.id)}" style="--ca:${esc(ideo.theme?.accent || '#b08a4a')}"><span class="av">${th ? `<img src="${esc(th)}" alt="" loading="lazy">` : esc(c.name.slice(0, 1))}</span><span class="nm"><b>${esc(c.name)}</b><small>${esc(ideo.name)} · ${esc(String(role).replace(/^[^·]*·\s*/, ''))}</small></span></a>`;
+        return `<a href="gallery.html?cat=character&open=${encodeURIComponent(c.id)}" style="--ca:${esc(c.theme?.accent || ideo.theme?.accent || '#b08a4a')}"><span class="av">${th ? `<img src="${esc(th)}" alt="" loading="lazy">` : esc(c.name.slice(0, 1))}</span><span class="nm"><b>${esc(c.name)}</b><small>${esc(ideo.name)} · ${esc(String(role).replace(/^[^·]*·\s*/, ''))}</small></span></a>`;
       }).join('') + '</div>').join('');
     });
     (card.querySelector('.atl-body') || card).scrollTop = 0;

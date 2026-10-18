@@ -549,7 +549,7 @@ void main(){
     C.restore();
   }
   function drawLegend(C, x0, y0) {
-    const items = [['border', '国界'], ['ghost', '未设定区界'], ['river', '河流'], ['road', '道路'], ['sea', '航线'], ['m0', '山地'], ['h0', '丘陵'], ['f0', '阔叶林'], ['p0', '针叶林'], ['rift', '时空裂缝']];
+    const items = [['border', '国界'], ['ghost', '待完善地区界'], ['river', '河流'], ['road', '道路'], ['sea', '航线'], ['m0', '山地'], ['h0', '丘陵'], ['f0', '阔叶林'], ['p0', '针叶林'], ['rift', '时空裂缝']];
     C.font = '12px "Noto Serif SC", serif'; C.textBaseline = 'middle'; C.textAlign = 'left';
     const widths = items.map(([, t]) => 30 + C.measureText(t).width + 18), total = widths.reduce((a, b) => a + b, 0) + 70;
     if (total > vw - 40) return;
@@ -736,7 +736,7 @@ void main(){
     b.querySelector('.t').textContent = it.name;
     if (it.art) b.querySelector('.k').textContent = (LOC[it.name]?.kind || '特殊地点').replace('特殊地点', '特殊地点');
     if (!it.art) b.style.fontSize = it.size + 'px';
-    b.setAttribute('aria-label', it.name + (it.ghost ? '（未设定地区）' : ''));
+    b.setAttribute('aria-label', it.name + (it.ghost ? '（暂无人设，待完善）' : ''));
     b.addEventListener('click', e => { e.stopPropagation(); selectItem(it, true, true); });
     b.addEventListener('pointerenter', () => { if (it.state != null && hoverState !== it.state) { hoverState = it.state; invalidate(); } });
     b.addEventListener('pointerleave', () => { if (hoverState === it.state) { hoverState = null; invalidate(); } });
@@ -904,7 +904,7 @@ void main(){
   /* ---------------- 搜索 ---------------- */
   const { hide: hideSuggest } = PlaceUI.search($('atlasSearch'), $('atlasSuggest'), [
     ...PlaceUI.baseEntries(),
-    ...items.filter(i => i.ghost).map(i => ({ name: i.name, label: i.name, kind: '未设定地区', canon: false }))
+    ...items.filter(i => i.ghost).map(i => ({ name: i.name, label: i.name, kind: '暂无人设 · 待完善', canon: false }))
   ], e => { const it = itemByName.get(e.name); if (!e.canon && it) { if (!layers.ghosts) setLayer('ghosts', true); selectItem(it, true, true); } else select(e.name, true, true); });
 
   /* ---------------- 图层 ---------------- */
