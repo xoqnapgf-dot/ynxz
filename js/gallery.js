@@ -47,7 +47,6 @@
      - 只写一个路径时浏览和详情都用它 */
   function imgThumb(im) { return typeof im === 'string' ? im : (im ? im.thumb : ''); }
   function imgFull(im)  { return typeof im === 'string' ? im : (im ? (im.full || im.thumb) : ''); }
-  function hasFull(im)  { return typeof im !== 'string' && im && im.full && im.full !== im.thumb; }
 
   function ideoCover(ideo, withName) {
     if (ideo.cover) return ideo.cover;
@@ -100,75 +99,19 @@
   function themeColors(entry) {
     var th = (entry && entry.theme) || {};
     return {
-      a1: th.accent || entry.accent || '',
-      a2: th.accent2 || entry.accent2 || '',
-      hi: th.hi || entry.hi || '',          /* 高光色：名字渐变亮部、装饰亮点 */
-      frame: th.frame || entry.frame || '', /* 画框样式：gilt/iron/ink/glass/regal/organic */
-      dust: th.dust || entry.dust || '',    /* 氛围粒子：gold/ember/snow/petal/leaf */
-      motif: th.motif || entry.motif || ''
+      a1: th.accent || '',
+      a2: th.accent2 || '',
+      hi: th.hi || '',        /* 高光色：名字渐变亮部、装饰亮点 */
+      frame: th.frame || '',  /* 画框样式：iron/ink/glass/regal/organic */
+      dust: th.dust || '',    /* 氛围粒子：ember/snow/petal/leaf/paper */
+      motif: th.motif || ''
     };
   }
-
-  /* 角色主题纹样（装饰层，纯 CSS/SVG，零依赖零请求） */
-  var MOTIFS = {
-    /* 麦穗：农业主义 */
-    wheat: '<svg viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg">' +
-      '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">' +
-      '<path d="M60 250 C 58 190 62 130 60 60" />' +
-      (function () {
-        var s = '';
-        for (var y = 60; y <= 210; y += 18) {
-          s += '<path d="M60 ' + y + ' C 48 ' + (y - 4) + ' 42 ' + (y - 14) + ' 44 ' + (y - 26) + '"/>';
-          s += '<path d="M60 ' + y + ' C 72 ' + (y - 4) + ' 78 ' + (y - 14) + ' 76 ' + (y - 26) + '"/>';
-        }
-        return s;
-      })() +
-      '<path d="M60 60 C 56 44 56 32 60 20 C 64 32 64 44 60 60 Z" fill="currentColor" stroke="none"/>' +
-      '</g></svg>',
-    gear: '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
-      '<g fill="none" stroke="currentColor" stroke-width="5">' +
-      '<circle cx="100" cy="100" r="58"/><circle cx="100" cy="100" r="22"/>' +
-      (function () {
-        var s = '';
-        for (var i = 0; i < 10; i++) {
-          var a = i * 36 * Math.PI / 180;
-          s += '<line x1="' + (100 + Math.cos(a) * 58).toFixed(1) + '" y1="' + (100 + Math.sin(a) * 58).toFixed(1) +
-               '" x2="' + (100 + Math.cos(a) * 82).toFixed(1) + '" y2="' + (100 + Math.sin(a) * 82).toFixed(1) + '"/>';
-        }
-        return s;
-      })() +
-      '</g></svg>',
-    star: '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
-      '<path d="M100 12 L118 78 L188 78 L131 119 L152 188 L100 146 L48 188 L69 119 L12 78 L82 78 Z" fill="currentColor"/></svg>',
-    scales: '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
-      '<g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">' +
-      '<line x1="100" y1="24" x2="100" y2="176"/><line x1="34" y1="52" x2="166" y2="52"/>' +
-      '<path d="M34 52 L14 108 A 26 26 0 0 0 54 108 Z"/><path d="M166 52 L146 108 A 26 26 0 0 0 186 108 Z"/>' +
-      '<circle cx="100" cy="24" r="8"/></g></svg>',
-    /* 八向罗盘玫瑰：冒险主义 */
-    compass: '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
-      '<g fill="none" stroke="currentColor" stroke-width="4">' +
-      '<circle cx="100" cy="100" r="88"/><circle cx="100" cy="100" r="72"/>' +
-      (function () {
-        var s = '';
-        for (var i = 0; i < 8; i++) {
-          var a = i * 45 * Math.PI / 180;
-          var r1 = i % 2 === 0 ? 0 : 30;
-          s += '<line x1="' + (100 + Math.cos(a) * r1).toFixed(1) + '" y1="' + (100 + Math.sin(a) * r1).toFixed(1) +
-               '" x2="' + (100 + Math.cos(a) * 78).toFixed(1) + '" y2="' + (100 + Math.sin(a) * 78).toFixed(1) + '"/>';
-        }
-        return s;
-      })() +
-      '</g>' +
-      '<path d="M100 30 L112 88 L100 78 L88 88 Z" fill="currentColor"/>' +
-      '<path d="M100 170 L112 112 L100 122 L88 112 Z" fill="currentColor" opacity="0.55"/>' +
-      '<circle cx="100" cy="100" r="7" fill="currentColor"/></svg>'
-  };
 
   /* 给详情整页铺主题：变量 + 背景氛围 + 纹样 */
   function paintStage(entry, cover) {
     var pg = $('#galDetailPage');
-    var t = themeColors(entry, cover);
+    var t = themeColors(entry);
     setAcc(pg, t.a1);
     if (t.a2) pg.style.setProperty('--ca2', t.a2); else pg.style.removeProperty('--ca2');
     if (t.hi) pg.style.setProperty('--ch', t.hi); else pg.style.removeProperty('--ch');
@@ -233,10 +176,7 @@
         frame: a.frame || b.frame || '',
         dust: a.dust || b.dust || '',
         motif: a.motif || b.motif || ''
-      },
-      accent: a.accent || b.accent || '',
-      accent2: a.accent2 || b.accent2 || '',
-      motif: a.motif || b.motif || ''
+      }
     };
   }
   /* ============ 意识形态封面：按主题自动设计（2:3 海报） ============ */
@@ -1295,7 +1235,7 @@
             '<circle r="152" stroke-width="1" opacity="0.28"/>' +
             '<circle r="140" stroke-width="0.8" opacity="0.16" stroke-dasharray="2 6"/>';
           for (var k = 0; k < 48; k++) {
-            var ang = k * 7.5 * Math.PI / 180, big = k % 6 === 0, r1 = big ? 152 : 152, r2 = big ? 162 : 158;
+            var ang = k * 7.5 * Math.PI / 180, big = k % 6 === 0, r1 = 152, r2 = big ? 162 : 158;
             g += '<line x1="' + (Math.cos(ang) * r1).toFixed(1) + '" y1="' + (Math.sin(ang) * r1).toFixed(1) +
                  '" x2="' + (Math.cos(ang) * r2).toFixed(1) + '" y2="' + (Math.sin(ang) * r2).toFixed(1) +
                  '" stroke-width="' + (big ? 1.4 : 0.8) + '" opacity="' + (big ? 0.5 : 0.26) + '"/>';
@@ -1418,7 +1358,7 @@
         (cCount ? '<span class="gal-thumb-badge">' + cCount + ' 角色</span>' : '') +
       '</div>' +
       '<figcaption class="gal-name">' + esc(ideo.name) + '</figcaption>';
-    paintTheme(fig, ideo, ideoCover(ideo));
+    paintTheme(fig, ideo);
     fig.addEventListener('click', function () { openIdeology(ideo); });
     fig.addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openIdeology(ideo); }
@@ -1440,7 +1380,7 @@
         '<span class="gal-sub">' + esc(pair.ideo.name) + '</span>' +
       '</div>' +
       '<figcaption class="gal-name">' + esc(pair.ch.name) + '</figcaption>';
-    paintTheme(fig, mergedTheme(pair.ch, pair.ideo), chCover(pair));
+    paintTheme(fig, mergedTheme(pair.ch, pair.ideo));
     fig.addEventListener('click', function () {
       /* 触屏无 hover：轻点先浮现意识形态横框，再点才进详情（等效双击） */
       if (window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches && !fig.classList.contains('show-sub')) {
@@ -1958,8 +1898,8 @@
         (people.length ? '<section class="loc-view-sec"><h4>相关角色 <small>' + people.length + '</small></h4><div class="loc-view-people">' + people.map(function (x) {
           var im = x.c.images && x.c.images[0], th = im ? (typeof im === 'string' ? im : im.thumb) : '';
           var role = ((x.c.info || []).filter(function (i) { return i.k === '身份'; })[0] || {}).v || '';
-          return '<a href="gallery.html?cat=character&open=' + encodeURIComponent(x.c.id) + '" data-open-ch="' + esc(x.c.id) + '" style="--pa:' + esc((x.ideo.theme && x.ideo.theme.accent) || '#b08a4a') + '"><span class="av">' + (th ? '<img src="' + esc(th) + '" alt="" loading="lazy">' : esc(x.c.name.slice(0, 1))) + '</span><span class="nm"><b>' + esc(x.c.name) + '</b><small>' + esc(x.ideo.name) + (role ? ' · ' + esc(String(role).replace(/^[^·]*·\s*/, '')) : '') + '</small></span></a>';
-        }).join('') + '</div></section>' : '') +
+          return '<a href="gallery.html?cat=character&open=' + encodeURIComponent(x.c.id) + '" data-open-ch="' + esc(x.c.id) + '" style="--pa:' + esc(mergedTheme(x.c, x.ideo).theme.accent || '#b08a4a') + '"><span class="av">' + (th ? '<img src="' + esc(th) + '" alt="" loading="lazy">' : esc(x.c.name.slice(0, 1))) + '</span><span class="nm"><b>' + esc(x.c.name) + '</b><small>' + esc(x.ideo.name) + (role ? ' · ' + esc(String(role).replace(/^[^·]*·\s*/, '')) : '') + '</small></span></a>';
+        }).join('') + '</div></section>' : '<section class="loc-view-sec"><h4>相关角色</h4><p class="loc-view-empty">暂无人设 · 待完善</p></section>') +
         (d.scene ? '<section class="loc-view-sec"><h4>场景</h4><a class="loc-view-scene" href="' + esc(d.scene) + '">进入地点场景 →</a></section>' : '') +
         '<footer class="loc-view-actions"><a class="primary" href="map.html?' + q + '">在地图上查看</a><a href="globe.html?' + q + '">3D地球</a></footer>' +
       '</article>';

@@ -1,8 +1,8 @@
 /* 国家与大地区：半开放沙盘。中心一块代表性区域，往外降级为色块并淡入背景。
    坐标：+x 东，+z 南（相机方位角 az=0 时从南向北看）。 */
-import * as K from './props.js?v=25';
-import { P, lin, tower } from './kit.js?v=25';
-import { bump, terrace, ridgeLine, coastDist, island, smooth, clamp, lerp, segDist } from './terrain.js?v=25';
+import * as K from './props.js?v=26';
+import { P, lin, tower } from './kit.js?v=26';
+import { bump, terrace, ridgeLine, coastDist, island, smooth, clamp, lerp, segDist } from './terrain.js?v=26';
 
 export const COUNTRIES = {};
 const many = (c, n) => c.coarse ? Math.round(n * .4) : n;

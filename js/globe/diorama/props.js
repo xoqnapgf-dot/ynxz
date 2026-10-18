@@ -1,6 +1,6 @@
 /* 沙盘道具与建筑组合：每个函数接收引擎上下文 c（含 B 合并构建器、I 实例、fx、h、r 等）。 */
-import { P, lin, house, tower, wall, boat } from './kit.js?v=25';
-import { lerp, clamp, spline } from './noise.js?v=25';
+import { P, lin, house, tower, wall, boat } from './kit.js?v=26';
+import { lerp, clamp, spline } from './noise.js?v=26';
 
 export const pick = (c, v) => Array.isArray(v) ? c.r.pick(v) : v;
 const rand = (c, a, b) => a + (b - a) * c.r();

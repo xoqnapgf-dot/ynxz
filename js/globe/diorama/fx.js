@@ -1,8 +1,8 @@
 /* 沙盘天气与特效：雨、雪、花瓣/落叶/萤火/孢子/尘、烟、积云、雾片、闪电、彩虹、裂隙、极光、探照灯、飞鸟。
    全部在 GPU 上按时间推算位置，CPU 只在闪电时更新一次几何。 */
 import * as T from 'three';
-import { G, NOISE_GLSL, ATMOS_GLSL, lin } from './kit.js?v=25';
-import { rng, makeNoise, spline } from './noise.js?v=25';
+import { G, NOISE_GLSL, ATMOS_GLSL, lin } from './kit.js?v=26';
+import { rng, makeNoise, spline } from './noise.js?v=26';
 
 const ATM = () => ({ uFade: G.uFade, uBg: G.uBg, uHaze: G.uHaze, uHazeD: G.uHazeD, uFogC: G.uFogC, uFogY: G.uFogY, uFogH: G.uFogH, uFogD: G.uFogD, uFlash: G.uFlash, uFocus: G.uFocus });
 
