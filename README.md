@@ -78,9 +78,9 @@ ynxz/
 │  ├─ globe/       3D地球：app.js（页面与交互）· planet.js（星球着色）
 │  │  └─ diorama/  2.5D沙盘：engine · kit · props · fx · terrain · noise · recipes · places-open · places-closed
 │  └─ vendor/three/  three.js r170（本地副本，importmap 引用）
-├─ tools/          build_atlas.py（平面地图数据）· build_planet.py（星球贴图烘焙）· validate-map.mjs（静态校验）
+├─ tools/          build_atlas.py（平面地图数据）· build_planet.py（星球贴图烘焙）· validate-map.mjs（静态校验）· place-images/（地点场景图生成）
 ├─ docs/           历次人设 / 地点审阅记录与表格
-└─ 素材/           角色大图 · 画廊预览图 · 历史图＆其他版本 · 地图（Azgaar 源文件）· globe（星球贴图）· CP区 · 其他（网页压缩版）
+└─ 素材/           角色大图 · 画廊预览图 · 历史图＆其他版本 · 地图（Azgaar 源文件）· globe（星球贴图）· 地点（场景图）· CP区 · 其他（网页压缩版）
 ```
 
 ---
@@ -254,7 +254,7 @@ ynxz/
 | `gallery-data.js` | `GALLERY_DATA` | 113 意识形态 / 125 角色。`{id,name,initial,desc,cover,theme:{accent,accent2,motif},characters:[{id,name,initial,bio,info:[{k,v}],desc,text,images:[{thumb,full}],misc}]}` |
 | `versions-data.js` | `VERSION_DATA` | 历史版本与「站主说」：`{chars:{id:[{url,label,note}]}, ideologies:{id:[...]}}`（**手改，勿脚本重生成**） |
 | `map-data.js` | `MAP_NATIONS` | 地图标记：`{id,name,form,x,y,type?,desc?,color?,parent?}`；`type` 缺省=国家，`special`=特殊地点（下级地名是否上图待定） |
-| `locations-data.js` | `LOCATION_DATA` | 地点志：`{名称:{desc,kind,parent?}}`（含各国 + 下级地名 + 隶属链） |
+| `locations-data.js` | `LOCATION_DATA` | 地点志：`{名称:{desc,kind,parent?,image?}}`（含各国 + 下级地名 + 隶属链）；`image` 为场景图路径（`素材/地点/名称.webp`） |
 | `atlas-data.js` | `ATLAS_DATA` | 平面地图数据：海岸 / 湖泊 / 常灵礁群环、政区环、国界线、河流、道路航线（矢量）与高程 / 群系 / 政区 / 温度栅格（base64）。由 `tools/build_atlas.py` 从 Azgaar 导出生成，**勿手改** |
 | `main.js` / `gallery.js` / `atlas.js` / `map-view.js` | — | 交互逻辑（`atlas.js` 为平面地图渲染器，`map-view.js` 负责平面 / 3D 之间的选择与网址同步） |
 
@@ -298,8 +298,8 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图与3D版本：`css/map-view.css v8`、`js/atlas-data.js v1`、`js/atlas.js v3`、`js/map-view.js v12`、`js/place-ui.js v3`；`js/globe/app.js v24`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 24）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
-- 当前版本指针：`style.css v27`、`gallery.css v55`、`gallery.js v80`、`gallery-data.js v122`、`versions-data.js v5`、`locations-data.js v27`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 地图与3D版本：`css/map-view.css v9`、`js/atlas-data.js v1`、`js/atlas.js v3`、`js/map-view.js v12`、`js/place-ui.js v3`；`js/globe/app.js v25`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 25）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
+- 当前版本指针：`style.css v27`、`gallery.css v56`、`gallery.js v81`、`gallery-data.js v122`、`versions-data.js v5`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
@@ -386,6 +386,14 @@ ynxz/
 - iOS：Safari 打开站点 → 分享 → 「添加到主屏幕」。以全屏方式打开时状态栏透明，样式已用 `env(safe-area-inset-*)` 给刘海与底部横条留了安全区。
 - 路径全部用相对路径（项目站点部署在 `/ynxz/` 子路径下）；没有 Service Worker，不做离线缓存，因此不影响现有的 `?v=` 版本号缓存策略。
 - 独立窗口（主屏幕启动）下，`js/theme.js` 会固定视口比例（`maximum-scale=1`、`touch-action: manipulation`、拦截 iOS `gesture*` 事件），禁用双击与捏合缩放；普通浏览器访问仍可正常缩放。地图页自己的捏合缩放不受影响。
+
+## 地点场景图（2026-10-18）
+- 28 处地点各有一张场景图：`素材/地点/<地点志正式名称>.webp`（1280×853，WebP 质量 80，每张约 100–250KB），在 `LOCATION_DATA[名称].image` 里登记。
+- 用在三处：① 人设卡里点属地打开的地点志弹层（`gallery.js` 的 `openLocView`）——图放在正文上方做特写，同一张图放大虚化铺满背景，卡片改成半透明磨砂（`.loc-view.has-bg`）；② 平面地图 / 3D 地球的地点卡（`place-ui.js` 的 `#acMedia`）；③ 进入 3D 沙盘时的加载遮罩（`app.js` 的 `#dioVeil.has-img`），等待时显示虚化的场景图。没有 `image` 的地点保持原样。
+- 背景用 CSS 变量（`--lv-bg` / `--veil-img`）传图片地址时必须先转成绝对网址：变量里的相对 `url()` 会按样式表所在的 `css/` 目录解析，直接 404。
+- 生成：`tools/place-images/prompts.json` 存统一画风、去噪提示词和每处的英文场景描述（只写地方，不点名角色，不写现实地名；旗帜写成自拟的素色样式，避免模型画出现实政治符号）；`tools/place-images/generate.py` 调 OpenAI 兼容的图片接口，兼容中转站的异步任务（先返回 `task_id`，再轮询 `/tasks/{id}`），压成 WebP 写入 `素材/地点/`，已存在的默认跳过，重画加 `--force`。
+  - 用法：`IMG_API_KEY=… IMG_API_BASE=https://…/v1 python3 tools/place-images/generate.py 地点名`（或 `--all`、`--dry-run`）。**密钥只放环境变量，不得写进仓库里的任何文件。**
+  - 本批参数：模型 `gpt-image-2.5-sunburst`，`1536x1024`，`quality: low`，每张约 0.056 点。铁枢第一版的旗帜接近现实极端主义旗帜样式，已改描述重画。
 
 ## 三维星球与 2.5D 沙盘（v23，2026-10-17）
 

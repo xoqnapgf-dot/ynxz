@@ -1965,6 +1965,9 @@
       '</article>';
     var src = document.getElementById('galDetailPage');
     if (src) { var cs = getComputedStyle(src), ca = cs.getPropertyValue('--ca').trim(); if (ca) { el.style.setProperty('--ca', ca); el.style.setProperty('--ca-d', ca); } }
+    // 有场景图时：整层背景换成这张图的虚化版，卡片变半透明
+    el.classList.toggle('has-bg', !!d.image);
+    el.style.setProperty('--lv-bg', d.image ? 'url("' + new URL(d.image, location.href).href + '")' : 'none');  // 转绝对地址：变量里的相对 url 会按 css/ 目录解析
     lockPage();
     el.classList.add('show');
     el.scrollTop = 0;

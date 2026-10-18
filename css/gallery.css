@@ -804,6 +804,14 @@
 .loc-view-actions a.primary { background: #3a2d20; color: #f6eedb; }
 .loc-view-actions a:hover { filter: brightness(1.1); }
 .loc-view :focus-visible { outline: 2px solid #a8742a; outline-offset: 2px; }
+/* 有场景图：背景是同一张图的虚化放大版，卡片半透明磨砂 */
+.loc-view.has-bg { background: rgba(12, 9, 6, .3); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.loc-view.has-bg::before { content: ""; position: fixed; inset: -60px; z-index: -1; pointer-events: none;
+  background: var(--lv-bg) center / cover no-repeat; filter: blur(22px) saturate(1.12) brightness(.66); transform: scale(1.04); }
+.loc-view.has-bg .loc-view-card {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ca, #c9a45c) 14%, rgba(251, 246, 234, .7)) 0, rgba(251, 246, 234, .72) 160px), rgba(251, 246, 234, .72);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1); backdrop-filter: blur(16px) saturate(1.1); border-color: rgba(255, 250, 238, .5); }
+.loc-view.has-bg .loc-view-media { box-shadow: 0 10px 26px -14px rgba(0, 0, 0, .55); }
 @media (max-width: 560px) {
   .loc-view { align-items: flex-end; padding: 0; overflow: hidden; }
   .loc-view-card { width: 100%; margin: auto 0 0; border-radius: 18px 18px 0 0; max-height: 88vh; overflow: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; animation-name: lv-up; }

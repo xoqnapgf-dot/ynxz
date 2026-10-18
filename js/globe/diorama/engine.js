@@ -8,10 +8,10 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
-import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js?v=24';
-import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js?v=24';
-import { createFx } from './fx.js?v=24';
-import { RECIPES, STYLES } from './recipes.js?v=24';
+import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js?v=25';
+import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js?v=25';
+import { createFx } from './fx.js?v=25';
+import { RECIPES, STYLES } from './recipes.js?v=25';
 
 const D2R = Math.PI / 180;
 
