@@ -299,7 +299,7 @@ ynxz/
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
 - 地图与3D版本：`css/map-view.css v9`、`js/atlas-data.js v1`、`js/atlas.js v3`、`js/map-view.js v12`、`js/place-ui.js v3`；`js/globe/app.js v25`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 25）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
-- 当前版本指针：`style.css v27`、`gallery.css v56`、`gallery.js v81`、`gallery-data.js v122`、`versions-data.js v5`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v56`、`gallery.js v81`、`gallery-data.js v123`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
@@ -394,6 +394,8 @@ ynxz/
 - 生成：`tools/place-images/prompts.json` 存统一画风、去噪提示词和每处的英文场景描述（只写地方，不点名角色，不写现实地名；旗帜写成自拟的素色样式，避免模型画出现实政治符号）；`tools/place-images/generate.py` 调 OpenAI 兼容的图片接口，兼容中转站的异步任务（先返回 `task_id`，再轮询 `/tasks/{id}`），压成 WebP 写入 `素材/地点/`，已存在的默认跳过，重画加 `--force`。
   - 用法：`IMG_API_KEY=… IMG_API_BASE=https://…/v1 python3 tools/place-images/generate.py 地点名`（或 `--all`、`--dry-run`）。**密钥只放环境变量，不得写进仓库里的任何文件。**
   - 本批参数：模型 `gpt-image-2.5-sunburst`，`1536x1024`，`quality: low`，每张约 0.056 点。铁枢第一版的旗帜接近现实极端主义旗帜样式，已改描述重画。
+- 带参考图生成（如按海报出角色预览图）：这个中转站的 `/images/edits` 只支持 Grok 模型；sunburst 要走 `/images/generations`，在请求里加 `image_urls: ["data:image/jpeg;base64,…"]`（也可用公开网址，最多 5 张）。`1024x1536` + `low` 一张约 0.14 点，比纯文生图贵。
+- 2026-10-18 逻辑实证主义·维丽蒂换上站主提供的新立绘（`角色大图/…_角色大图.jpg`，原图直接入库不再转码）；预览图用站主的「提取单人物全身 + UE5 写实」提示词，以新立绘为参考图生成，缩成 373×560 存为 `.jpg`；旧立绘移到 `历史图＆其他版本/…_历史版本1.PNG` 并登记进 `versions-data.js`。
 
 ## 三维星球与 2.5D 沙盘（v23，2026-10-17）
 
