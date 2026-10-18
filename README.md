@@ -75,7 +75,7 @@ ynxz/
 ├─ css/            style.css（全站）· gallery.css · cp.css · map-view.css
 ├─ js/             数据：gallery-data / versions-data / map-data / locations-data / atlas-data
 │                  逻辑：main / gallery / cp / search / atlas / map-view / place-ui
-│  ├─ globe/       3D地球：app.js（页面与交互）· planet.js（星球着色）
+│  ├─ globe/       3D地球：app.js（页面与交互）· planet.js（星球着色）· warm.js（着色器预热）
 │  │  └─ diorama/  2.5D沙盘：engine · kit · props · fx · terrain · noise · recipes · places-open · places-closed
 │  └─ vendor/three/  three.js r170（本地副本，importmap 引用）
 ├─ tools/          build_atlas.py（平面地图数据）· build_planet.py（星球贴图烘焙）· validate-map.mjs（静态校验）· place-images/（地点场景图生成）
@@ -298,7 +298,7 @@ ynxz/
 - 数据/脚本改动后：`node --check` 语法自检 + 升 `?v=` + 浏览器实测渲染。
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
-- 地图与3D版本：`css/map-view.css v9`、`js/atlas-data.js v1`、`js/atlas.js v4`、`js/map-view.js v12`、`js/place-ui.js v4`；`js/globe/app.js v26`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 26）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
+- 地图与3D版本：`css/map-view.css v9`、`js/atlas-data.js v1`、`js/atlas.js v4`、`js/map-view.js v12`、`js/place-ui.js v4`；`js/globe/app.js v27`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 27）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
 - 当前版本指针：`style.css v27`、`gallery.css v57`、`gallery.js v82`、`gallery-data.js v124`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
@@ -430,7 +430,10 @@ ynxz/
 - 每处的地形、材质、时段、天气各不相同：如安那其学院是依山一层层修上去的台地，山顶是改作大讲堂和书库的旧城堡，城堡正面、城门和广场地面都有Ⓐ；万知城是环城墙里的书城，中央广场立着铜浑仪，图书馆有六柱门廊和带肋的铜绿圆顶；法洛塔是夜里的山坡港口与灯串、汐见町是退潮后的滩涂与细雨、天神峰是黎明的孤峰冰川与云海、南境工矿区是雪夜的井架与探照灯、常灵群岛是蓝调时分的雾、密林与发光裂缝。配方里的说明文字（`note`）只写地方，不点名角色。
 - 引擎（`engine.js`）：程序化地形 + 平台 / 道路 / 河道整形，按地形自动着色；房屋、桥梁、船、工业设施等由 `props.js` 组合，合并成少量网格；树木、人、牲畜、石头、草用实例化；材质在着色器里程序生成（砖、瓦、石、木、金属、玻璃……），夜里窗户会亮。光照为太阳阴影 + 半球光 + 天空环境贴图；后期为 GTAO 环境光遮蔽、泛光、移轴景深与调色。天气（雨、雪、花瓣、落叶、萤火、雾层、积云、闪电、彩虹、极光 / 裂缝光幕、烟、探照灯、飞鸟）在 `fx.js`，可用「天气与动态」开关。积云挡在镜头和主体之间时会自动淡出；有雷雨云时闪电从云底劈下。
 - 手机或低性能设备（`coarse`）自动减少实例数量与光源；系统开启「减少动态效果」时不播放镜头飞行。
-- 画质分三档（`engine.js` 的 `quality`）：电脑默认 high（PCF 软阴影每帧更新、GTAO、4×MSAA、移轴 18 次采样、分辨率上限 2）；手机默认 mid（阴影图 1536、每 4 帧更新一次、不做 GTAO、2×MSAA、移轴 8 次采样、分辨率上限 1.25）；low 关掉移轴，阴影只画一次，泛光只在夜景保留。`app.js` 按相邻两次实际绘制的间隔（不是 JS 耗时——手机多半卡在 GPU 上，JS 耗时看不出来）统计帧率，连续约 45 帧平均低于约 32 帧/秒就调用 `dio.degrade()` 降一档；降到 low 后再把沙盘渲染分辨率每次降 0.25，最低 0.75。不在沙盘时同样的判断用来降低星球的分辨率。调试可用 `__globe.degrade()` 手动降档，`__globe.stats().diorama` 里能看到当前 `quality` 与 `pr`。
+- 画质分三档（`engine.js` 的 `quality`）：电脑默认 high（PCF 软阴影每帧更新、GTAO、4×MSAA、移轴 18 次采样、分辨率上限 2）；手机默认 mid（阴影图 1536、每 4 帧更新一次、不做 GTAO、2×MSAA、移轴 8 次采样、分辨率上限 1.25）；low 关掉移轴，阴影只画一次，泛光只在夜景保留。`app.js` 按相邻两次实际绘制的间隔（不是 JS 耗时——手机多半卡在 GPU 上，JS 耗时看不出来）统计帧率，连续约 30 帧平均低于约 32 帧/秒就调用 `dio.degrade()` 降一档（低于约 20 帧/秒一次降两档）；降到 low 后再把沙盘渲染分辨率每次降 0.25，最低 0.75。不在沙盘时同样的判断用来降低星球的分辨率（每次 0.25，很卡时 0.5，最低 0.75）。调试可用 `__globe.degrade()` 手动降档，`__globe.stats().diorama` 里能看到当前 `quality` 与 `pr`。
+- **卡死的根因与预热（v27）**：进沙盘、开地球时整页卡住，主要不是建模或画质，而是**第一帧同步编译着色器**——three.js 第一次画某个材质时才编译，并在主线程上等驱动编完；Windows 的 ANGLE→D3D 编译很慢，沙盘第一次进入要编约 30 个程序（场景材质、阴影深度、GTAO 法线、泛光 / 移轴 / 调色 / 输出各通道），页面会冻住十几秒甚至被浏览器判为无响应。本地 SwiftShader 实测进沙盘 52 秒里有 48 秒耗在这类同步查询上，搭场景的 JS 只占约 1.5 秒。现在 `warm.js` 的 `warmUp()` 在首帧前用 `renderer.compileAsync` 把这些程序交给驱动后台编译（支持 `KHR_parallel_shader_compile` 的真实显卡基本都有），编完才撤加载遮罩；阴影深度和 GTAO 法线用同参数的临时材质顶替编译，`OutputPass` 的 defines 提前写好，只在调试或直出屏幕时才用的通道材质跳过。环境图用的 PMREM 生成器跨沙盘复用，烘焙前也先后台编译天空材质。测试脚本统计链接时机：地球与沙盘的渲染期漏编为 0（只剩烘环境图时的少量程序）。软件渲染没有这个扩展，所以本地测出的总时长不变；真实设备上的改善要以电脑和手机实际体验为准。
+- **星球减负（v27）**：渲染倍率上限电脑也降到 1.5（原 1.75）；倍率达 1.5 时多重采样从 4× 降到 2×（两张半精度多重采样缓冲的显存与带宽减半）；星空排在地表之后画，被星球挡住的像素靠深度测试跳过；银河带以外跳过 4 次噪声与最密一层星点；贴图能用 `ImageBitmap` 时在后台线程解码，并在加载时逐张上传，不再全部堆到第一帧（旧版 Safari < 17 / Firefox < 98 退回普通加载）。
+- **地点介绍按钮（v27）**：沙盘里用卡片右上角 × 关掉卡片会清空选择，之后「地点介绍」按钮点了没反应，地址栏也丢了 `scene=1`，只能退出重进。现在沙盘里的 × 只收起卡片；「地点介绍」没有选择时回落到当前沙盘的地点；收起动画的计时不再把刚重新打开的卡片藏掉。在沙盘里从卡片换到另一个地点时，会先拆掉旧沙盘再建新的，避免渲染器状态被错存。
 - 写新配方：坐标 +x 东、+z 南；视角 `az=0` 是从南往北看，`az=90` 从东往西看。没有水的地点写 `water:false`。
 
 ### 验证

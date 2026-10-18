@@ -8,10 +8,14 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
-import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js?v=26';
-import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js?v=26';
-import { createFx } from './fx.js?v=26';
-import { RECIPES, STYLES } from './recipes.js?v=26';
+import { G, NOISE_GLSL, ATMOS_GLSL, Builder, kitMaterial, Instances, lin, house, P } from './kit.js?v=27';
+import { makeNoise, rng, strSeed, smooth, clamp, lerp, segDist, spline } from './noise.js?v=27';
+import { createFx } from './fx.js?v=27';
+import { RECIPES, STYLES } from './recipes.js?v=27';
+import { warmUp, warmOffscreen } from '../warm.js?v=27';
+
+// 环境图生成器跨沙盘复用：它的模糊着色器不必每次进沙盘都重新编译
+const PMREM = new WeakMap();
 
 const D2R = Math.PI / 180;
 
@@ -511,8 +515,9 @@ export async function createDiorama(renderer, name, opts = {}) {
   setSkyU(skyM, false); skyM.uniforms.uOpen.value = open ? 1 : 0;
   const envScene = new T.Scene(), envM = skyMaterial(true); setSkyU(envM, true);
   envScene.add(new T.Mesh(new T.SphereGeometry(10, 32, 16), envM));
-  const pmrem = new T.PMREMGenerator(renderer);
-  const envRT = pmrem.fromScene(envScene, 0, .1, 100); pmrem.dispose();
+  await warmOffscreen(renderer, envScene);
+  if (!PMREM.has(renderer)) PMREM.set(renderer, new T.PMREMGenerator(renderer));
+  const envRT = PMREM.get(renderer).fromScene(envScene, 0, .1, 100);
   scene.environment = envRT.texture; scene.environmentIntensity = time.env;
   envM.dispose();
   if (waterMat) {
@@ -730,6 +735,8 @@ export async function createDiorama(renderer, name, opts = {}) {
     composer.render();
   }
 
+  // 首帧前让着色器在后台编译，进沙盘时页面不再整段卡住
+  disposables.push(await warmUp(renderer, scene, camera, composer));
   await tick();
   if (dbg.expose) window.__dioScene = { scene, camera, composer };
   const info = renderer.info;
