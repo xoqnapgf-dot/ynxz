@@ -1,9 +1,9 @@
 /* 小地点：完整底座的沙盘。
    坐标：+x 东，+z 南（相机方位角 az=0 时从南向北看）。 */
 import { Vector3 as T3, Euler as E3 } from 'three';
-import * as K from './props.js?v=26';
-import { P, lin, wall, tower, boat } from './kit.js?v=26';
-import { bump, terrace, ridgeLine, island, smooth, clamp, lerp, segDist } from './terrain.js?v=26';
+import * as K from './props.js?v=27';
+import { P, lin, wall, tower, boat } from './kit.js?v=27';
+import { bump, terrace, ridgeLine, island, smooth, clamp, lerp, segDist } from './terrain.js?v=27';
 
 export const SITES = {};
 const coarse = (c, n) => c.coarse ? Math.round(n * .35) : n;

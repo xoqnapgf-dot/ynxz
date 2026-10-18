@@ -321,10 +321,13 @@ const SKY_FS = /* glsl */`
     // 银河：沿一条倾斜大圆的雾带与暗尘
     vec3 gp = normalize(vec3(.32, .86, -.39));
     float band = exp(-pow(dot(d, gp) * 4.2, 2.));
-    float n = snoise(d * 6.) * .5 + snoise(d * 14.) * .3 + snoise(d * 33.) * .2;
-    float dust = smoothstep(.15, .7, snoise(d * 9. + 4.) * .5 + .5) * band;
-    col += vec3(.55, .58, .72) * band * (.008 + .007 * n) * (1. - dust * .7);
-    col += starLayer(d, 1300., .08) * band * .5;
+    // 银河带外几乎没有贡献，跳过四次噪声和最密的一层星点
+    if (band > .002) {
+      float n = snoise(d * 6.) * .5 + snoise(d * 14.) * .3 + snoise(d * 33.) * .2;
+      float dust = smoothstep(.15, .7, snoise(d * 9. + 4.) * .5 + .5) * band;
+      col += vec3(.55, .58, .72) * band * (.008 + .007 * n) * (1. - dust * .7);
+      col += starLayer(d, 1300., .08) * band * .5;
+    }
     col *= uStars;
     // 日面与日冕
     float c = dot(d, uSun);
@@ -368,7 +371,8 @@ export function createPlanet(tex, { segments = 640 } = {}) {
     vertexShader: 'varying vec3 vDir; void main(){ vDir = position; vec4 p = projectionMatrix * viewMatrix * vec4(position + cameraPosition, 1.); gl_Position = p.xyww; }',
     fragmentShader: SKY_FS, side: T.BackSide, depthWrite: false
   }));
-  sky.renderOrder = -1; sky.frustumCulled = false;
+  // 排在地表之后：被星球挡住的像素靠深度测试直接跳过，不再白算星空
+  sky.renderOrder = 1; sky.frustumCulled = false;
   group.add(sky);
   const gm = ground.material.uniforms;
   return {

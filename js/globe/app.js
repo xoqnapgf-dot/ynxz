@@ -6,7 +6,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=26';
+import { createPlanet, uvToDir, ribbon, DISP } from './planet.js?v=27';
+import { warmUp } from './warm.js?v=27';
 
 const $ = id => document.getElementById(id);
 const A = window.ATLAS_DATA, NAT = window.MAP_NATIONS || [], LOC = window.LOCATION_DATA || {};
@@ -79,7 +80,8 @@ renderer.toneMapping = T.AgXToneMapping;
 renderer.toneMappingExposure = 1.0;
 const maxTex = renderer.capabilities.maxTextureSize;
 const hiTex = maxTex >= 8192 && !coarse;
-let pixelRatio = Math.min(devicePixelRatio || 1, coarse ? 1.5 : 1.75);
+// 高分屏上 1.5 倍已经足够细；再往上主要是在烧显卡
+let pixelRatio = Math.min(devicePixelRatio || 1, 1.5);
 renderer.setPixelRatio(pixelRatio);
 
 const scene = new T.Scene();
@@ -90,7 +92,8 @@ Object.assign(controls, { enablePan: false, enableDamping: true, dampingFactor: 
 controls.addEventListener('start', () => { flight = null; poke(); });
 controls.addEventListener('change', poke);
 
-const rt = new T.WebGLRenderTarget(1, 1, { type: T.HalfFloatType, samples: coarse ? 2 : 4 });
+// 渲染倍率已到 1.5 时多重采样减半：画质差别看不出，显存和带宽省一半
+const rt = new T.WebGLRenderTarget(1, 1, { type: T.HalfFloatType, samples: coarse || pixelRatio >= 1.5 ? 2 : 4 });
 const composer = new EffectComposer(renderer, rt);
 composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new T.Vector2(1, 1), .22, .5, 1.6);
@@ -112,16 +115,22 @@ async function loadTextures() {
     ['normal', 'normal-4k.jpg'], ['data', 'data-4k.jpg'],
     ['water', `water-${hiTex ? '8k' : '4k'}.png`], ['clouds', 'clouds-4k.jpg']
   ];
-  const loader = new T.TextureLoader();
+  // 能用 ImageBitmap 就在后台线程解码，8k 大图不再占住主线程（旧版 Safari / Firefox 的翻转参数不可靠，退回普通加载）
+  const ua = navigator.userAgent, sv = /^((?!chrome|android).)*safari/i.test(ua) ? +(ua.match(/Version\/(\d+)/)?.[1] || 0) : 99;
+  const fv = /Firefox\/(\d+)/.test(ua) ? +ua.match(/Firefox\/(\d+)/)[1] : 999;
+  const bitmap = typeof createImageBitmap === 'function' && sv >= 17 && fv >= 98;
+  const loader = bitmap ? new T.ImageBitmapLoader().setOptions({ imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' }) : new T.TextureLoader();
   let done = 0;
   const out = {};
   await Promise.all(list.map(async ([key, file, srgb]) => {
-    const t = await loader.loadAsync(TEX + file + '?v=2');
+    let t = await loader.loadAsync(TEX + file + '?v=2');
+    if (bitmap) { t = new T.Texture(t); t.flipY = false; t.needsUpdate = true; }
     t.wrapS = T.RepeatWrapping; t.wrapT = T.ClampToEdgeWrapping;
     t.colorSpace = srgb ? T.SRGBColorSpace : T.NoColorSpace;
     t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
     t.generateMipmaps = true; t.minFilter = T.LinearMipmapLinearFilter;
     out[key] = t;
+    renderer.initTexture(t);   // 分散上传，别全堆到第一帧
     done++;
     $('glbLoadBar').style.width = (done / list.length * 100) + '%';
     $('glbLoadText').textContent = ['正在铺开海岸线', '正在抬起山脉', '正在灌注海洋', '正在聚拢云层', '即将完成'][Math.min(4, done)];
@@ -235,7 +244,13 @@ function flyTo(dir, dist, dur = 1300) {
   poke();
 }
 card.addEventListener('click', e => { const go = e.target.closest('[data-go]'); if (go) select(go.dataset.go, { emit: true }); });
-$('acClose').onclick = () => clear(true);
+function hideCard() {
+  card.classList.remove('open'); stage.classList.remove('card-open');
+  setTimeout(() => { if (!card.classList.contains('open')) card.hidden = true; }, 260);
+  poke();
+}
+// 沙盘里点 × 只收起卡片：清掉选择会让「地点介绍」按钮失效，地址栏也会丢掉沙盘状态
+$('acClose').onclick = () => { if (dio) hideCard(); else clear(true); };
 $('acGrip').onclick = () => card.classList.toggle('full');
 $('acCopy').onclick = window.PlaceUI.copyLink;
 $('acFlat').onclick = () => window.__mapView?.setMode('flat');
@@ -341,18 +356,19 @@ function loop(now) {
   // 只统计连续绘制的帧；切后台回来的长间隔不算
   if (prevDrawn && !idle && iv < 250 && --cool < 0) {
     ivSum += iv; ivN++;
-    if (ivN >= 45) {
-      if (ivSum / ivN > 31) degrade();
+    if (ivN >= 30) {
+      const avg = ivSum / ivN;
+      if (avg > 31) degrade(avg > 50);
       ivSum = ivN = 0;
     }
   }
   prevDrawn = true;
   if (!document.hidden) raf = requestAnimationFrame(loop);
 }
-function degrade() {
-  // 沙盘先逐档降效果，星球直接降分辨率；降完留一段时间让帧率稳下来再判断
-  if (dio && dio.degrade()) { cool = 60; return; }
-  if (pixelRatio > 1) { pixelRatio = Math.max(1, pixelRatio - .25); renderer.setPixelRatio(pixelRatio); resize(); cool = 60; }
+function degrade(hard = false) {
+  // 沙盘先逐档降效果，星球直接降分辨率；降完留一段时间让帧率稳下来再判断；特别卡时一次降两档
+  if (dio && dio.degrade()) { if (hard) dio.degrade(); cool = 40; return; }
+  if (pixelRatio > .75) { pixelRatio = Math.max(.75, pixelRatio - (hard ? .5 : .25)); renderer.setPixelRatio(pixelRatio); resize(); cool = 40; }
 }
 function frame(now) {
   if (flight) {
@@ -398,7 +414,9 @@ async function enterDiorama(name) {
   $('dioVeil').classList.add('on');
   $('dioVeilText').textContent = '正在搭建「' + name + '」沙盘';
   try {
-    const mod = await import('./diorama/engine.js?v=26');
+    // 在沙盘里换到另一个地点：先拆掉旧的，否则渲染器状态会被新沙盘错存
+    if (dio) { dio.dispose(); dio = null; }
+    const mod = await import('./diorama/engine.js?v=27');
     await new Promise(r => setTimeout(r, 30));
     const next = await mod.createDiorama(renderer, name, { width: stage.clientWidth, height: stage.clientHeight, pixelRatio, reduced, coarse, anchor: it ? { u: it.u, v: it.v } : null });
     dio = next; ivSum = ivN = 0; cool = 90;
@@ -415,6 +433,7 @@ async function enterDiorama(name) {
     window.dispatchEvent(new CustomEvent('globe:scene', { detail: { name, on: true } }));
   } catch (err) {
     console.error(err);
+    if (!dio) { document.body.classList.remove('in-dio'); stage.classList.remove('dio'); $('dioHud').hidden = true; applyLayers(); }
     window.PlaceUI.toast('沙盘没能载入：' + (err.message || err));
   } finally {
     dioLoading = false;
@@ -438,7 +457,12 @@ function exitDiorama() {
   poke();
 }
 $('dioBack').onclick = exitDiorama;
-$('dioInfo').onclick = () => { if (card.hidden && selected) select(selected.name, { fly: false }); else if (!card.hidden) { card.classList.remove('open'); stage.classList.remove('card-open'); setTimeout(() => { card.hidden = true; }, 240); } };
+$('dioInfo').onclick = () => {
+  if (!dio) return;
+  // 以同步设置的 card-open 判断开合，不依赖下一帧才加上的 open 动画类
+  if (card.hidden || !stage.classList.contains('card-open')) select(selected?.name || dio.info.name, { fly: false });
+  else hideCard();
+};
 $('dioViews').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (!b || !dio) return; dio.view(+b.dataset.view); $('dioViews').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); poke(); });
 $('dioWeather').onchange = e => { dio?.setWeather(e.target.checked); poke(); };
 $('dioOrbit').onchange = e => { dio?.setOrbit(e.target.checked); poke(); };
@@ -463,6 +487,8 @@ async function boot() {
     select(name, { fly: true });
     if (params.get('scene') === '1' && has(LOC, name)) enterDiorama(name);
   }
+  $('glbLoadText').textContent = '正在准备光影';
+  await warmUp(renderer, scene, camera, composer);
   frame(performance.now());
   $('globeLoading').classList.add('gone');
   setTimeout(() => { $('globeLoading').hidden = true; }, 600);
