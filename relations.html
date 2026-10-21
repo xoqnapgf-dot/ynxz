@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="site-release" content="22" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>人物关系 · 意拟小站</title>
+  <meta name="robots" content="noindex" />
+  <script src="js/theme.js?v=2"></script>
+  <link rel="stylesheet" href="css/style.css?v=27" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <meta name="theme-color" content="#0a0a0e" />
+  <link rel="stylesheet" href="css/relations.css?v=1" />
+</head>
+<body data-page="relations">
+  <header class="site-header">
+    <a class="brand" href="index.html?release=23">
+      <span class="brand-zh">意拟小站</span>
+      <span class="brand-en">IDEOLOGICAL&nbsp;HUMANS</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="gallery.html?release=23">画廊</a>
+      <a href="map.html?release=23">地图</a>
+      <a href="cp.html?release=23">CP乱炖</a>
+      <a href="forum.html?release=23">讨论区</a>
+      <a href="search.html?release=23">搜索</a>
+    </nav>
+  </header>
+
+  <main class="rel-main">
+    <section class="page-head compact">
+      <p class="page-badge reveal">样稿&nbsp;·&nbsp;RELATIONS</p>
+      <h1 class="page-title reveal">人物关系</h1>
+      <p class="page-title-en reveal" style="--d:.08s">BY PLACE</p>
+    </section>
+
+    <p class="rel-note">样稿：按地点看住在那里的人和彼此的关系。关系只取自现有人设正文，目前只录了<b>科鲁鲁王国</b>与<b>安那其学院</b>两处；<span class="rel-key sure"></span>实线为正文写明，<span class="rel-key maybe"></span>虚线为待确认。</p>
+
+    <div class="rel-places" id="relPlaces" role="tablist" aria-label="地点"></div>
+
+    <div class="rel-wrap">
+      <section class="rel-board" id="relBoard" aria-label="关系图">
+        <svg class="rel-lines" id="relLines" aria-hidden="true"></svg>
+        <div class="rel-nodes" id="relNodes"></div>
+      </section>
+      <aside class="rel-side" id="relSide" aria-live="polite"></aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>意拟小站 · IDEOLOGICAL HUMANS</span>
+  </footer>
+
+  <script src="js/gallery-data.js?v=124" defer></script>
+  <script src="js/locations-data.js?v=28" defer></script>
+  <script src="js/relations-data.js?v=1" defer></script>
+  <script src="js/main.js?v=1" defer></script>
+  <script src="js/relations.js?v=1" defer></script>
+</body>
+</html>
