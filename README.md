@@ -62,13 +62,14 @@
 | `globe.html` | 独立3D地球（v23）：按平面地图真实比例烘焙的星球；点地点可进入该地的 2.5D 沙盘（国家 / 大地区半开放，小地点完整底座），可返回平面地图 |
 | `cp.html` | CP 乱炖：浏览与发布（发布内容存浏览器 localStorage） |
 | `cp-view.html` | CP 帖子详情页 |
+| `relations.html` | 人物关系样稿：按地点看角色与关系（未进主导航） |
 | `forum.html` | 讨论区 |
 | `search.html` | 站内搜索（意识形态 / 角色 / CP / 讨论） |
 
 ### 目录结构
 ```
 ynxz/
-├─ index.html · gallery.html · map.html · cp.html · cp-view.html · forum.html · search.html
+├─ index.html · gallery.html · map.html · cp.html · cp-view.html · forum.html · search.html · relations.html（样稿）
 ├─ README.md · AGENTS.md  项目说明 / 给 AI 协作者的入口
 ├─ manifest.webmanifest   添加到主屏幕（iOS / Android）所需清单
 ├─ icons/          应用图标：icon.svg（源）· apple-touch-icon.png（180）· icon-192/512.png · favicon-32.png
@@ -415,6 +416,12 @@ ynxz/
   - 本批参数：模型 `gpt-image-2.5-sunburst`，`1536x1024`，`quality: low`，每张约 0.056 点。铁枢第一版的旗帜接近现实极端主义旗帜样式，已改描述重画。
 - 带参考图生成（如按海报出角色预览图）：这个中转站的 `/images/edits` 只支持 Grok 模型；sunburst 要走 `/images/generations`，在请求里加 `image_urls: ["data:image/jpeg;base64,…"]`（也可用公开网址，最多 5 张）。`1024x1536` + `low` 一张约 0.14 点，比纯文生图贵。
 - 2026-10-18 逻辑实证主义·维丽蒂换上站主提供的新立绘（`角色大图/…_角色大图.jpg`，原图直接入库不再转码）；预览图用站主的「提取单人物全身 + UE5 写实」提示词，以新立绘为参考图生成，缩成 373×560 存为 `.jpg`；旧立绘移到 `历史图＆其他版本/…_历史版本1.PNG` 并登记进 `versions-data.js`。
+
+## 人物关系（样稿，v1，2026-10-21）
+- 页面 `relations.html?place=地点&c=角色id`（暂不进主导航，`noindex`）：按地点把住在那里的角色排成一圈拍立得，中间贴地点场景图；有关系的人之间连红线，线上小纸签写关系。点照片高亮 TA 的关系，侧栏列出关系与人设原文出处，并可跳到画廊人设（`gallery.html?cat=character&open=id`）或地图（`map.html?place=`）。和外地的人有关系时，对方以小照片贴在外圈，再点一次跳到那个地点。手机上纸签只在点开某人时显示。
+- 角色按 `属地` 第一段（经 `LOCATION_ALIAS` 规范、再沿 `parent` 上溯）归到顶层地点；属地里更细的小地点显示在照片下方。排位用交换法让有关系的人尽量挨着坐，关系最多的人放正上方；照片尺寸按人数自动缩，一圈按「卡片尺寸归一后的弧长」等距排开。会穿过中间照片的线改从照片外侧绕。
+- 数据 `js/relations-data.js`：`{a, b, label, sure, src}`。**只录人设正文写明或直接可读出的关系**，`src` 记出处；`sure:false` 画虚线，表示正文能看出交集、但算不算关系与怎么称呼待站主确认。同国、同姓、同职业不算关系（见上文「不追加关系」）。目前只录了科鲁鲁王国 5 条（实线 2、虚线 3）与安那其学院 2 条（实线），其他地点只摆人。
+- 资源：`css/relations.css v1`、`js/relations.js v1`、`js/relations-data.js v1`；读取 `gallery-data.js v124`、`locations-data.js v28`。
 
 ## 三维星球与 2.5D 沙盘（v23，2026-10-17）
 
