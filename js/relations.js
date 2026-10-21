@@ -7,6 +7,32 @@
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var canon = function (s) { s = String(s).trim(); return L[s] ? s : (A[s] || s); };
   var NS = 'http://www.w3.org/2000/svg';
+  var STAGE_W = 720, STAGE_H = 660;   // 手机上的固定版面，缩放后铺满屏宽
+
+  /* 各地的纸：按地方的气质挑（样式在 relations.css 的 [data-paper]），没列的用羊皮纸 */
+  var PAPER = {
+    '科鲁鲁王国': 'vellum',       // 礼法古国：泛黄羊皮纸，红色双栏线
+    '安那其学院': 'pulp',         // 岛上印刷所：再生粗纸，印刷栏线
+    '伊鲁尼利亚共和国': 'chart',  // 两面临海的商贸共和国：海图纸
+    '万知城': 'ledger',           // 书城：档案卡纸，横格与红边线
+    '坎普共和国': 'kraft',        // 码头与矿区：牛皮纸
+    '布图里亚': 'tide',           // 海峡王国：灰蓝布纹纸，浪纹水印
+    '璇玑联邦': 'drafting',       // 研究院与精密工坊：制图纸
+    '铁枢人民共和国': 'graph',    // 计划经济：方格表格纸
+    '霁川公国': 'rice',           // 稻作水乡：长纤维白纸，淡墨晕
+    '卡法里扬帝国': 'ash',        // 北方冻土与矿冶：冷灰厚纸，烟熏边
+    '塞雷格帝国': 'decree',       // 自称古帝国继承者：诏书纸，双重框
+    '帕尔哈南神权政治': 'scripture', // 抄经院：赭金经卷纸
+    '裂缝彼端': 'rift',           // 彼方：暗紫异纸，一道裂光
+    '翁吉亚共和国': 'ochre',      // 高地诸神：赭土纸，回纹边
+    '契莱西亚保护国': 'bark',     // 山林雨林：树皮纸
+    '奥嫩堡王国': 'charter',      // 封臣与城堡：特许状厚羊皮，蜡封
+    '罗歇阿普公国': 'damp',       // 湿热海岸：受潮泛黄、霉斑
+    '天神峰': 'snow',             // 雪峰：冷白纸，雪点
+    '常灵群岛': 'mist',           // 雾岛：灰绿纸，雾带
+    '卡斯奎尼亚王国': 'hemp',     // 草原与骑士：麻纸织纹
+    '示安神权政治': 'washi'       // 社祠与潮汐：长纤维薄纸，朱印
+  };
 
   /* ---- 角色与所属地点 ---- */
   var chars = {}, byPlace = {};
@@ -87,23 +113,32 @@
 
   var pos = {}, geo = {};
   function render() {
-    [].forEach.call($('relPlaces').children, function (b) { b.setAttribute('aria-selected', String(b.dataset.place === cur)); });
-    var board = $('relBoard'), ids = order(byPlace[cur] || []), n = ids.length, W = board.clientWidth, narrow = W < 600;
-    // 手机上人多时把纸板拉长，免得照片叠在一起
-    var wantH = narrow ? Math.round(W * (n > 10 ? 1.75 : 1.45)) + 'px' : '';
+    [].forEach.call($('relPlaces').children, function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.place === cur));
+      if (b.dataset.place === cur && $('relPlaces').scrollWidth > $('relPlaces').clientWidth) $('relPlaces').scrollLeft = b.offsetLeft - $('relPlaces').clientWidth / 2 + b.offsetWidth / 2;
+    });
+    var board = $('relBoard'), stage = $('relStage'), ids = order(byPlace[cur] || []), n = ids.length, BW = board.clientWidth;
+    board.dataset.paper = PAPER[cur] || 'vellum';
+    // 手机：按电脑版的版面画一块固定大小的纸板，再整体缩到屏幕宽度，间距和比例与电脑上一致
+    var narrow = BW < 600, s = narrow ? BW / STAGE_W : 1;
+    var wantH = narrow ? Math.round(STAGE_H * s) + 'px' : '';
     if (board.style.height !== wantH) board.style.height = wantH;
-    var H = board.clientHeight, cx = W / 2, cy = H / 2;
-    // 卡片从大往小试，直到一圈能放下（归一弧长每张至少 1.08 张卡）
-    var w = narrow ? 76 : 96, h, rx, ry, ring;
+    board.classList.toggle('scaled', narrow);
+    var W = narrow ? STAGE_W : BW, H = narrow ? STAGE_H : board.clientHeight, cx = W / 2, cy = H / 2;
+    stage.style.width = W + 'px'; stage.style.height = H + 'px';
+    stage.style.transform = narrow ? 'scale(' + s.toFixed(4) + ')' : '';
+    // 卡片从大往小试，直到一圈能放下（归一弧长每张至少 1.16 张卡，留出歪放的余量）
+    var w = narrow ? 104 : 96, h, rx, ry, ring;
     for (;;) {
       h = w * 1.6; rx = cx - w * .58 - 4; ry = cy - h * .52 - 6;
       ring = ringPoints(n, rx, ry, w, h);
-      if (ring.room >= 1.08 || w <= 50) break;
+      if (ring.room >= 1.16 || w <= 50) break;
       w -= 2;
     }
     // 中间的地点照片：不压到环上的卡片
-    var placeW = Math.max(96, Math.min(narrow ? 150 : 220, (rx - w * .55) * 2 - 24, ((ry - h * .52) * 2 - 24 - (narrow ? 44 : 72)) / .667));
-    var placeH = placeW * .667 + (narrow ? 44 : 72);
+    var cap = narrow ? 92 : 72;   // 照片下方文字区的高度（缩放版字号更大）
+    var placeW = Math.max(96, Math.min(narrow ? 240 : 220, (rx - w * .55) * 2 - 24, ((ry - h * .52) * 2 - 24 - cap) / .667));
+    var placeH = placeW * .667 + cap;
     geo = { cx: cx, cy: cy, hw: placeW / 2 + 10, hh: placeH / 2 + 10 };
     pos = {};
     ids.forEach(function (id, i) { pos[id] = { x: cx + ring.pts[i][0], y: cy + ring.pts[i][1], r: ((i * 37) % 9 - 4) * .9 }; });
@@ -124,8 +159,8 @@
     var loc = L[cur] || {}, html = '';
     html += '<div class="rel-place" style="left:' + cx + 'px;top:' + cy + 'px;width:' + placeW.toFixed(0) + 'px">' +
       (loc.image ? '<img src="' + esc(loc.image) + '" alt="" loading="lazy">' : '') +
-      '<b>' + esc(cur) + '</b><small>' + esc(loc.kind || '') + ' · ' + n + ' 人</small>' +
-      (narrow ? '' : '<a href="map.html?place=' + encodeURIComponent(cur) + '">在地图上看</a>') + '</div>';
+      '<b>' + esc(cur) + '</b><small>' + (loc.kind ? esc(loc.kind) + ' · ' : '') + n + ' 人</small>' +
+      (L[cur] ? '<a href="map.html?place=' + encodeURIComponent(cur) + '">在地图上看</a>' : '') + '</div>';
     ids.concat(far).forEach(function (id) {
       var c = chars[id], p = pos[id], isFar = !!p.far;
       html += '<button type="button" class="rel-node' + (isFar ? ' far' : '') + '" data-id="' + esc(id) + '" style="left:' + p.x.toFixed(1) + 'px;top:' + p.y.toFixed(1) + 'px;--w:' + (isFar ? Math.round(w * .68) : Math.round(w)) + 'px;--r:' + p.r.toFixed(1) + 'deg" aria-label="' + esc(c.name) + '">' +
@@ -134,7 +169,7 @@
     });
     // 线与标签
     var svg = $('relLines'); svg.innerHTML = ''; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    var tags = '';
+    var tags = '', placed = [], fs = narrow ? 13 : 11;
     rels.forEach(function (r, i) {
       var a = pos[r.a], b = pos[r.b];
       if (!a || !b) return;
@@ -154,9 +189,17 @@
       path.setAttribute('class', (r.sure ? '' : 'maybe') + (a.far || b.far ? ' far' : ''));
       path.dataset.a = r.a; path.dataset.b = r.b;
       svg.appendChild(path);
-      // 纸签放在曲线顶点，再往圆心挪一点，少压照片的名字
-      var tx = .25 * a.x + .5 * qx + .25 * b.x, ty = .25 * a.y + .5 * qy + .25 * b.y;
-      if (!hitsPlace(a, b, qx, qy)) { tx += (cx - tx) * .14; ty += (cy - ty) * .14; }
+      // 纸签沿曲线找一处不压照片、不和别的纸签叠的位置；都不行就用压得最少的
+      var tw = r.label.length * fs + 20, th = fs + 10, around = hitsPlace(a, b, qx, qy), best = null;
+      [.5, .4, .6, .32, .68, .25, .75].some(function (t) {
+        var u = 1 - t, x = u * u * a.x + 2 * u * t * qx + t * t * b.x, y = u * u * a.y + 2 * u * t * qy + t * t * b.y;
+        if (!around) { x += (cx - x) * .1; y += (cy - y) * .1; }
+        var bad = (onCard(x, y, w, h, tw, th) ? 2 : 0) + (placed.some(function (q) { return Math.abs(q[0] - x) < (q[2] + tw) / 2 + 4 && Math.abs(q[1] - y) < (q[3] + th) / 2 + 2; }) ? 1 : 0);
+        if (!best || bad < best[2]) best = [x, y, bad];
+        return bad === 0;
+      });
+      var tx = best[0], ty = best[1];
+      placed.push([tx, ty, tw, th]);
       tags += '<span class="rel-tag' + (r.sure ? '' : ' maybe') + '" data-a="' + esc(r.a) + '" data-b="' + esc(r.b) + '" style="left:' + tx.toFixed(1) + 'px;top:' + ty.toFixed(1) + 'px">' + esc(r.label) + '</span>';
     });
     $('relNodes').innerHTML = html + tags;
@@ -164,6 +207,10 @@
     focus();
   }
 
+  function onCard(x, y, w, h, tw, th) {
+    for (var id in pos) { var p = pos[id], k = p.far ? .68 : 1; if (Math.abs(x - p.x) < (w * k + tw) / 2 - 6 && Math.abs(y - p.y) < (h * k + th) / 2 - 4) return true; }
+    return false;
+  }
   function hitsPlace(a, b, qx, qy) {
     for (var i = 1; i < 20; i++) {
       var t = i / 20, u = 1 - t, x = u * u * a.x + 2 * u * t * qx + t * t * b.x, y = u * u * a.y + 2 * u * t * qy + t * t * b.y;
@@ -188,7 +235,7 @@
       var ids = byPlace[cur] || [], mine = rels.filter(function (r) { return chars[r.a].place === cur || chars[r.b].place === cur; });
       s.innerHTML = '<h3>' + esc(cur) + '</h3><p class="sub">' + ids.length + ' 位角色 · ' + mine.length + ' 条关系</p>' +
         '<p>' + (mine.length ? '点一张照片，看这个人和谁有关、出处在哪段人设里。和外地的人有关系时，对方会以小照片出现在外圈，再点一次就跳过去。' : '这里的人物关系还没有录入，目前只摆出住在这里的人。') + '</p>' +
-        '<div class="acts"><a href="map.html?place=' + encodeURIComponent(cur) + '">在地图上看</a></div>';
+        (L[cur] ? '<div class="acts"><a href="map.html?place=' + encodeURIComponent(cur) + '">在地图上看</a></div>' : '');
       return;
     }
     var c = chars[sel], mine2 = rels.filter(function (r) { return r.a === sel || r.b === sel; });
