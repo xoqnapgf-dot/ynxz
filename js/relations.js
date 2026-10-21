@@ -7,7 +7,7 @@
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var canon = function (s) { s = String(s).trim(); return L[s] ? s : (A[s] || s); };
   var NS = 'http://www.w3.org/2000/svg';
-  var STAGE_W = 720, STAGE_H = 660;   // 手机上的固定版面，缩放后铺满屏宽
+  var STAGE_W = 720, STAGE_H = 760;   // 手机上的固定版面（比电脑略高，竖屏更宽松），缩放后铺满屏宽
 
   /* 各地的纸：按地方的气质挑（样式在 relations.css 的 [data-paper]），没列的用羊皮纸 */
   var PAPER = {
@@ -128,16 +128,17 @@
     stage.style.width = W + 'px'; stage.style.height = H + 'px';
     stage.style.transform = narrow ? 'scale(' + s.toFixed(4) + ')' : '';
     // 卡片从大往小试，直到一圈能放下（归一弧长每张至少 1.16 张卡，留出歪放的余量）
-    var w = narrow ? 104 : 96, h, rx, ry, ring;
+    // 卡片实际高度 = 3:4 照片 + 上下留白 + 两行字（缩放版字号大，文字区更高）
+    var capN = narrow ? 62 : 50, w = narrow ? 100 : 96, h, rx, ry, ring;
     for (;;) {
-      h = w * 1.6; rx = cx - w * .58 - 4; ry = cy - h * .52 - 6;
+      h = w * 4 / 3 + capN; rx = cx - w * .58 - 14; ry = cy - h * .5 - 16;
       ring = ringPoints(n, rx, ry, w, h);
       if (ring.room >= 1.16 || w <= 50) break;
       w -= 2;
     }
     // 中间的地点照片：不压到环上的卡片
-    var cap = narrow ? 92 : 72;   // 照片下方文字区的高度（缩放版字号更大）
-    var placeW = Math.max(96, Math.min(narrow ? 240 : 220, (rx - w * .55) * 2 - 24, ((ry - h * .52) * 2 - 24 - cap) / .667));
+    var cap = narrow ? 112 : 92;   // 地点照片下方文字区与留白的高度
+    var placeW = Math.max(110, Math.min(narrow ? 250 : 230, (rx - w * .55) * 2 - 30, ((ry - h * .5) * 2 - 30 - cap) / .667));
     var placeH = placeW * .667 + cap;
     geo = { cx: cx, cy: cy, hw: placeW / 2 + 10, hh: placeH / 2 + 10 };
     pos = {};
@@ -169,7 +170,7 @@
     });
     // 线与标签
     var svg = $('relLines'); svg.innerHTML = ''; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    var tags = '', placed = [], fs = narrow ? 13 : 11;
+    var tags = '', placed = [], fs = narrow ? 14 : 11;
     rels.forEach(function (r, i) {
       var a = pos[r.a], b = pos[r.b];
       if (!a || !b) return;
@@ -189,27 +190,39 @@
       path.setAttribute('class', (r.sure ? '' : 'maybe') + (a.far || b.far ? ' far' : ''));
       path.dataset.a = r.a; path.dataset.b = r.b;
       svg.appendChild(path);
-      // 纸签沿曲线找一处不压照片、不和别的纸签叠的位置；都不行就用压得最少的
-      var tw = r.label.length * fs + 20, th = fs + 10, around = hitsPlace(a, b, qx, qy), best = null;
-      [.5, .4, .6, .32, .68, .25, .75].some(function (t) {
-        var u = 1 - t, x = u * u * a.x + 2 * u * t * qx + t * t * b.x, y = u * u * a.y + 2 * u * t * qy + t * t * b.y;
-        if (!around) { x += (cx - x) * .1; y += (cy - y) * .1; }
-        var bad = (onCard(x, y, w, h, tw, th) ? 2 : 0) + (placed.some(function (q) { return Math.abs(q[0] - x) < (q[2] + tw) / 2 + 4 && Math.abs(q[1] - y) < (q[3] + th) / 2 + 2; }) ? 1 : 0);
-        if (!best || bad < best[2]) best = [x, y, bad];
-        return bad === 0;
+      // 纸签：沿曲线取若干点，再往两侧偏一点，挑与照片、地点卡、已放纸签重叠面积最小的位置
+      var tw = r.label.length * fs * 1.02 + fs * 1.6 + 6, th = fs * 1.45 + 8, best = null;
+      var len = Math.hypot(b.x - a.x, b.y - a.y) || 1, nx = -(b.y - a.y) / len, ny = (b.x - a.x) / len;
+      [.5, .42, .58, .34, .66, .27, .73].forEach(function (t) {
+        var u = 1 - t, bx = u * u * a.x + 2 * u * t * qx + t * t * b.x, by = u * u * a.y + 2 * u * t * qy + t * t * b.y;
+        [0, 1, -1, 2, -2, 3, -3, 4, -4].forEach(function (k) {
+          var x = bx + nx * k * th * .75, y = by + ny * k * th * .75;
+          var score = cover(x, y, tw, th, w, h) + 2 * placed.reduce(function (sum, q) { return sum + ov(x, y, tw, th, q[0], q[1], q[2] + 8, q[3] + 4); }, 0) + Math.abs(t - .5) * 40 + Math.abs(k) * 25;
+          if (!best || score < best[2]) best = [x, y, score];
+        });
       });
       var tx = best[0], ty = best[1];
       placed.push([tx, ty, tw, th]);
-      tags += '<span class="rel-tag' + (r.sure ? '' : ' maybe') + '" data-a="' + esc(r.a) + '" data-b="' + esc(r.b) + '" style="left:' + tx.toFixed(1) + 'px;top:' + ty.toFixed(1) + 'px">' + esc(r.label) + '</span>';
+      tags += '<span class="rel-tag' + (r.sure ? '' : ' maybe') + '" data-a="' + esc(r.a) + '" data-b="' + esc(r.b) + '" style="left:' + tx.toFixed(1) + 'px;top:' + ty.toFixed(1) + 'px;--tr:' + ((i * 53) % 5 - 2) * .6 + 'deg">' + esc(r.label) + '</span>';
     });
     $('relNodes').innerHTML = html + tags;
     if (sel && !pos[sel]) sel = null;
     focus();
   }
 
-  function onCard(x, y, w, h, tw, th) {
-    for (var id in pos) { var p = pos[id], k = p.far ? .68 : 1; if (Math.abs(x - p.x) < (w * k + tw) / 2 - 6 && Math.abs(y - p.y) < (h * k + th) / 2 - 4) return true; }
-    return false;
+  // 两个以中心定位的矩形重叠面积
+  function ov(x1, y1, w1, h1, x2, y2, w2, h2) {
+    var dx = Math.min(x1 + w1 / 2, x2 + w2 / 2) - Math.max(x1 - w1 / 2, x2 - w2 / 2), dy = Math.min(y1 + h1 / 2, y2 + h2 / 2) - Math.max(y1 - h1 / 2, y2 - h2 / 2);
+    return dx > 0 && dy > 0 ? dx * dy : 0;
+  }
+  // 纸签压到照片的面积；压在文字区（卡片下部）加倍算，名字最不能挡
+  function cover(x, y, tw, th, w, h) {
+    var sum = ov(x, y, tw, th, geo.cx, geo.cy, geo.hw * 2, geo.hh * 2) * 1.5;
+    for (var id in pos) {
+      var p = pos[id], k = p.far ? .68 : 1, cw = w * k + 8, ch = h * k + 8, capH = (h - w * 4 / 3) * k + 6;
+      sum += ov(x, y, tw, th, p.x, p.y, cw, ch) + 2 * ov(x, y, tw, th, p.x, p.y + ch / 2 - capH / 2, cw, capH);
+    }
+    return sum;
   }
   function hitsPlace(a, b, qx, qy) {
     for (var i = 1; i < 20; i++) {
@@ -239,11 +252,12 @@
       return;
     }
     var c = chars[sel], mine2 = rels.filter(function (r) { return r.a === sel || r.b === sel; });
-    s.innerHTML = '<h3>' + esc(c.name) + '</h3><p class="sub">' + esc(c.ideo) + (c.role ? ' · ' + esc(c.role) : '') + (c.born ? ' · ' + esc(c.born) : '') + '<br>' + esc(c.place + (c.sub ? ' · ' + c.sub : '')) + '</p>' +
+    s.innerHTML = '<div class="who">' + (c.thumb ? '<img src="' + esc(c.thumb) + '" alt="">' : '') + '<div><h3>' + esc(c.name) + '</h3><p class="sub">' + esc(c.ideo) + (c.role ? ' · ' + esc(c.role) : '') + '<br>' + (c.born ? esc(c.born) + ' · ' : '') + esc(c.place + (c.sub ? ' · ' + c.sub : '')) + '</p></div></div>' +
       '<h4>关系</h4>' + (mine2.length ? '<ul>' + mine2.map(function (r) {
         var o = chars[r.a === sel ? r.b : r.a];
-        return '<li><button type="button" data-go="' + esc(o.id) + '">' + esc(o.name) + '</button>' + (o.place !== cur ? ' <small>（' + esc(o.place) + '）</small>' : '') +
-          '<span class="lab' + (r.sure ? '' : ' maybe') + '">' + esc(r.label) + '</span><q>' + esc(r.src) + '</q></li>';
+        return '<li' + (r.sure ? '' : ' class="maybe"') + '><div class="row">' + (o.thumb ? '<img src="' + esc(o.thumb) + '" alt="">' : '') +
+          '<div><button type="button" data-go="' + esc(o.id) + '">' + esc(o.name) + '</button>' + (o.place !== cur ? ' <small>（' + esc(o.place) + '）</small>' : '') +
+          '<span class="lab">' + esc(r.label) + '</span></div></div><q>' + esc(r.src) + '</q></li>';
       }).join('') + '</ul>' : '<p>还没有录入这个人的关系。</p>') +
       '<div class="acts"><a href="gallery.html?cat=character&amp;open=' + encodeURIComponent(c.id) + '">看人设</a>' +
       (c.place !== cur ? '<a href="#" data-place-go="' + esc(c.place) + '">去' + esc(c.place) + '</a>' : '') + '</div>';
