@@ -8,7 +8,7 @@
   var canon = function (s) { s = String(s).trim(); return L[s] ? s : (A[s] || s); };
   var NS = 'http://www.w3.org/2000/svg';
   var ar = 4 / 3;   // 照片高宽比：3:4 立绘，人多时改方形头像
-  var STAGE_W = 720, STAGE_H = 760;   // 手机上的固定版面（比电脑略高，竖屏更宽松），缩放后铺满屏宽
+  var STAGE_W = 720, STAGE_H = 920;   // 手机上的固定版面：竖屏长，版面拉高让一圈照片上下更松，缩放后铺满屏宽
 
 
   /* ---- 角色与所属地点 ---- */
@@ -112,7 +112,7 @@
     // 卡片从大往小试，直到一圈能放下（归一弧长每张至少 1.16 张卡，留出歪放的余量）
     // 卡片实际高度 = 照片 + 上下留白 + 两行字（缩放版字号大，文字区更高）
     // 人多时 3:4 立绘会缩得太小，改成方形头像（只取上半身往上），同样的地方能放得更大
-    var capN = narrow ? 62 : 50, w, h, rx, ry, ring;
+    var capN = narrow ? 82 : 50, w, h, rx, ry, ring;   // 手机上职位可折成两行，文字区留高些
     function fit(aspect) {
       ar = aspect; w = narrow ? 100 : 96;
       for (;;) {
@@ -127,8 +127,8 @@
     if (dense) fit(1);
     board.classList.toggle('dense', dense);
     // 中间的地点照片：不压到环上的卡片
-    var cap = narrow ? 112 : 92;   // 地点照片下方文字区与留白的高度
-    var placeW = Math.max(110, Math.min(narrow ? 250 : 230, (rx - w * .55) * 2 - 30, ((ry - h * .5) * 2 - 30 - cap) / .667));
+    var cap = narrow ? 108 : 92;   // 地点照片下方文字区与留白的高度
+    var placeW = Math.max(110, Math.min(narrow ? 210 : 230, (rx - w * .55) * 2 - 30, ((ry - h * .5) * 2 - 30 - cap) / .667));
     var placeH = placeW * .667 + cap;
     geo = { cx: cx, cy: cy, hw: placeW / 2 + 10, hh: placeH / 2 + 10 };
     pos = {};
@@ -181,19 +181,22 @@
       path.dataset.a = r.a; path.dataset.b = r.b;
       svg.appendChild(path);
       // 纸签：沿曲线取若干点，再往两侧偏一点，挑与照片、地点卡、已放纸签重叠面积最小的位置
-      var tw = r.label.length * fs * 1.02 + fs * 1.6 + 6, th = fs * 1.45 + 8, best = null;
+      // 手机上长纸签在「·」处折成两行，变窄才贴得住线；step 为单行高度，候选位置的间距不随行数放大
+      var cut = r.label.indexOf(' · '), lines = narrow && r.label.length > 7 && cut > 0 ? [r.label.slice(0, cut), r.label.slice(cut + 3)] : [r.label];
+      var tw = Math.max.apply(null, lines.map(function (t) { return t.length; })) * fs * 1.02 + fs * 1.6 + 6, step = fs * 1.45 + 8, th = step + (lines.length - 1) * fs * 1.45, best = null;
       var len = Math.hypot(b.x - a.x, b.y - a.y) || 1, nx = -(b.y - a.y) / len, ny = (b.x - a.x) / len;
-      [.5, .42, .58, .34, .66, .27, .73].forEach(function (t) {
+      [.5, .42, .58, .34, .66, .27, .73, .2, .8].forEach(function (t) {
         var u = 1 - t, bx = u * u * a.x + 2 * u * t * qx + t * t * b.x, by = u * u * a.y + 2 * u * t * qy + t * t * b.y;
         [0, 1, -1, 2, -2, 3, -3, 4, -4].forEach(function (k) {
-          var x = bx + nx * k * th * .75, y = by + ny * k * th * .75;
-          var score = cover(x, y, tw, th, w, h) + 2 * placed.reduce(function (sum, q) { return sum + ov(x, y, tw, th, q[0], q[1], q[2] + 8, q[3] + 4); }, 0) + Math.abs(t - .5) * 40 + Math.abs(k) * 25;
+          var x = bx + nx * k * step * .75, y = by + ny * k * step * .75;
+          var score = cover(x, y, tw, th, w, h) + 6 * placed.reduce(function (sum, q) { return sum + ov(x, y, tw, th, q[0], q[1], q[2] + 8, q[3] + 4); }, 0) + Math.abs(t - .5) * 40 + Math.abs(k) * 25;
           if (!best || score < best[2]) best = [x, y, score];
         });
       });
+      // 纸签互相压住会整句看不见，比压到照片边缘更糟，所以权重最高
       var tx = best[0], ty = best[1];
       placed.push([tx, ty, tw, th]);
-      tags += '<span class="rel-tag' + (r.sure ? '' : ' maybe') + '" data-a="' + esc(r.a) + '" data-b="' + esc(r.b) + '" style="left:' + tx.toFixed(1) + 'px;top:' + ty.toFixed(1) + 'px;--tr:' + ((i * 53) % 5 - 2) * .6 + 'deg">' + esc(r.label) + '</span>';
+      tags += '<span class="rel-tag' + (r.sure ? '' : ' maybe') + '" data-a="' + esc(r.a) + '" data-b="' + esc(r.b) + '" style="left:' + tx.toFixed(1) + 'px;top:' + ty.toFixed(1) + 'px;--tr:' + ((i * 53) % 5 - 2) * .6 + 'deg"' + (lines.length > 1 ? ' title="' + esc(r.label) + '"' : '') + '>' + lines.map(esc).join('<br>') + '</span>';
     });
     $('relNodes').innerHTML = html + tags;
     if (sel && !pos[sel]) sel = null;

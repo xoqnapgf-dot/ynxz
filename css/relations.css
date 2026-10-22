@@ -79,7 +79,7 @@
 
 /* 手机：版面按电脑的比例画，再整体缩小；字号放大一些，缩完仍看得清 */
 .rel-board.scaled .rel-node b { font-size: 17.5px; letter-spacing: 0; }
-.rel-board.scaled .rel-node small { font-size: 13.5px; }
+.rel-board.scaled .rel-node small { font-size: 13.5px; line-height: 1.3; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }   /* 手机：职位最多两行，不再只剩半截 */
 .rel-board.scaled .rel-tag { font-size: 15px; max-width: 230px; padding: 4px 11px 4px 9px; border-left-width: 4px; }
 .rel-board.scaled .rel-place b { font-size: 24px; }
 .rel-board.scaled .rel-place small, .rel-board.scaled .rel-place a { font-size: 15px; }
