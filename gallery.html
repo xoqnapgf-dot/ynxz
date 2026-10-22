@@ -15,7 +15,10 @@
   <meta name="apple-mobile-web-app-title" content="意拟小站" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script src="js/theme.js?v=2"></script>
-  <link rel="stylesheet" href="css/gallery.css?v=57" />
+  <!-- 霞鹜文楷（OFL）：只用于名字与标题，异步加载，取不到时退回宋体 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.css" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="css/papers.css?v=1" />
+  <link rel="stylesheet" href="css/gallery.css?v=58" />
 </head>
 <body data-page="gallery" class="theme-gallery">
 
@@ -27,6 +30,7 @@
     <nav class="site-nav" aria-label="主导航">
       <a href="gallery.html?release=23" aria-current="page">画廊</a>
       <a href="map.html?release=23">地图</a>
+      <a href="relations.html?release=23">关系</a>
       <a href="cp.html?release=23">CP乱炖</a>
       <a href="forum.html?release=23">讨论区</a>
       <a href="search.html?release=23">搜索</a>
@@ -79,7 +83,8 @@
   <script src="js/gallery-data.js?v=124" defer></script>
   <script src="js/versions-data.js?v=6" defer></script>
   <script src="js/locations-data.js?v=28" defer></script>
+  <script src="js/papers.js?v=1" defer></script>
   <script src="js/main.js?v=1" defer></script>
-  <script src="js/gallery.js?v=82" defer></script>
+  <script src="js/gallery.js?v=83" defer></script>
 </body>
 </html>

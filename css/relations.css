@@ -1,12 +1,13 @@
-/* 人物关系（样稿）：一页相册——中间贴地点照片（相角固定），四周拍立得（纸胶带），红线连有关系的人 */
-.rel-main { width: min(var(--max), 100% - 32px); margin: 0 auto; padding-bottom: 64px; }
+/* 人物关系：一页相册——中间贴地点照片（相角固定），四周拍立得（纸胶带），红线连有关系的人 */
+/* 手写感的字（霞鹜文楷，异步加载，没下载到时退回宋体）：只用在名字、纸签、标题上，正文仍是宋体 */
+.rel-main { --hand: "LXGW WenKai", var(--serif); width: min(var(--max), 100% - 32px); margin: 0 auto; padding-bottom: 64px; }
 .rel-note { max-width: 760px; margin: 0 auto 18px; font: 13.5px/1.8 var(--serif); color: var(--ink-dim); text-align: center; }
 .rel-note b { color: var(--ink); font-weight: 600; }
 .rel-key { display: inline-block; width: 26px; height: 0; margin: 0 6px 3px 2px; vertical-align: middle; border-top: 2px solid #b8402f; }
 .rel-key.maybe { border-top: 2px dashed #8a7f6c; }
 
 .rel-places { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 auto 20px; max-width: 920px; }
-.rel-places button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--hairline); border-radius: 999px; background: rgba(var(--ink-rgb), .02); color: var(--ink-dim); font: 13px var(--serif); letter-spacing: .08em; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
+.rel-places button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--hairline); border-radius: 999px; background: rgba(var(--ink-rgb), .02); color: var(--ink-dim); font: 14px var(--hand); letter-spacing: .08em; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
 .rel-places button:hover { color: var(--ink); border-color: var(--gold-soft); }
 .rel-places button[aria-selected="true"] { background: linear-gradient(180deg, var(--gold-hi), var(--gold)); border-color: var(--gold); color: #1b150c; box-shadow: 0 4px 14px rgba(216,178,90,.25); }
 .rel-places button small { min-width: 18px; padding: 0 5px; border-radius: 999px; background: rgba(var(--ink-rgb), .08); font: 11px/18px var(--sans); letter-spacing: 0; text-align: center; }
@@ -49,7 +50,7 @@
     linear-gradient(315deg, #3b2c1c 50%, transparent 50%) right bottom / 22px 22px no-repeat;
   opacity: .82; filter: drop-shadow(0 1px 1px rgba(0,0,0,.25)); }
 .rel-place img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: #d9cdb3; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
-.rel-place b { display: block; margin-top: 10px; padding-bottom: 6px; font: 700 17px/1.2 var(--serif); letter-spacing: .32em; text-indent: .32em; color: var(--ink2); background: linear-gradient(90deg, transparent, rgba(120,90,50,.35), transparent) center bottom / 70% 1px no-repeat; }
+.rel-place b { display: block; margin-top: 10px; padding-bottom: 6px; font: 400 19px/1.2 var(--hand); letter-spacing: .32em; text-indent: .32em; color: var(--ink2); background: linear-gradient(90deg, transparent, rgba(120,90,50,.35), transparent) center bottom / 70% 1px no-repeat; }
 .rel-place small { display: block; margin-top: 6px; font: 11.5px var(--serif); color: var(--ink3); letter-spacing: .14em; }
 .rel-place a { display: inline-block; margin-top: 7px; padding: 2px 10px; border: 1px solid rgba(138,84,19,.35); border-radius: 999px; font: 11.5px/1.6 var(--serif); color: #8a5413; letter-spacing: .1em; text-decoration: none; }
 .rel-place a::after { content: " →"; }
@@ -59,9 +60,11 @@
 .rel-node { position: absolute; width: var(--w, 96px); padding: 6px 6px 8px; transform: translate(-50%, -50%) rotate(var(--r, 0deg)); background: linear-gradient(180deg, #fffdf7, #f7f1e3); box-shadow: 0 6px 14px rgba(50,30,8,.26), 0 1px 2px rgba(50,30,8,.2); border: 0; cursor: pointer; z-index: 2; text-align: center; transition: transform .2s var(--ease), box-shadow .2s, opacity .25s; font: inherit; color: inherit; }
 .rel-node::before { content: ""; position: absolute; top: -8px; left: 50%; width: 42%; height: 15px; transform: translateX(-50%) rotate(-4deg); background: repeating-linear-gradient(90deg, rgba(240,226,180,.82) 0 6px, rgba(232,214,160,.82) 6px 12px); box-shadow: 0 1px 2px rgba(0,0,0,.1); clip-path: polygon(3% 0, 97% 6%, 100% 50%, 96% 100%, 2% 94%, 0 50%); }
 .rel-node img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 12%; background: #e3d8c2; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
-.rel-node b { display: block; margin-top: 6px; font: 700 13px/1.3 var(--serif); letter-spacing: .06em; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rel-node b { display: block; margin-top: 6px; font: 400 14.5px/1.3 var(--hand); letter-spacing: .04em; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rel-node small { display: block; margin-top: 1px; font: 10.5px/1.35 var(--serif); color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rel-node:hover, .rel-node:focus-visible { transform: translate(-50%, -50%) rotate(0deg) scale(1.06); z-index: 6; box-shadow: 0 12px 26px rgba(50,30,8,.35); outline: none; }
+.rel-board.dense .rel-node img { aspect-ratio: 1; object-position: 50% 6%; }   /* 人多：方形头像，往上取头肩 */
+.rel-board.dense .rel-node { padding: 5px 5px 7px; }
 .rel-node.far { opacity: .95; }
 .rel-node.far small { color: #8a5413; }
 .rel-board.focus .rel-node { opacity: .32; filter: saturate(.5); }
@@ -69,23 +72,23 @@
 .rel-board.focus .rel-node.sel { opacity: 1; filter: none; transform: translate(-50%, -50%) rotate(0deg) scale(1.1); z-index: 7; box-shadow: 0 0 0 2px #b03a2a, 0 14px 30px rgba(50,30,8,.4); }
 
 /* 线上的小纸签：一小条纸，左边一道色 */
-.rel-tag { position: absolute; transform: translate(-50%, -50%) rotate(var(--tr, -1deg)); max-width: 168px; padding: 3px 9px 3px 8px; background: #fffcf4; border-left: 3px solid #b03a2a; border-radius: 1px 3px 3px 1px; box-shadow: 0 2px 5px rgba(50,30,8,.2); font: 600 11px/1.45 var(--serif); letter-spacing: .04em; color: #7a2a1e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 4; pointer-events: none; transition: opacity .25s; }
+.rel-tag { position: absolute; transform: translate(-50%, -50%) rotate(var(--tr, -1deg)); max-width: 168px; padding: 3px 9px 3px 8px; background: #fffcf4; border-left: 3px solid #b03a2a; border-radius: 1px 3px 3px 1px; box-shadow: 0 2px 5px rgba(50,30,8,.2); font: 400 12px/1.45 var(--hand); letter-spacing: .03em; color: #7a2a1e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 4; pointer-events: none; transition: opacity .25s; }
 .rel-tag.maybe { border-left: 3px dotted #8a7f6c; color: #5a5040; font-weight: 500; background: #fbf8f0; }
 .rel-board.focus .rel-tag { opacity: .08; }
 .rel-board.focus .rel-tag.on { opacity: 1; z-index: 8; }
 
 /* 手机：版面按电脑的比例画，再整体缩小；字号放大一些，缩完仍看得清 */
-.rel-board.scaled .rel-node b { font-size: 16px; letter-spacing: 0; }
+.rel-board.scaled .rel-node b { font-size: 17.5px; letter-spacing: 0; }
 .rel-board.scaled .rel-node small { font-size: 13.5px; }
-.rel-board.scaled .rel-tag { font-size: 14px; max-width: 230px; padding: 4px 11px 4px 9px; border-left-width: 4px; }
-.rel-board.scaled .rel-place b { font-size: 22px; }
+.rel-board.scaled .rel-tag { font-size: 15px; max-width: 230px; padding: 4px 11px 4px 9px; border-left-width: 4px; }
+.rel-board.scaled .rel-place b { font-size: 24px; }
 .rel-board.scaled .rel-place small, .rel-board.scaled .rel-place a { font-size: 15px; }
 
 /* 侧栏 */
 .rel-side { min-height: 200px; padding: 20px 20px 22px; border: 1px solid var(--hairline); border-radius: 10px; background: linear-gradient(180deg, rgba(var(--soft-rgb), .85), rgba(var(--soft-rgb), .55)); box-shadow: 0 12px 30px rgba(0,0,0,.25); }
 .rel-side .who { display: flex; gap: 14px; align-items: center; }
 .rel-side .who img { width: 56px; height: 74px; object-fit: cover; object-position: 50% 12%; border-radius: 4px; border: 1px solid var(--gold-soft); flex: none; }
-.rel-side h3 { margin: 0 0 4px; font: 700 19px/1.3 var(--serif); letter-spacing: .1em; color: var(--ink); }
+.rel-side h3 { margin: 0 0 4px; font: 400 22px/1.3 var(--hand); letter-spacing: .1em; color: var(--ink); }
 .rel-side .sub { margin: 0; font: 12.5px/1.65 var(--serif); color: var(--ink-dim); }
 .rel-side h4 { display: flex; align-items: center; gap: 10px; margin: 18px 0 10px; font: 600 12px var(--serif); letter-spacing: .24em; color: var(--gold); }
 .rel-side h4::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-soft), transparent); }
@@ -96,9 +99,9 @@
 .rel-side li.maybe { border-left: 3px dotted var(--ink-faint); }
 .rel-side li .row { display: flex; align-items: center; gap: 10px; }
 .rel-side li .row img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; object-position: 50% 10%; border: 1px solid var(--hairline); flex: none; }
-.rel-side li button { padding: 0; border: 0; background: none; color: var(--ink); font: 600 14px var(--serif); text-align: left; cursor: pointer; }
+.rel-side li button { padding: 0; border: 0; background: none; color: var(--ink); font: 400 16px var(--hand); text-align: left; cursor: pointer; }
 .rel-side li button:hover { color: var(--gold-hi); }
-.rel-side li .lab { display: block; font: 12px/1.5 var(--serif); color: #e08a74; }
+.rel-side li .lab { display: block; font: 13px/1.5 var(--hand); color: #e08a74; }
 .rel-side li.maybe .lab { color: var(--ink-faint); }
 .rel-side li.maybe .lab::after { content: " · 待确认"; }
 .rel-side li q { display: block; margin-top: 8px; padding-left: 10px; border-left: 1px solid var(--hairline); font: 12px/1.75 var(--serif); color: var(--ink-faint); quotes: none; }
@@ -116,203 +119,4 @@
   .rel-places::-webkit-scrollbar { display: none; }
   .rel-places button { flex: none; }
 }
-
-/* ---- 各地的纸（js/relations.js 的 PAPER 决定用哪种；纹理是内嵌的 SVG 噪声，不额外下载图片） ---- */
-.rel-board::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--motif, none); opacity: var(--motif-a, 1); }
-.rel-board[data-paper="vellum"] {
-  --paper: #efe0bd; --paper2: #dcc395; --ink2: #3a2e20;
-  background:
-    linear-gradient(90deg, transparent 30px, rgba(150,40,30,.35) 30px 31.5px, transparent 31.5px 35px, rgba(150,40,30,.35) 35px 36.5px, transparent 36.5px),
-    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(110,70,25,.38) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #efe0bd, #dcc395);
-}
-.rel-board[data-paper="pulp"] {
-  --paper: #e6e2d6; --paper2: #d6d0bf; --ink2: #2c2a26;
-  background:
-    repeating-linear-gradient(90deg, transparent 0 118px, rgba(40,40,40,.07) 118px 119px, transparent 119px 124px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='1' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0 0.1 3.2 0 0 0 -2.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #e6e2d6, #d6d0bf);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='50' fill='none' stroke='%232a2a2a' stroke-width='6'/%3E%3Cpath d='M30 98 L60 18 L90 98 M38 72 H96' fill='none' stroke='%232a2a2a' stroke-width='9' stroke-linecap='round'/%3E%3C/svg%3E") right 18px bottom 16px / 70px no-repeat; --motif-a: .16;
-}
-.rel-board[data-paper="chart"] {
-  --paper: #e3ead9; --paper2: #cfd8c2; --ink2: #22383a;
-  background:
-    repeating-linear-gradient(0deg, rgba(47,111,115,.13) 0 1px, transparent 1px 64px),
-    repeating-linear-gradient(90deg, rgba(47,111,115,.13) 0 1px, transparent 1px 64px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #e3ead9, #cfd8c2);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='none' stroke='%232f6f73' stroke-width='1.2' opacity='.5'%3E%3Ccircle cx='130' cy='130' r='110'/%3E%3Ccircle cx='130' cy='130' r='96'/%3E%3Ccircle cx='130' cy='130' r='40'/%3E%3Cline x1='130' y1='130' x2='250.0' y2='130.0'/%3E%3Cline x1='130' y1='130' x2='240.9' y2='175.9'/%3E%3Cline x1='130' y1='130' x2='214.9' y2='214.9'/%3E%3Cline x1='130' y1='130' x2='175.9' y2='240.9'/%3E%3Cline x1='130' y1='130' x2='130.0' y2='250.0'/%3E%3Cline x1='130' y1='130' x2='84.1' y2='240.9'/%3E%3Cline x1='130' y1='130' x2='45.1' y2='214.9'/%3E%3Cline x1='130' y1='130' x2='19.1' y2='175.9'/%3E%3Cline x1='130' y1='130' x2='10.0' y2='130.0'/%3E%3Cline x1='130' y1='130' x2='19.1' y2='84.1'/%3E%3Cline x1='130' y1='130' x2='45.1' y2='45.1'/%3E%3Cline x1='130' y1='130' x2='84.1' y2='19.1'/%3E%3Cline x1='130' y1='130' x2='130.0' y2='10.0'/%3E%3Cline x1='130' y1='130' x2='175.9' y2='19.1'/%3E%3Cline x1='130' y1='130' x2='214.9' y2='45.1'/%3E%3Cline x1='130' y1='130' x2='240.9' y2='84.1'/%3E%3C/g%3E%3Cpath d='M130 20 L140 130 L130 240 L120 130Z M20 130 L130 120 L240 130 L130 140Z' fill='%232f6f73' opacity='.28'/%3E%3C/svg%3E") left -40px bottom -50px / 300px no-repeat; --motif-a: .9;
-}
-.rel-board[data-paper="ledger"] {
-  --paper: #f3ecd9; --paper2: #e6dcc2; --ink2: #2f2a22;
-  background:
-    linear-gradient(90deg, transparent 44px, rgba(190,60,50,.4) 44px 45.5px, transparent 45.5px),
-    repeating-linear-gradient(180deg, transparent 0 27px, rgba(60,100,160,.16) 27px 28px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #f3ecd9, #e6dcc2);
-}
-.rel-board[data-paper="kraft"] {
-  --paper: #c9a576; --paper2: #b08a5b; --ink2: #2f2115;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35 .012' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='1' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0 0.1 3.2 0 0 0 -2.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #c9a576, #b08a5b);
-}
-.rel-board[data-paper="tide"] {
-  --paper: #dfe2dc; --paper2: #c7cdc8; --ink2: #253039;
-  background:
-    repeating-linear-gradient(45deg, rgba(60,80,95,.05) 0 2px, transparent 2px 6px),
-    repeating-linear-gradient(-45deg, rgba(60,80,95,.05) 0 2px, transparent 2px 6px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #dfe2dc, #c7cdc8);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='60' viewBox='0 0 240 60'%3E%3Cpath d='M0 20 q 30 -10 60 0 t 60 0 t 60 0 t 60 0' fill='none' stroke='%235d7890' stroke-width='1.2' opacity='.35'/%3E%3Cpath d='M0 34 q 30 -10 60 0 t 60 0 t 60 0 t 60 0' fill='none' stroke='%235d7890' stroke-width='1.2' opacity='.35'/%3E%3Cpath d='M0 48 q 30 -10 60 0 t 60 0 t 60 0 t 60 0' fill='none' stroke='%235d7890' stroke-width='1.2' opacity='.35'/%3E%3C/svg%3E") left bottom 14px / 240px 60px repeat-x; --motif-a: 1;
-}
-.rel-board[data-paper="drafting"] {
-  --paper: #eef3f4; --paper2: #dde7ea; --ink2: #1e3346;
-  background:
-    repeating-linear-gradient(0deg, rgba(44,93,138,.05) 0 1px, transparent 1px 10px),
-    repeating-linear-gradient(90deg, rgba(44,93,138,.05) 0 1px, transparent 1px 10px),
-    repeating-linear-gradient(0deg, rgba(44,93,138,.11) 0 1px, transparent 1px 50px),
-    repeating-linear-gradient(90deg, rgba(44,93,138,.11) 0 1px, transparent 1px 50px),
-    linear-gradient(160deg, #eef3f4, #dde7ea);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cg stroke='%232c5d8a' stroke-width='1.4' fill='none' opacity='.55'%3E%3Cpath d='M6 26 H46 M26 6 V46'/%3E%3Ccircle cx='26' cy='26' r='12'/%3E%3C/g%3E%3C/svg%3E") left 12px top 12px / 40px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cg stroke='%232c5d8a' stroke-width='1.4' fill='none' opacity='.55'%3E%3Cpath d='M6 26 H46 M26 6 V46'/%3E%3Ccircle cx='26' cy='26' r='12'/%3E%3C/g%3E%3C/svg%3E") right 12px top 12px / 40px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cg stroke='%232c5d8a' stroke-width='1.4' fill='none' opacity='.55'%3E%3Cpath d='M6 26 H46 M26 6 V46'/%3E%3Ccircle cx='26' cy='26' r='12'/%3E%3C/g%3E%3C/svg%3E") left 12px bottom 12px / 40px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cg stroke='%232c5d8a' stroke-width='1.4' fill='none' opacity='.55'%3E%3Cpath d='M6 26 H46 M26 6 V46'/%3E%3Ccircle cx='26' cy='26' r='12'/%3E%3C/g%3E%3C/svg%3E") right 12px bottom 12px / 40px no-repeat; --motif-a: 1;
-}
-.rel-board[data-paper="graph"] {
-  --paper: #e4e6d8; --paper2: #d3d6c4; --ink2: #262a20;
-  background:
-    linear-gradient(180deg, rgba(160,40,35,.55) 0 8px, transparent 8px),
-    repeating-linear-gradient(0deg, rgba(70,110,80,.12) 0 1px, transparent 1px 12px),
-    repeating-linear-gradient(90deg, rgba(70,110,80,.12) 0 1px, transparent 1px 12px),
-    repeating-linear-gradient(0deg, rgba(70,110,80,.2) 0 1px, transparent 1px 60px),
-    repeating-linear-gradient(90deg, rgba(70,110,80,.2) 0 1px, transparent 1px 60px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #e4e6d8, #d3d6c4);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='52' fill='none' stroke='%239c2b22' stroke-width='5'/%3E%3Ccircle cx='60' cy='60' r='40' fill='none' stroke='%239c2b22' stroke-width='2'/%3E%3Cpath d='M60 30 L68 52 L91 52 L72 66 L79 88 L60 74 L41 88 L48 66 L29 52 L52 52Z' fill='%239c2b22'/%3E%3C/svg%3E") right 16px bottom 16px / 76px no-repeat; --motif-a: .22;
-}
-.rel-board[data-paper="rice"] {
-  --paper: #f6f2e8; --paper2: #ebe5d6; --ink2: #2a2a2a;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35 .012' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #f6f2e8, #ebe5d6);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='300' viewBox='0 0 500 300'%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='14'/%3E%3C/filter%3E%3Cpath d='M0 300 L0 200 Q60 120 120 180 Q170 90 240 150 Q300 70 380 160 Q440 110 500 170 L500 300Z' fill='%234b5866' opacity='.22' filter='url(%23b)'/%3E%3Cpath d='M0 300 L0 240 Q80 190 160 230 Q240 170 330 220 Q420 180 500 230 L500 300Z' fill='%233d4855' opacity='.2' filter='url(%23b)'/%3E%3C/svg%3E") center bottom / 100% 46% no-repeat; --motif-a: 1;
-}
-.rel-board[data-paper="ash"] {
-  --paper: #d9d8d3; --paper2: #bfbdb6; --ink2: #24262a;
-  background:
-    radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(30,30,32,.45) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #d9d8d3, #bfbdb6);
-}
-.rel-board[data-paper="decree"] {
-  --paper: #f1e9d6; --paper2: #e2d6bb; --ink2: #2a2018;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #f1e9d6, #e2d6bb);
-}
-.rel-board[data-paper="scripture"] {
-  --paper: #e9cf96; --paper2: #d3b06c; --ink2: #3a2810;
-  background:
-    linear-gradient(90deg, transparent 22%, rgba(150,100,30,.28) 22% calc(22% + 1px), transparent calc(22% + 1px) 78%, rgba(150,100,30,.28) 78% calc(78% + 1px), transparent calc(78% + 1px)),
-    radial-gradient(ellipse at 50% 40%, rgba(255,240,200,.35), transparent 60%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #e9cf96, #d3b06c);
-}
-.rel-board[data-paper="rift"] {
-  --paper: #3b3350; --paper2: #28223a; --ink2: #2a2238; --ink3: #5c5470;
-  background:
-    radial-gradient(ellipse at 70% 30%, rgba(160,120,255,.25), transparent 55%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #3b3350, #28223a);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='240' viewBox='0 0 400 240'%3E%3Cpath d='M0 210 L70 180 L95 196 L150 140 L175 150 L230 92 L262 102 L330 40 L400 20' fill='none' stroke='%23d9c6ff' stroke-width='2.4' opacity='.9'/%3E%3Cpath d='M0 210 L70 180 L95 196 L150 140 L175 150 L230 92 L262 102 L330 40 L400 20' fill='none' stroke='%23a37bff' stroke-width='10' opacity='.25'/%3E%3C/svg%3E") right -20px top 10% / 70% auto no-repeat; --motif-a: 1;
-}
-.rel-board[data-paper="ochre"] {
-  --paper: #dcae84; --paper2: #c48f62; --ink2: #3a2010;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #dcae84, #c48f62);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='36' viewBox='0 0 40 36'%3E%3Cpath d='M0 18 H10 V6 H26 V22 H16 V14 M16 22 V30 H40 V6' fill='none' stroke='%237d3f22' stroke-width='3' opacity='.45'/%3E%3C/svg%3E") left top 6px / 40px 36px repeat-x, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='36' viewBox='0 0 40 36'%3E%3Cpath d='M0 18 H10 V6 H26 V22 H16 V14 M16 22 V30 H40 V6' fill='none' stroke='%237d3f22' stroke-width='3' opacity='.45'/%3E%3C/svg%3E") left bottom 6px / 40px 36px repeat-x; --motif-a: 1;
-}
-.rel-board[data-paper="bark"] {
-  --paper: #b58e64; --paper2: #9a744d; --ink2: #2a1a0c;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35 .012' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #b58e64, #9a744d);
-}
-.rel-board[data-paper="charter"] {
-  --paper: #eadbb8; --paper2: #d4bd8e; --ink2: #33261a;
-  background:
-    radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(100,70,30,.35) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #eadbb8, #d4bd8e);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 6 C70 4 92 18 94 42 C98 64 86 90 60 94 C36 98 10 86 6 60 C2 36 24 8 50 6Z' fill='%238e1f1a'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%235e100c' stroke-width='3'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%23b33a2c' stroke-width='2'/%3E%3Cpath d='M38 50 L50 34 L62 50 L50 66Z' fill='%235e100c'/%3E%3C/svg%3E") right 22px bottom 20px / 84px no-repeat; --motif-a: .92;
-}
-.rel-board[data-paper="damp"] {
-  --paper: #eadfb6; --paper2: #d8c88f; --ink2: #33291a;
-  background:
-    radial-gradient(circle at 18% 22%, rgba(140,100,40,.18) 0 40px, transparent 41px),
-    radial-gradient(circle at 82% 70%, rgba(140,100,40,.14) 0 60px, transparent 62px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='1' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0 0.1 3.2 0 0 0 -2.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #eadfb6, #d8c88f);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='52' fill='none' stroke='%238a6a2e' stroke-width='5' opacity='.3'/%3E%3Ccircle cx='70' cy='70' r='46' fill='none' stroke='%238a6a2e' stroke-width='2' opacity='.18'/%3E%3C/svg%3E") left 60% top 8% / 140px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='52' fill='none' stroke='%238a6a2e' stroke-width='5' opacity='.3'/%3E%3Ccircle cx='70' cy='70' r='46' fill='none' stroke='%238a6a2e' stroke-width='2' opacity='.18'/%3E%3C/svg%3E") left 6% bottom 4% / 110px no-repeat; --motif-a: 1;
-}
-.rel-board[data-paper="snow"] {
-  --paper: #f2f5f8; --paper2: #dfe7ee; --ink2: #22303c;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='1' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 4 0 0 0 -3.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(180deg, rgba(160,190,220,.18), transparent 40%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #f2f5f8, #dfe7ee);
-}
-.rel-board[data-paper="mist"] {
-  --paper: #d8ddd2; --paper2: #c3cbbd; --ink2: #22302a;
-  background:
-    linear-gradient(180deg, transparent 18%, rgba(255,255,255,.45) 26%, transparent 34%, transparent 58%, rgba(255,255,255,.4) 66%, transparent 76%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #d8ddd2, #c3cbbd);
-}
-.rel-board[data-paper="hemp"] {
-  --paper: #ddcfa8; --paper2: #c9b688; --ink2: #30271a;
-  background:
-    repeating-linear-gradient(45deg, rgba(100,80,40,.08) 0 1.5px, transparent 1.5px 5px),
-    repeating-linear-gradient(-45deg, rgba(100,80,40,.08) 0 1.5px, transparent 1.5px 5px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.28 0 0 0 0 0.12 1.3 0 0 0 -0.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #ddcfa8, #c9b688);
-}
-.rel-board[data-paper="washi"] {
-  --paper: #f4efe4; --paper2: #e7dfcd; --ink2: #2c2620;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35 .012' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 1.1 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.18 0 0 0 0 0.1 0.5 0 0 0 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, #f4efe4, #e7dfcd);
-  --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect x='6' y='6' width='88' height='88' rx='6' fill='none' stroke='%23c2402c' stroke-width='6'/%3E%3Crect x='18' y='18' width='64' height='64' fill='%23c2402c' opacity='.85'/%3E%3Cpath d='M30 40 H70 M30 52 H70 M30 64 H70 M50 28 V74' stroke='%23f4e3d0' stroke-width='5'/%3E%3C/svg%3E") right 18px top 16px / 54px no-repeat; --motif-a: .75;
-}
-
-/* 个别纸的边框与收边 */
-.rel-board[data-paper="decree"] { box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 0 0 10px #f1e9d6, inset 0 0 0 12px #7d1d1a, inset 0 0 0 16px #f1e9d6, inset 0 0 0 17px #2a2018, inset 0 0 60px rgba(90,60,20,.15); }
-.rel-board[data-paper="scripture"] { box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 0 0 9px rgba(233,207,150,.6), inset 0 0 0 11px #a8782a, inset 0 0 0 14px rgba(233,207,150,.6), inset 0 0 0 15px #a8782a, inset 0 0 70px rgba(110,70,10,.25); }
-.rel-board[data-paper="vellum"], .rel-board[data-paper="charter"], .rel-board[data-paper="ash"] { box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 0 0 1px rgba(80,60,30,.2), inset 0 0 90px rgba(80,45,10,.35); }
-.rel-board[data-paper="rift"] { box-shadow: 0 18px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(200,180,255,.2), inset 0 0 80px rgba(10,0,30,.6); }
 .rel-board[data-paper="rift"] .rel-lines path.maybe { stroke: #b9aed6; }

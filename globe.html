@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="site-release" content="23" />
+  <meta name="robots" content="noindex" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>3D地球 · 意拟小站</title>
   <link rel="stylesheet" href="css/style.css?v=27" />
@@ -15,7 +16,9 @@
   <meta name="apple-mobile-web-app-title" content="意拟小站" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script src="js/theme.js?v=2"></script>
-  <link rel="stylesheet" href="css/map-view.css?v=9" />
+  <!-- 3D 地球已撤下（v28）：代码保留，加 ?dev=3d 才能打开；其余一律转到平面地图 -->
+  <script>(()=>{const q=new URLSearchParams(location.search);if(q.get('dev')==='3d')return;const u=new URL('map.html',location.href);if(q.get('place'))u.searchParams.set('place',q.get('place'));u.searchParams.set('release','23');u.hash=location.hash;location.replace(u.href);})();</script>
+  <link rel="stylesheet" href="css/map-view.css?v=10" />
   <script type="importmap">{"imports":{"three":"./js/vendor/three/three.module.js","three/addons/":"./js/vendor/three/addons/"}}</script>
 </head>
 <body data-page="map" class="theme-map" data-map-view="globe">
@@ -24,6 +27,7 @@
     <nav class="site-nav" aria-label="主导航">
       <a href="gallery.html?release=23">画廊</a>
       <a href="map.html?release=23" aria-current="page">地图</a>
+      <a href="relations.html?release=23">关系</a>
       <a href="cp.html?release=23">CP乱炖</a>
       <a href="forum.html?release=23">讨论区</a>
       <a href="search.html?release=23">搜索</a>
@@ -131,7 +135,7 @@
   <script src="js/locations-data.js?v=28"></script>
   <script src="js/atlas-data.js?v=1"></script>
   <script src="js/place-ui.js?v=4"></script>
-  <script src="js/map-view.js?v=12"></script>
+  <script src="js/map-view.js?v=13"></script>
   <script type="module" src="js/globe/app.js?v=27"></script>
 </body>
 </html>

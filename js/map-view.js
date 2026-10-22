@@ -19,7 +19,8 @@
     if (opts.scene && selected) u.searchParams.set('scene', '1');
     return u.href;
   }
-  function links() { $('viewFlat').href = link('map.html'); $('viewGlobe').href = link('globe.html'); }
+  // v28：3D 地球已撤下，map.html 不再有平面 / 3D 切换；元素不在时跳过，globe.html?dev=3d 仍可用
+  function links() { if ($('viewFlat')) $('viewFlat').href = link('map.html'); if ($('viewGlobe')) $('viewGlobe').href = link('globe.html'); }
   function writeURL() {
     const u = new URL(location.href);
     ['view', 'site', 'inspect', 'frame'].forEach(k => u.searchParams.delete(k));
