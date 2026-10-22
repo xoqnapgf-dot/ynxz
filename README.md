@@ -302,7 +302,7 @@ ynxz/
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
 - 地图与3D版本：`css/map-view.css v10`、`js/atlas-data.js v1`、`js/atlas.js v5`、`js/map-view.js v13`、`js/place-ui.js v5`；`js/globe/app.js v27`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 27）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
-- 当前版本指针：`style.css v27`、`gallery.css v58`、`gallery.js v84`、`papers.css v1`、`papers.js v1`、`relations.css v4`、`relations.js v5`、`relations-data.js v2`、`gallery-data.js v124`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v58`、`gallery.js v84`、`papers.css v1`、`papers.js v1`、`relations.css v5`、`relations.js v6`、`relations-data.js v2`、`gallery-data.js v124`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
@@ -423,6 +423,7 @@ ynxz/
 - **v4 上线**：去掉「样稿」字样与 `noindex`，各页主导航加「关系」（画廊、地图之后），首页「3D地球」横条换成「人物关系」；地图地点卡底部「人物关系」、画廊地点志弹层「人物关系」都跳到这里。网址的 `place=` 可以是小地点或别名，会沿 `parent` 归到所属国家 / 大地区；只给 `c=` 时自动切到这个人所在的地点。
 - **人多改方形头像（v4，站主要求）**：一圈 12 人以上，或 3:4 照片会缩到太小（电脑宽 < 84、手机版面宽 < 92）时，拍立得改成方形头像，`object-position: 50% 6%` 往上取头肩，同样的地方每张能放更大（`.rel-board.dense`）。现在伊鲁尼利亚（14 人）、万知城（13 人）用的是方形。
 - **字体（v4）**：名字、纸签、地点名、侧栏标题改用霞鹜文楷（LXGW WenKai，SIL OFL 1.1），从 jsDelivr 的 `lxgw-wenkai-webfont@1.7.0` 异步加载（`media="print" onload` 不阻塞首屏，按 unicode-range 分片只下载用到的字），取不到时退回原来的宋体；正文仍是宋体。关系页和画廊（地点志弹层）引用；CSS 变量 `--hand`。
+- **手机版松一点（v6，站主反馈「还是太挤」）**：手机固定版面由 720×760 拉高到 720×920，一圈照片上下更松；中间地点卡最宽 250→210；职位最多折两行（`-webkit-line-clamp: 2`），不再只剩「先王遗孀、…」；长纸签在「 · 」处折成两行变窄，才贴得住自己的线；纸签候选位置沿曲线多取两点，纸签互相重叠的扣分由 2 倍提到 6 倍（叠住就整句看不见）。实测 430 / 375 宽下科鲁鲁的纸签压照片面积由约 1600 / 1200 px² 降到约 190 / 140 px²（只擦到卡片边），纸签之间不重叠；安那其、伊鲁尼利亚、万知城为 0。电脑版不受影响。
 - **照片下的职位（v5，站主反馈「归属和职位有的弄反了」）**：原先关系页照片下写「属地里更细的小地点，没有才写职位」，于是萨丽特、康妮、虎刃、奈莉、费雯、沈青禾、水无月澪、艾格尼丝等写的是地名，其他人写职位，看起来像弄反了；地点志弹层和地图地点卡只去掉 `身份` 的第一段，三段式的身份（如萨丽特「霁川公国 · 河湾乡社 · 自耕农」）会留下地名。现在三处统一：`身份` 去掉地点志正式名、别名和 `属地` 里写到的段（如「裂缝彼端」），剩下的才当职位显示；小地点只在侧栏的归属行（出生日期后面）出现。数据本身核对过：125 人的 `身份` 都是「地点 · 职位」顺序，身份里的地名都在属地链上，没有写反的条目，未改数据。地图地点卡里属地同时写了国家和下辖小地点的人（如康妮）只列在小地点下，不再出现两次。
 - **纸样共用（v4）**：各地的纸从 `relations.css` 拆到 `css/papers.css`（`.paper[data-paper="种类"]`），地点 → 种类的表从 `relations.js` 拆到 `js/papers.js`（`PLACE_PAPER` 与 `placePaper(name)`，小地点沿 `parent` 取所属地区的纸），关系页纸板与画廊地点志弹层共用。
 - 页面 `relations.html?place=地点&c=角色id`：按地点把住在那里的角色排成一圈拍立得，中间贴地点场景图；有关系的人之间连红线，线上小纸签写关系。点照片高亮 TA 的关系，侧栏列出关系与人设原文出处，并可跳到画廊人设（`gallery.html?cat=character&open=id`）或地图（`map.html?place=`）。和外地的人有关系时，对方以小照片贴在外圈，再点一次跳到那个地点。
@@ -431,7 +432,7 @@ ynxz/
 - **各地的纸**：`papers.js` 的 `PLACE_PAPER` 给 21 个地点各指定一种纸，样式在 `papers.css` 的 `[data-paper]`，纹理全是内嵌 SVG 噪声与 CSS 渐变，不另下载图片：科鲁鲁羊皮纸（红色双栏线）、安那其学院再生粗纸（印刷栏线、Ⓐ 印）、伊鲁尼利亚海图纸（经纬格、罗盘花）、万知城档案卡纸、坎普牛皮纸、布图里亚灰蓝布纹纸（浪纹）、璇玑制图纸、铁枢方格表格纸（红头、星印）、霁川长纤维白纸（淡墨山影）、卡法里扬冷灰烟熏纸、塞雷格诏书纸（双重框）、帕尔哈南赭金经卷纸、裂缝彼端暗紫异纸（裂光）、翁吉亚赭土纸（回纹边）、契莱西亚树皮纸、奥嫩堡特许状（蜡封）、罗歇阿普受潮纸（水渍圈）、天神峰冷白雪点纸、常灵雾带纸、卡斯奎尼亚麻纸织纹、示安长纤维薄纸（朱印）。新增地点没写时默认羊皮纸。
 - 角色按 `属地` 第一段（经 `LOCATION_ALIAS` 规范、再沿 `parent` 上溯）归到顶层地点；属地里更细的小地点显示在照片下方。排位用交换法让有关系的人尽量挨着坐，关系最多的人放正上方；照片尺寸按人数自动缩，一圈按「卡片尺寸归一后的弧长」等距排开。会穿过中间照片的线改从照片外侧绕。
 - 数据 `js/relations-data.js`：`{a, b, label, sure, src}`。**只录人设正文写明或直接可读出的关系**，`src` 记出处；`sure:false` 画虚线，表示正文能看出交集、但算不算关系与怎么称呼待站主确认。同国、同姓、同职业不算关系（见上文「不追加关系」）。目前只录了科鲁鲁王国 5 条（实线 2、虚线 3）与安那其学院 2 条（实线），其他地点只摆人。
-- 资源：`css/papers.css v1`、`css/relations.css v4`、`js/papers.js v1`、`js/relations.js v5`、`js/relations-data.js v2`；读取 `gallery-data.js v124`、`locations-data.js v28`。
+- 资源：`css/papers.css v1`、`css/relations.css v5`、`js/papers.js v1`、`js/relations.js v6`、`js/relations-data.js v2`；读取 `gallery-data.js v124`、`locations-data.js v28`。
 
 ## 三维星球与 2.5D 沙盘（v23，2026-10-17）
 
