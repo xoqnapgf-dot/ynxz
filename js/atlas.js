@@ -778,7 +778,8 @@ void main(){
       color: color || (it?.art === 'isles' ? '#b39ae6' : it?.art === 'peak' ? '#e0b860' : it?.art === 'city' ? '#9fbedf' : it?.art === 'academy' ? '#e7a99a' : '#cdb991'),
       coord: exact ? coordText(it.x, it.y) : it ? '坐标未定 · 沿「' + it.name + '」定位' : ''
     });
-    $('acGlobe').hidden = !has(LOC, name);
+    // 地点卡底部：去这个地点（小地点归到所属国家 / 大地区）的人物关系页
+    const rel = $('acRel'); rel.hidden = !has(LOC, name); rel.href = 'relations.html?release=23&place=' + encodeURIComponent(name);
     card.hidden = false;
     requestAnimationFrame(() => card.classList.add('open'));
     stage.classList.add('card-open');
@@ -786,7 +787,6 @@ void main(){
   function closeCard() { card.classList.remove('open'); stage.classList.remove('card-open'); setTimeout(() => { if (!card.classList.contains('open')) card.hidden = true; }, 260); }
   card.addEventListener('click', e => { const go = e.target.closest('[data-go]'); if (go) select(go.dataset.go, true, true); });
   $('acClose').onclick = () => clear(true);
-  $('acGlobe').onclick = () => window.__mapView?.setMode('globe', { scene: true });
   $('acCopy').onclick = PlaceUI.copyLink;
   $('acGrip').onclick = () => card.classList.toggle('full');
 

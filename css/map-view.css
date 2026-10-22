@@ -136,11 +136,11 @@ html,body{overflow:hidden}
 /* 正文单独滚动，操作栏固定在卡片底部、不压在正文上（iOS 上 sticky 底栏会停在卡片中间、把字截断） */
 .atl-body{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 .atl-actions{flex:none;display:flex;gap:8px;padding:12px 24px 16px;background:#fbf6ea;border-top:1px solid rgba(62,49,34,.12);box-shadow:0 -10px 18px -14px rgba(62,49,34,.35)}
-.atl-actions button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 16px;border-radius:10px;border:1px solid #3a2d20;background:#3a2d20;color:#f6eedb;font:600 13.5px var(--atl-serif);letter-spacing:.08em;cursor:pointer}
-.atl-actions button:hover{background:#2b2016}
+.atl-actions button,.atl-actions a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 16px;border-radius:10px;border:1px solid #3a2d20;background:#3a2d20;color:#f6eedb;font:600 13.5px var(--atl-serif);letter-spacing:.08em;text-decoration:none;cursor:pointer}
+.atl-actions button:hover,.atl-actions a:hover{background:#2b2016}
 .atl-actions button.ghost{background:transparent;color:var(--atl-ink)}
 .atl-actions button.ghost:hover{background:rgba(62,49,34,.07)}
-.atl-actions button[hidden]{display:none}
+.atl-actions button[hidden],.atl-actions a[hidden]{display:none}
 .card-open .atl-tools{right:424px}.card-open .atl-layers{right:476px}.card-open .atl-compass{right:430px}
 .atl-ui :focus-visible,.atl-card :focus-visible{outline:2px solid var(--atl-accent);outline-offset:2px}
 
@@ -227,6 +227,10 @@ html,body{overflow:hidden}
   .atl-foot{left:12px}
 }
 @media (max-width:700px){
+  /* 主导航多了「关系」：手机上收窄字距与留白，390 宽一行放得下（更窄时可横向滑动） */
+  .theme-map .site-header{gap:8px}
+  .theme-map .site-nav{gap:0}
+  .theme-map .site-nav a{min-width:0;padding:0 5px;letter-spacing:.04em}
   .atl-seg a svg{display:none}
   .atl-card{top:auto;left:0;right:0;bottom:0;width:auto;max-height:58%;border-radius:18px 18px 0 0;border-bottom:0;transform:translateY(24px)}
   .atl-card.full{max-height:calc(100% - 8px)}
@@ -237,7 +241,7 @@ html,body{overflow:hidden}
   .atl-desc,.atl-sec{padding-left:18px;padding-right:18px}
   .atl-desc p{font-size:14.5px;line-height:1.9}
   .atl-actions{padding:10px 18px calc(12px + env(safe-area-inset-bottom,0px))}
-  .atl-actions button{flex:1}
+  .atl-actions button,.atl-actions a{flex:1}
   .card-open .atl-tools,.card-open .atl-layers{right:10px}
   .card-open .atl-layers{right:62px}
   .card-open .atl-foot{opacity:0}

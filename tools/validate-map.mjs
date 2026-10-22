@@ -1,4 +1,4 @@
-// v23 静态校验：平面地图（atlas 代码渲染）+ 独立 3D 地球 + 每个地点一份 2.5D 沙盘配方。
+// v28 静态校验：平面地图（atlas 代码渲染）+ 人物关系入口；3D 地球与 2.5D 沙盘配方已撤下入口但代码保留，仍校验完整。
 import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';
 const root=new URL('../',import.meta.url),read=f=>fs.readFileSync(new URL(f,root),'utf8');
 const ctx={};ctx.window=ctx;vm.runInNewContext(read('js/map-data.js')+'\n'+read('js/locations-data.js')+'\n'+read('js/atlas-data.js'),ctx);
@@ -21,7 +21,11 @@ assert.equal(new Set(names).size,names.length,'沙盘配方重名');
 assert.deepEqual([...names].sort(),Object.keys(L).sort(),'每个地点志条目都要有沙盘配方');
 // 页面入口
 const html=read('map.html'),globe=read('globe.html');
-for(const id of ['viewFlat','viewGlobe','mapStage','atlasCanvas','atlasCard','atlasSearch'])assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,'map '+id);
+for(const id of ['mapStage','atlasCanvas','atlasCard','atlasSearch','acRel'])assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,'map '+id);
+// v28：3D 地球撤下，平面地图不再链到 globe.html；globe.html 只在 ?dev=3d 时运行，其余转回平面地图
+assert(!/globe\.html|id="viewGlobe"|id="acGlobe"/.test(html),'map.html 不应再有 3D 入口');
+assert(/get\('dev'\)===['"]3d['"]/.test(globe)&&globe.includes("location.replace"),'globe.html 需转回平面地图');
+for(const p of fs.readdirSync(new URL('.',root)).filter(f=>f.endsWith('.html')&&f!=='globe.html'))assert(!read(p).includes('globe.html'),p+' 不应再链到 globe.html');
 for(const id of ['globeStage','globeCanvas','atlasCard','acDio','dioHud','dioViews','dioVeil'])assert.equal((globe.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,'globe '+id);
 assert(!/<img[^>]+素材\/地图/.test(html),'flat map must not load base images');assert(!html.includes('<iframe'),'no 3D iframe');
 // 资源版本：同一文件在各页面的 ?v= 必须一致；3D 模块的相对导入统一版本，避免同一模块加载两份
@@ -32,4 +36,5 @@ const mods=['js/globe/app.js','js/globe/planet.js',...fs.readdirSync(new URL('js
 for(const f of mods)for(const m of read(f).matchAll(/(?:from |import\()'(\.[^']+)'/g)){const v=(m[1].match(/\?v=(\d+)$/)||[])[1];assert(v,f+' 相对导入缺少版本 '+m[1]);vers.add(v);}
 assert.equal(vers.size,1,'3D 模块相对导入版本不统一 '+[...vers]);
 for(const p of pages)assert(!/release=(1\d|2[0-2])\b/.test(read(p)),p+' 仍有旧 release 链接');
-console.log(`PASS: v23 atlas, ${Object.keys(L).length} places (${official.length} mapped), ${open.length} open + ${closed.length} closed dioramas, ${pages.length} pages with consistent asset versions.`);
+for(const p of pages)if(read(p).includes('class="site-nav"'))assert(read(p).includes('href="relations.html?release=23"'),p+' 主导航缺少「关系」');
+console.log(`PASS: v28 atlas + relations entry, ${Object.keys(L).length} places (${official.length} mapped), ${open.length} open + ${closed.length} closed dioramas, ${pages.length} pages with consistent asset versions.`);

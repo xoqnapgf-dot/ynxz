@@ -1,4 +1,4 @@
-/* 人物关系（样稿）：按地点把角色排成一圈，关系连红线；点人看关系与出处，点外地的人跳到那个地点。
+/* 人物关系：按地点把角色排成一圈，关系连红线；点人看关系与出处，点外地的人跳到那个地点。
    数据：GALLERY_DATA（角色、属地）· LOCATION_DATA / LOCATION_ALIAS（地点层级）· RELATION_DATA（关系） */
 (function () {
   'use strict';
@@ -7,32 +7,9 @@
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var canon = function (s) { s = String(s).trim(); return L[s] ? s : (A[s] || s); };
   var NS = 'http://www.w3.org/2000/svg';
+  var ar = 4 / 3;   // 照片高宽比：3:4 立绘，人多时改方形头像
   var STAGE_W = 720, STAGE_H = 760;   // 手机上的固定版面（比电脑略高，竖屏更宽松），缩放后铺满屏宽
 
-  /* 各地的纸：按地方的气质挑（样式在 relations.css 的 [data-paper]），没列的用羊皮纸 */
-  var PAPER = {
-    '科鲁鲁王国': 'vellum',       // 礼法古国：泛黄羊皮纸，红色双栏线
-    '安那其学院': 'pulp',         // 岛上印刷所：再生粗纸，印刷栏线
-    '伊鲁尼利亚共和国': 'chart',  // 两面临海的商贸共和国：海图纸
-    '万知城': 'ledger',           // 书城：档案卡纸，横格与红边线
-    '坎普共和国': 'kraft',        // 码头与矿区：牛皮纸
-    '布图里亚': 'tide',           // 海峡王国：灰蓝布纹纸，浪纹水印
-    '璇玑联邦': 'drafting',       // 研究院与精密工坊：制图纸
-    '铁枢人民共和国': 'graph',    // 计划经济：方格表格纸
-    '霁川公国': 'rice',           // 稻作水乡：长纤维白纸，淡墨晕
-    '卡法里扬帝国': 'ash',        // 北方冻土与矿冶：冷灰厚纸，烟熏边
-    '塞雷格帝国': 'decree',       // 自称古帝国继承者：诏书纸，双重框
-    '帕尔哈南神权政治': 'scripture', // 抄经院：赭金经卷纸
-    '裂缝彼端': 'rift',           // 彼方：暗紫异纸，一道裂光
-    '翁吉亚共和国': 'ochre',      // 高地诸神：赭土纸，回纹边
-    '契莱西亚保护国': 'bark',     // 山林雨林：树皮纸
-    '奥嫩堡王国': 'charter',      // 封臣与城堡：特许状厚羊皮，蜡封
-    '罗歇阿普公国': 'damp',       // 湿热海岸：受潮泛黄、霉斑
-    '天神峰': 'snow',             // 雪峰：冷白纸，雪点
-    '常灵群岛': 'mist',           // 雾岛：灰绿纸，雾带
-    '卡斯奎尼亚王国': 'hemp',     // 草原与骑士：麻纸织纹
-    '示安神权政治': 'washi'       // 社祠与潮汐：长纤维薄纸，朱印
-  };
 
   /* ---- 角色与所属地点 ---- */
   var chars = {}, byPlace = {};
@@ -55,8 +32,11 @@
   var places = Object.keys(byPlace).sort(function (a, b) { return (relCount[b] || 0) - (relCount[a] || 0) || byPlace[b].length - byPlace[a].length; });
 
   var qs = new URLSearchParams(location.search);
-  var cur = places.indexOf(canon(qs.get('place') || '')) >= 0 ? canon(qs.get('place')) : places[0];
+  var rootOf = function (p) { var seen = {}; p = canon(p); while (L[p] && L[p].parent && !seen[p]) { seen[p] = 1; p = canon(L[p].parent); } return p; };
+  var want = rootOf(qs.get('place') || '');   // 地图和画廊可能传来小地点，归到所属国家 / 大地区
+  var cur = places.indexOf(want) >= 0 ? want : places[0];
   var sel = qs.get('c') && chars[qs.get('c')] ? qs.get('c') : null;
+  if (sel && !qs.get('place')) cur = chars[sel].place;
 
   /* ---- 地点切换条 ---- */
   $('relPlaces').innerHTML = places.map(function (p) {
@@ -118,7 +98,7 @@
       if (b.dataset.place === cur && $('relPlaces').scrollWidth > $('relPlaces').clientWidth) $('relPlaces').scrollLeft = b.offsetLeft - $('relPlaces').clientWidth / 2 + b.offsetWidth / 2;
     });
     var board = $('relBoard'), stage = $('relStage'), ids = order(byPlace[cur] || []), n = ids.length, BW = board.clientWidth;
-    board.dataset.paper = PAPER[cur] || 'vellum';
+    board.dataset.paper = window.placePaper ? placePaper(cur) : 'vellum';
     // 手机：按电脑版的版面画一块固定大小的纸板，再整体缩到屏幕宽度，间距和比例与电脑上一致
     var narrow = BW < 600, s = narrow ? BW / STAGE_W : 1;
     var wantH = narrow ? Math.round(STAGE_H * s) + 'px' : '';
@@ -128,14 +108,22 @@
     stage.style.width = W + 'px'; stage.style.height = H + 'px';
     stage.style.transform = narrow ? 'scale(' + s.toFixed(4) + ')' : '';
     // 卡片从大往小试，直到一圈能放下（归一弧长每张至少 1.16 张卡，留出歪放的余量）
-    // 卡片实际高度 = 3:4 照片 + 上下留白 + 两行字（缩放版字号大，文字区更高）
-    var capN = narrow ? 62 : 50, w = narrow ? 100 : 96, h, rx, ry, ring;
-    for (;;) {
-      h = w * 4 / 3 + capN; rx = cx - w * .58 - 14; ry = cy - h * .5 - 16;
-      ring = ringPoints(n, rx, ry, w, h);
-      if (ring.room >= 1.16 || w <= 50) break;
-      w -= 2;
+    // 卡片实际高度 = 照片 + 上下留白 + 两行字（缩放版字号大，文字区更高）
+    // 人多时 3:4 立绘会缩得太小，改成方形头像（只取上半身往上），同样的地方能放得更大
+    var capN = narrow ? 62 : 50, w, h, rx, ry, ring;
+    function fit(aspect) {
+      ar = aspect; w = narrow ? 100 : 96;
+      for (;;) {
+        h = w * ar + capN; rx = cx - w * .58 - 14; ry = cy - h * .5 - 16;
+        ring = ringPoints(n, rx, ry, w, h);
+        if (ring.room >= 1.16 || w <= 50) break;
+        w -= 2;
+      }
     }
+    fit(4 / 3);
+    var dense = n >= 12 || w < (narrow ? 92 : 84);
+    if (dense) fit(1);
+    board.classList.toggle('dense', dense);
     // 中间的地点照片：不压到环上的卡片
     var cap = narrow ? 112 : 92;   // 地点照片下方文字区与留白的高度
     var placeW = Math.max(110, Math.min(narrow ? 250 : 230, (rx - w * .55) * 2 - 30, ((ry - h * .5) * 2 - 30 - cap) / .667));
@@ -170,7 +158,7 @@
     });
     // 线与标签
     var svg = $('relLines'); svg.innerHTML = ''; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    var tags = '', placed = [], fs = narrow ? 14 : 11;
+    var tags = '', placed = [], fs = narrow ? 15 : 12;
     rels.forEach(function (r, i) {
       var a = pos[r.a], b = pos[r.b];
       if (!a || !b) return;
@@ -219,7 +207,7 @@
   function cover(x, y, tw, th, w, h) {
     var sum = ov(x, y, tw, th, geo.cx, geo.cy, geo.hw * 2, geo.hh * 2) * 1.5;
     for (var id in pos) {
-      var p = pos[id], k = p.far ? .68 : 1, cw = w * k + 8, ch = h * k + 8, capH = (h - w * 4 / 3) * k + 6;
+      var p = pos[id], k = p.far ? .68 : 1, cw = w * k + 8, ch = h * k + 8, capH = (h - w * ar) * k + 6;
       sum += ov(x, y, tw, th, p.x, p.y, cw, ch) + 2 * ov(x, y, tw, th, p.x, p.y + ch / 2 - capH / 2, cw, capH);
     }
     return sum;
