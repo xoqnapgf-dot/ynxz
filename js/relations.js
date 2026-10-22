@@ -21,7 +21,9 @@
       var parts = loc.split(/\s*[·・]\s*/).map(canon), root = parts[0], seen = {};
       while (L[root] && L[root].parent && !seen[root]) { seen[root] = 1; root = canon(L[root].parent); }
       var sub = parts.filter(function (p) { return p !== root; }).join(' · ');
-      var id = get('身份').split(/\s*[·・]\s*/).pop();
+      // 职位：身份里去掉地名（地点志正式名、别名，以及属地里写到的段，如「裂缝彼端」），剩下的才是职位
+      var homes = loc.split(/\s*[·・]\s*/);
+      var id = get('身份').split(/\s*[·・]\s*/).filter(function (t) { return t && !L[t] && !A[t] && homes.indexOf(t) < 0; }).join(' · ');
       chars[c.id] = { id: c.id, name: c.name, ideo: ideo.name, place: root, sub: sub, role: id, born: get('出生日期'), thumb: (c.images && c.images[0] && c.images[0].thumb) || '', bio: c.bio || '' };
       (byPlace[root] = byPlace[root] || []).push(c.id);
     });
@@ -154,7 +156,7 @@
       var c = chars[id], p = pos[id], isFar = !!p.far;
       html += '<button type="button" class="rel-node' + (isFar ? ' far' : '') + '" data-id="' + esc(id) + '" style="left:' + p.x.toFixed(1) + 'px;top:' + p.y.toFixed(1) + 'px;--w:' + (isFar ? Math.round(w * .68) : Math.round(w)) + 'px;--r:' + p.r.toFixed(1) + 'deg" aria-label="' + esc(c.name) + '">' +
         (c.thumb ? '<img src="' + esc(c.thumb) + '" alt="" loading="lazy">' : '') +
-        '<b>' + esc(c.name.split(/[·・]/)[0]) + '</b><small>' + esc(isFar ? '↗ ' + c.place : (c.sub || c.role || c.ideo)) + '</small></button>';
+        '<b>' + esc(c.name.split(/[·・]/)[0]) + '</b><small>' + esc(isFar ? '↗ ' + c.place : (c.role || c.ideo)) + '</small></button>';
     });
     // 线与标签
     var svg = $('relLines'); svg.innerHTML = ''; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);

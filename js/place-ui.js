@@ -12,6 +12,12 @@
   const kidsOf = name => Object.keys(LOC).filter(n => LOC[n].parent === name);
   function coordText(u, v) { const A = window.ATLAS_DATA, latM = A ? 180 * A.H / A.W : 90, lon = u * 360 - 180, lat = latM * (1 - 2 * v); return `${Math.abs(lat).toFixed(1)}°${lat >= 0 ? 'N' : 'S'} · ${Math.abs(lon).toFixed(1)}°${lon >= 0 ? 'E' : 'W'}`; }
 
+  /* 职位：身份里去掉地名（地点志正式名、别名，以及属地里写到的段），只留职位 */
+  function roleOf(c) {
+    const get = k => ((c.info || []).find(i => i.k === k) || {}).v || '', homes = get('属地').split(/\s*[·・]\s*/);
+    return get('身份').split(/\s*[·・]\s*/).filter(t => t && !has(LOC, t) && !has(ALIAS, t) && !homes.includes(t)).join(' · ');
+  }
+
   /* 相关角色：按人设「属地」匹配地点名或别名（gallery-data.js 按需加载） */
   let peopleIndex = null, peopleLoading = null;
   function loadPeople(src) {
@@ -56,14 +62,16 @@
     const ppl = $('acPeople'); ppl.hidden = !d; ppl.innerHTML = d ? '<h3>相关角色</h3><p class="atl-wait">正在查找…</p>' : '';
     if (d) loadPeople(card.dataset.galleryData).then(idx => {
       if ($('acName').textContent !== name) return;
-      const groups = [[name, idx[name] || []]];
+      // 属地同时写了国家和下辖小地点的人，只列在小地点下，不重复出现
+      const inKid = new Set(kids.flatMap(k => (idx[k] || []).map(x => x.c.id)));
+      const groups = [[name, (idx[name] || []).filter(x => !inKid.has(x.c.id))]];
       kids.forEach(k => { if (idx[k]?.length) groups.push([k, idx[k]]); });
       const total = groups.reduce((a, g) => a + g[1].length, 0);
       if (!total) { ppl.innerHTML = '<h3>相关角色</h3><p class="atl-wait">暂无人设 · 待完善</p>'; return; }
       ppl.innerHTML = `<h3>相关角色 <small>${total}</small></h3>` + groups.filter(g => g[1].length).map(([g, list]) => (g !== name ? `<p class="atl-sub">${esc(g)}</p>` : '') + '<div class="atl-people">' + list.map(({ c, ideo }) => {
         const im = c.images && c.images[0], th = im ? (typeof im === 'string' ? im : im.thumb) : '';
-        const role = ((c.info || []).find(i => i.k === '身份') || {}).v || ideo.name;
-        return `<a href="gallery.html?cat=character&open=${encodeURIComponent(c.id)}" style="--ca:${esc(c.theme?.accent || ideo.theme?.accent || '#b08a4a')}"><span class="av">${th ? `<img src="${esc(th)}" alt="" loading="lazy">` : esc(c.name.slice(0, 1))}</span><span class="nm"><b>${esc(c.name)}</b><small>${esc(ideo.name)} · ${esc(String(role).replace(/^[^·]*·\s*/, ''))}</small></span></a>`;
+        const role = roleOf(c);
+        return `<a href="gallery.html?cat=character&open=${encodeURIComponent(c.id)}" style="--ca:${esc(c.theme?.accent || ideo.theme?.accent || '#b08a4a')}"><span class="av">${th ? `<img src="${esc(th)}" alt="" loading="lazy">` : esc(c.name.slice(0, 1))}</span><span class="nm"><b>${esc(c.name)}</b><small>${esc(ideo.name)}${role ? ' · ' + esc(role) : ''}</small></span></a>`;
       }).join('') + '</div>').join('');
     });
     (card.querySelector('.atl-body') || card).scrollTop = 0;
