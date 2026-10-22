@@ -1813,6 +1813,13 @@
   /* 地点志弹层：相册风，底纸按地点换（css/papers.css + js/papers.js，与人物关系页同一套纸）。
      相关角色贴成拍立得，底部去人物关系页与地图。
      预留：LOCATION_DATA[name].image（地点配图）、.scene（小场景页面链接）有值时自动显示。 */
+  /* 职位：身份里去掉地名（地点志正式名、别名，以及属地里写到的段），只留职位，避免照片下有的写地点、有的写职位 */
+  function charRole(c) {
+    var L = typeof LOCATION_DATA !== 'undefined' ? LOCATION_DATA : {}, A = typeof LOCATION_ALIAS !== 'undefined' ? LOCATION_ALIAS : {};
+    var get = function (k) { return ((c.info || []).filter(function (it) { return it.k === k; })[0] || {}).v || ''; };
+    var homes = get('属地').split(/\s*[·・]\s*/);
+    return get('身份').split(/\s*[·・]\s*/).filter(function (t) { return t && !L[t] && !A[t] && homes.indexOf(t) < 0; }).join(' · ');
+  }
   function locPeople(name) {
     var out = [];
     if (typeof GALLERY_DATA === 'undefined') return out;
@@ -1902,8 +1909,8 @@
         (kids.length ? '<section class="loc-view-sec"><h4>下辖地点</h4><div class="loc-view-chips">' + kids.map(function (n) { return '<a href="#" data-loc="' + esc(n) + '"><b>' + esc(n) + '</b><small>' + esc(L[n].kind || '') + '</small></a>'; }).join('') + '</div></section>' : '') +
         (people.length ? '<section class="loc-view-sec"><h4>相关角色 <small>' + people.length + '</small></h4><div class="loc-view-people' + (people.length > 8 ? ' dense' : '') + '">' + people.map(function (x, i) {
           var im = x.c.images && x.c.images[0], th = im ? (typeof im === 'string' ? im : im.thumb) : '';
-          var role = ((x.c.info || []).filter(function (it) { return it.k === '身份'; })[0] || {}).v || '';
-          return '<a href="gallery.html?cat=character&open=' + encodeURIComponent(x.c.id) + '" data-open-ch="' + esc(x.c.id) + '" style="--pa:' + esc(mergedTheme(x.c, x.ideo).theme.accent || '#b08a4a') + ';--r:' + (((i * 37) % 7) - 3) * .7 + 'deg"' + (x.c.id === locFrom ? ' class="me"' : '') + '><span class="av">' + (th ? '<img src="' + esc(th) + '" alt="" loading="lazy">' : esc(x.c.name.slice(0, 1))) + '</span><b>' + esc(x.c.name.split(/[·・]/)[0]) + '</b><small>' + esc(role ? String(role).replace(/^[^·]*·\s*/, '') : x.ideo.name) + '</small></a>';
+          var role = charRole(x.c);
+          return '<a href="gallery.html?cat=character&open=' + encodeURIComponent(x.c.id) + '" data-open-ch="' + esc(x.c.id) + '" style="--pa:' + esc(mergedTheme(x.c, x.ideo).theme.accent || '#b08a4a') + ';--r:' + (((i * 37) % 7) - 3) * .7 + 'deg"' + (x.c.id === locFrom ? ' class="me"' : '') + '><span class="av">' + (th ? '<img src="' + esc(th) + '" alt="" loading="lazy">' : esc(x.c.name.slice(0, 1))) + '</span><b>' + esc(x.c.name.split(/[·・]/)[0]) + '</b><small>' + esc(role || x.ideo.name) + '</small></a>';
         }).join('') + '</div></section>' : '<section class="loc-view-sec"><h4>相关角色</h4><p class="loc-view-empty">暂无人设 · 待完善</p></section>') +
         (d.scene ? '<section class="loc-view-sec"><h4>场景</h4><a class="loc-view-scene" href="' + esc(d.scene) + '">进入地点场景 →</a></section>' : '') +
         '<footer class="loc-view-actions"><a class="primary" href="relations.html?' + relQ + '">人物关系</a><a href="map.html?' + q + '">在地图上查看</a></footer>' +
