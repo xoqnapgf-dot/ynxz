@@ -242,7 +242,7 @@ ynxz/
 ---
 
 ## 四、功能特性
-- **主题配色封面**：每个意识形态一套 `accent + accent2 + 唯一 SVG 纹样(motif)`，封面为**内联 data-URI SVG**（`designIdeologyCover` 生成，113 个 motif 各不相同，不依赖素材图）。日间模式另生成一张纸面版（同构图，浅纸底 + 压暗的主色墨线，`designIdeologyCover(ideo, false, true)`），卡片里两张图按 `data-theme` 切换，避免浅色页面上出现一块块深色卡。
+- **主题配色封面**：每个意识形态一套 `accent + accent2 + 唯一 SVG 纹样(motif)`，封面为**内联 data-URI SVG**（`designIdeologyCover` 生成，124 个 motif 各不相同，不依赖素材图）。日间模式另生成一张纸面版（同构图，浅纸底 + 压暗的主色墨线，`designIdeologyCover(ideo, false, true)`），卡片里两张图按 `data-theme` 切换，避免浅色页面上出现一块块深色卡。
 - **人物介绍 + 基础信息**：角色名下方、简介上方；衬线正文 + 分隔线，无板块标题。
 - **历史版本 + 「站主说」**：版本查看器右侧显示该图批注（仅填了才显示）。
 - **地点志**：角色"属地/身份"里的地名可点击 → 弹出相册风的地点志（v28）：底纸按地点换（与人物关系页同一套纸），地点类型是一枚朱红小章，地名手写体居中；下辖地点是小纸签，以此为属地的角色贴成拍立得（超过 8 人改方形头像），底部「人物关系 / 在地图上查看」。从某个人设点进来时，去关系页会顺带选中这个人（`&c=id`），弹层里这张照片也有红框。弹层打开时会锁住背后的页面（`position:fixed` 记住滚动位置，关闭后还原），手指碰到遮罩不会滑动背景，避免 iOS 上滑动「跑」到背景人设页。
@@ -254,14 +254,14 @@ ynxz/
 ## 五、数据文件与结构（`js/`）
 | 文件 | 全局变量 | 内容 |
 |---|---|---|
-| `gallery-data.js` | `GALLERY_DATA` | 113 意识形态 / 125 角色。`{id,name,initial,desc,cover,theme:{accent,accent2,motif},characters:[{id,name,initial,bio,info:[{k,v}],desc,text,images:[{thumb,full}],misc}]}` |
+| `gallery-data.js` | `GALLERY_DATA` | 124 意识形态 / 136 角色。`{id,name,initial,desc,cover,theme:{accent,accent2,motif},characters:[{id,name,initial,bio,info:[{k,v}],desc,text,images:[{thumb,full}],misc}]}` |
 | `versions-data.js` | `VERSION_DATA` | 历史版本与「站主说」：`{chars:{id:[{url,label,note}]}, ideologies:{id:[...]}}`（**手改，勿脚本重生成**） |
 | `map-data.js` | `MAP_NATIONS` | 地图标记：`{id,name,form,x,y,type?,desc?,color?,parent?}`；`type` 缺省=国家，`special`=特殊地点（下级地名是否上图待定） |
 | `locations-data.js` | `LOCATION_DATA` | 地点志：`{名称:{desc,kind,parent?,image?}}`（含各国 + 下级地名 + 隶属链）；`image` 为场景图路径（`素材/地点/名称.webp`） |
 | `atlas-data.js` | `ATLAS_DATA` | 平面地图数据：海岸 / 湖泊 / 常灵礁群环、政区环、国界线、河流、道路航线（矢量）与高程 / 群系 / 政区 / 温度栅格（base64）。由 `tools/build_atlas.py` 从 Azgaar 导出生成，**勿手改** |
 | `main.js` / `gallery.js` / `atlas.js` / `map-view.js` | — | 交互逻辑（`atlas.js` 为平面地图渲染器，`map-view.js` 负责平面 / 3D 之间的选择与网址同步） |
 
-**规模**：意识形态 113、角色 125（125 位均有正文）、地图标记 41、地点志 28。
+**规模**：意识形态 124、角色 136（136 位均有正文）、地图标记 41、地点志 28。
 
 ---
 
@@ -302,7 +302,7 @@ ynxz/
 - 本站无需安装构建依赖；临时检查工具用完清掉 `node_modules`、`.npmcache`，勿进仓库（已有 `.gitignore` 兜底）。
 - 地图卡片介绍单一来源：地点志已收录的地点一律读 `locations-data.js`；`map-data.js` 只保留地点志**没有**的地点的 desc（当前为空）。
 - 地图与3D版本：`css/map-view.css v10`、`js/atlas-data.js v1`、`js/atlas.js v5`、`js/map-view.js v13`、`js/place-ui.js v5`；`js/globe/app.js v27`。`js/globe/` 下各模块之间的相对导入**统一写同一个 `?v=`（当前 27）**：浏览器按完整网址区分模块，混用版本会把 `kit.js` 等加载两份，沙盘的共享 uniform 随之失效。星球贴图另用 `app.js` 里的 `?v=2`，重新烘焙后要一起升。
-- 当前版本指针：`style.css v27`、`gallery.css v58`、`gallery.js v84`、`papers.css v1`、`papers.js v1`、`relations.css v5`、`relations.js v6`、`relations-data.js v2`、`gallery-data.js v124`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
+- 当前版本指针：`style.css v27`、`gallery.css v58`、`gallery.js v85`、`papers.css v1`、`papers.js v1`、`relations.css v5`、`relations.js v6`、`relations-data.js v2`、`gallery-data.js v125`、`versions-data.js v6`、`locations-data.js v28`、`map-data.js v25`、`cp.js v7`、`search.js v4`、`main.js v1`、`theme.js v2`。**同一文件在所有页面的 `?v=` 指针必须一致**（曾出现 search.html 把 gallery-data 停在 v12，导致搜索页读旧缓存）。
 
 ---
 
@@ -326,7 +326,9 @@ ynxz/
 - **X / Y / Z 角色全面复核（2026-10）**：逐一核对 23 个思潮下的 28 位角色、对应大图、`gallery-data.js`、写作规则、时间线与地点志；改写全部 28 篇正文，避免照搬立绘标语、道具或未经核实的情节。修正艾琉瑟里娅的属地链接与五处身份地点链接；夏梦华 `info` 的 `历法` 字段改为 `出生日期`，原纪年值保留。维斯珀按璇玑内陆湖群的通航与贸易设定重写；删去叶卡捷琳娜长子仍年幼的暗示，避免与出生年和现任摄政状态冲突；艾莉森不再出现未获设定支持的高架路等设施。姓名、出生年份、角色主要归属及既定能力边界未改，没有新建地点；角色 / 地点 CSV 继续作为既有审查基线。
 - **心灵主义释义复核**：明确本条目采用形而上学用法，并与心灵哲学 / 心理学中强调内在心理状态具有解释或因果作用的用法、以及舞台 mentalism 区分；参考 Stanford Encyclopedia of Philosophy《Idealism》[1](https://plato.stanford.edu/entries/idealism/) 和 Burgos、Killeen 对 mentalism 用法争议的综述 [2](https://pmc.ncbi.nlm.nih.gov/articles/PMC6701732/)。相对主义与自然主义的概念边界另参考 SEP [3](https://plato.stanford.edu/entries/relativism/) [4](https://plato.stanford.edu/entries/naturalism/)。
 - **本轮交付方式（2026-10-14）**：S—Z 的年龄、身份与正文作为修订稿提交 PR 审阅，暂不自动合并。旧批次的“文件草稿／待审”措辞是各自当时的状态，不代表当前仍未合并。
-- **当前内容数量**：125 位角色均有非空正文；早期的“剩余17人／已写122人”统计已过时，不作为当前缺稿清单。多数占位国仍无介绍；其他批次的设定与配色仍可继续复核。
+- **当前内容数量**：136 位角色均有非空正文；早期的“剩余17人／已写122人”统计已过时，不作为当前缺稿清单。多数占位国仍无介绍；其他批次的设定与配色仍可继续复核。
+- **新增 11 个思潮（2026-10-23，站主授权自由发挥）**：站主把 11 张海报误传到仓库根目录，已压缩为 900×1600 大图与 373×560 预览（WebP），按 `{思潮}_{角色}_角色大图/画廊预览图.webp` 命名放入 `素材/`，根目录原图删除。新增思潮与角色：黄老学说·虞清和（霁川公府参议）、宋明理学·叶澄心（霁川书院讲书）、新奥尔良爵士·埃斯特尔·马雷（坎普河港乐队小号手）、公路电影·乔茜·温德尔（璇玑巡回放映员）、反出生主义·伊薇特·莫恩（常灵群岛渔村代笔人）、名家·辛离（伊鲁尼利亚议会措辞审校）、阴阳家·晏星回（塞雷格司历署历算官）、纵横家·季衡（卡斯奎尼亚王庭行人）、杂家·容采之（万知城类书编纂馆主编）、兵家·祁安澜（卡法里扬边军参谋）、农家·谷小满（南岸乡社农事互助召集人）。姓名、身份、属地与出生年份均为自拟，站主可改；属地全部复用已有地点，未建新地点，正文不写彼此关系，`relations-data.js` 未改。`gallery.js` 新增 11 个唯一纹样：daofa / moonrivers / trumpet / road / dandelion / venn / wuxing / zongheng / slips / tally / plow。
+- **本批释义核对**：先秦诸家按《汉书·艺文志》诸子略、兵书略的家数篇数与「出于某官」原文；黄老参考马王堆帛书四篇与《史记》曹参、窦太后记载；名家参考《庄子·天下》与《荀子·非十二子》；纵横家参考《战国纵横家书》对苏秦年代的修正；兵家参考银雀山汉简；农家参考《孟子·滕文公上》许行章。新奥尔良爵士的首张唱片参考 [1](https://en.wikipedia.org/wiki/Livery_Stable_Blues)；公路电影参考 Laderman《Driving Visions》出版信息与书评 [1](https://muse.jhu.edu/article/40146)；反出生主义参考 Benatar《Better Never to Have Been》（2006）。现实人物与地名只出现在释义里。
 - **J 字头 12 个思潮的角色人设已重写**（建制主义～绝对主义，共 12 人），同时修掉了这批 bio 里把换行写成双反斜杠、页面上直接显示 `\\n` 的乱码；**K 字头 4 个思潮的角色人设已补写**（扩张主义·奥罗拉·奥克塔维亚 / 开明君主制·索菲·德·波旁 / 客观主义·薇薇安·斯蒂尔 / 酷儿安那其主义·瑞欧特·奎恩）；**N 字头 1 个、P 字头 1 个思潮的角色人设已补写**（农业主义·萨丽特 / 平等主义·艾米丽亚·索恩）；其他思潮的人设待继续补写或复核。
 - **农业主义 / 平等主义人设完善（文件草稿，待审）**：萨丽特补足自耕者的独立、乡社互助、对失地与粮商依赖的顾虑，以及爽快又恋乡的性格；艾米丽亚保留营造所平整吏身份，补足居民发言、勘量记录可查、公共修缮按需要安排等主张，并写明较真、话硬的性格。两人的姓名、出生年份、身份、属地及原有生活背景不变，仅调整 `bio`；思潮释义、配色与图片未改，该轮未增加已写人设数量。此前按要求先写文件；现随本分支提交 PR 待审，暂不合并。
 - **本轮写作核对**：农业主义的自耕者独立与乡村共同生活参考 [1](https://en.wikipedia.org/wiki/Agrarian_society)；平等主义的平等地位、不同条件下的平等待遇参考 [3](https://plato.stanford.edu/archives/sum2013/entries/egalitarianism/)。资料只用于核对现实概念，不作为世界内人物经历。
@@ -346,7 +348,7 @@ ynxz/
 - 断链已补：沈青禾属地的「南境工矿区」与萨丽特属地的「河湾乡社」已进地点志（2026-10 设定补桥）。「裂缝彼端 · 另一世界」不是固定地点，而是不同的时间线，属地只写文字、不做链接，这是有意设计。
 - 占位国名中「清」「华清国保护国」已改为「璇玑联邦」「霁川公国」；「平」等译名仍易联想现实地名，下一轮改名优先处理；其余单字/怪译名一并复核。
 - 地图尚未决定是否展示州、市与其他小地点；目前只保留已登场国家和少量特殊地点标记，之后若增加点位，应优先做可切换/按缩放分级的独立覆盖层，避免一屏堆满。
-- 「人物设定整理中」占位（`gallery.js` 的 `pendingHtml`）：角色一旦写了 `bio` / `info` / `desc` / `text` 任一项会自动隐藏。现有 125 位都已写完，但新角色常常先上图后补正文，所以保留这段兜底，不要当冗余删除。
+- 「人物设定整理中」占位（`gallery.js` 的 `pendingHtml`）：角色一旦写了 `bio` / `info` / `desc` / `text` 任一项会自动隐藏。现有 136 位都已写完，但新角色常常先上图后补正文，所以保留这段兜底，不要当冗余删除。
 
 ---
 
@@ -432,7 +434,7 @@ ynxz/
 - **各地的纸**：`papers.js` 的 `PLACE_PAPER` 给 21 个地点各指定一种纸，样式在 `papers.css` 的 `[data-paper]`，纹理全是内嵌 SVG 噪声与 CSS 渐变，不另下载图片：科鲁鲁羊皮纸（红色双栏线）、安那其学院再生粗纸（印刷栏线、Ⓐ 印）、伊鲁尼利亚海图纸（经纬格、罗盘花）、万知城档案卡纸、坎普牛皮纸、布图里亚灰蓝布纹纸（浪纹）、璇玑制图纸、铁枢方格表格纸（红头、星印）、霁川长纤维白纸（淡墨山影）、卡法里扬冷灰烟熏纸、塞雷格诏书纸（双重框）、帕尔哈南赭金经卷纸、裂缝彼端暗紫异纸（裂光）、翁吉亚赭土纸（回纹边）、契莱西亚树皮纸、奥嫩堡特许状（蜡封）、罗歇阿普受潮纸（水渍圈）、天神峰冷白雪点纸、常灵雾带纸、卡斯奎尼亚麻纸织纹、示安长纤维薄纸（朱印）。新增地点没写时默认羊皮纸。
 - 角色按 `属地` 第一段（经 `LOCATION_ALIAS` 规范、再沿 `parent` 上溯）归到顶层地点；属地里更细的小地点显示在照片下方。排位用交换法让有关系的人尽量挨着坐，关系最多的人放正上方；照片尺寸按人数自动缩，一圈按「卡片尺寸归一后的弧长」等距排开。会穿过中间照片的线改从照片外侧绕。
 - 数据 `js/relations-data.js`：`{a, b, label, sure, src}`。**只录人设正文写明或直接可读出的关系**，`src` 记出处；`sure:false` 画虚线，表示正文能看出交集、但算不算关系与怎么称呼待站主确认。同国、同姓、同职业不算关系（见上文「不追加关系」）。目前只录了科鲁鲁王国 5 条（实线 2、虚线 3）与安那其学院 2 条（实线），其他地点只摆人。
-- 资源：`css/papers.css v1`、`css/relations.css v5`、`js/papers.js v1`、`js/relations.js v6`、`js/relations-data.js v2`；读取 `gallery-data.js v124`、`locations-data.js v28`。
+- 资源：`css/papers.css v1`、`css/relations.css v5`、`js/papers.js v1`、`js/relations.js v6`、`js/relations-data.js v2`；读取 `gallery-data.js v125`、`locations-data.js v28`。
 
 ## 三维星球与 2.5D 沙盘（v23，2026-10-17）
 
