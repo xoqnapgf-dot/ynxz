@@ -199,7 +199,8 @@
      qmark: 1.3, halospark: 1.05, geode: 1.3, relarrows: 1.3, dove: 1.1, turnstile: 1.4,
     helmet: 1.3, lantern: 1.3, prism: 1.05, geoscale: 1.3, peak: 1.2, patchwork: 1.2, quill: 1.2,
     sprig: 1.2, plumb: 1.2, flagwheat: 1.2, ideacity: 1.2, crownscroll: 1.2, castle: 1.2,
-    deductree: 1.2, coinstack: 1.3, unitnode: 1.4, gearcoin: 1.5, starcoin: 1.4, candles: 1.15, transcend: 1.2, abacus: 1.2, shieldlock: 1.1, imperialorb: 1.3, eagle: 1.3, duality: 1.1, sisyphus: 1.15, ecocycle: 1.2, swordstar: 1.2, fan: 1.15, peony: 1.3, feather: 1.0, web: 1.15, brokenchain: 1.3, ship: 1.2, hourglass: 1.15, unlock: 1.3, crown: 1.3, mirror: 1.15, padlock: 1.15, brokencrown: 1.45, crownslash: 1.55, taiji: 1.2
+    deductree: 1.2, coinstack: 1.3, unitnode: 1.4, gearcoin: 1.5, starcoin: 1.4, candles: 1.15, transcend: 1.2, abacus: 1.2, shieldlock: 1.1, imperialorb: 1.3, eagle: 1.3, duality: 1.1, sisyphus: 1.15, ecocycle: 1.2, swordstar: 1.2, fan: 1.15, peony: 1.3, feather: 1.0, web: 1.15, brokenchain: 1.3, ship: 1.2, hourglass: 1.15, unlock: 1.3, crown: 1.3, mirror: 1.15, padlock: 1.15, brokencrown: 1.45, crownslash: 1.55, taiji: 1.2,
+    daofa: 1.15, moonrivers: 1.2, trumpet: 1.25, road: 1.15, dandelion: 1.3, venn: 1.15, wuxing: 1.15, zongheng: 1.3, slips: 1.15, tally: 1.25, plow: 1.25
   };
   function motifDeco(motif, col) {
     var g = motifDecoRaw(motif, col), k = MOTIF_SCALE[motif];
@@ -1181,6 +1182,106 @@
       g += '<circle r="56" stroke-width="2.4" opacity="0.85"/><circle r="16" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.15"/>';
       for (i = 0; i < 8; i++) { a = i * 45 * Math.PI / 180; g += '<line x1="' + (Math.cos(a) * 16).toFixed(1) + '" y1="' + (Math.sin(a) * 16).toFixed(1) + '" x2="' + (Math.cos(a) * 56).toFixed(1) + '" y2="' + (Math.sin(a) * 56).toFixed(1) + '" stroke-width="1.4" opacity="0.5"/>'; }
       return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    }
+    if (motif === 'daofa') {       /* 黄老学说：道生法，上为虚圆，下垂准绳至量尺 */
+      g += '<circle cy="-30" r="40" stroke-width="2.6" opacity="0.9"/><circle cy="-30" r="24" stroke-width="1.2" opacity="0.35"/>' +
+           '<line x1="0" y1="10" x2="0" y2="44" stroke-width="2" opacity="0.8"/>' +
+           '<rect x="-66" y="44" width="132" height="16" rx="2" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.12"/>';
+      for (i = 0; i < 13; i++) g += '<line x1="' + (-60 + i * 10) + '" y1="44" x2="' + (-60 + i * 10) + '" y2="' + (i % 3 === 0 ? 54 : 49) + '" stroke-width="1.4" opacity="0.6"/>';
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    }
+    if (motif === 'moonrivers') {  /* 宋明理学：月印万川，一月映于诸水 */
+      g += '<circle cy="-52" r="22" stroke-width="2.4" opacity="0.9" fill="' + col + '" fill-opacity="0.2"/>';
+      for (i = 0; i < 3; i++) {
+        var ry = 4 + i * 24, rx = [-30, 14, -6][i];
+        g += '<path d="M-74 ' + ry + ' Q-55 ' + (ry - 7) + ' -37 ' + ry + ' T0 ' + ry + ' T37 ' + ry + ' T74 ' + ry + '" stroke-width="1.8" opacity="' + (0.8 - i * 0.15) + '"/>' +
+             '<ellipse cx="' + rx + '" cy="' + (ry + 9) + '" rx="' + (10 - i * 2) + '" ry="3.4" fill="' + col + '" fill-opacity="0.45" stroke="none"/>';
+      }
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    }
+    if (motif === 'trumpet') {     /* 新奥尔良爵士：小号 */
+      g += '<path d="M-58 -6 L28 -6 C44 -6 56 -20 70 -36 L70 36 C56 20 44 6 28 6 L-58 6" stroke-width="2.6" opacity="0.9" fill="' + col + '" fill-opacity="0.1"/>' +
+           '<path d="M-42 6 C-42 34 18 34 18 6" stroke-width="2.4" opacity="0.75"/>' +
+           '<path d="M-58 -9 L-58 9 M-70 -5 L-58 -3 M-70 5 L-58 3 M-70 -5 L-70 5" stroke-width="2.2" opacity="0.85"/>';
+      for (i = 0; i < 3; i++) g += '<line x1="' + (-24 + i * 14) + '" y1="-6" x2="' + (-24 + i * 14) + '" y2="-28" stroke-width="5" opacity="0.7"/><circle cx="' + (-24 + i * 14) + '" cy="-32" r="4" fill="' + col + '" stroke="none" opacity="0.85"/>';
+      g += '<path d="M78 -26 Q88 -32 92 -44 M80 0 L96 0 M78 26 Q88 32 92 44" stroke-width="1.6" opacity="0.45"/>';
+      return '<g transform="translate(' + (C - 8) + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
+    }
+    if (motif === 'road') {        /* 公路电影：通向地平线的公路与落日 */
+      g += '<path d="M-34 -12 A34 34 0 0 1 34 -12" stroke-width="2.4" opacity="0.85" fill="' + col + '" fill-opacity="0.16"/>';
+      for (i = 0; i < 7; i++) { a = (200 + i * 23.3) * Math.PI / 180; g += '<line x1="' + (Math.cos(a) * 42).toFixed(1) + '" y1="' + (-12 + Math.sin(a) * 42).toFixed(1) + '" x2="' + (Math.cos(a) * 54).toFixed(1) + '" y2="' + (-12 + Math.sin(a) * 54).toFixed(1) + '" stroke-width="1.6" opacity="0.5"/>'; }
+      g += '<line x1="-80" y1="-12" x2="80" y2="-12" stroke-width="2" opacity="0.7"/>' +
+           '<path d="M-6 -12 L-66 70 M6 -12 L66 70" stroke-width="2.6" opacity="0.9"/>';
+      for (i = 0; i < 4; i++) { var y0 = -4 + i * i * 4 + i * 8, h = 4 + i * 3; g += '<line x1="0" y1="' + y0 + '" x2="0" y2="' + (y0 + h) + '" stroke-width="' + (1.6 + i * 0.8) + '" opacity="0.8"/>'; }
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    }
+    if (motif === 'dandelion') {   /* 反出生主义：蒲公英，种子散而不落 */
+      g += '<path d="M0 -14 C4 20 -6 46 2 76" stroke-width="2.2" opacity="0.75"/><circle cy="-24" r="6" fill="' + col + '" stroke="none" opacity="0.8"/>';
+      for (i = 0; i < 22; i++) {
+        if (i === 3 || i === 5) continue;
+        a = i * (360 / 22) * Math.PI / 180;
+        var tx = Math.cos(a) * 42, ty = -24 + Math.sin(a) * 42;
+        g += '<line x1="' + (Math.cos(a) * 7).toFixed(1) + '" y1="' + (-24 + Math.sin(a) * 7).toFixed(1) + '" x2="' + tx.toFixed(1) + '" y2="' + ty.toFixed(1) + '" stroke-width="1.1" opacity="0.55"/>' +
+             '<circle cx="' + tx.toFixed(1) + '" cy="' + ty.toFixed(1) + '" r="3.6" stroke-width="1" opacity="0.7"/>';
+      }
+      g += '<path d="M48 -54 L60 -68 M60 -68 m-5 0 l5 0 l0 5 M70 -40 L82 -54 M82 -54 m-5 0 l5 0 l0 5" stroke-width="1.4" opacity="0.6"/>' +
+           '<circle cx="62" cy="-70" r="3.6" stroke-width="1" opacity="0.6"/><circle cx="84" cy="-56" r="3.6" stroke-width="1" opacity="0.5"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 8) + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    }
+    if (motif === 'venn') {        /* 名家：合同异，两圆相交 */
+      g += '<path d="M0 -38.2 A46 46 0 0 1 0 38.2 A46 46 0 0 1 0 -38.2 Z" fill="' + col + '" fill-opacity="0.22" stroke="none"/>' +
+           '<circle cx="-26" r="46" stroke-width="2.6" opacity="0.9"/><circle cx="26" r="46" stroke-width="2.6" opacity="0.9"/>' +
+           '<line x1="-84" y1="64" x2="84" y2="64" stroke-width="1.4" opacity="0.4"/>' +
+           '<circle cx="-48" cy="0" r="3.4" fill="' + col + '" stroke="none" opacity="0.7"/><circle cx="48" cy="0" r="3.4" fill="' + col + '" stroke="none" opacity="0.7"/><circle r="3.4" fill="' + col + '" stroke="none" opacity="0.95"/>';
+      return '<g transform="translate(' + C + ',' + (CY - 6) + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    }
+    if (motif === 'wuxing') {      /* 阴阳家：五行，相生成环、相胜成星 */
+      var pts = [];
+      for (i = 0; i < 5; i++) { a = (-90 + i * 72) * Math.PI / 180; pts.push([Math.cos(a) * 56, Math.sin(a) * 56]); }
+      for (i = 0; i < 5; i++) {
+        var p1 = pts[i], p2 = pts[(i + 1) % 5], p3 = pts[(i + 2) % 5];
+        g += '<line x1="' + p1[0].toFixed(1) + '" y1="' + p1[1].toFixed(1) + '" x2="' + p2[0].toFixed(1) + '" y2="' + p2[1].toFixed(1) + '" stroke-width="2" opacity="0.7"/>' +
+             '<line x1="' + p1[0].toFixed(1) + '" y1="' + p1[1].toFixed(1) + '" x2="' + p3[0].toFixed(1) + '" y2="' + p3[1].toFixed(1) + '" stroke-width="1.2" opacity="0.4" stroke-dasharray="4 4"/>';
+      }
+      for (i = 0; i < 5; i++) g += '<circle cx="' + pts[i][0].toFixed(1) + '" cy="' + pts[i][1].toFixed(1) + '" r="13" stroke-width="2.4" opacity="0.95" fill="' + col + '" fill-opacity="' + (i === 0 ? 0.45 : 0.14) + '"/>';
+      g += '<circle r="78" stroke-width="1" opacity="0.25"/>';
+      return '<g transform="translate(' + C + ',' + (CY + 4) + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    }
+    if (motif === 'zongheng') {    /* 纵横家：六点合纵为竖，一线连横向一强 */
+      g += '<line x1="-20" y1="-70" x2="-20" y2="70" stroke-width="2.4" opacity="0.8"/>' +
+           '<line x1="-76" y1="0" x2="50" y2="0" stroke-width="2.4" opacity="0.8" stroke-dasharray="10 6"/>' +
+           '<circle cx="62" r="13" stroke-width="2.6" opacity="0.95" fill="' + col + '" fill-opacity="0.3"/>';
+      for (i = 0; i < 6; i++) { var zy = -60 + i * 24; g += '<circle cx="-20" cy="' + zy + '" r="7" stroke-width="2" opacity="0.9" fill="' + col + '" fill-opacity="' + (zy === -12 || zy === 12 ? 0.2 : 0.6) + '"/>'; }
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' + g + '</g>';
+    }
+    if (motif === 'slips') {       /* 杂家：一束竹简，诸家合编 */
+      for (i = 0; i < 7; i++) {
+        var sx = -49 + i * 14, rot = (i - 3) * 2.2;
+        g += '<g transform="rotate(' + rot.toFixed(1) + ' ' + sx + ' 70)"><rect x="' + (sx - 6) + '" y="-62" width="12" height="124" rx="2" stroke-width="1.8" opacity="0.85" fill="' + col + '" fill-opacity="' + (0.06 + (i % 3) * 0.06) + '"/>';
+        for (var k = 0; k < 4; k++) g += '<line x1="' + sx + '" y1="' + (-44 + k * 12 + (i % 2) * 5) + '" x2="' + sx + '" y2="' + (-38 + k * 12 + (i % 2) * 5) + '" stroke-width="1.6" opacity="0.5"/>';
+        g += '</g>';
+      }
+      g += '<path d="M-62 -26 Q0 -18 62 -26 M-62 34 Q0 42 62 34" stroke-width="2.4" opacity="0.85"/>';
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round">' + g + '</g>';
+    }
+    if (motif === 'tally') {       /* 兵家：虎符，两半相合方能发兵 */
+      g += '<g transform="translate(0 -7)"><path d="M-58 -2 C-58 -20 -42 -28 -16 -28 L34 -28 C46 -28 52 -40 64 -36 C74 -32 74 -14 68 -2 Z" stroke-width="2.4" opacity="0.95" fill="' + col + '" fill-opacity="0.18"/>' +
+           '<path d="M56 -38 L60 -48 L66 -38" stroke-width="2" opacity="0.85"/><circle cx="62" cy="-24" r="2.6" fill="' + col + '" stroke="none"/>' +
+           '<path d="M-58 -12 C-72 -14 -78 -26 -72 -38" stroke-width="2.2" opacity="0.8"/>';
+      for (i = 0; i < 6; i++) g += '<line x1="' + (-38 + i * 13) + '" y1="-15" x2="' + (-32 + i * 13) + '" y2="-15" stroke-width="1.8" opacity="0.55"/>';
+      g += '</g><g transform="translate(0 7)"><path d="M-58 2 L68 2 C72 12 68 22 58 24 L50 24 L50 36 L38 36 L38 24 L-28 24 L-28 36 L-40 36 L-40 24 C-54 24 -58 14 -58 2 Z" stroke-width="2.4" opacity="0.8" fill="' + col + '" fill-opacity="0.08"/>';
+      for (i = 0; i < 6; i++) g += '<line x1="' + (-38 + i * 13) + '" y1="13" x2="' + (-32 + i * 13) + '" y2="13" stroke-width="1.8" opacity="0.4"/>';
+      g += '</g>';
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
+    }
+    if (motif === 'plow') {        /* 农家：耒耜入土，田垄生苗 */
+      g += '<line x1="-52" y1="-76" x2="6" y2="34" stroke-width="4" opacity="0.9"/>' +
+           '<line x1="-66" y1="-66" x2="-38" y2="-82" stroke-width="3" opacity="0.8"/>' +
+           '<line x1="-12" y1="6" x2="12" y2="-6" stroke-width="2.6" opacity="0.75"/>' +
+           '<path d="M6 34 L-2 60 M6 34 L18 56" stroke-width="3" opacity="0.9"/>' +
+           '<path d="M-80 62 Q-40 56 0 62 T80 62" stroke-width="2" opacity="0.6"/>';
+      for (i = 0; i < 3; i++) { var px = 34 + i * 18, ph = 18 - i * 3; g += '<path d="M' + px + ' 60 L' + px + ' ' + (60 - ph) + ' M' + px + ' ' + (62 - ph) + ' Q' + (px - 10) + ' ' + (56 - ph) + ' ' + (px - 12) + ' ' + (64 - ph) + ' M' + px + ' ' + (64 - ph) + ' Q' + (px + 10) + ' ' + (58 - ph) + ' ' + (px + 12) + ' ' + (66 - ph) + '" stroke-width="1.8" opacity="0.8"/>'; }
+      return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
     }
     /* 默认：菱形徽记 + 同心细环 */
     return '<g transform="translate(' + C + ',' + CY + ')" stroke="' + col + '" fill="none">' +
